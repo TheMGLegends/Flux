@@ -1,5 +1,5 @@
-#include <iostream>
 #include <SDL3/SDL.h>
+#include <Mouse.h>
 
 int main()
 {
@@ -12,6 +12,9 @@ int main()
 	}
 
 	SDL_Quit();*/
+
+	// INFO: DirectXTK Integration Test
+	//DirectX::Mouse mouse;
 
 	return 0;
 }
