@@ -10,9 +10,6 @@
 *.userosscache
 *.sln.docstates
 
-# Allow lib Files
-!Vendors/SDL3/lib
-
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
