@@ -1,10 +1,16 @@
 #include <iostream>
 
 #include <SDL3/SDL.h>
+
 #include <Mouse.h>
+
 #include <nlohmann/json.hpp>
+
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 int main()
 {
@@ -46,6 +52,13 @@ int main()
 	{
 		std::cout << "Imported model successfully!" << std::endl;
 	}*/
+
+	// INFO: FreeType Integration Test
+	FT_Library library;
+	if (FT_Init_FreeType(&library) == FT_Err_Ok)
+	{
+		std::cout << "Initialized FreeType successfully!" << std::endl;
+	}
 
 	return 0;
 }
