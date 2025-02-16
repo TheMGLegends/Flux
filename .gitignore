@@ -398,3 +398,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Allow 3D obj models in Assets/Models folder
+!Assets/Models/*.obj 

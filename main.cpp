@@ -3,6 +3,8 @@
 #include <SDL3/SDL.h>
 #include <Mouse.h>
 #include <nlohmann/json.hpp>
+#include <assimp/cimport.h>
+#include <assimp/postprocess.h>
 
 int main()
 {
@@ -36,6 +38,14 @@ int main()
 	};
 
 	std::cout << j.dump(4) << std::endl;*/
+
+	// INFO: Assimp Integration Test
+	/*const aiScene* testImport = aiImportFile("Assets/Models/Cube.obj", aiProcessPreset_TargetRealtime_MaxQuality);
+
+	if (testImport)
+	{
+		std::cout << "Imported model successfully!" << std::endl;
+	}*/
 
 	return 0;
 }
