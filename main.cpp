@@ -1,4 +1,5 @@
 #include <iostream>
+#include <Windows.h>
 
 #include <SDL3/SDL.h>
 
@@ -11,6 +12,8 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+#include <fmod.hpp>
 
 int main()
 {
@@ -54,11 +57,26 @@ int main()
 	}*/
 
 	// INFO: FreeType Integration Test
-	FT_Library library;
+	/*FT_Library library;
 	if (FT_Init_FreeType(&library) == FT_Err_Ok)
 	{
 		std::cout << "Initialized FreeType successfully!" << std::endl;
+	}*/
+
+	// INFO: FMOD Integration Test
+	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+
+	FMOD_RESULT result;
+	FMOD::System* system;
+
+	result = FMOD::System_Create(&system);
+	if (result == FMOD_OK)
+	{
+		std::cout << "Created FMOD system successfully!" << std::endl;
 	}
+
+	system->release();
+	CoUninitialize();
 
 	return 0;
 }

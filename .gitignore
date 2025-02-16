@@ -400,4 +400,7 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Allow 3D obj models in Assets/Models folder
-!Assets/Models/*.obj 
+!Assets/Models/*.obj
+
+# Allow all .lib files in Vendors folder
+!Vendors/*.lib
