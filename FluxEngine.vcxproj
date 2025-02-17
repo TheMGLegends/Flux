@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;$(ProjectDir)Vendors\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -145,9 +145,33 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Vendors\imgui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Vendors\imgui\backends\imgui_impl_sdl3.cpp" />
+    <ClCompile Include="Vendors\imgui\freetype\imgui_freetype.cpp" />
+    <ClCompile Include="Vendors\imgui\imgui.cpp" />
+    <ClCompile Include="Vendors\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Vendors\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Vendors\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Vendors\imgui\string\imgui_stdlib.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Vendors\imgui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="Vendors\imgui\backends\imgui_impl_sdl3.h" />
+    <ClInclude Include="Vendors\imgui\freetype\imgui_freetype.h" />
+    <ClInclude Include="Vendors\imgui\imconfig.h" />
+    <ClInclude Include="Vendors\imgui\imgui.h" />
+    <ClInclude Include="Vendors\imgui\imgui_internal.h" />
+    <ClInclude Include="Vendors\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Vendors\imgui\imstb_textedit.h" />
+    <ClInclude Include="Vendors\imgui\imstb_truetype.h" />
+    <ClInclude Include="Vendors\imgui\string\imgui_stdlib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Vendors\imgui\debuggers\imgui.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

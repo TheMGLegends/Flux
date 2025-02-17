@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
 
 #include <Mouse.h>
 
@@ -16,6 +17,12 @@
 #include <fmod.hpp>
 
 #include <PxPhysicsAPI.h>
+
+#include <imgui.h>
+#include <backends/imgui_impl_sdl3.h>
+#include <backends/imgui_impl_dx11.h>
+#include <d3d11.h>
+#include <wrl.h>
 
 int main()
 {
@@ -96,6 +103,73 @@ int main()
 	physics->release();
 	pvd->release();
 	foundation->release();*/
+
+	// INFO: Dear ImGui Integration Test
+	/*SDL_Window* window = SDL_CreateWindow("Dear ImGui Test", 1280, 720, SDL_WINDOW_MAXIMIZED);
+
+	Microsoft::WRL::ComPtr<ID3D11Device> device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+
+	HRESULT hResult = { S_OK };
+
+	// INFO: Create the swap chain description
+	DXGI_SWAP_CHAIN_DESC scd = { 0 };
+	scd.BufferDesc.Width = 0;
+	scd.BufferDesc.Height = 0;
+	scd.BufferDesc.RefreshRate.Numerator = 0;
+	scd.BufferDesc.RefreshRate.Denominator = 1;
+	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	scd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	scd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+
+	scd.SampleDesc.Count = 1;
+	scd.SampleDesc.Quality = 0;
+
+	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	scd.BufferCount = 1;
+	scd.OutputWindow = (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(window), SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
+	scd.Windowed = TRUE;
+	scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+	// INFO: Create the device, device context, swap chain and front/back buffers
+	hResult = D3D11CreateDeviceAndSwapChain(
+		nullptr,
+		D3D_DRIVER_TYPE_HARDWARE,
+		nullptr,
+		D3D11_CREATE_DEVICE_DEBUG,
+		nullptr,
+		0,
+		D3D11_SDK_VERSION,
+		&scd,
+		&swapChain,
+		&device,
+		nullptr,
+		&deviceContext
+	);
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+	ImGui::StyleColorsDark();
+
+	if (ImGui_ImplSDL3_InitForD3D(window))
+	{
+		std::cout << "Initialized Dear ImGui SDL3 for D3D successfully!" << std::endl;
+	}
+
+	if (ImGui_ImplDX11_Init(device.Get(), deviceContext.Get()))
+	{
+		std::cout << "Initialized Dear ImGui successfully!" << std::endl;
+	}
+
+	(void)getchar();
+
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplSDL3_Shutdown();
+	SDL_DestroyWindow(window);*/
 
 	return 0;
 }
