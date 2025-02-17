@@ -24,6 +24,8 @@
 #include <d3d11.h>
 #include <wrl.h>
 
+#include <ImGuizmo.h>
+
 int main()
 {
 	// INFO: SDL Integration Test
@@ -170,6 +172,10 @@ int main()
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplSDL3_Shutdown();
 	SDL_DestroyWindow(window);*/
+
+	// INFO: ImGuizmo Integration Test
+	/*std::string isUsing = ImGuizmo::IsUsing() ? "true" : "false";
+	std::cout << "IsUsing is " << isUsing << std::endl;*/
 
 	return 0;
 }

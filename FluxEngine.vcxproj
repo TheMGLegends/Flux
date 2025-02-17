@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;$(ProjectDir)Vendors\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;$(ProjectDir)Vendors\imgui;$(ProjectDir)Vendors\imguizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -127,7 +127,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;$(ProjectDir)Vendors\imgui;$(ProjectDir)Vendors\imguizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -145,6 +145,9 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Vendors\imguizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="Vendors\imguizmo\ImGradient.cpp" />
+    <ClCompile Include="Vendors\imguizmo\ImGuizmo.cpp" />
     <ClCompile Include="Vendors\imgui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="Vendors\imgui\backends\imgui_impl_sdl3.cpp" />
     <ClCompile Include="Vendors\imgui\freetype\imgui_freetype.cpp" />
@@ -159,6 +162,10 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Vendors\imguizmo\ImCurveEdit.h" />
+    <ClInclude Include="Vendors\imguizmo\ImGradient.h" />
+    <ClInclude Include="Vendors\imguizmo\ImGuizmo.h" />
+    <ClInclude Include="Vendors\imguizmo\ImZoomSlider.h" />
     <ClInclude Include="Vendors\imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="Vendors\imgui\backends\imgui_impl_sdl3.h" />
     <ClInclude Include="Vendors\imgui\freetype\imgui_freetype.h" />
