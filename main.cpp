@@ -15,6 +15,8 @@
 
 #include <fmod.hpp>
 
+#include <PxPhysicsAPI.h>
+
 int main()
 {
 	// INFO: SDL Integration Test
@@ -64,7 +66,7 @@ int main()
 	}*/
 
 	// INFO: FMOD Integration Test
-	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+	/*CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
 	FMOD_RESULT result;
 	FMOD::System* system;
@@ -76,7 +78,24 @@ int main()
 	}
 
 	system->release();
-	CoUninitialize();
+	CoUninitialize();*/
+
+	// INFO: PhysX Integration Test
+	/*physx::PxDefaultAllocator allocator;
+	physx::PxDefaultErrorCallback errorCallback;
+	physx::PxFoundation* foundation = PxCreateFoundation(PX_PHYSICS_VERSION, allocator, errorCallback);
+
+	physx::PxPvd* pvd = physx::PxCreatePvd(*foundation);
+	physx::PxPhysics* physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, physx::PxTolerancesScale(), true, pvd);
+
+	if (physics)
+	{
+		std::cout << "Created PhysX physics system successfully!" << std::endl;
+	}
+
+	physics->release();
+	pvd->release();
+	foundation->release();*/
 
 	return 0;
 }
