@@ -144,8 +144,10 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Core\Components\Component.cpp" />
     <ClCompile Include="Source\Engine\Core\GameObject.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Source\Engine\Core\Components\Transform.cpp" />
     <ClCompile Include="Vendors\imguizmo\ImCurveEdit.cpp" />
     <ClCompile Include="Vendors\imguizmo\ImGradient.cpp" />
     <ClCompile Include="Vendors\imguizmo\ImGuizmo.cpp" />
@@ -163,8 +165,10 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine\Core\Components\Component.h" />
     <ClInclude Include="Source\Interfaces\ISerializable.h" />
     <ClInclude Include="Source\Engine\Core\GameObject.h" />
+    <ClInclude Include="Source\Engine\Core\Components\Transform.h" />
     <ClInclude Include="Vendors\imguizmo\ImCurveEdit.h" />
     <ClInclude Include="Vendors\imguizmo\ImGradient.h" />
     <ClInclude Include="Vendors\imguizmo\ImGuizmo.h" />
