@@ -4,6 +4,7 @@ using namespace DirectX::SimpleMath;
 
 TransformComponent::TransformComponent() : position(Vector3::Zero), rotation(Quaternion::Identity), scale(Vector3::One)
 {
+	isRemoveable = false;
 }
 
 TransformComponent::~TransformComponent()
@@ -15,7 +16,7 @@ void TransformComponent::Serialize(nlohmann::ordered_json& json) const
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
 
-	// TODO: Serialize Transform
+	// TODO: Serialize TransformComponent
 }
 
 void TransformComponent::Deserialize(const nlohmann::ordered_json& json)
@@ -23,7 +24,7 @@ void TransformComponent::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);
 
-	// TODO: Deserialize Transform
+	// TODO: Deserialize TransformComponent
 }
 
 DirectX::XMMATRIX TransformComponent::GetWorldMatrix() const
@@ -32,7 +33,6 @@ DirectX::XMMATRIX TransformComponent::GetWorldMatrix() const
 	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationQuaternion(rotation);
 	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScalingFromVector(scale);
 
-	// INFO: Returns the World Matrix (World = Scale * Rotation * Translation)
 	return scaleMatrix * rotationMatrix * translationMatrix;
 }
 
@@ -45,7 +45,6 @@ DirectX::XMMATRIX TransformComponent::GetWorldMatrix(const Vector3& additionalSc
 
 	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationQuaternion(rotation);
 
-	// INFO: Returns the World Matrix (World = Scale * Rotation * Translation)
 	return scaleMatrix * rotationMatrix * translationMatrix;
 }
 

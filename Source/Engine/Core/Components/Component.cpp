@@ -10,10 +10,10 @@ Component::~Component()
 
 void Component::Serialize(nlohmann::ordered_json& json) const
 {
-	// TODO: Serialize isActive
+	// TODO: Serialize Component
 }
 
 void Component::Deserialize(const nlohmann::ordered_json& json)
 {
-	// TODO: Deserialize isActive
+	// TODO: Deserialize Component
 }
