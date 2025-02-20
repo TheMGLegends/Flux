@@ -7,7 +7,7 @@
 #include "../../Interfaces/ISerializable.h"
 
 //#include "Components/Collider.h"
-#include "Components/Transform.h"
+#include "Components/TransformComponent.h"
 
 class Component;
 
@@ -56,7 +56,7 @@ private:
 	inline void SetType(const std::string& _type) { type = _type; } // INFO: Used during Deserialization to note down GO type for future Serialization
 
 public:
-	std::weak_ptr<Transform> transform;
+	std::weak_ptr<TransformComponent> transform;
 
 private:
 	bool isActive;

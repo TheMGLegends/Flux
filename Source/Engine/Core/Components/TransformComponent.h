@@ -4,11 +4,11 @@
 
 #include <SimpleMath.h>
 
-class Transform : public Component
+class TransformComponent : public Component
 {
 public:
-	Transform();
-	virtual ~Transform() override;
+	TransformComponent();
+	virtual ~TransformComponent() override;
 
 	virtual void Serialize(nlohmann::ordered_json& json) const override;
 	virtual void Deserialize(const nlohmann::ordered_json& json) override;
