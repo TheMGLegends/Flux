@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "../../Interfaces/ISerializable.h"
+#include "../Interfaces/ISerializable.h"
 
 #include "Components/Colliders/Collider.h"
 #include "Components/Transform.h"

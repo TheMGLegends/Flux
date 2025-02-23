@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../Interfaces/ISerializable.h"
+#include "../../Interfaces/ISerializable.h"
 
 class GameObject;
 

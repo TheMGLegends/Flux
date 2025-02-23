@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vendors\imgui\imgui.cpp">
@@ -129,7 +129,7 @@
     <ClInclude Include="Source\Engine\Core\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Interfaces\ISerializable.h">
+    <ClInclude Include="Source\Engine\Interfaces\ISerializable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\Components\Component.h">
@@ -138,7 +138,7 @@
     <ClInclude Include="Source\Engine\Core\Components\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Interfaces\IDebugWireframe.h">
+    <ClInclude Include="Source\Engine\Interfaces\IDebugWireframe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\Components\Camera.h">

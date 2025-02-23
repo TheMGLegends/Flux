@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Component.h"
-#include "../../../Interfaces/IDebugWireframe.h"
+#include "../../Interfaces/IDebugWireframe.h"
 
 #include <array>
 #include <SimpleMath.h>
