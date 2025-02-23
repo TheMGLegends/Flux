@@ -144,6 +144,10 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Application\Application.cpp" />
+    <ClCompile Include="Source\Application\Runtimes\EditorRuntime.cpp" />
+    <ClCompile Include="Source\Application\Runtimes\EngineRuntime.cpp" />
+    <ClCompile Include="Source\Application\Runtimes\Runtime.cpp" />
     <ClCompile Include="Source\Engine\Core\Components\PhysicsBody.cpp" />
     <ClCompile Include="Source\Engine\Core\Components\Colliders\BoxCollider.cpp" />
     <ClCompile Include="Source\Engine\Core\Components\Colliders\Collider.cpp" />
@@ -171,6 +175,11 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Application\Application.h" />
+    <ClInclude Include="Source\Application\Runtimes\EditorRuntime.h" />
+    <ClInclude Include="Source\Application\Runtimes\EngineRuntime.h" />
+    <ClInclude Include="Source\Application\Runtimes\Runtime.h" />
+    <ClInclude Include="Source\Core\Globals.h" />
     <ClInclude Include="Source\Engine\Core\Components\PhysicsBody.h" />
     <ClInclude Include="Source\Engine\Core\Components\Colliders\BoxCollider.h" />
     <ClInclude Include="Source\Engine\Core\Components\Colliders\Collider.h" />

@@ -26,6 +26,8 @@
 
 #include <ImGuizmo.h>
 
+#include "Application/Application.h"
+
 int main()
 {
 	// INFO: SDL Integration Test
@@ -176,6 +178,9 @@ int main()
 	// INFO: ImGuizmo Integration Test
 	/*std::string isUsing = ImGuizmo::IsUsing() ? "true" : "false";
 	std::cout << "IsUsing is " << isUsing << std::endl;*/
+
+	Application app;
+	app.Run();
 
 	return 0;
 }
