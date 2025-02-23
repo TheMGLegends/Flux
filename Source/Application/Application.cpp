@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 
 #include "../Core/Globals.h"
+#include "../Core/Time/Time.h"
 
 Application::Application() : isRunning(false)
 {
@@ -15,7 +16,7 @@ Application::Application() : isRunning(false)
 	//engineRuntime.PreInitialise();
 
 	// INFO: Window Creation
-	window = SDL_CreateWindow("Flux Engine", EngineSettings::WindowWidth, EngineSettings::WindowHeight, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Flux Engine", EngineSettings::WINDOW_WIDTH, EngineSettings::WINDOW_HEIGHT, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
 
 	// TODO: Renderer (Need to pass over hWnd)
 
@@ -35,7 +36,7 @@ void Application::Run()
 {
 	while (isRunning)
 	{
-		// TODO: Tick Time
+		Time::Tick();
 		// TODO: Get Input
 		
 		//editorRuntime.Update(Time::DeltaTime());

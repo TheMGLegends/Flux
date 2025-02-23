@@ -1,5 +1,7 @@
 #include "EngineRuntime.h"
 
+#include "../../Core/Time/Time.h"
+
 EngineRuntime::EngineRuntime(EventDispatcher& _eventDispatcher) : Runtime(_eventDispatcher)
 {
 }
@@ -46,8 +48,11 @@ void EngineRuntime::Start()
 
 void EngineRuntime::FixedUpate(float fixedDeltaTime)
 {
-	// TODO: Fixed Update Logic
-	// While loop until accumulated time is less than fixedDeltaTime
+	while (Time::PerformPhysicsUpdate())
+	{
+		// TODO: Fixed Update Logic
+		// Simulate Physics Scene
+	}
 }
 
 void EngineRuntime::ProcessEvents()

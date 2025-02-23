@@ -41,6 +41,11 @@ namespace RuntimeState
 
 namespace EngineSettings
 {
-	constexpr int WindowWidth = 1280;
-	constexpr int WindowHeight = 720;
+	constexpr int WINDOW_WIDTH = 1280;
+	constexpr int WINDOW_HEIGHT = 720;
+}
+
+namespace TimeSettings
+{
+	constexpr float FIXED_DELTA_TIME = 0.02f; // INFO: 50 FPS
 }
