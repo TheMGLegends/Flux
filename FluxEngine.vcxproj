@@ -144,14 +144,14 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Engine\Core\Components\PhysicsBodyComponent.cpp" />
+    <ClCompile Include="Source\Engine\Core\Components\PhysicsBody.cpp" />
     <ClCompile Include="Source\Engine\Core\Components\Colliders\BoxCollider.cpp" />
-    <ClCompile Include="Source\Engine\Core\Components\Colliders\ColliderComponent.cpp" />
-    <ClCompile Include="Source\Engine\Core\Components\CameraComponent.cpp" />
+    <ClCompile Include="Source\Engine\Core\Components\Colliders\Collider.cpp" />
+    <ClCompile Include="Source\Engine\Core\Components\Camera.cpp" />
     <ClCompile Include="Source\Engine\Core\Components\Component.cpp" />
     <ClCompile Include="Source\Engine\Core\GameObject.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Source\Engine\Core\Components\TransformComponent.cpp" />
+    <ClCompile Include="Source\Engine\Core\Components\Transform.cpp" />
     <ClCompile Include="Source\Engine\Core\Components\Colliders\SphereCollider.cpp" />
     <ClCompile Include="Vendors\imguizmo\ImCurveEdit.cpp" />
     <ClCompile Include="Vendors\imguizmo\ImGradient.cpp" />
@@ -164,22 +164,22 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <ClCompile Include="Vendors\imgui\imgui_tables.cpp" />
     <ClCompile Include="Vendors\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Vendors\imgui\string\imgui_stdlib.cpp" />
-    <ClCompile Include="Source\Engine\Core\Components\VisualizerComponent.cpp" />
+    <ClCompile Include="Source\Engine\Core\Components\Visualizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Engine\Core\Components\PhysicsBodyComponent.h" />
+    <ClInclude Include="Source\Engine\Core\Components\PhysicsBody.h" />
     <ClInclude Include="Source\Engine\Core\Components\Colliders\BoxCollider.h" />
-    <ClInclude Include="Source\Engine\Core\Components\Colliders\ColliderComponent.h" />
-    <ClInclude Include="Source\Engine\Core\Components\CameraComponent.h" />
+    <ClInclude Include="Source\Engine\Core\Components\Colliders\Collider.h" />
+    <ClInclude Include="Source\Engine\Core\Components\Camera.h" />
     <ClInclude Include="Source\Interfaces\IDebugWireframe.h" />
     <ClInclude Include="Source\Engine\Core\Components\Component.h" />
     <ClInclude Include="Source\Interfaces\ISerializable.h" />
     <ClInclude Include="Source\Engine\Core\GameObject.h" />
-    <ClInclude Include="Source\Engine\Core\Components\TransformComponent.h" />
+    <ClInclude Include="Source\Engine\Core\Components\Transform.h" />
     <ClInclude Include="Source\Engine\Core\Components\Colliders\SphereCollider.h" />
     <ClInclude Include="Vendors\imguizmo\ImCurveEdit.h" />
     <ClInclude Include="Vendors\imguizmo\ImGradient.h" />
@@ -195,7 +195,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <ClInclude Include="Vendors\imgui\imstb_textedit.h" />
     <ClInclude Include="Vendors\imgui\imstb_truetype.h" />
     <ClInclude Include="Vendors\imgui\string\imgui_stdlib.h" />
-    <ClInclude Include="Source\Engine\Core\Components\VisualizerComponent.h" />
+    <ClInclude Include="Source\Engine\Core\Components\Visualizer.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Vendors\imgui\debuggers\imgui.natvis" />

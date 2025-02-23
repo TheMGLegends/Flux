@@ -8,11 +8,11 @@
 class Material;
 class Model;
 
-class VisualizerComponent : public Component
+class Visualizer : public Component
 {
 public:
-	VisualizerComponent();
-	virtual ~VisualizerComponent() override;
+	Visualizer();
+	virtual ~Visualizer() override;
 
 	virtual void Serialize(nlohmann::ordered_json& json) const override;
 	virtual void Deserialize(const nlohmann::ordered_json& json) override;

@@ -2,7 +2,7 @@
 
 GameObject::GameObject() : isActive(true)
 {
-	transform = AddComponent<TransformComponent>();
+	transform = AddComponent<Transform>();
 }
 
 GameObject::~GameObject()

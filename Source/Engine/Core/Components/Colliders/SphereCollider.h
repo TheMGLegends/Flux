@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ColliderComponent.h"
+#include "Collider.h"
 
-class SphereCollider : public ColliderComponent
+class SphereCollider : public Collider
 {
 public:
 	SphereCollider();

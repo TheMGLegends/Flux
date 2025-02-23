@@ -6,8 +6,8 @@
 
 #include "../../Interfaces/ISerializable.h"
 
-#include "Components/Colliders/ColliderComponent.h"
-#include "Components/TransformComponent.h"
+#include "Components/Colliders/Collider.h"
+#include "Components/Transform.h"
 
 class Component;
 
@@ -39,13 +39,13 @@ public:
 	virtual void LateUpdate(float deltaTime) {}
 	virtual void FixedUpdate(float fixedDeltaTime) {}
 
-	virtual void OnCollisionEnter(std::shared_ptr<ColliderComponent> other) {}
-	virtual void OnCollisionStay(std::shared_ptr<ColliderComponent> other) {}
-	virtual void OnCollisionExit(std::shared_ptr<ColliderComponent> other) {}
+	virtual void OnCollisionEnter(std::shared_ptr<Collider> other) {}
+	virtual void OnCollisionStay(std::shared_ptr<Collider> other) {}
+	virtual void OnCollisionExit(std::shared_ptr<Collider> other) {}
 
-	virtual void OnTriggerEnter(std::shared_ptr<ColliderComponent> other) {}
-	virtual void OnTriggerStay(std::shared_ptr<ColliderComponent> other) {}
-	virtual void OnTriggerExit(std::shared_ptr<ColliderComponent> other) {}
+	virtual void OnTriggerEnter(std::shared_ptr<Collider> other) {}
+	virtual void OnTriggerStay(std::shared_ptr<Collider> other) {}
+	virtual void OnTriggerExit(std::shared_ptr<Collider> other) {}
 
 	virtual void OnDisable() {}
 	virtual void OnEnable() {}
@@ -56,7 +56,7 @@ private:
 	inline void SetType(const std::string& _type) { type = _type; } // INFO: Used during Deserialization to note down GO type for future Serialization
 
 public:
-	std::weak_ptr<TransformComponent> transform;
+	std::weak_ptr<Transform> transform;
 
 private:
 	bool isActive;

@@ -1,10 +1,10 @@
-#include "ColliderComponent.h"
+#include "Collider.h"
 
 #include "../../GameObject.h"
 
 using namespace DirectX::SimpleMath;
 
-ColliderComponent::ColliderComponent() : colliderShape(nullptr), rigidActor(nullptr)/*TODO: TEMPORARY*/, isTrigger(false), centre(Vector3::Zero)
+Collider::Collider() : colliderShape(nullptr), rigidActor(nullptr)/*TODO: TEMPORARY*/, isTrigger(false), centre(Vector3::Zero)
 {
 	GameObject* gameObject = GetGameObject();
 
@@ -25,7 +25,7 @@ ColliderComponent::ColliderComponent() : colliderShape(nullptr), rigidActor(null
 	// TODO: Set rigidActor granted rigidbody isn't found on GameObject
 }
 
-void ColliderComponent::Serialize(nlohmann::ordered_json& json) const
+void Collider::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
@@ -33,7 +33,7 @@ void ColliderComponent::Serialize(nlohmann::ordered_json& json) const
 	// TODO: Serialize ColliderComponent
 }
 
-void ColliderComponent::Deserialize(const nlohmann::ordered_json& json)
+void Collider::Deserialize(const nlohmann::ordered_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);
@@ -41,7 +41,7 @@ void ColliderComponent::Deserialize(const nlohmann::ordered_json& json)
 	// TODO: Deserialize ColliderComponent
 }
 
-void ColliderComponent::ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<ColliderComponent> other)
+void Collider::ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other)
 {
 	if (!collisionCallbacks.contains(collisionType))
 	{

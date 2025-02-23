@@ -1,12 +1,12 @@
-#include "CameraComponent.h"
+#include "Camera.h"
 
 #include "../GameObject.h"
 
 using namespace DirectX::SimpleMath;
 
-CameraComponent::CameraComponent() : rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(16.0f / 9.0f), backgroundColour({ 0.0f, 0.0f, 0.0f, 0.0f })
+Camera::Camera() : rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(16.0f / 9.0f), backgroundColour({ 0.0f, 0.0f, 0.0f, 0.0f })
 {
-	transform = GetGameObject()->GetComponent<TransformComponent>();
+	transform = GetGameObject()->GetComponent<Transform>();
 
 	if (transform.expired())
 	{
@@ -16,11 +16,11 @@ CameraComponent::CameraComponent() : rotation(Quaternion::CreateFromYawPitchRoll
 	// TODO: Retrieve aspect ratio of screen
 }
 
-CameraComponent::~CameraComponent()
+Camera::~Camera()
 {
 }
 
-void CameraComponent::Serialize(nlohmann::ordered_json& json) const
+void Camera::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
@@ -28,7 +28,7 @@ void CameraComponent::Serialize(nlohmann::ordered_json& json) const
 	// TODO: Serialize CameraComponent
 }
 
-void CameraComponent::Deserialize(const nlohmann::ordered_json& json)
+void Camera::Deserialize(const nlohmann::ordered_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);
@@ -36,12 +36,12 @@ void CameraComponent::Deserialize(const nlohmann::ordered_json& json)
 	// TODO: Deserialize CameraComponent
 }
 
-void CameraComponent::DrawWireframe(ID3D11DeviceContext* deviceContext)
+void Camera::DrawWireframe(ID3D11DeviceContext* deviceContext)
 {
 	// TODO: Debug Draw View Frustum
 }
 
-DirectX::XMMATRIX CameraComponent::GetViewMatrix() const
+DirectX::XMMATRIX Camera::GetViewMatrix() const
 {
 	DirectX::XMFLOAT3 position(0.0, 0.0f, 0.0f);
 
@@ -61,23 +61,23 @@ DirectX::XMMATRIX CameraComponent::GetViewMatrix() const
 	return DirectX::XMMatrixLookAtLH(eye, lookTo, up);
 }
 
-DirectX::XMMATRIX CameraComponent::GetProjectionMatrix() const
+DirectX::XMMATRIX Camera::GetProjectionMatrix() const
 {
 	return DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(verticalFOV), 
 							                 aspectRatio, nearClippingPlane, farClippingPlane);
 }
 
-Vector3 CameraComponent::Forward() const
+Vector3 Camera::Forward() const
 {
 	return Vector3::Transform(Vector3::Forward, rotation);
 }
 
-Vector3 CameraComponent::Right() const
+Vector3 Camera::Right() const
 {
 	return Vector3::Transform(Vector3::Right, rotation);
 }
 
-Vector3 CameraComponent::Up() const
+Vector3 Camera::Up() const
 {
 	return Vector3::Transform(Vector3::Up, rotation);
 }

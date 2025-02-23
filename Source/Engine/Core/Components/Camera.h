@@ -6,13 +6,13 @@
 #include <array>
 #include <SimpleMath.h>
 
-class TransformComponent;
+class Transform;
 
-class CameraComponent : public Component, public IDebugWireframe
+class Camera : public Component, public IDebugWireframe
 {
 public:
-	CameraComponent();
-	virtual ~CameraComponent() override;
+	Camera();
+	virtual ~Camera() override;
 
 	virtual void Serialize(nlohmann::ordered_json& json) const override;
 	virtual void Deserialize(const nlohmann::ordered_json& json) override;
@@ -37,7 +37,7 @@ private:
 	inline void SetBackgroundColour(const std::array<float, 4>& _backgroundColour) { backgroundColour = _backgroundColour; }
 
 private:
-	std::weak_ptr<TransformComponent> transform;
+	std::weak_ptr<Transform> transform;
 
 	DirectX::SimpleMath::Quaternion rotation;
 

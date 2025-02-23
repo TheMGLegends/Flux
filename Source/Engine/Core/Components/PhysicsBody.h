@@ -15,11 +15,11 @@ enum class ConstraintAxis
 	Count
 };
 
-class PhysicsBodyComponent : public Component
+class PhysicsBody : public Component
 {
 public:
-	PhysicsBodyComponent();
-	virtual ~PhysicsBodyComponent() override;
+	PhysicsBody();
+	virtual ~PhysicsBody() override;
 
 	virtual void Serialize(nlohmann::ordered_json& json) const override;
 	virtual void Deserialize(const nlohmann::ordered_json& json) override;

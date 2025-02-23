@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ColliderComponent.h"
+#include "Collider.h"
 
-class BoxCollider : public ColliderComponent
+class BoxCollider : public Collider
 {
 public:
 	BoxCollider();

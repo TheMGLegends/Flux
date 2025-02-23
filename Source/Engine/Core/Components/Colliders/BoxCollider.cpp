@@ -14,7 +14,7 @@ BoxCollider::~BoxCollider()
 void BoxCollider::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class
-	ColliderComponent::Serialize(json);
+	Collider::Serialize(json);
 
 	// TODO: Serialize BoxCollider
 }
@@ -22,7 +22,7 @@ void BoxCollider::Serialize(nlohmann::ordered_json& json) const
 void BoxCollider::Deserialize(const nlohmann::ordered_json& json)
 {
 	// INFO: Deserialize Parent Class
-	ColliderComponent::Deserialize(json);
+	Collider::Deserialize(json);
 
 	// TODO: Deserialize BoxCollider
 }

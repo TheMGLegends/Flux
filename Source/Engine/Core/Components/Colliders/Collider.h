@@ -24,10 +24,10 @@ enum class CollisionType
 	Count
 };
 
-class ColliderComponent : public Component, public IDebugWireframe
+class Collider : public Component, public IDebugWireframe
 {
 public:
-	ColliderComponent();
+	Collider();
 
 	virtual void Serialize(nlohmann::ordered_json& json) const override;
 	virtual void Deserialize(const nlohmann::ordered_json& json) override;
@@ -38,7 +38,7 @@ public:
 	inline void SetCentre(const DirectX::SimpleMath::Vector3& _centre) { centre = _centre; }
 	inline const DirectX::SimpleMath::Vector3& GetCentre() const { return centre; }
 
-	void ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<ColliderComponent> other);
+	void ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other);
 
 protected:
 	PxShape* colliderShape;
@@ -49,6 +49,6 @@ private:
 	bool isTrigger;
 	DirectX::SimpleMath::Vector3 centre;
 
-	std::unordered_map<CollisionType, std::function<void(std::shared_ptr<ColliderComponent>)>> collisionCallbacks;
+	std::unordered_map<CollisionType, std::function<void(std::shared_ptr<Collider>)>> collisionCallbacks;
 };
 

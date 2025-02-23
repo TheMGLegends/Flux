@@ -1,17 +1,17 @@
-#include "TransformComponent.h"
+#include "Transform.h"
 
 using namespace DirectX::SimpleMath;
 
-TransformComponent::TransformComponent() : position(Vector3::Zero), rotation(Quaternion::Identity), scale(Vector3::One)
+Transform::Transform() : position(Vector3::Zero), rotation(Quaternion::Identity), scale(Vector3::One)
 {
 	isRemoveable = false;
 }
 
-TransformComponent::~TransformComponent()
+Transform::~Transform()
 {
 }
 
-void TransformComponent::Serialize(nlohmann::ordered_json& json) const
+void Transform::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
@@ -19,7 +19,7 @@ void TransformComponent::Serialize(nlohmann::ordered_json& json) const
 	// TODO: Serialize TransformComponent
 }
 
-void TransformComponent::Deserialize(const nlohmann::ordered_json& json)
+void Transform::Deserialize(const nlohmann::ordered_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);
@@ -27,7 +27,7 @@ void TransformComponent::Deserialize(const nlohmann::ordered_json& json)
 	// TODO: Deserialize TransformComponent
 }
 
-DirectX::XMMATRIX TransformComponent::GetWorldMatrix() const
+DirectX::XMMATRIX Transform::GetWorldMatrix() const
 {
 	DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslationFromVector(position);
 	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationQuaternion(rotation);
@@ -36,7 +36,7 @@ DirectX::XMMATRIX TransformComponent::GetWorldMatrix() const
 	return scaleMatrix * rotationMatrix * translationMatrix;
 }
 
-DirectX::XMMATRIX TransformComponent::GetWorldMatrix(const Vector3& additionalScale) const
+DirectX::XMMATRIX Transform::GetWorldMatrix(const Vector3& additionalScale) const
 {
 	DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslationFromVector(position);
 
@@ -48,22 +48,22 @@ DirectX::XMMATRIX TransformComponent::GetWorldMatrix(const Vector3& additionalSc
 	return scaleMatrix * rotationMatrix * translationMatrix;
 }
 
-Vector3 TransformComponent::Forward() const
+Vector3 Transform::Forward() const
 {
 	return Vector3::Transform(Vector3::Forward, rotation);
 }
 
-Vector3 TransformComponent::Right() const
+Vector3 Transform::Right() const
 {
 	return Vector3::Transform(Vector3::Right, rotation);
 }
 
-Vector3 TransformComponent::Up() const
+Vector3 Transform::Up() const
 {
 	return Vector3::Transform(Vector3::Up, rotation);
 }
 
-void TransformComponent::Rotate(const Vector3& eulerRotation)
+void Transform::Rotate(const Vector3& eulerRotation)
 {
 	Quaternion rotationQuaternion = Quaternion::CreateFromYawPitchRoll(eulerRotation.y, eulerRotation.x, eulerRotation.z);
 

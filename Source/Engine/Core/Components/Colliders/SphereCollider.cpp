@@ -12,7 +12,7 @@ SphereCollider::~SphereCollider()
 void SphereCollider::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class
-	ColliderComponent::Serialize(json);
+	Collider::Serialize(json);
 
 	// TODO: Serialize SphereCollider
 }
@@ -20,7 +20,7 @@ void SphereCollider::Serialize(nlohmann::ordered_json& json) const
 void SphereCollider::Deserialize(const nlohmann::ordered_json& json)
 {
 	// INFO: Deserialize Parent Class
-	ColliderComponent::Deserialize(json);
+	Collider::Deserialize(json);
 
 	// TODO: Deserialize SphereCollider
 }
