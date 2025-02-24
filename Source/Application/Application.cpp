@@ -3,10 +3,26 @@
 #include <SDL3/SDL.h>
 
 #include "../Core/Globals.h"
+#include "../Core/Input/Input.h"
 #include "../Core/Time/Time.h"
 
 Application::Application() : isRunning(false)
 {
+	if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
+	{
+		// TODO: Logging System Log Error Message
+	}
+
+	if (!Input::PreInitialise())
+	{
+		// TODO: Logging System Log Error Message
+	}
+
+	if (!Input::Initialise())
+	{
+		// TODO: Logging System Log Error Message
+	}
+
 	// TODO: EventDispatcher
 
 	//editorRuntime = EditorRuntime(eventDispatcher);
@@ -17,6 +33,11 @@ Application::Application() : isRunning(false)
 
 	// INFO: Window Creation
 	window = SDL_CreateWindow("Flux Engine", EngineSettings::WINDOW_WIDTH, EngineSettings::WINDOW_HEIGHT, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
+
+	if (!window)
+	{
+		// TODO: Logging System Log Error Message
+	}
 
 	// TODO: Renderer (Need to pass over hWnd)
 
@@ -30,6 +51,8 @@ Application::~Application()
 {
 	//editorRuntime.Release();
 	//engineRuntime.Release();
+
+	Input::Release();
 }
 
 void Application::Run()
@@ -37,8 +60,8 @@ void Application::Run()
 	while (isRunning)
 	{
 		Time::Tick();
-		// TODO: Get Input
-		
+		Input::Update();
+
 		//editorRuntime.Update(Time::DeltaTime());
 
 		if (RuntimeState::HasEnteredPlayMode())
