@@ -2,14 +2,17 @@
 
 using namespace DirectX::SimpleMath;
 
+SDL_Window* Input::window = nullptr;
+
 const bool* Input::currentKeyboardState = nullptr;
 bool* Input::previousKeyboardState = nullptr;
 int Input::keyLength = 0;
 
 SDL_MouseButtonFlags Input::currentMouseState = 0;
 SDL_MouseButtonFlags Input::previousMouseState = 0;
-
 Vector2 Input::mousePosition = Vector2::Zero;
+Vector2 Input::latestAbsoluteMousePosition = Vector2::Zero;
+bool Input::isRelative = false;
 
 bool Input::PreInitialise()
 {
@@ -24,8 +27,15 @@ bool Input::PreInitialise()
 	return true; // INFO: Pre-Initialisation Successful
 }
 
-bool Input::Initialise()
+bool Input::Initialise(SDL_Window* _window)
 {
+	window = _window;
+
+	if (!window)
+	{
+		// TODO: Logging System Log Error Message
+	}
+
 	currentKeyboardState = SDL_GetKeyboardState(&keyLength);
 
 	if (!currentKeyboardState)
@@ -53,7 +63,10 @@ void Input::Update()
 {
 	memcpy(previousKeyboardState, currentKeyboardState, keyLength);
 	previousMouseState = currentMouseState;
-	currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
+	if (isRelative)
+		currentMouseState = SDL_GetRelativeMouseState(&mousePosition.x, &mousePosition.y);
+	else
+		currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
 
 	SDL_Event event;
 
@@ -79,4 +92,30 @@ void Input::Release()
 		delete[] previousKeyboardState;
 		previousKeyboardState = nullptr;
 	}
+}
+
+void Input::SetMouseMode(bool _isRelative)
+{
+	if (!window)
+	{
+		// TODO: Logging System Log Error Message
+		return;
+	}
+
+	// INFO: Going from relative to absolute
+	if (isRelative && !_isRelative)
+	{
+		SDL_WarpMouseInWindow(window, latestAbsoluteMousePosition.x, latestAbsoluteMousePosition.y);
+		SDL_SetWindowRelativeMouseMode(window, false);
+	}
+	// INFO: Going from absolute to relative
+	else if (!isRelative && _isRelative)
+	{
+		// INFO: Store the latest absolute mouse position before switching to relative
+		latestAbsoluteMousePosition = mousePosition;
+
+		SDL_SetWindowRelativeMouseMode(window, true);
+	}
+
+	isRelative = _isRelative;
 }

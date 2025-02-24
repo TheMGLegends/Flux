@@ -13,12 +13,20 @@ Application::Application() : isRunning(false)
 		// TODO: Logging System Log Error Message
 	}
 
+	// INFO: Window Creation
+	window = SDL_CreateWindow("Flux Engine", EngineSettings::WINDOW_WIDTH, EngineSettings::WINDOW_HEIGHT, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
+
+	if (!window)
+	{
+		// TODO: Logging System Log Error Message
+	}
+
 	if (!Input::PreInitialise())
 	{
 		// TODO: Logging System Log Error Message
 	}
 
-	if (!Input::Initialise())
+	if (!Input::Initialise(window))
 	{
 		// TODO: Logging System Log Error Message
 	}
@@ -30,14 +38,6 @@ Application::Application() : isRunning(false)
 
 	//editorRuntime.PreInitialise();
 	//engineRuntime.PreInitialise();
-
-	// INFO: Window Creation
-	window = SDL_CreateWindow("Flux Engine", EngineSettings::WINDOW_WIDTH, EngineSettings::WINDOW_HEIGHT, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
-
-	if (!window)
-	{
-		// TODO: Logging System Log Error Message
-	}
 
 	// TODO: Renderer (Need to pass over hWnd)
 

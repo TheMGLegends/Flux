@@ -3,6 +3,8 @@
 #include <SDL3/SDL.h>
 #include <SimpleMath.h>
 
+// TODO: Gamepad Support https://www.youtube.com/watch?v=ptJLU0w0ZwU
+
 class Input
 {
 public:
@@ -12,7 +14,7 @@ public:
 	Input& operator=(const Input&) = delete;
 
 	static bool PreInitialise();
-	static bool Initialise();
+	static bool Initialise(SDL_Window* _window);
 
 	static void Update();
 
@@ -27,8 +29,12 @@ public:
 	static inline bool GetMouseButtonUp(SDL_MouseButtonFlags button) { return !(currentMouseState & SDL_BUTTON_MASK(button)) && (previousMouseState & SDL_BUTTON_MASK(button)); }
 
 	static inline const DirectX::SimpleMath::Vector2& GetMousePosition() { return mousePosition; }
+	/// @param isRelative: true = relative, false = absolute
+	static void SetMouseMode(bool _isRelative);
 
 private:
+	static SDL_Window* window;
+
 	static const bool* currentKeyboardState;
 	static bool* previousKeyboardState;
 	static int keyLength;
@@ -36,5 +42,7 @@ private:
 	static SDL_MouseButtonFlags currentMouseState;
 	static SDL_MouseButtonFlags previousMouseState;
 	static DirectX::SimpleMath::Vector2 mousePosition;
+	static DirectX::SimpleMath::Vector2 latestAbsoluteMousePosition;
+	static bool isRelative;
 };
 
