@@ -55,6 +55,7 @@ Application::~Application()
 	//engineRuntime.Release();
 
 	Input::Release();
+	SDL_Quit();
 }
 
 void Application::Run()
@@ -64,20 +65,8 @@ void Application::Run()
 		Time::Tick();
 		Input::Update();
 
-		if (Input::GetTrigger(SDL_GAMEPAD_AXIS_LEFT_TRIGGER))
-		{
-			std::cout << "Left Trigger Held" << std::endl;
-		}
-
-		if (Input::GetTriggerDown(SDL_GAMEPAD_AXIS_RIGHT_TRIGGER))
-		{
-			std::cout << "Right Trigger Pressed" << std::endl;
-		}
-
-		if (Input::GetTriggerUp(SDL_GAMEPAD_AXIS_RIGHT_TRIGGER))
-		{
-			std::cout << "Right Trigger Released" << std::endl;
-		}
+		//DirectX::SimpleMath::Vector2 joystickAxes = Input::GetJoystickAxes(GamepadJoystick::Left);
+		//std::cout << "Left Joystick: " << joystickAxes.x << ", " << joystickAxes.y << std::endl;
 
 		//editorRuntime.Update(Time::DeltaTime());
 

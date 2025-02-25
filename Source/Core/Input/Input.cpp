@@ -253,28 +253,72 @@ void Input::SetMouseMode(bool _isRelative)
 	isRelative = _isRelative;
 }
 
-bool Input::GetTrigger(SDL_GamepadAxis trigger)
+bool Input::GetTrigger(SDL_GamepadAxis trigger, float* axisState)
 {
 	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
 		return false;
+
+	// INFO: Normalize the axis (0 to 1)
+	if (axisState)
+	{
+		*axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX;
+	}
 
 	return currentGamepadAxisState[trigger] > 0;
 }
 
-bool Input::GetTriggerDown(SDL_GamepadAxis trigger)
+bool Input::GetTriggerDown(SDL_GamepadAxis trigger, float* axisState)
 {
 	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
 		return false;
+
+	// INFO: Normalize the axis (0 to 1)
+	if (axisState)
+	{
+		*axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX;
+	}
 
 	return currentGamepadAxisState[trigger] > 0 && previousGamepadAxisState[trigger] == 0;
 }
 
-bool Input::GetTriggerUp(SDL_GamepadAxis trigger)
+bool Input::GetTriggerUp(SDL_GamepadAxis trigger, float* axisState)
 {
 	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
 		return false;
 
+	// INFO: Normalize the axis (0 to 1)
+	if (axisState) 
+	{
+		*axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX;
+	}
+
 	return currentGamepadAxisState[trigger] == 0 && previousGamepadAxisState[trigger] > 0;
+}
+
+Vector2 Input::GetJoystickAxes(GamepadJoystick joystick)
+{
+	Vector2 axes = Vector2::Zero;
+
+	switch (joystick)
+	{
+	case GamepadJoystick::Left:
+		axes.x = currentGamepadAxisState[SDL_GAMEPAD_AXIS_LEFTX];
+		axes.y = currentGamepadAxisState[SDL_GAMEPAD_AXIS_LEFTY];
+
+		break;
+	case GamepadJoystick::Right:
+		axes.x = currentGamepadAxisState[SDL_GAMEPAD_AXIS_RIGHTX];
+		axes.y = currentGamepadAxisState[SDL_GAMEPAD_AXIS_RIGHTY];
+		break;
+	default:
+		break;
+	}
+
+	// INFO: Normalize the axes (-1 to 1)
+	axes.x = axes.x < 0 ? axes.x / (float)(SDL_JOYSTICK_AXIS_MAX + 1) : axes.x / (float)SDL_JOYSTICK_AXIS_MAX;
+	axes.y = axes.y < 0 ? axes.y / (float)SDL_JOYSTICK_AXIS_MIN : axes.y / (float)SDL_JOYSTICK_AXIS_MAX;
+
+	return axes;
 }
 
 void Input::GetGamepadButtonState()

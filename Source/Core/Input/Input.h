@@ -3,6 +3,12 @@
 #include <SDL3/SDL.h>
 #include <SimpleMath.h>
 
+enum class GamepadJoystick
+{
+	Left,
+	Right
+};
+
 class Input
 {
 public:
@@ -35,11 +41,16 @@ public:
 	static inline bool GetGamepadButtonUp(SDL_GamepadButton button) { return !currentGamepadButtonState[button] && previousGamepadButtonState[button]; }
 
 	/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
-	static bool GetTrigger(SDL_GamepadAxis trigger);
+	/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
+	static bool GetTrigger(SDL_GamepadAxis trigger, float* axisState = nullptr);
 	/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
-	static bool GetTriggerDown(SDL_GamepadAxis trigger);
+	/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
+	static bool GetTriggerDown(SDL_GamepadAxis trigger, float* axisState = nullptr);
 	/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
-	static bool GetTriggerUp(SDL_GamepadAxis trigger);
+	/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
+	static bool GetTriggerUp(SDL_GamepadAxis trigger, float* axisState = nullptr);
+
+	static DirectX::SimpleMath::Vector2 GetJoystickAxes(GamepadJoystick joystick);
 
 private:
 	/// @brief Populates the currentGamepadState array with the current state of all buttons
