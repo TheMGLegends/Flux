@@ -50,7 +50,7 @@ public:
 	/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
 	static bool GetTriggerUp(SDL_GamepadAxis trigger, float* axisState = nullptr);
 
-	static DirectX::SimpleMath::Vector2 GetJoystickAxes(GamepadJoystick joystick);
+	static DirectX::SimpleMath::Vector2 GetJoystickAxes(GamepadJoystick joystick, bool inverseY = true);
 
 private:
 	/// @brief Populates the currentGamepadState array with the current state of all buttons

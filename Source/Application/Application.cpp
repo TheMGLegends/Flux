@@ -6,8 +6,6 @@
 #include "../Core/Input/Input.h"
 #include "../Core/Time/Time.h"
 
-#include <iostream> // TODO: TESTING
-
 Application::Application() : isRunning(false)
 {
 	if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
@@ -64,9 +62,6 @@ void Application::Run()
 	{
 		Time::Tick();
 		Input::Update();
-
-		//DirectX::SimpleMath::Vector2 joystickAxes = Input::GetJoystickAxes(GamepadJoystick::Left);
-		//std::cout << "Left Joystick: " << joystickAxes.x << ", " << joystickAxes.y << std::endl;
 
 		//editorRuntime.Update(Time::DeltaTime());
 

@@ -1,7 +1,6 @@
 #include "Input.h"
 
 #include <cmath> // TODO: Replace with custom library maybe
-#include <iostream> // TODO: TESTING
 
 using namespace DirectX::SimpleMath;
 
@@ -119,8 +118,6 @@ bool Input::Initialise(SDL_Window* _window)
 		memcpy(previousGamepadAxisState, currentGamepadAxisState, gamepadAxisLength);
 	}
 
-	//SDL_GetGamepadAxis
-
 	return true; // INFO: Initialisation Successful
 }
 
@@ -152,34 +149,6 @@ void Input::Update()
 		case SDL_EVENT_QUIT:
 		{
 			// TODO: Event System Dispatch Quit Event
-			break;
-		}
-		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
-		{
-			/*if (event.gaxis.axis == 0)
-			{
-				std::cout << "Left Stick X-Axis: " << event.gaxis.value << std::endl;
-			}
-			else if (event.gaxis.axis == 1)
-			{
-				std::cout << "Left Stick Y-Axis: " << event.gaxis.value << std::endl;
-			}
-			else if (event.gaxis.axis == 2)
-			{
-				std::cout << "Right Stick X-Axis: " << event.gaxis.value << std::endl;
-			}
-			else if (event.gaxis.axis == 3)
-			{
-				std::cout << "Right Stick Y-Axis: " << event.gaxis.value << std::endl;
-			}
-			else if (event.gaxis.axis == 4)
-			{
-				std::cout << "Left Trigger: " << event.gaxis.value << std::endl;
-			}
-			else if (event.gaxis.axis == 5)
-			{
-				std::cout << "Right Trigger: " << event.gaxis.value << std::endl;
-			}*/
 			break;
 		}
 		default:
@@ -297,7 +266,7 @@ bool Input::GetTriggerUp(SDL_GamepadAxis trigger, float* axisState)
 	return currentGamepadAxisState[trigger] == 0 && previousGamepadAxisState[trigger] > 0;
 }
 
-Vector2 Input::GetJoystickAxes(GamepadJoystick joystick)
+Vector2 Input::GetJoystickAxes(GamepadJoystick joystick, bool inverseY)
 {
 	Vector2 axes = Vector2::Zero;
 
@@ -318,7 +287,10 @@ Vector2 Input::GetJoystickAxes(GamepadJoystick joystick)
 
 	// INFO: Normalize the axes (-1 to 1)
 	axes.x = axes.x < 0 ? axes.x / (float)(SDL_JOYSTICK_AXIS_MAX + 1) : axes.x / (float)SDL_JOYSTICK_AXIS_MAX;
-	axes.y = axes.y < 0 ? axes.y / (float)SDL_JOYSTICK_AXIS_MIN : axes.y / (float)SDL_JOYSTICK_AXIS_MAX;
+	axes.y = axes.y < 0 ? axes.y / (float)(SDL_JOYSTICK_AXIS_MAX + 1) : axes.y / (float)SDL_JOYSTICK_AXIS_MAX;
+
+	if (inverseY && axes.y != 0)
+		axes.y *= -1;
 
 	return axes;
 }
