@@ -6,6 +6,8 @@
 #include "../Core/Input/Input.h"
 #include "../Core/Time/Time.h"
 
+#include <iostream> // TODO: TESTING
+
 Application::Application() : isRunning(false)
 {
 	if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
@@ -61,6 +63,21 @@ void Application::Run()
 	{
 		Time::Tick();
 		Input::Update();
+
+		if (Input::GetTrigger(SDL_GAMEPAD_AXIS_LEFT_TRIGGER))
+		{
+			std::cout << "Left Trigger Held" << std::endl;
+		}
+
+		if (Input::GetTriggerDown(SDL_GAMEPAD_AXIS_RIGHT_TRIGGER))
+		{
+			std::cout << "Right Trigger Pressed" << std::endl;
+		}
+
+		if (Input::GetTriggerUp(SDL_GAMEPAD_AXIS_RIGHT_TRIGGER))
+		{
+			std::cout << "Right Trigger Released" << std::endl;
+		}
 
 		//editorRuntime.Update(Time::DeltaTime());
 

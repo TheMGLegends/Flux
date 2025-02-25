@@ -3,8 +3,6 @@
 #include <SDL3/SDL.h>
 #include <SimpleMath.h>
 
-// TODO: Gamepad Support https://www.youtube.com/watch?v=ptJLU0w0ZwU
-
 class Input
 {
 public:
@@ -32,6 +30,24 @@ public:
 	/// @param isRelative: true = relative, false = absolute
 	static void SetMouseMode(bool _isRelative);
 
+	static inline bool GetGamepadButton(SDL_GamepadButton button) { return currentGamepadButtonState[button]; }
+	static inline bool GetGamepadButtonDown(SDL_GamepadButton button) { return currentGamepadButtonState[button] && !previousGamepadButtonState[button]; }
+	static inline bool GetGamepadButtonUp(SDL_GamepadButton button) { return !currentGamepadButtonState[button] && previousGamepadButtonState[button]; }
+
+	/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
+	static bool GetTrigger(SDL_GamepadAxis trigger);
+	/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
+	static bool GetTriggerDown(SDL_GamepadAxis trigger);
+	/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
+	static bool GetTriggerUp(SDL_GamepadAxis trigger);
+
+private:
+	/// @brief Populates the currentGamepadState array with the current state of all buttons
+	static void GetGamepadButtonState();
+
+	/// @brief Populates the currentGamepadAxisState array with the current state of all axes
+	static void GetGamepadAxisState();
+
 private:
 	static SDL_Window* window;
 
@@ -44,5 +60,15 @@ private:
 	static DirectX::SimpleMath::Vector2 mousePosition;
 	static DirectX::SimpleMath::Vector2 latestAbsoluteMousePosition;
 	static bool isRelative;
+
+	static SDL_Gamepad* gamepad;
+	static bool* currentGamepadButtonState;
+	static bool* previousGamepadButtonState;
+	static int gamepadButtonLength;
+	
+	static Sint16* currentGamepadAxisState;
+	static Sint16* previousGamepadAxisState;
+	static int gamepadAxisLength;
+	static inline const int DEADZONE = 8000;
 };
 

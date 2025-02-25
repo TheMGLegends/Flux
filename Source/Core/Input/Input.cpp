@@ -1,5 +1,8 @@
 #include "Input.h"
 
+#include <cmath> // TODO: Replace with custom library maybe
+#include <iostream> // TODO: TESTING
+
 using namespace DirectX::SimpleMath;
 
 SDL_Window* Input::window = nullptr;
@@ -13,6 +16,14 @@ SDL_MouseButtonFlags Input::previousMouseState = 0;
 Vector2 Input::mousePosition = Vector2::Zero;
 Vector2 Input::latestAbsoluteMousePosition = Vector2::Zero;
 bool Input::isRelative = false;
+
+SDL_Gamepad* Input::gamepad = nullptr;
+bool* Input::currentGamepadButtonState = nullptr;
+bool* Input::previousGamepadButtonState = nullptr;
+int Input::gamepadButtonLength = 0;
+Sint16* Input::currentGamepadAxisState = nullptr;
+Sint16* Input::previousGamepadAxisState = nullptr;
+int Input::gamepadAxisLength = 0;
 
 bool Input::PreInitialise()
 {
@@ -56,17 +67,81 @@ bool Input::Initialise(SDL_Window* _window)
 	currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
 	previousMouseState = currentMouseState;
 
+
+	int count = 0;
+	SDL_JoystickID* joysticks = SDL_GetJoysticks(&count);
+
+	if (count > 0 && joysticks)
+	{
+		for (size_t i = 0; i < count; i++)
+		{
+			if (SDL_IsGamepad(joysticks[i]))
+			{
+				gamepad = SDL_OpenGamepad(joysticks[i]);
+				// TODO: Logging System Log Message
+				break;
+			}
+		}
+	}
+
+	if (gamepad)
+	{
+		currentGamepadButtonState = new bool[SDL_GAMEPAD_BUTTON_COUNT];
+		gamepadButtonLength = SDL_GAMEPAD_BUTTON_COUNT * sizeof(bool);
+		GetGamepadButtonState();
+
+		if (!currentGamepadButtonState)
+		{
+			// TODO: Logging System Log Error Message
+			return false;
+		}
+
+		previousGamepadButtonState = new bool[SDL_GAMEPAD_BUTTON_COUNT];
+		memcpy(previousGamepadButtonState, currentGamepadButtonState, gamepadButtonLength);
+
+		if (!previousGamepadButtonState)
+		{
+			// TODO: Logging System Log Error Message
+			return false;
+		}
+
+		currentGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
+		gamepadAxisLength = SDL_GAMEPAD_AXIS_COUNT * sizeof(Sint16);
+		GetGamepadAxisState();
+
+		if (!currentGamepadAxisState)
+		{
+			// TODO: Logging System Log Error Message
+			return false;
+		}
+
+		previousGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
+		memcpy(previousGamepadAxisState, currentGamepadAxisState, gamepadAxisLength);
+	}
+
+	//SDL_GetGamepadAxis
+
 	return true; // INFO: Initialisation Successful
 }
 
 void Input::Update()
 {
 	memcpy(previousKeyboardState, currentKeyboardState, keyLength);
+
 	previousMouseState = currentMouseState;
 	if (isRelative)
 		currentMouseState = SDL_GetRelativeMouseState(&mousePosition.x, &mousePosition.y);
 	else
 		currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
+
+	if (gamepad)
+	{
+		memcpy(previousGamepadButtonState, currentGamepadButtonState, gamepadButtonLength);
+		GetGamepadButtonState();
+
+		memcpy(previousGamepadAxisState, currentGamepadAxisState, gamepadAxisLength);
+		GetGamepadAxisState();
+	}
 
 	SDL_Event event;
 
@@ -77,6 +152,34 @@ void Input::Update()
 		case SDL_EVENT_QUIT:
 		{
 			// TODO: Event System Dispatch Quit Event
+			break;
+		}
+		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+		{
+			/*if (event.gaxis.axis == 0)
+			{
+				std::cout << "Left Stick X-Axis: " << event.gaxis.value << std::endl;
+			}
+			else if (event.gaxis.axis == 1)
+			{
+				std::cout << "Left Stick Y-Axis: " << event.gaxis.value << std::endl;
+			}
+			else if (event.gaxis.axis == 2)
+			{
+				std::cout << "Right Stick X-Axis: " << event.gaxis.value << std::endl;
+			}
+			else if (event.gaxis.axis == 3)
+			{
+				std::cout << "Right Stick Y-Axis: " << event.gaxis.value << std::endl;
+			}
+			else if (event.gaxis.axis == 4)
+			{
+				std::cout << "Left Trigger: " << event.gaxis.value << std::endl;
+			}
+			else if (event.gaxis.axis == 5)
+			{
+				std::cout << "Right Trigger: " << event.gaxis.value << std::endl;
+			}*/
 			break;
 		}
 		default:
@@ -91,6 +194,36 @@ void Input::Release()
 	{
 		delete[] previousKeyboardState;
 		previousKeyboardState = nullptr;
+	}
+
+	if (gamepad)
+	{
+		SDL_CloseGamepad(gamepad);
+		gamepad = nullptr;
+
+		if (currentGamepadButtonState)
+		{
+			delete[] currentGamepadButtonState;
+			currentGamepadButtonState = nullptr;
+		}
+
+		if (previousGamepadButtonState)
+		{
+			delete[] previousGamepadButtonState;
+			previousGamepadButtonState = nullptr;
+		}
+
+		if (currentGamepadAxisState)
+		{
+			delete[] currentGamepadAxisState;
+			currentGamepadAxisState = nullptr;
+		}
+
+		if (previousGamepadAxisState)
+		{
+			delete[] previousGamepadAxisState;
+			previousGamepadAxisState = nullptr;
+		}
 	}
 }
 
@@ -118,4 +251,61 @@ void Input::SetMouseMode(bool _isRelative)
 	}
 
 	isRelative = _isRelative;
+}
+
+bool Input::GetTrigger(SDL_GamepadAxis trigger)
+{
+	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
+		return false;
+
+	return currentGamepadAxisState[trigger] > 0;
+}
+
+bool Input::GetTriggerDown(SDL_GamepadAxis trigger)
+{
+	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
+		return false;
+
+	return currentGamepadAxisState[trigger] > 0 && previousGamepadAxisState[trigger] == 0;
+}
+
+bool Input::GetTriggerUp(SDL_GamepadAxis trigger)
+{
+	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
+		return false;
+
+	return currentGamepadAxisState[trigger] == 0 && previousGamepadAxisState[trigger] > 0;
+}
+
+void Input::GetGamepadButtonState()
+{
+	if (gamepad)
+	{
+		for (size_t i = 0; i < SDL_GAMEPAD_BUTTON_COUNT; i++)
+		{
+			currentGamepadButtonState[i] = SDL_GetGamepadButton(gamepad, (SDL_GamepadButton)i);
+		}
+	}
+}
+
+void Input::GetGamepadAxisState()
+{
+	if (gamepad)
+	{
+		for (size_t i = 0; i < SDL_GAMEPAD_AXIS_COUNT; i++)
+		{
+			Sint16 value = SDL_GetGamepadAxis(gamepad, (SDL_GamepadAxis)i);
+
+			if (std::abs(value) > DEADZONE)
+			{
+				currentGamepadAxisState[i] = value;
+			}
+			else
+			{
+				currentGamepadAxisState[i] = 0;
+			}
+
+			currentGamepadAxisState[i];
+		}
+	}
 }
