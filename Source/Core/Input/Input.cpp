@@ -225,6 +225,8 @@ void Input::Release()
 			previousGamepadAxisState = nullptr;
 		}
 	}
+
+	SDL_QuitSubSystem(SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC);
 }
 
 void Input::SetMouseMode(bool _isRelative)

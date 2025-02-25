@@ -55,7 +55,7 @@ Application::~Application()
 	//engineRuntime.Release();
 
 	Input::Release();
-	SDL_Quit();
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 void Application::Run()
