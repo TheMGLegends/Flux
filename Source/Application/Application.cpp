@@ -33,13 +33,18 @@ Application::Application() : isRunning(false)
 
 	// TODO: EventDispatcher
 
+	// TODO: Get viewport information from scene view panel
+	if (FAILED(renderer.Initialise(GetWindowHandle(), /*TODO: Temporary*/Viewport(0.0f, 0.0f, 1920.0f, 1080.0f, 0.0f, 1.0f))))
+	{
+		// TODO: Logging System Log Error Message
+	}
+
 	//editorRuntime = EditorRuntime(eventDispatcher);
 	//engineRuntime = EngineRuntime(eventDispatcher);
 
 	//editorRuntime.PreInitialise();
 	//engineRuntime.PreInitialise();
 
-	// TODO: Renderer (Need to pass over hWnd)
 
 	//editorRuntime.Initialise();
 	//engineRuntime.Initialise();
@@ -78,9 +83,20 @@ void Application::Run()
 			//engineRuntime.Update(Time::DeltaTime());
 		}
 
-		//editorRuntime.Render();
-		//engineRuntime.Render();
+		//renderer.RenderFrame(engineRuntime.GetActiveScene());
+		//editorRuntime.RenderGUI();
 
 		// TODO: Garbage Cleanup Logic
 	}
+}
+
+HWND Application::GetWindowHandle() const
+{
+	if (!window)
+	{
+		// TODO: Logging System Log Error Message
+		return HWND();
+	}
+
+	return (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(window), SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
 }

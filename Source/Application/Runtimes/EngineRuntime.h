@@ -11,7 +11,6 @@ public:
 	bool PreInitialise() override;
 	bool Initialise() override;
 	void Update(float deltaTime) override;
-	void Render() override;
 	void Release() override;
 
 	void Start();

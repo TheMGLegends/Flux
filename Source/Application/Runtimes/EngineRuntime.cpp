@@ -31,11 +31,6 @@ void EngineRuntime::Update(float deltaTime)
 	// TODO: Update All Components
 }
 
-void EngineRuntime::Render()
-{
-	// TODO: Render Logic
-}
-
 void EngineRuntime::Release()
 {
 	// TODO: Release Logic

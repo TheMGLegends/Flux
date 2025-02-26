@@ -27,9 +27,9 @@ void EditorRuntime::Update(float deltaTime)
 	// TODO: Update Logic
 }
 
-void EditorRuntime::Render()
+void EditorRuntime::RenderGUI()
 {
-	// TODO: Render Logic
+	// TODO: RenderGUI Logic
 }
 
 void EditorRuntime::Release()

@@ -1,9 +1,8 @@
 #pragma once
 
-// TODO: Include renderer
-
 #include "Runtimes/EditorRuntime.h"
 #include "Runtimes/EngineRuntime.h"
+#include "../Core/Renderer/Renderer.h"
 
 struct SDL_Window;
 
@@ -16,13 +15,16 @@ public:
 	void Run();
 
 private:
+	HWND GetWindowHandle() const;
+
+private:
 	//EditorRuntime editorRuntime;
 	//EngineRuntime engineRuntime;
 	// TODO: EventDispatcher
 	//EventDispatcher eventDispatcher;
 
-	// TODO: Renderer
 	SDL_Window* window;
+	Renderer renderer;
 
 	bool isRunning;
 };

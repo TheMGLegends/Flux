@@ -12,7 +12,6 @@ public:
 	virtual bool PreInitialise() = 0;
 	virtual bool Initialise() = 0;
 	virtual void Update(float deltaTime) {}
-	virtual void Render() {}
 	virtual void Release() {}
 
 protected:
