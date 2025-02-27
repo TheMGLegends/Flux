@@ -1,5 +1,7 @@
 #include "Input.h"
 
+#include "../EventSystem/EventDispatcher.h"
+
 #include <cmath> // TODO: Replace with custom library maybe
 
 using namespace DirectX::SimpleMath;
@@ -87,6 +89,7 @@ bool Input::Initialise(SDL_Window* _window)
 	{
 		currentGamepadButtonState = new bool[SDL_GAMEPAD_BUTTON_COUNT];
 		gamepadButtonLength = SDL_GAMEPAD_BUTTON_COUNT * sizeof(bool);
+		memset(currentGamepadButtonState, 0, gamepadButtonLength);
 		GetGamepadButtonState();
 
 		if (!currentGamepadButtonState)
@@ -106,6 +109,7 @@ bool Input::Initialise(SDL_Window* _window)
 
 		currentGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
 		gamepadAxisLength = SDL_GAMEPAD_AXIS_COUNT * sizeof(Sint16);
+		memset(currentGamepadAxisState, 0, gamepadAxisLength);
 		GetGamepadAxisState();
 
 		if (!currentGamepadAxisState)
@@ -121,7 +125,7 @@ bool Input::Initialise(SDL_Window* _window)
 	return true; // INFO: Initialisation Successful
 }
 
-void Input::Update()
+void Input::Update(EventDispatcher& eventDispatcher)
 {
 	memcpy(previousKeyboardState, currentKeyboardState, keyLength);
 
@@ -148,7 +152,7 @@ void Input::Update()
 		{
 		case SDL_EVENT_QUIT:
 		{
-			// TODO: Event System Dispatch Quit Event
+			eventDispatcher.QueueEvent(EventType::Quit, nullptr);
 			break;
 		}
 		default:

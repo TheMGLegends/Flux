@@ -3,6 +3,8 @@
 #include <SDL3/SDL.h>
 #include <SimpleMath.h>
 
+class EventDispatcher;
+
 enum class GamepadJoystick
 {
 	Left,
@@ -20,7 +22,7 @@ public:
 	static bool PreInitialise();
 	static bool Initialise(SDL_Window* _window);
 
-	static void Update();
+	static void Update(EventDispatcher& eventDispatcher);
 
 	static void Release();
 

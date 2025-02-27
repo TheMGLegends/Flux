@@ -49,8 +49,3 @@ void EngineRuntime::FixedUpate(float fixedDeltaTime)
 		// Simulate Physics Scene
 	}
 }
-
-void EngineRuntime::ProcessEvents()
-{
-	// TODO: Process Events Logic
-}

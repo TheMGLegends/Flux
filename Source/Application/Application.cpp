@@ -6,7 +6,7 @@
 #include "../Core/Input/Input.h"
 #include "../Core/Time/Time.h"
 
-Application::Application() : isRunning(false)
+Application::Application() : editorRuntime(eventDispatcher), engineRuntime(eventDispatcher), window(nullptr), isRunning(false)
 {
 	if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
 	{
@@ -31,34 +31,44 @@ Application::Application() : isRunning(false)
 		// TODO: Logging System Log Error Message
 	}
 
-	// TODO: EventDispatcher
-
 	// TODO: Get viewport information from scene view panel
 	if (FAILED(renderer.Initialise(GetWindowHandle(), /*TODO: Temporary*/Viewport(0.0f, 0.0f, 1920.0f, 1080.0f, 0.0f, 1.0f))))
 	{
 		// TODO: Logging System Log Error Message
 	}
 
-	//editorRuntime = EditorRuntime(eventDispatcher);
-	//engineRuntime = EngineRuntime(eventDispatcher);
+	editorRuntime.PreInitialise();
+	engineRuntime.PreInitialise();
 
-	//editorRuntime.PreInitialise();
-	//engineRuntime.PreInitialise();
+	editorRuntime.Initialise();
+	engineRuntime.Initialise();
 
-
-	//editorRuntime.Initialise();
-	//engineRuntime.Initialise();
+	// INFO: Setup Events to Listen For
+	eventDispatcher.AddListener(EventType::Quit, this);
 
 	isRunning = true;
 }
 
 Application::~Application()
 {
-	//editorRuntime.Release();
-	//engineRuntime.Release();
+	editorRuntime.Release();
+	engineRuntime.Release();
 
 	Input::Release();
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+}
+
+void Application::OnNotify(EventType eventType, std::shared_ptr<Event> event)
+{
+	switch (eventType)
+	{
+	case EventType::Quit:
+		isRunning = false;
+		break;
+	case EventType::None:
+	default:
+		break;
+	}
 }
 
 void Application::Run()
@@ -66,27 +76,26 @@ void Application::Run()
 	while (isRunning)
 	{
 		Time::Tick();
-		Input::Update();
+		Input::Update(eventDispatcher);
 
-		//editorRuntime.Update(Time::DeltaTime());
+		editorRuntime.Update(Time::DeltaTime());
 
 		if (RuntimeState::HasEnteredPlayMode())
 		{
-			//engineRuntime.Start();
+			engineRuntime.Start();
 			RuntimeState::PlayModeEntered();
 		}
 
 		if (RuntimeState::IsInPlayMode())
 		{
-			//engineRuntime.ProcessEvents();
-			//engineRuntime.FixedUpate(Time::FixedDeltaTime()); // TODO: Could move FixedUpate into Update?
-			//engineRuntime.Update(Time::DeltaTime());
+			engineRuntime.FixedUpate(TimeSettings::FIXED_DELTA_TIME);
+			engineRuntime.Update(Time::DeltaTime());
 		}
 
 		//renderer.RenderFrame(engineRuntime.GetActiveScene());
-		//editorRuntime.RenderGUI();
+		editorRuntime.RenderGUI();
 
-		// TODO: Garbage Cleanup Logic
+		eventDispatcher.ProcessEvents();
 	}
 }
 

@@ -1,7 +1,6 @@
 #pragma once
 
-// TODO: EventDispatcher Include
-class EventDispatcher;
+#include "../../Core/EventSystem/EventDispatcher.h"
 
 class Runtime
 {
@@ -15,6 +14,6 @@ public:
 	virtual void Release() {}
 
 protected:
-	//EventDispatcher& eventDispatcher;
+	EventDispatcher& eventDispatcher;
 };
 
