@@ -11,7 +11,7 @@ Application::Application() : editorRuntime(eventDispatcher), engineRuntime(event
 {
 	if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Application::Application() - Failed to initialise SDL Video Subsystem");
 	}
 
 	// INFO: Window Creation
@@ -19,23 +19,23 @@ Application::Application() : editorRuntime(eventDispatcher), engineRuntime(event
 
 	if (!window)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Application::Application() - Failed to create SDL Window");
 	}
 
 	if (!Input::PreInitialise())
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Application::Application() - Failed to pre-initialise Input System");
 	}
 
 	if (!Input::Initialise(window))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Application::Application() - Failed to initialise Input System");
 	}
 
 	// TODO: Get viewport information from scene view panel
 	if (FAILED(renderer.Initialise(GetWindowHandle(), /*TODO: Temporary*/Viewport(0.0f, 0.0f, 1920.0f, 1080.0f, 0.0f, 1.0f))))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Application::Application() - Failed to initialise Renderer");
 	}
 
 	editorRuntime.PreInitialise();
@@ -104,7 +104,7 @@ HWND Application::GetWindowHandle() const
 {
 	if (!window)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Application::GetWindowHandle() - Window is null");
 		return HWND();
 	}
 

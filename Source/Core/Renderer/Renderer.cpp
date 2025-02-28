@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 #include "../Globals.h"
+#include "../Debug/Debug.h"
 
 using namespace Microsoft::WRL;
 using namespace DirectX;
@@ -59,7 +60,7 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 
 	if (FAILED(hResult))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Renderer::Initialise() - Failed to create Device, Device Context and Swap Chain");
 		return hResult;
 	}
 
@@ -70,7 +71,7 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 
 	if (FAILED(hResult))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Renderer::Initialise() - Failed to get Back Buffer");
 		return hResult;
 	}
 
@@ -79,7 +80,7 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 
 	if (FAILED(hResult))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Renderer::Initialise() - Failed to create Render Target View");
 		return hResult;
 	}
 
@@ -105,7 +106,7 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 
 	if (FAILED(hResult))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Renderer::Initialise() - Failed to create Depth Stencil Buffer");
 		return hResult;
 	}
 
@@ -121,7 +122,7 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 
 	if (FAILED(hResult))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Renderer::Initialise() - Failed to create Depth Stencil View");
 		return hResult;
 	}
 
@@ -136,7 +137,7 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 
 	if (!spriteBatch)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Renderer::Initialise() - Failed to create Sprite Batch");
 		return E_FAIL;
 	}
 

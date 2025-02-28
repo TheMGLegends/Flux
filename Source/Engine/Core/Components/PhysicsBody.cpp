@@ -1,5 +1,9 @@
 #include "PhysicsBody.h"
 
+#include "../../../Core/Debug/Debug.h"
+
+#include <magic_enum.hpp>
+
 PhysicsBody::PhysicsBody() : rigidActor(nullptr), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
 {
 	// INFO: No constraints by default
@@ -64,7 +68,8 @@ void PhysicsBody::SetPositionConstraint(bool isConstrained, ConstraintAxis axis)
 {
 	if (axis == ConstraintAxis::Count)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("PhysicsBody::SetPositionConstraint() - Invalid Constraint Axis: " + std::string{ magic_enum::enum_name(axis) });
+		return;
 	}
 
 	positionConstraints[static_cast<size_t>(axis)] = isConstrained;
@@ -76,7 +81,8 @@ void PhysicsBody::SetRotationConstraint(bool isConstrained, ConstraintAxis axis)
 {
 	if (axis == ConstraintAxis::Count)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("PhysicsBody::SetRotationConstraint() - Invalid Constraint Axis: " + std::string{ magic_enum::enum_name(axis) });
+		return;
 	}
 
 	rotationConstraints[static_cast<size_t>(axis)] = isConstrained;

@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 #include "../GameObject.h"
+#include "../../../Core/Debug/Debug.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -10,7 +11,7 @@ Camera::Camera() : rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0
 
 	if (transform.expired())
 	{
-		// TOOD: Logging System Log Error Message
+		Debug::LogError("Camera::Camera() - Camera Component must be attached to a GameObject with a Transform Component");
 	}
 
 	// TODO: Retrieve aspect ratio of screen
@@ -47,7 +48,7 @@ DirectX::XMMATRIX Camera::GetViewMatrix() const
 
 	if (transform.expired())
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Camera::GetViewMatrix() - Transform Component has expired");
 	}
 	else
 	{

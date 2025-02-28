@@ -1,6 +1,9 @@
 #include "Collider.h"
 
 #include "../../GameObject.h"
+#include "../../../../Core/Debug/Debug.h"
+
+#include <magic_enum.hpp>
 
 using namespace DirectX::SimpleMath;
 
@@ -10,7 +13,7 @@ Collider::Collider() : colliderShape(nullptr), rigidActor(nullptr)/*TODO: TEMPOR
 
 	if (!gameObject)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Collider::Collider() - Collider Component must be attached to a GameObject");
 	}
 
 	// INFO: Set Default Collision Callbacks
@@ -45,7 +48,7 @@ void Collider::ExecuteCollisionCallback(CollisionType collisionType, std::shared
 {
 	if (!collisionCallbacks.contains(collisionType))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Collider::ExecuteCollisionCallback() - Collision Callback not found for Collision Type: " + std::string{ magic_enum::enum_name(collisionType) });
 	}
 
 	// INFO: Perform the Collision Callback

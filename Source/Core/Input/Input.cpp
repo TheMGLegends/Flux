@@ -1,5 +1,6 @@
 #include "Input.h"
 
+#include "../Debug/Debug.h"
 #include "../EventSystem/EventDispatcher.h"
 
 #include <cmath> // TODO: Replace with custom library maybe
@@ -32,7 +33,7 @@ bool Input::PreInitialise()
 
 	if (!SDL_InitSubSystem(flags))
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Input::PreInitialise() - Failed to initialise SDL Gamepad and Haptic Subsystems");
 		return false;
 	}
 
@@ -45,14 +46,15 @@ bool Input::Initialise(SDL_Window* _window)
 
 	if (!window)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Input::Initialise() - Window is nullptr");
+		return false;
 	}
 
 	currentKeyboardState = SDL_GetKeyboardState(&keyLength);
 
 	if (!currentKeyboardState)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Input::Initialise() - Failed to get Keyboard State");
 		return false;
 	}
 
@@ -61,7 +63,7 @@ bool Input::Initialise(SDL_Window* _window)
 
 	if (!previousKeyboardState)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Input::Initialise() - Failed to allocate memory for previous Keyboard State");
 		return false;
 	}
 
@@ -79,7 +81,7 @@ bool Input::Initialise(SDL_Window* _window)
 			if (SDL_IsGamepad(joysticks[i]))
 			{
 				gamepad = SDL_OpenGamepad(joysticks[i]);
-				// TODO: Logging System Log Message
+				Debug::Log("Input::Initialise() - Gamepad Detected: " + std::string(SDL_GetGamepadName(gamepad)));
 				break;
 			}
 		}
@@ -94,7 +96,7 @@ bool Input::Initialise(SDL_Window* _window)
 
 		if (!currentGamepadButtonState)
 		{
-			// TODO: Logging System Log Error Message
+			Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Button State");
 			return false;
 		}
 
@@ -103,7 +105,7 @@ bool Input::Initialise(SDL_Window* _window)
 
 		if (!previousGamepadButtonState)
 		{
-			// TODO: Logging System Log Error Message
+			Debug::LogError("Input::Initialise() - Failed to allocate memory for previous Gamepad Button State");
 			return false;
 		}
 
@@ -114,7 +116,7 @@ bool Input::Initialise(SDL_Window* _window)
 
 		if (!currentGamepadAxisState)
 		{
-			// TODO: Logging System Log Error Message
+			Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Axis State");
 			return false;
 		}
 
@@ -206,7 +208,7 @@ void Input::SetMouseMode(bool _isRelative)
 {
 	if (!window)
 	{
-		// TODO: Logging System Log Error Message
+		Debug::LogError("Input::SetMouseMode() - Window is nullptr");
 		return;
 	}
 
