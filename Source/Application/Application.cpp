@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 
 #include "../Core/Globals.h"
+#include "../Core/Debug/Debug.h"
 #include "../Core/Input/Input.h"
 #include "../Core/Time/Time.h"
 

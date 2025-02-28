@@ -179,6 +179,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Debug\Debug.h" />
     <ClInclude Include="Source\Core\EventSystem\EventDispatcher.h" />
     <ClInclude Include="Source\Core\EventSystem\Events\Event.h" />
     <ClInclude Include="Source\Core\EventSystem\EventTypes.h" />
