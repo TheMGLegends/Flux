@@ -7,6 +7,12 @@
 #include "../Core/Input/Input.h"
 #include "../Core/Time/Time.h"
 
+// TODO: TESTING INCLUDES
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include <assimp/postprocess.h>
+#include "../Core/Renderer/Model.h"
+
 Application::Application() : editorRuntime(eventDispatcher), engineRuntime(eventDispatcher), window(nullptr), isRunning(false)
 {
 	if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
@@ -46,6 +52,17 @@ Application::Application() : editorRuntime(eventDispatcher), engineRuntime(event
 
 	// INFO: Setup Events to Listen For
 	eventDispatcher.AddListener(EventType::Quit, this);
+
+	// TODO: TESTING CODE
+	Assimp::Importer importer;
+
+	const aiScene* yep = importer.ReadFile("Assets/Models/Cube.obj", aiProcessPreset_TargetRealtime_MaxQuality);
+
+	if (yep)
+	{
+		Model cube;
+		cube.Initialise(renderer.GetDevice(), renderer.GetDeviceContext(), yep, "Cube");
+	}
 
 	isRunning = true;
 }

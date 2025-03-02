@@ -144,6 +144,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Renderer\Model.cpp" />
     <ClCompile Include="Source\Core\Renderer\Material.cpp" />
     <ClCompile Include="Source\Core\EventSystem\EventDispatcher.cpp" />
     <ClCompile Include="Source\Core\Renderer\Renderer.cpp" />
@@ -180,6 +181,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Renderer\Model.h" />
     <ClInclude Include="Source\Core\Renderer\Material.h" />
     <ClInclude Include="Source\Core\Debug\Debug.h" />
     <ClInclude Include="Source\Core\EventSystem\EventDispatcher.h" />

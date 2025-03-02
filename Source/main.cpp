@@ -1,5 +1,4 @@
 #include <iostream>
-#include <Windows.h>
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
@@ -8,7 +7,8 @@
 
 #include <nlohmann/json.hpp>
 
-#include <assimp/cimport.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
 #include <ft2build.h>
@@ -62,11 +62,18 @@ int main()
 	std::cout << j.dump(4) << std::endl;*/
 
 	// INFO: Assimp Integration Test
-	/*const aiScene* testImport = aiImportFile("Assets/Models/Cube.obj", aiProcessPreset_TargetRealtime_MaxQuality);
+	/*Assimp::Importer importer;
+	const aiScene* testImport = importer.ReadFile("Assets/Models/Cube.obj", aiProcessPreset_TargetRealtime_MaxQuality);
+
+	Model cube;
 
 	if (testImport)
 	{
 		std::cout << "Imported model successfully!" << std::endl;
+		if (testImport->HasMeshes())
+		{
+			std::cout << "Model has meshes: " << testImport->mNumMeshes << std::endl;
+		}
 	}*/
 
 	// INFO: FreeType Integration Test
