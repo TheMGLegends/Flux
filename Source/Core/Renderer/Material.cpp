@@ -16,35 +16,29 @@ Material::~Material()
 {
 }
 
-void Material::Bind(ID3D11DeviceContext* deviceContext)
+void Material::Bind(ID3D11DeviceContext& deviceContext)
 {
-	if (!deviceContext)
-	{
-		Debug::LogError("Material::Bind() - Invalid device context");
-		return;
-	}
-
 	if (inputLayout)
-		deviceContext->IASetInputLayout(inputLayout);
+		deviceContext.IASetInputLayout(inputLayout);
 	
 	if (vertexShader)
-		deviceContext->VSSetShader(vertexShader, nullptr, 0);
+		deviceContext.VSSetShader(vertexShader, nullptr, 0);
 
 	if (pixelShader)
-		deviceContext->PSSetShader(pixelShader, nullptr, 0);
+		deviceContext.PSSetShader(pixelShader, nullptr, 0);
 
 	if (constantBufferData.buffer)
-		deviceContext->VSSetConstantBuffers(0, 1, &constantBufferData.buffer);
+		deviceContext.VSSetConstantBuffers(0, 1, &constantBufferData.buffer);
 
 	if (depthWrite)
-		deviceContext->OMSetDepthStencilState(depthWrite, 0);
+		deviceContext.OMSetDepthStencilState(depthWrite, 0);
 
 	if (cullingMode)
-		deviceContext->RSSetState(cullingMode);
+		deviceContext.RSSetState(cullingMode);
 
 	if (texture)
-		deviceContext->PSSetShaderResources(0, 1, &texture);
+		deviceContext.PSSetShaderResources(0, 1, &texture);
 
 	if (sampler)
-		deviceContext->PSSetSamplers(0, 1, &sampler);
+		deviceContext.PSSetSamplers(0, 1, &sampler);
 }

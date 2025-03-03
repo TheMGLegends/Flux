@@ -2,10 +2,17 @@
 
 #include "../GameObject.h"
 #include "../../../Core/Debug/Debug.h"
+#include "../../../Core/Globals.h"
+#include "../../../Core/Renderer/ConstantBuffers.h"
+#include "../../../Core/Renderer/Material.h"
+#include "../../../Core/Renderer/Model.h"
 
+using namespace ConstantBuffers;
+using namespace DirectXConfig;
 using namespace DirectX::SimpleMath;
 
-Camera::Camera() : rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(16.0f / 9.0f), backgroundColour({ 0.0f, 0.0f, 0.0f, 0.0f })
+Camera::Camera() : rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f), 
+		           aspectRatio(16.0f / 9.0f), backgroundColour({ 0.0f, 0.0f, 0.0f, 0.0f }), skyboxMaterial(nullptr), skyboxModel(nullptr), useSkybox(true)
 {
 	transform = GetGameObject()->GetComponent<Transform>();
 
@@ -81,4 +88,27 @@ Vector3 Camera::Right() const
 Vector3 Camera::Up() const
 {
 	return Vector3::Transform(Vector3::Up, rotation);
+}
+
+void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection)
+{
+	if (!useSkybox)
+		return;
+
+	if (!skyboxModel || !skyboxMaterial)
+	{
+		Debug::LogError("Camera::DrawSkybox() - Skybox Model or Material is nullptr");
+		return;
+	}
+
+	UnlitVS skyboxVS{};
+	skyboxVS.wvp = translation * view * projection;
+
+	ConstantBufferData& constantBufferData = skyboxMaterial->GetConstantBufferData();
+
+	if (constantBufferData.constantBufferType == ConstantBufferType::Unlit)
+		deviceContext.UpdateSubresource(constantBufferData.buffer, 0, nullptr, &skyboxVS, 0, 0);
+
+	skyboxMaterial->Bind(deviceContext);
+	skyboxModel->Draw(deviceContext);
 }

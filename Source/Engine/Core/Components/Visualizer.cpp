@@ -1,5 +1,9 @@
 #include "Visualizer.h"
 
+#include "../../../Core/Debug/Debug.h"
+#include "../../../Core/Renderer/Material.h"
+#include "../../../Core/Renderer/Model.h"
+
 Visualizer::Visualizer() : model(nullptr), material(nullptr)
 {
 }
@@ -31,9 +35,14 @@ void Visualizer::SetModel(const std::filesystem::path& _modelPath)
 	// to the existing model and material and set the modelFilepath to the _modelPath
 }
 
-void Visualizer::Draw(ID3D11DeviceContext* deviceContext)
+void Visualizer::Draw(ID3D11DeviceContext& deviceContext)
 {
-	// TODO: Set material properties
+	if (!model || !material)
+	{
+		Debug::LogError("Visualizer::Draw() - Model or Material is nullptr");
+		return;
+	}
 
-	// TODO: Draw call
+	material->Bind(deviceContext);
+	model->Draw(deviceContext);
 }

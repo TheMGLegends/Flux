@@ -4,9 +4,12 @@
 #include "../../Interfaces/IDebugWireframe.h"
 
 #include <array>
+#include <memory>
 #include <SimpleMath.h>
 
 class Transform;
+class Material;
+class Model;
 
 class Camera : public Component, public IDebugWireframe
 {
@@ -29,6 +32,8 @@ public:
 	inline void SetRotation(const DirectX::SimpleMath::Quaternion& _rotation) { rotation = _rotation; }
 	inline const DirectX::SimpleMath::Quaternion& GetRotation() const { return rotation; }
 
+	void DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection);
+
 private:
 	inline void SetVerticalFOV(float _verticalFOV) { verticalFOV = _verticalFOV; }
 	inline void SetNearClippingPlane(float _nearClippingPlane) { nearClippingPlane = _nearClippingPlane; }
@@ -47,5 +52,10 @@ private:
 	float aspectRatio;
 
 	std::array<float, 4> backgroundColour;
+
+	// INFO: Skybox Members
+	Model* skyboxModel;
+	Material* skyboxMaterial;
+	bool useSkybox;
 };
 

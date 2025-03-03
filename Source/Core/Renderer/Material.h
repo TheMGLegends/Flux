@@ -25,8 +25,9 @@ public:
 	~Material();
 
 	inline ConstantBufferData& GetConstantBufferData() { return constantBufferData; }
+	inline void SetTexture(ID3D11ShaderResourceView* _texture) { texture = _texture; }
 
-	void Bind(ID3D11DeviceContext* deviceContext);
+	void Bind(ID3D11DeviceContext& deviceContext);
 
 private:
 	ID3D11VertexShader* vertexShader;

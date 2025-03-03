@@ -181,6 +181,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Renderer\ConstantBuffers.h" />
     <ClInclude Include="Source\Core\Renderer\Model.h" />
     <ClInclude Include="Source\Core\Renderer\Material.h" />
     <ClInclude Include="Source\Core\Debug\Debug.h" />

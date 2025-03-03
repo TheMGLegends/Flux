@@ -19,7 +19,7 @@ public:
 
 	void SetModel(const std::filesystem::path& _modelPath);
 
-	void Draw(ID3D11DeviceContext* deviceContext);
+	void Draw(ID3D11DeviceContext& deviceContext);
 
 private:
 	Model* model;
