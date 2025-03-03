@@ -5,8 +5,6 @@
 
 namespace Flux
 {
-	class EventDispatcher;
-
 	enum class GamepadJoystick
 	{
 		Left,
@@ -24,7 +22,7 @@ namespace Flux
 		static bool PreInitialise();
 		static bool Initialise(SDL_Window* _window);
 
-		static void Update(EventDispatcher& eventDispatcher);
+		static void Update();
 
 		static void Release();
 

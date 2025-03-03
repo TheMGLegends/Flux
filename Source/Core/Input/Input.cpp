@@ -128,7 +128,7 @@ bool Input::Initialise(SDL_Window* _window)
 	return true; // INFO: Initialisation Successful
 }
 
-void Input::Update(EventDispatcher& eventDispatcher)
+void Input::Update()
 {
 	memcpy(previousKeyboardState, currentKeyboardState, keyLength);
 
@@ -155,7 +155,7 @@ void Input::Update(EventDispatcher& eventDispatcher)
 		{
 		case SDL_EVENT_QUIT:
 		{
-			eventDispatcher.QueueEvent(EventType::Quit, nullptr);
+			EventDispatcher::QueueEvent(EventType::Quit, nullptr);
 			break;
 		}
 		default:

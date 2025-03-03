@@ -25,8 +25,6 @@ namespace Flux
 		HWND GetWindowHandle() const;
 
 	private:
-		EventDispatcher eventDispatcher;
-
 		EditorRuntime editorRuntime;
 		EngineRuntime engineRuntime;
 

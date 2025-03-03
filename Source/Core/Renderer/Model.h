@@ -10,22 +10,23 @@ struct aiScene;
 
 namespace Flux
 {
-	struct Vertex
-	{
-	public:
-		Vertex() : position(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)), color(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)),
-			texCoord(DirectX::XMFLOAT2(0.0f, 0.0f)), normal(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)) {}
-		~Vertex() = default;
-
-	public:
-		DirectX::XMFLOAT3 position;
-		DirectX::XMFLOAT4 color;
-		DirectX::XMFLOAT2 texCoord;
-		DirectX::XMFLOAT3 normal;
-	};
-
 	class Model
 	{
+	public:
+		struct Vertex
+		{
+		public:
+			Vertex() : position(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)), color(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)),
+				texCoord(DirectX::XMFLOAT2(0.0f, 0.0f)), normal(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)) {}
+			~Vertex() = default;
+
+		public:
+			DirectX::XMFLOAT3 position;
+			DirectX::XMFLOAT4 color;
+			DirectX::XMFLOAT2 texCoord;
+			DirectX::XMFLOAT3 normal;
+		};
+
 	public:
 		Model();
 		~Model();

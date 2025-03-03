@@ -5,12 +5,13 @@
 
 using namespace Flux;
 
-EngineRuntime::EngineRuntime(EventDispatcher& _eventDispatcher) : Runtime(_eventDispatcher)
+EngineRuntime::EngineRuntime()
 {
 }
 
 EngineRuntime::~EngineRuntime()
 {
+	// TODO: Cleanup Logic
 }
 
 bool EngineRuntime::PreInitialise()
@@ -36,11 +37,6 @@ void EngineRuntime::Update(float deltaTime)
 
 	if (scene.get())
 		scene->LateUpdate(deltaTime);
-}
-
-void EngineRuntime::Release()
-{
-	// TODO: Release Logic
 }
 
 void EngineRuntime::Start()

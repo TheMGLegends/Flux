@@ -7,14 +7,19 @@ namespace Flux
 	class EditorRuntime : public Runtime
 	{
 	public:
-		EditorRuntime(EventDispatcher& _eventDispatcher);
+		EditorRuntime();
 		virtual ~EditorRuntime() override;
 
+		/// @brief Used for initializing systems before the main initialisation
 		bool PreInitialise() override;
+		/// @brief Used for initializing data that uses the systems
 		bool Initialise() override;
 		void Update(float deltaTime) override;
+
+
+		// INFO: Editor Specific Methods
+
 		void RenderGUI();
-		void Release() override;
 
 	private:
 		// TODO: Editor Specific Members

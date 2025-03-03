@@ -18,7 +18,7 @@
 
 using namespace Flux;
 
-Application::Application() : editorRuntime(eventDispatcher), engineRuntime(eventDispatcher), window(nullptr), isRunning(false)
+Application::Application() : window(nullptr), isRunning(false)
 {
 	if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
 	{
@@ -26,7 +26,7 @@ Application::Application() : editorRuntime(eventDispatcher), engineRuntime(event
 	}
 
 	// INFO: Window Creation
-	window = SDL_CreateWindow("Flux Engine", EngineConfig::WINDOW_WIDTH, EngineConfig::WINDOW_HEIGHT, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Flux Engine", EngineConfig::windowWidth, EngineConfig::windowHeight, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
 
 	if (!window)
 	{
@@ -44,7 +44,7 @@ Application::Application() : editorRuntime(eventDispatcher), engineRuntime(event
 	}
 
 	// TODO: Get viewport information from scene view panel
-	if (FAILED(renderer.Initialise(GetWindowHandle(), /*TODO: Temporary*/Viewport(0.0f, 0.0f, 1920.0f, 1080.0f, 0.0f, 1.0f))))
+	if (FAILED(renderer.Initialise(GetWindowHandle(), /*TODO: Temporary*/Viewport(0.0f, 0.0f, (float)EngineConfig::windowWidth, (float)EngineConfig::windowHeight, 0.0f, 1.0f))))
 	{
 		Debug::LogError("Application::Application() - Failed to initialise Renderer");
 	}
@@ -56,7 +56,7 @@ Application::Application() : editorRuntime(eventDispatcher), engineRuntime(event
 	engineRuntime.Initialise();
 
 	// INFO: Setup Events to Listen For
-	eventDispatcher.AddListener(EventType::Quit, this);
+	EventDispatcher::AddListener(EventType::Quit, this);
 
 	// TODO: TESTING CODE
 	Assimp::Importer importer;
@@ -74,9 +74,6 @@ Application::Application() : editorRuntime(eventDispatcher), engineRuntime(event
 
 Application::~Application()
 {
-	editorRuntime.Release();
-	engineRuntime.Release();
-
 	Input::Release();
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
@@ -99,7 +96,7 @@ void Application::Run()
 	while (isRunning)
 	{
 		Time::Tick();
-		Input::Update(eventDispatcher);
+		Input::Update();
 
 		editorRuntime.Update(Time::DeltaTime());
 
@@ -118,7 +115,7 @@ void Application::Run()
 		//renderer.RenderFrame(engineRuntime.GetActiveScene());
 		editorRuntime.RenderGUI();
 
-		eventDispatcher.ProcessEvents();
+		EventDispatcher::ProcessEvents();
 	}
 }
 

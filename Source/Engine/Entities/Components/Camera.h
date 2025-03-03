@@ -55,7 +55,9 @@ namespace Flux
 
 		std::array<float, 4> backgroundColour;
 
-		// INFO: Skybox Members
+
+		// INFO: Skybox Properties
+
 		Model* skyboxModel;
 		Material* skyboxMaterial;
 		bool useSkybox;

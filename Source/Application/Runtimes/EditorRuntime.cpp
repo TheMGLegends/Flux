@@ -2,12 +2,13 @@
 
 using namespace Flux;
 
-EditorRuntime::EditorRuntime(EventDispatcher& _eventDispatcher) : Runtime(_eventDispatcher)
+EditorRuntime::EditorRuntime()
 {
 }
 
 EditorRuntime::~EditorRuntime()
 {
+	// TODO: Cleanup Logic
 }
 
 bool EditorRuntime::PreInitialise()
@@ -32,9 +33,4 @@ void EditorRuntime::Update(float deltaTime)
 void EditorRuntime::RenderGUI()
 {
 	// TODO: RenderGUI Logic
-}
-
-void EditorRuntime::Release()
-{
-	// TODO: Release Logic
 }

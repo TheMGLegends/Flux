@@ -153,7 +153,6 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <ClCompile Include="Source\Application\Application.cpp" />
     <ClCompile Include="Source\Application\Runtimes\EditorRuntime.cpp" />
     <ClCompile Include="Source\Application\Runtimes\EngineRuntime.cpp" />
-    <ClCompile Include="Source\Application\Runtimes\Runtime.cpp" />
     <ClCompile Include="Source\Engine\Entities\Components\PhysicsBody.cpp" />
     <ClCompile Include="Source\Engine\Entities\Components\Colliders\BoxCollider.cpp" />
     <ClCompile Include="Source\Engine\Entities\Components\Colliders\Collider.cpp" />
@@ -178,6 +177,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <ClCompile Include="Source\Engine\Entities\Components\Visualizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="packages.config" />
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>

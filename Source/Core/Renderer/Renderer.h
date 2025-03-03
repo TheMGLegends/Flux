@@ -10,6 +10,7 @@ namespace Flux
 {
 	class Scene;
 
+	/// @brief Initializer for D3D11_VIEWPORT struct
 	struct Viewport : D3D11_VIEWPORT
 	{
 		Viewport(float topLeftX, float topLeftY, float width, float height, float minDepth, float maxDepth)

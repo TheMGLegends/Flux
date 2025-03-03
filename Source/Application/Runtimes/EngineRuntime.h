@@ -9,13 +9,17 @@ namespace Flux
 	class EngineRuntime : public Runtime
 	{
 	public:
-		EngineRuntime(EventDispatcher& _eventDispatcher);
+		EngineRuntime();
 		virtual ~EngineRuntime() override;
 
+		/// @brief Used for initializing systems before the main initialisation
 		bool PreInitialise() override;
+		/// @brief Used for initializing data that uses the systems
 		bool Initialise() override;
 		void Update(float deltaTime) override;
-		void Release() override;
+
+
+		// INFO: Engine Specific Methods
 
 		void Start();
 		void FixedUpate(float fixedDeltaTime);

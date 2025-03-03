@@ -4,13 +4,8 @@
 
 using namespace Flux;
 
-EventDispatcher::EventDispatcher()
-{
-}
-
-EventDispatcher::~EventDispatcher()
-{
-}
+std::unordered_map<EventType, std::vector<IEventListener*>> EventDispatcher::listeners;
+std::queue<std::pair<EventType, std::shared_ptr<Event>>> EventDispatcher::eventQueue;
 
 bool EventDispatcher::AddListener(EventType eventType, IEventListener* listener)
 {

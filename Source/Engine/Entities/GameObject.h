@@ -68,8 +68,6 @@ namespace Flux
 
 		std::string name; // INFO: Used by Editor GUI to display the name of the GameObject
 		std::string type; // INFO: Used by Serialization to determine the type of the GameObject to instantiate
-
-		EventDispatcher* eventDispatcher;
 	};
 }
 
@@ -128,8 +126,7 @@ inline void Flux::GameObject::RemoveComponent(std::weak_ptr<T> component)
 
 		if (castedComponent && component.get() == castedComponent)
 		{
-			if (eventDispatcher)
-				eventDispatcher.QueueEvent(EventType::ComponentRemoved, std::make_shared<ComponentRemovedEvent>(component));
+			EventDispatcher::QueueEvent(EventType::ComponentRemoved, std::make_shared<ComponentRemovedEvent>(component));
 
 			if (!component.expired())
 				component.lock()->SetIsActive(false);

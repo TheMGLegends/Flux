@@ -2,7 +2,7 @@
 
 namespace Flux::EngineConfig
 {
-	constexpr int WINDOW_WIDTH = 1280;
-	constexpr int WINDOW_HEIGHT = 720;
+	inline int windowWidth = 1280;
+	inline int windowHeight = 720;
 }
 

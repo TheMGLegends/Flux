@@ -2,7 +2,7 @@
 
 using namespace Flux;
 
-GameObject::GameObject() : isActive(true), eventDispatcher(nullptr)
+GameObject::GameObject() : isActive(true)
 {
 	transform = AddComponent<Transform>();
 }
