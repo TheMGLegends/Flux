@@ -2,19 +2,22 @@
 
 #include "Runtime.h"
 
-class EditorRuntime : public Runtime
+namespace Flux
 {
-public:
-	EditorRuntime(EventDispatcher& _eventDispatcher);
-	virtual ~EditorRuntime() override;
+	class EditorRuntime : public Runtime
+	{
+	public:
+		EditorRuntime(EventDispatcher& _eventDispatcher);
+		virtual ~EditorRuntime() override;
 
-	bool PreInitialise() override;
-	bool Initialise() override;
-	void Update(float deltaTime) override;
-	void RenderGUI();
-	void Release() override;
+		bool PreInitialise() override;
+		bool Initialise() override;
+		void Update(float deltaTime) override;
+		void RenderGUI();
+		void Release() override;
 
-private:
-	// TODO: Editor Specific Members
-};
+	private:
+		// TODO: Editor Specific Members
+	};
+}
 

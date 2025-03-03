@@ -1,9 +1,13 @@
 #pragma once
 
-enum class EventType
+namespace Flux
 {
-	None = 0,
+	enum class EventType
+	{
+		None = 0,
 
-	Quit,
-	ComponentRemoved
-};
+		Quit,
+		ComponentRemoved
+	};
+}
+

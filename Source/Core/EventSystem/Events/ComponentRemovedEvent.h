@@ -4,15 +4,18 @@
 
 #include <memory>
 
-class Component;
-
-class ComponentRemovedEvent : public Event
+namespace Flux
 {
-public:
-	ComponentRemovedEvent(std::weak_ptr<Component> _component) : component(_component) {}
-	virtual ~ComponentRemovedEvent() override {}
+	class Component;
 
-public:
-	std::weak_ptr<Component> component;
-};
+	class ComponentRemovedEvent : public Event
+	{
+	public:
+		ComponentRemovedEvent(std::weak_ptr<Component> _component) : component(_component) {}
+		virtual ~ComponentRemovedEvent() override {}
+
+	public:
+		std::weak_ptr<Component> component;
+	};
+}
 

@@ -8,38 +8,41 @@
 
 struct aiScene;
 
-struct Vertex
+namespace Flux
 {
-public:
-	Vertex() : position(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)), color(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)),
-		texCoord(DirectX::XMFLOAT2(0.0f, 0.0f)), normal(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)) {}
-	~Vertex() = default;
+	struct Vertex
+	{
+	public:
+		Vertex() : position(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)), color(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)),
+			texCoord(DirectX::XMFLOAT2(0.0f, 0.0f)), normal(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)) {}
+		~Vertex() = default;
 
-public:
-	DirectX::XMFLOAT3 position;
-	DirectX::XMFLOAT4 color;
-	DirectX::XMFLOAT2 texCoord;
-	DirectX::XMFLOAT3 normal;
-};
+	public:
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT4 color;
+		DirectX::XMFLOAT2 texCoord;
+		DirectX::XMFLOAT3 normal;
+	};
 
-class Model
-{
-public:
-	Model();
-	~Model();
+	class Model
+	{
+	public:
+		Model();
+		~Model();
 
-	void Initialise(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, const std::string& _modelName);
-	void Draw(ID3D11DeviceContext& deviceContext);
+		void Initialise(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, const std::string& _modelName);
+		void Draw(ID3D11DeviceContext& deviceContext);
 
-	inline const std::string& GetModelName() const { return modelName; }
+		inline const std::string& GetModelName() const { return modelName; }
 
-private:
-	std::string modelName;
+	private:
+		std::string modelName;
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-};
+		std::vector<Vertex> vertices;
+		std::vector<unsigned int> indices;
+	};
+}
 

@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 
-namespace Debug
+namespace Flux::Debug
 {
 	inline void Log(const std::string& message)
 	{

@@ -1,14 +1,15 @@
 #include "Collider.h"
 
-#include "../PhysicsBody.h"
-#include "../../GameObject.h"
-#include "../../../../Core/Debug/Debug.h"
-
 #include <magic_enum.hpp>
 
+#include "Core/Debug/Debug.h"
+#include "Engine/Entities/GameObject.h"
+#include "Engine/Entities/Components/PhysicsBody.h"
+
+using namespace Flux;
 using namespace DirectX::SimpleMath;
 
-Collider::Collider() : colliderShape(nullptr), rigidActor(nullptr)/*TODO: TEMPORARY*/, isTrigger(false), centre(Vector3::Zero)
+Collider::Collider() : colliderShape(nullptr), rigidActor(nullptr), isTrigger(false), centre(Vector3::Zero)
 {
 	GameObject* gameObject = GetGameObject();
 

@@ -7,30 +7,33 @@
 #include <unordered_map>
 #include <vector>
 
-class IEventListener;
-class Event;
-
-class EventDispatcher
+namespace Flux
 {
-public:
-	EventDispatcher();
-	~EventDispatcher();
+	class IEventListener;
+	class Event;
 
-	/// @brief Prevents the same listener from being added to the same event type multiple times
-	bool AddListener(EventType eventType, IEventListener* listener);
-	/// @brief Removes a listener from all event types it is listening to
-	void RemoveListener(IEventListener* listener);
+	class EventDispatcher
+	{
+	public:
+		EventDispatcher();
+		~EventDispatcher();
 
-	/// @brief Immediate notification of all listeners listening to the event type
-	void Notify(EventType eventType, std::shared_ptr<Event> event);
-	/// @brief Delayed notification of all listeners listening to the event type until ProcessEvents is called
-	void QueueEvent(EventType eventType, std::shared_ptr<Event> event);
+		/// @brief Prevents the same listener from being added to the same event type multiple times
+		bool AddListener(EventType eventType, IEventListener* listener);
+		/// @brief Removes a listener from all event types it is listening to
+		void RemoveListener(IEventListener* listener);
 
-	/// @brief Processes all events in the event queue
-	void ProcessEvents();
+		/// @brief Immediate notification of all listeners listening to the event type
+		void Notify(EventType eventType, std::shared_ptr<Event> event);
+		/// @brief Delayed notification of all listeners listening to the event type until ProcessEvents is called
+		void QueueEvent(EventType eventType, std::shared_ptr<Event> event);
 
-private:
-	std::unordered_map<EventType, std::vector<IEventListener*>> listeners;
-	std::queue<std::pair<EventType, std::shared_ptr<Event>>> eventQueue;
-};
+		/// @brief Processes all events in the event queue
+		void ProcessEvents();
+
+	private:
+		std::unordered_map<EventType, std::vector<IEventListener*>> listeners;
+		std::queue<std::pair<EventType, std::shared_ptr<Event>>> eventQueue;
+	};
+}
 

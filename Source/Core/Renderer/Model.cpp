@@ -1,8 +1,10 @@
 #include "Model.h"
 
-#include "../Debug/Debug.h"
+#include "Core/Debug/Debug.h"
 
 #include <assimp/scene.h>
+
+using namespace Flux;
 
 Model::Model()
 {

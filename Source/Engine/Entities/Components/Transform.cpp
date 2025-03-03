@@ -1,5 +1,6 @@
 #include "Transform.h"
 
+using namespace Flux;
 using namespace DirectX::SimpleMath;
 
 Transform::Transform() : position(Vector3::Zero), rotation(Quaternion::Identity), scale(Vector3::One)

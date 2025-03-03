@@ -186,7 +186,7 @@ int main()
 	/*std::string isUsing = ImGuizmo::IsUsing() ? "true" : "false";
 	std::cout << "IsUsing is " << isUsing << std::endl;*/
 
-	Application app;
+	Flux::Application app;
 	app.Run();
 
 	return 0;

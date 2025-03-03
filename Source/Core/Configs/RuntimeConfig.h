@@ -1,6 +1,6 @@
 #pragma once
 
-namespace RuntimeConfig
+namespace Flux::RuntimeConfig
 {
 	enum class Mode
 	{
@@ -38,3 +38,4 @@ namespace RuntimeConfig
 		return Internal::enteredPlayMode;
 	}
 }
+

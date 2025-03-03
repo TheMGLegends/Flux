@@ -1,10 +1,11 @@
 #include "Renderer.h"
 
-#include "../Configs/RendererConfig.h"
-#include "../Debug/Debug.h"
+#include "Core/Configs/RendererConfig.h"
+#include "Core/Debug/Debug.h"
 
-using namespace Microsoft::WRL;
 using namespace DirectX;
+using namespace Flux;
+using namespace Microsoft::WRL;
 
 Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullptr), renderTargetView(nullptr), 
 					   depthStencilView(nullptr), spriteBatch(nullptr), viewport()

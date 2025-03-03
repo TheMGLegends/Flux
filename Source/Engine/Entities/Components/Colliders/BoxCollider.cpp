@@ -1,5 +1,6 @@
 #include "BoxCollider.h"
 
+using namespace Flux;
 using namespace DirectX::SimpleMath;
 
 BoxCollider::BoxCollider() : size(Vector3::One)
@@ -27,7 +28,7 @@ void BoxCollider::Deserialize(const nlohmann::ordered_json& json)
 	// TODO: Deserialize BoxCollider
 }
 
-void BoxCollider::DrawWireframe(ID3D11DeviceContext* deviceContext)
+void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext)
 {
 	// TODO: Debug Draw Box Collider Wireframe
 }

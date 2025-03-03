@@ -6,46 +6,49 @@
 #include <Windows.h>
 #include <wrl.h>
 
-struct Viewport : D3D11_VIEWPORT
+namespace Flux
 {
-	Viewport(float topLeftX, float topLeftY, float width, float height, float minDepth, float maxDepth)
+	class Scene;
+
+	struct Viewport : D3D11_VIEWPORT
 	{
-		TopLeftX = topLeftX;
-		TopLeftY = topLeftY;
-		Width = width;
-		Height = height;
-		MinDepth = minDepth;
-		MaxDepth = maxDepth;
-	}
-};
+		Viewport(float topLeftX, float topLeftY, float width, float height, float minDepth, float maxDepth)
+		{
+			TopLeftX = topLeftX;
+			TopLeftY = topLeftY;
+			Width = width;
+			Height = height;
+			MinDepth = minDepth;
+			MaxDepth = maxDepth;
+		}
+	};
 
-class Scene;
+	// TODO: Potentially make renderer listener for window resize events
 
-// TODO: Potentially make renderer listener for window resize events
+	class Renderer
+	{
+	public:
+		Renderer();
+		~Renderer();
 
-class Renderer
-{
-public:
-	Renderer();
-	~Renderer();
+		/// @param: _viewport The viewport to use for rendering (Scene View Panel Dimensions)
+		HRESULT Initialise(HWND hWnd, const Viewport& _viewport);
 
-	/// @param: _viewport The viewport to use for rendering (Scene View Panel Dimensions)
-	HRESULT Initialise(HWND hWnd, const Viewport& _viewport);
+		void RenderFrame(Scene& scene);
 
-	void RenderFrame(Scene& scene);
+		inline ID3D11Device& GetDevice() { return *device.Get(); }
+		inline ID3D11DeviceContext& GetDeviceContext() { return *deviceContext.Get(); }
 
-	inline ID3D11Device& GetDevice() { return *device.Get(); }
-	inline ID3D11DeviceContext& GetDeviceContext() { return *deviceContext.Get(); }
+	private:
+		Microsoft::WRL::ComPtr<ID3D11Device> device;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
+		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 
-private:
-	Microsoft::WRL::ComPtr<ID3D11Device> device;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
+		D3D11_VIEWPORT viewport;
 
-	D3D11_VIEWPORT viewport;
-
-	std::unique_ptr<DirectX::SpriteBatch> spriteBatch;
-};
+		std::unique_ptr<DirectX::SpriteBatch> spriteBatch;
+	};
+}
 

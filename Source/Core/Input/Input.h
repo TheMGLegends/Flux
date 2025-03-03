@@ -3,85 +3,88 @@
 #include <SDL3/SDL.h>
 #include <SimpleMath.h>
 
-class EventDispatcher;
-
-enum class GamepadJoystick
+namespace Flux
 {
-	Left,
-	Right
-};
+	class EventDispatcher;
 
-class Input
-{
-public:
-	Input() = delete;
-	~Input() = delete;
-	Input(const Input&) = delete;
-	Input& operator=(const Input&) = delete;
+	enum class GamepadJoystick
+	{
+		Left,
+		Right
+	};
 
-	static bool PreInitialise();
-	static bool Initialise(SDL_Window* _window);
+	class Input
+	{
+	public:
+		Input() = delete;
+		~Input() = delete;
+		Input(const Input&) = delete;
+		Input& operator=(const Input&) = delete;
 
-	static void Update(EventDispatcher& eventDispatcher);
+		static bool PreInitialise();
+		static bool Initialise(SDL_Window* _window);
 
-	static void Release();
+		static void Update(EventDispatcher& eventDispatcher);
 
-	static inline bool GetKey(SDL_Scancode key) { return currentKeyboardState[key]; }
-	static inline bool GetKeyDown(SDL_Scancode key) { return currentKeyboardState[key] && !previousKeyboardState[key]; }
-	static inline bool GetKeyUp(SDL_Scancode key) { return !currentKeyboardState[key] && previousKeyboardState[key]; }
+		static void Release();
 
-	static inline bool GetMouseButton(SDL_MouseButtonFlags button) { return currentMouseState & SDL_BUTTON_MASK(button); }
-	static inline bool GetMouseButtonDown(SDL_MouseButtonFlags button) { return (currentMouseState & SDL_BUTTON_MASK(button)) && !(previousMouseState & SDL_BUTTON_MASK(button)); }
-	static inline bool GetMouseButtonUp(SDL_MouseButtonFlags button) { return !(currentMouseState & SDL_BUTTON_MASK(button)) && (previousMouseState & SDL_BUTTON_MASK(button)); }
+		static inline bool GetKey(SDL_Scancode key) { return currentKeyboardState[key]; }
+		static inline bool GetKeyDown(SDL_Scancode key) { return currentKeyboardState[key] && !previousKeyboardState[key]; }
+		static inline bool GetKeyUp(SDL_Scancode key) { return !currentKeyboardState[key] && previousKeyboardState[key]; }
 
-	static inline const DirectX::SimpleMath::Vector2& GetMousePosition() { return mousePosition; }
-	/// @param isRelative: true = relative, false = absolute
-	static void SetMouseMode(bool _isRelative);
+		static inline bool GetMouseButton(SDL_MouseButtonFlags button) { return currentMouseState & SDL_BUTTON_MASK(button); }
+		static inline bool GetMouseButtonDown(SDL_MouseButtonFlags button) { return (currentMouseState & SDL_BUTTON_MASK(button)) && !(previousMouseState & SDL_BUTTON_MASK(button)); }
+		static inline bool GetMouseButtonUp(SDL_MouseButtonFlags button) { return !(currentMouseState & SDL_BUTTON_MASK(button)) && (previousMouseState & SDL_BUTTON_MASK(button)); }
 
-	static inline bool GetGamepadButton(SDL_GamepadButton button) { return currentGamepadButtonState[button]; }
-	static inline bool GetGamepadButtonDown(SDL_GamepadButton button) { return currentGamepadButtonState[button] && !previousGamepadButtonState[button]; }
-	static inline bool GetGamepadButtonUp(SDL_GamepadButton button) { return !currentGamepadButtonState[button] && previousGamepadButtonState[button]; }
+		static inline const DirectX::SimpleMath::Vector2& GetMousePosition() { return mousePosition; }
+		/// @param isRelative: true = relative, false = absolute
+		static void SetMouseMode(bool _isRelative);
 
-	/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
-	/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
-	static bool GetTrigger(SDL_GamepadAxis trigger, float* axisState = nullptr);
-	/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
-	/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
-	static bool GetTriggerDown(SDL_GamepadAxis trigger, float* axisState = nullptr);
-	/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
-	/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
-	static bool GetTriggerUp(SDL_GamepadAxis trigger, float* axisState = nullptr);
+		static inline bool GetGamepadButton(SDL_GamepadButton button) { return currentGamepadButtonState[button]; }
+		static inline bool GetGamepadButtonDown(SDL_GamepadButton button) { return currentGamepadButtonState[button] && !previousGamepadButtonState[button]; }
+		static inline bool GetGamepadButtonUp(SDL_GamepadButton button) { return !currentGamepadButtonState[button] && previousGamepadButtonState[button]; }
 
-	static DirectX::SimpleMath::Vector2 GetJoystickAxes(GamepadJoystick joystick, bool inverseY = true);
+		/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
+		/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
+		static bool GetTrigger(SDL_GamepadAxis trigger, float* axisState = nullptr);
+		/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
+		/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
+		static bool GetTriggerDown(SDL_GamepadAxis trigger, float* axisState = nullptr);
+		/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
+		/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
+		static bool GetTriggerUp(SDL_GamepadAxis trigger, float* axisState = nullptr);
 
-private:
-	/// @brief Populates the currentGamepadState array with the current state of all buttons
-	static void GetGamepadButtonState();
+		static DirectX::SimpleMath::Vector2 GetJoystickAxes(GamepadJoystick joystick, bool inverseY = true);
 
-	/// @brief Populates the currentGamepadAxisState array with the current state of all axes
-	static void GetGamepadAxisState();
+	private:
+		/// @brief Populates the currentGamepadState array with the current state of all buttons
+		static void GetGamepadButtonState();
 
-private:
-	static SDL_Window* window;
+		/// @brief Populates the currentGamepadAxisState array with the current state of all axes
+		static void GetGamepadAxisState();
 
-	static const bool* currentKeyboardState;
-	static bool* previousKeyboardState;
-	static int keyLength;
+	private:
+		static SDL_Window* window;
 
-	static SDL_MouseButtonFlags currentMouseState;
-	static SDL_MouseButtonFlags previousMouseState;
-	static DirectX::SimpleMath::Vector2 mousePosition;
-	static DirectX::SimpleMath::Vector2 latestAbsoluteMousePosition;
-	static bool isRelative;
+		static const bool* currentKeyboardState;
+		static bool* previousKeyboardState;
+		static int keyLength;
 
-	static SDL_Gamepad* gamepad;
-	static bool* currentGamepadButtonState;
-	static bool* previousGamepadButtonState;
-	static int gamepadButtonLength;
-	
-	static Sint16* currentGamepadAxisState;
-	static Sint16* previousGamepadAxisState;
-	static int gamepadAxisLength;
-	static inline const int DEADZONE = 8000;
-};
+		static SDL_MouseButtonFlags currentMouseState;
+		static SDL_MouseButtonFlags previousMouseState;
+		static DirectX::SimpleMath::Vector2 mousePosition;
+		static DirectX::SimpleMath::Vector2 latestAbsoluteMousePosition;
+		static bool isRelative;
+
+		static SDL_Gamepad* gamepad;
+		static bool* currentGamepadButtonState;
+		static bool* previousGamepadButtonState;
+		static int gamepadButtonLength;
+
+		static Sint16* currentGamepadAxisState;
+		static Sint16* previousGamepadAxisState;
+		static int gamepadAxisLength;
+		static inline const int DEADZONE = 8000;
+	};
+}
 

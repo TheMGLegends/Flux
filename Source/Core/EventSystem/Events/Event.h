@@ -1,8 +1,11 @@
 #pragma once
 
-class Event
+namespace Flux
 {
-public:
-	virtual ~Event() {}
-};
+	class Event
+	{
+	public:
+		virtual ~Event() {}
+	};
+}
 

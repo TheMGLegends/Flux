@@ -1,40 +1,43 @@
 #pragma once
 
-#include "../../Interfaces/ISerializable.h"
+#include "Engine/Interfaces/ISerializable.h"
 
-class GameObject;
-
-class Component : public ISerializable
+namespace Flux
 {
-	friend class GameObject;
+	class GameObject;
 
-public:
-	Component();
-	virtual ~Component() = 0;
+	class Component : public ISerializable
+	{
+		friend class GameObject;
 
-	/// @brief Called after the component has been assigned to a GameObject
-	virtual void PostConstruction() {}
+	public:
+		Component();
+		virtual ~Component() = 0;
 
-	virtual void Serialize(nlohmann::ordered_json& json) const override;
-	virtual void Deserialize(const nlohmann::ordered_json& json) override;
+		/// @brief Called after the component has been assigned to a GameObject
+		virtual void PostConstruction() {}
 
-	inline GameObject* GetGameObject() const { return gameObject; }
+		virtual void Serialize(nlohmann::ordered_json& json) const override;
+		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
-	inline void SetIsActive(bool _isActive) { isActive = _isActive; }
-	inline bool IsActive() const { return isActive; }
+		inline GameObject* GetGameObject() const { return gameObject; }
 
-	inline bool CanHaveMultiple() const { return canHaveMultiple; }
-	inline bool IsRemoveable() const { return isRemoveable; }
+		inline void SetIsActive(bool _isActive) { isActive = _isActive; }
+		inline bool IsActive() const { return isActive; }
 
-private:
-	inline void SetGameObject(GameObject* _gameObject) { gameObject = _gameObject; }
+		inline bool CanHaveMultiple() const { return canHaveMultiple; }
+		inline bool IsRemoveable() const { return isRemoveable; }
 
-protected:
-	bool isActive;
-	bool canHaveMultiple;
-	bool isRemoveable;
+	private:
+		inline void SetGameObject(GameObject* _gameObject) { gameObject = _gameObject; }
 
-private:
-	GameObject* gameObject;
-};
+	protected:
+		bool isActive;
+		bool canHaveMultiple;
+		bool isRemoveable;
+
+	private:
+		GameObject* gameObject;
+	};
+}
 

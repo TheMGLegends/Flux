@@ -1,8 +1,10 @@
 #include "PhysicsBody.h"
 
-#include "../../../Core/Debug/Debug.h"
-
 #include <magic_enum.hpp>
+
+#include "Core/Debug/Debug.h"
+
+using namespace Flux;
 
 PhysicsBody::PhysicsBody() : rigidActor(nullptr), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
 {

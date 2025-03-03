@@ -1,5 +1,7 @@
 #include "GameObject.h"
 
+using namespace Flux;
+
 GameObject::GameObject() : isActive(true), eventDispatcher(nullptr)
 {
 	transform = AddComponent<Transform>();

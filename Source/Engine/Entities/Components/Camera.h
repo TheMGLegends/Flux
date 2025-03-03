@@ -1,61 +1,64 @@
 #pragma once
 
 #include "Component.h"
-#include "../../Interfaces/IDebugWireframe.h"
+#include "Engine/Interfaces/IDebugWireframe.h"
 
 #include <array>
 #include <memory>
 #include <SimpleMath.h>
 
-class Transform;
-class Material;
-class Model;
-
-class Camera : public Component, public IDebugWireframe
+namespace Flux
 {
-public:
-	Camera();
-	virtual ~Camera() override;
+	class Transform;
+	class Material;
+	class Model;
 
-	virtual void Serialize(nlohmann::ordered_json& json) const override;
-	virtual void Deserialize(const nlohmann::ordered_json& json) override;
+	class Camera : public Component, public IDebugWireframe
+	{
+	public:
+		Camera();
+		virtual ~Camera() override;
 
-	virtual void DrawWireframe(ID3D11DeviceContext* deviceContext) override;
+		virtual void Serialize(nlohmann::ordered_json& json) const override;
+		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
-	DirectX::XMMATRIX GetViewMatrix() const;
-	DirectX::XMMATRIX GetProjectionMatrix() const;
+		virtual void DrawWireframe(ID3D11DeviceContext& deviceContext) override;
 
-	DirectX::SimpleMath::Vector3 Forward() const;
-	DirectX::SimpleMath::Vector3 Right() const;
-	DirectX::SimpleMath::Vector3 Up() const;
+		DirectX::XMMATRIX GetViewMatrix() const;
+		DirectX::XMMATRIX GetProjectionMatrix() const;
 
-	inline void SetRotation(const DirectX::SimpleMath::Quaternion& _rotation) { rotation = _rotation; }
-	inline const DirectX::SimpleMath::Quaternion& GetRotation() const { return rotation; }
+		DirectX::SimpleMath::Vector3 Forward() const;
+		DirectX::SimpleMath::Vector3 Right() const;
+		DirectX::SimpleMath::Vector3 Up() const;
 
-	void DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection);
+		inline void SetRotation(const DirectX::SimpleMath::Quaternion& _rotation) { rotation = _rotation; }
+		inline const DirectX::SimpleMath::Quaternion& GetRotation() const { return rotation; }
 
-private:
-	inline void SetVerticalFOV(float _verticalFOV) { verticalFOV = _verticalFOV; }
-	inline void SetNearClippingPlane(float _nearClippingPlane) { nearClippingPlane = _nearClippingPlane; }
-	inline void SetFarClippingPlane(float _farClippingPlane) { farClippingPlane = _farClippingPlane; }
-	inline void SetAspectRatio(float screenWidth, float screenHeight) { aspectRatio = screenWidth / screenHeight; }
-	inline void SetBackgroundColour(const std::array<float, 4>& _backgroundColour) { backgroundColour = _backgroundColour; }
+		void DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection);
 
-private:
-	std::weak_ptr<Transform> transform;
+	private:
+		inline void SetVerticalFOV(float _verticalFOV) { verticalFOV = _verticalFOV; }
+		inline void SetNearClippingPlane(float _nearClippingPlane) { nearClippingPlane = _nearClippingPlane; }
+		inline void SetFarClippingPlane(float _farClippingPlane) { farClippingPlane = _farClippingPlane; }
+		inline void SetAspectRatio(float screenWidth, float screenHeight) { aspectRatio = screenWidth / screenHeight; }
+		inline void SetBackgroundColour(const std::array<float, 4>& _backgroundColour) { backgroundColour = _backgroundColour; }
 
-	DirectX::SimpleMath::Quaternion rotation;
+	private:
+		std::weak_ptr<Transform> transform;
 
-	float verticalFOV; // INFO: In degrees
-	float nearClippingPlane;
-	float farClippingPlane;
-	float aspectRatio;
+		DirectX::SimpleMath::Quaternion rotation;
 
-	std::array<float, 4> backgroundColour;
+		float verticalFOV; // INFO: In degrees
+		float nearClippingPlane;
+		float farClippingPlane;
+		float aspectRatio;
 
-	// INFO: Skybox Members
-	Model* skyboxModel;
-	Material* skyboxMaterial;
-	bool useSkybox;
-};
+		std::array<float, 4> backgroundColour;
+
+		// INFO: Skybox Members
+		Model* skyboxModel;
+		Material* skyboxMaterial;
+		bool useSkybox;
+	};
+}
 

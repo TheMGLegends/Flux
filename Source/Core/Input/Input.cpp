@@ -1,10 +1,11 @@
 #include "Input.h"
 
-#include "../Debug/Debug.h"
-#include "../EventSystem/EventDispatcher.h"
+#include <cmath>
 
-#include <cmath> // TODO: Replace with custom library maybe
+#include "Core/Debug/Debug.h"
+#include "Core/EventSystem/EventDispatcher.h"
 
+using namespace Flux;
 using namespace DirectX::SimpleMath;
 
 SDL_Window* Input::window = nullptr;

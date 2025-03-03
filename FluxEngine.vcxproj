@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;$(ProjectDir)Vendors\imgui;$(ProjectDir)Vendors\imguizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;$(ProjectDir)Vendors\imgui;$(ProjectDir)Vendors\imguizmo;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -127,7 +127,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;$(ProjectDir)Vendors\imgui;$(ProjectDir)Vendors\imguizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\freetype;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;$(ProjectDir)Vendors\imgui;$(ProjectDir)Vendors\imguizmo;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>

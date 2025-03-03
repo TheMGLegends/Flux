@@ -1,7 +1,9 @@
 #include "Scene.h"
 
-#include "../Entities/GameObject.h"
-#include "../Entities/Components/Camera.h"
+#include "Engine/Entities/GameObject.h"
+#include "Engine/Entities/Components/Camera.h"
+
+using namespace Flux;
 
 Scene::Scene()
 {

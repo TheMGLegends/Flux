@@ -2,6 +2,8 @@
 
 #include "IEventListener.h"
 
+using namespace Flux;
+
 EventDispatcher::EventDispatcher()
 {
 }

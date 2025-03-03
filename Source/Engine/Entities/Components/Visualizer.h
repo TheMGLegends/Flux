@@ -5,25 +5,28 @@
 #include <d3d11.h>
 #include <filesystem>
 
-class Material;
-class Model;
-
-class Visualizer : public Component
+namespace Flux
 {
-public:
-	Visualizer();
-	virtual ~Visualizer() override;
+	class Material;
+	class Model;
 
-	virtual void Serialize(nlohmann::ordered_json& json) const override;
-	virtual void Deserialize(const nlohmann::ordered_json& json) override;
+	class Visualizer : public Component
+	{
+	public:
+		Visualizer();
+		virtual ~Visualizer() override;
 
-	void SetModel(const std::filesystem::path& _modelPath);
+		virtual void Serialize(nlohmann::ordered_json& json) const override;
+		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
-	void Draw(ID3D11DeviceContext& deviceContext);
+		void SetModel(const std::filesystem::path& _modelPath);
 
-private:
-	Model* model;
-	std::filesystem::path modelFilepath;
-	Material* material;
-};
+		void Draw(ID3D11DeviceContext& deviceContext);
+
+	private:
+		Model* model;
+		std::filesystem::path modelFilepath;
+		Material* material;
+	};
+}
 

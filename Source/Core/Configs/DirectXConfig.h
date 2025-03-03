@@ -1,6 +1,6 @@
 #pragma once
 
-namespace DirectXConfig
+namespace Flux::DirectXConfig
 {
 	enum class ConstantBufferType
 	{
@@ -27,3 +27,4 @@ namespace DirectXConfig
 		BackSolid
 	};
 }
+

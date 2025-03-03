@@ -1,77 +1,80 @@
 #pragma once
 
-#include "../Interfaces/ISerializable.h"
-
-#include "Components/Colliders/Collider.h"
-#include "Components/Transform.h"
-#include "../../Core/EventSystem/EventDispatcher.h"
-#include "../../Core/EventSystem/Events/ComponentRemovedEvent.h"
+#include "Engine/Interfaces/ISerializable.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-class Component;
+#include "Components/Colliders/Collider.h"
+#include "Components/Transform.h"
+#include "Core/EventSystem/EventDispatcher.h"
+#include "Core/EventSystem/Events/ComponentRemovedEvent.h"
 
-class GameObject : public ISerializable
+namespace Flux
 {
-public:
-	GameObject();
-	virtual ~GameObject();
+	class Component;
 
-	virtual void Serialize(nlohmann::ordered_json& json) const override;
-	virtual void Deserialize(const nlohmann::ordered_json& json) override;
+	class GameObject : public ISerializable
+	{
+	public:
+		GameObject();
+		virtual ~GameObject();
 
-	template<class T>
-	std::weak_ptr<T> GetComponent();
+		virtual void Serialize(nlohmann::ordered_json& json) const override;
+		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
-	template<class T, typename... Args>
-	std::weak_ptr<T> AddComponent(Args&&... args);
+		template<class T>
+		std::weak_ptr<T> GetComponent();
 
-	template<class T>
-	void RemoveComponent(std::weak_ptr<T> component);
+		template<class T, typename... Args>
+		std::weak_ptr<T> AddComponent(Args&&... args);
 
-	void SetIsActive(bool _isActive);
-	inline bool IsActive() const { return isActive; }
+		template<class T>
+		void RemoveComponent(std::weak_ptr<T> component);
 
-	void Destroy();
+		void SetIsActive(bool _isActive);
+		inline bool IsActive() const { return isActive; }
 
-	virtual void Start() {}
-	virtual void Update(float deltaTime) {}
-	virtual void LateUpdate(float deltaTime) {}
-	virtual void FixedUpdate(float fixedDeltaTime) {}
+		void Destroy();
 
-	virtual void OnCollisionEnter(std::shared_ptr<Collider> other) {}
-	virtual void OnCollisionStay(std::shared_ptr<Collider> other) {}
-	virtual void OnCollisionExit(std::shared_ptr<Collider> other) {}
+		virtual void Start() {}
+		virtual void Update(float deltaTime) {}
+		virtual void LateUpdate(float deltaTime) {}
+		virtual void FixedUpdate(float fixedDeltaTime) {}
 
-	virtual void OnTriggerEnter(std::shared_ptr<Collider> other) {}
-	virtual void OnTriggerStay(std::shared_ptr<Collider> other) {}
-	virtual void OnTriggerExit(std::shared_ptr<Collider> other) {}
+		virtual void OnCollisionEnter(std::shared_ptr<Collider> other) {}
+		virtual void OnCollisionStay(std::shared_ptr<Collider> other) {}
+		virtual void OnCollisionExit(std::shared_ptr<Collider> other) {}
 
-	virtual void OnDisable() {}
-	virtual void OnEnable() {}
-	virtual void OnDestroy() {}
+		virtual void OnTriggerEnter(std::shared_ptr<Collider> other) {}
+		virtual void OnTriggerStay(std::shared_ptr<Collider> other) {}
+		virtual void OnTriggerExit(std::shared_ptr<Collider> other) {}
 
-private:
-	inline void SetName(const std::string& _name) { name = _name; } // INFO: Used by Editor GUI to set the display name of the GameObject
-	inline void SetType(const std::string& _type) { type = _type; } // INFO: Used during Deserialization to note down GO type for future Serialization
+		virtual void OnDisable() {}
+		virtual void OnEnable() {}
+		virtual void OnDestroy() {}
 
-public:
-	std::weak_ptr<Transform> transform;
+	private:
+		inline void SetName(const std::string& _name) { name = _name; } // INFO: Used by Editor GUI to set the display name of the GameObject
+		inline void SetType(const std::string& _type) { type = _type; } // INFO: Used during Deserialization to note down GO type for future Serialization
 
-private:
-	bool isActive;
-	std::vector<std::shared_ptr<Component>> components;
+	public:
+		std::weak_ptr<Transform> transform;
 
-	std::string name; // INFO: Used by Editor GUI to display the name of the GameObject
-	std::string type; // INFO: Used by Serialization to determine the type of the GameObject to instantiate
+	private:
+		bool isActive;
+		std::vector<std::shared_ptr<Component>> components;
 
-	EventDispatcher* eventDispatcher;
-};
+		std::string name; // INFO: Used by Editor GUI to display the name of the GameObject
+		std::string type; // INFO: Used by Serialization to determine the type of the GameObject to instantiate
+
+		EventDispatcher* eventDispatcher;
+	};
+}
 
 template<class T>
-inline std::weak_ptr<T> GameObject::GetComponent()
+inline std::weak_ptr<T> Flux::GameObject::GetComponent()
 {
 	// INFO: Check if component exists
 	for (auto& component : components)
@@ -86,7 +89,7 @@ inline std::weak_ptr<T> GameObject::GetComponent()
 }
 
 template<class T, typename ...Args>
-inline std::weak_ptr<T> GameObject::AddComponent(Args && ...args)
+inline std::weak_ptr<T> Flux::GameObject::AddComponent(Args && ...args)
 {
 	static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
 
@@ -112,7 +115,7 @@ inline std::weak_ptr<T> GameObject::AddComponent(Args && ...args)
 }
 
 template<class T>
-inline void GameObject::RemoveComponent(std::weak_ptr<T> component)
+inline void Flux::GameObject::RemoveComponent(std::weak_ptr<T> component)
 {
 	static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
 

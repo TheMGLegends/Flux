@@ -2,18 +2,21 @@
 
 #include <SDL3/SDL.h>
 
-#include "../Core/Configs/EngineConfig.h"
-#include "../Core/Configs/RuntimeConfig.h"
-#include "../Core/Configs/TimeConfig.h"
-#include "../Core/Debug/Debug.h"
-#include "../Core/Input/Input.h"
-#include "../Core/Time/Time.h"
+#include "Core/Configs/EngineConfig.h"
+#include "Core/Configs/RuntimeConfig.h"
+#include "Core/Configs/TimeConfig.h"
+
+#include "Core/Debug/Debug.h"
+#include "Core/Input/Input.h"
+#include "Core/Time/Time.h"
 
 // TODO: TESTING INCLUDES
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include <assimp/postprocess.h>
-#include "../Core/Renderer/Model.h"
+#include "Core/Renderer/Model.h"
+
+using namespace Flux;
 
 Application::Application() : editorRuntime(eventDispatcher), engineRuntime(eventDispatcher), window(nullptr), isRunning(false)
 {

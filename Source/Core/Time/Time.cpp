@@ -1,7 +1,8 @@
 #include "Time.h"
 
-#include "../Configs/TimeConfig.h"
+#include "Core/Configs/TimeConfig.h"
 
+using namespace Flux;
 using namespace std::chrono;
 
 constexpr float MICRO_TO_SEC = 1000000.0f;

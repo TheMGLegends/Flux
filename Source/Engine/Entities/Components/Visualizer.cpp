@@ -1,8 +1,10 @@
 #include "Visualizer.h"
 
-#include "../../../Core/Debug/Debug.h"
-#include "../../../Core/Renderer/Material.h"
-#include "../../../Core/Renderer/Model.h"
+#include "Core/Debug/Debug.h"
+#include "Core/Renderer/Material.h"
+#include "Core/Renderer/Model.h"
+
+using namespace Flux;
 
 Visualizer::Visualizer() : model(nullptr), material(nullptr)
 {

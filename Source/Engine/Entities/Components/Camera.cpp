@@ -1,13 +1,14 @@
 #include "Camera.h"
 
-#include "../GameObject.h"
-#include "../../../Core/Debug/Debug.h"
-#include "../../../Core/Renderer/ConstantBuffers.h"
-#include "../../../Core/Renderer/Material.h"
-#include "../../../Core/Renderer/Model.h"
+#include "Core/Debug/Debug.h"
+#include "Core/Renderer/ConstantBuffers.h"
+#include "Core/Renderer/Material.h"
+#include "Core/Renderer/Model.h"
+#include "Engine/Entities/GameObject.h"
 
-using namespace ConstantBuffers;
-using namespace DirectXConfig;
+using namespace Flux;
+using namespace Flux::ConstantBuffers;
+using namespace Flux::DirectXConfig;
 using namespace DirectX::SimpleMath;
 
 Camera::Camera() : rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f), 
@@ -43,7 +44,7 @@ void Camera::Deserialize(const nlohmann::ordered_json& json)
 	// TODO: Deserialize CameraComponent
 }
 
-void Camera::DrawWireframe(ID3D11DeviceContext* deviceContext)
+void Camera::DrawWireframe(ID3D11DeviceContext& deviceContext)
 {
 	// TODO: Debug Draw View Frustum
 }

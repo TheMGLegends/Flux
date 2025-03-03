@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Component.h"
-#include "../../../Interfaces/IDebugWireframe.h"
+#include "Engine/Entities/Components/Component.h"
+#include "Engine/Interfaces/IDebugWireframe.h"
 
 #include <functional>
 #include <memory>
@@ -11,46 +11,49 @@
 class PxRigidActor;
 class PxShape;
 
-enum class CollisionType
+namespace Flux
 {
-	CollisionEnter,
-	CollisionStay,
-	CollisionExit,
+	enum class CollisionType
+	{
+		CollisionEnter,
+		CollisionStay,
+		CollisionExit,
 
-	TriggerEnter,
-	TriggerStay,
-	TriggerExit,
+		TriggerEnter,
+		TriggerStay,
+		TriggerExit,
 
-	Count
-};
+		Count
+	};
 
-class Collider : public Component, public IDebugWireframe
-{
-public:
-	Collider();
+	class Collider : public Component, public IDebugWireframe
+	{
+	public:
+		Collider();
 
-	virtual void PostConstruction() override;
+		virtual void PostConstruction() override;
 
-	virtual void Serialize(nlohmann::ordered_json& json) const override;
-	virtual void Deserialize(const nlohmann::ordered_json& json) override;
+		virtual void Serialize(nlohmann::ordered_json& json) const override;
+		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
-	inline void SetIsTrigger(bool _isTrigger) { isTrigger = _isTrigger; }
-	inline bool IsTrigger() const { return isTrigger; }
+		inline void SetIsTrigger(bool _isTrigger) { isTrigger = _isTrigger; }
+		inline bool IsTrigger() const { return isTrigger; }
 
-	inline void SetCentre(const DirectX::SimpleMath::Vector3& _centre) { centre = _centre; }
-	inline const DirectX::SimpleMath::Vector3& GetCentre() const { return centre; }
+		inline void SetCentre(const DirectX::SimpleMath::Vector3& _centre) { centre = _centre; }
+		inline const DirectX::SimpleMath::Vector3& GetCentre() const { return centre; }
 
-	void ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other);
+		void ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other);
 
-protected:
-	PxShape* colliderShape;
+	protected:
+		PxShape* colliderShape;
 
-private:
-	PxRigidActor* rigidActor;
+	private:
+		PxRigidActor* rigidActor;
 
-	bool isTrigger;
-	DirectX::SimpleMath::Vector3 centre;
+		bool isTrigger;
+		DirectX::SimpleMath::Vector3 centre;
 
-	std::unordered_map<CollisionType, std::function<void(std::shared_ptr<Collider>)>> collisionCallbacks;
-};
+		std::unordered_map<CollisionType, std::function<void(std::shared_ptr<Collider>)>> collisionCallbacks;
+	};
+}
 

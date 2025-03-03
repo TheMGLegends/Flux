@@ -1,5 +1,7 @@
 #include "Component.h"
 
+using namespace Flux;
+
 Component::Component() : isActive(true), canHaveMultiple(false), isRemoveable(true), gameObject(nullptr)
 {
 }

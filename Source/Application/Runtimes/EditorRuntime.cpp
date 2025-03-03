@@ -1,5 +1,7 @@
 #include "EditorRuntime.h"
 
+using namespace Flux;
+
 EditorRuntime::EditorRuntime(EventDispatcher& _eventDispatcher) : Runtime(_eventDispatcher)
 {
 }

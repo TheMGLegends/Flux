@@ -2,7 +2,7 @@
 
 #include <DirectXMath.h>
 
-namespace ConstantBuffers
+namespace Flux::ConstantBuffers
 {
 	struct UnlitVS
 	{

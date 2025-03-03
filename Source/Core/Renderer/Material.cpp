@@ -1,8 +1,9 @@
 #include "Material.h"
 
-#include "../Debug/Debug.h"
+#include "Core/Debug/Debug.h"
 
-using namespace DirectXConfig;
+using namespace Flux;
+using namespace Flux::DirectXConfig;
 
 Material::Material(ShaderType shaderType, ConstantBufferType constantBufferType, DepthWriteType depthWriteType, 
 	               CullingModeType cullingModeType, const std::string& textureName) : vertexShader(nullptr), pixelShader(nullptr), 

@@ -1,6 +1,7 @@
 #pragma once
 
-namespace RendererConfig
+namespace Flux::RendererConfig
 {
 	inline bool vsyncEnabled = false;
 }
+
