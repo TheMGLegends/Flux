@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-#include "../Globals.h"
+#include "../Configs/RendererConfig.h"
 #include "../Debug/Debug.h"
 
 using namespace Microsoft::WRL;
@@ -166,5 +166,5 @@ void Renderer::RenderFrame(Scene& scene)
 	// TODO: Render all UI elements (FPS Counter)
 	spriteBatch->End();
 
-	swapChain->Present((UINT)RendererSettings::ENABLE_VSYNC, 0);
+	swapChain->Present((UINT)RendererConfig::vsyncEnabled, 0);
 }

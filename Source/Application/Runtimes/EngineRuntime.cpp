@@ -1,7 +1,7 @@
 #include "EngineRuntime.h"
 
 #include "../../Core/Time/Time.h"
-#include "../../Engine/Core/Scene/Scene.h"
+#include "../../Engine/Scene/Scene.h"
 
 EngineRuntime::EngineRuntime(EventDispatcher& _eventDispatcher) : Runtime(_eventDispatcher)
 {

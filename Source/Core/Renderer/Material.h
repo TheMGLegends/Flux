@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Globals.h"
+#include "../Configs/DirectXConfig.h"
 
 #include <d3d11.h>
 #include <string>

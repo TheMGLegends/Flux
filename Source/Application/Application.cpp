@@ -2,7 +2,9 @@
 
 #include <SDL3/SDL.h>
 
-#include "../Core/Globals.h"
+#include "../Core/Configs/EngineConfig.h"
+#include "../Core/Configs/RuntimeConfig.h"
+#include "../Core/Configs/TimeConfig.h"
 #include "../Core/Debug/Debug.h"
 #include "../Core/Input/Input.h"
 #include "../Core/Time/Time.h"
@@ -21,7 +23,7 @@ Application::Application() : editorRuntime(eventDispatcher), engineRuntime(event
 	}
 
 	// INFO: Window Creation
-	window = SDL_CreateWindow("Flux Engine", EngineSettings::WINDOW_WIDTH, EngineSettings::WINDOW_HEIGHT, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Flux Engine", EngineConfig::WINDOW_WIDTH, EngineConfig::WINDOW_HEIGHT, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
 
 	if (!window)
 	{
@@ -98,15 +100,15 @@ void Application::Run()
 
 		editorRuntime.Update(Time::DeltaTime());
 
-		if (RuntimeState::HasEnteredPlayMode())
+		if (RuntimeConfig::HasEnteredPlayMode())
 		{
 			engineRuntime.Start();
-			RuntimeState::PlayModeEntered();
+			RuntimeConfig::PlayModeEntered();
 		}
 
-		if (RuntimeState::IsInPlayMode())
+		if (RuntimeConfig::IsInPlayMode())
 		{
-			engineRuntime.FixedUpate(TimeSettings::FIXED_DELTA_TIME);
+			engineRuntime.FixedUpate(TimeConfig::FIXED_DELTA_TIME);
 			engineRuntime.Update(Time::DeltaTime());
 		}
 

@@ -2,7 +2,6 @@
 
 #include "../GameObject.h"
 #include "../../../Core/Debug/Debug.h"
-#include "../../../Core/Globals.h"
 #include "../../../Core/Renderer/ConstantBuffers.h"
 #include "../../../Core/Renderer/Material.h"
 #include "../../../Core/Renderer/Model.h"

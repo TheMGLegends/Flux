@@ -1,7 +1,7 @@
 #include "Scene.h"
 
-#include "../GameObject.h"
-#include "../Components/Camera.h"
+#include "../Entities/GameObject.h"
+#include "../Entities/Components/Camera.h"
 
 Scene::Scene()
 {

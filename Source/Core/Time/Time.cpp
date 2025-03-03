@@ -1,6 +1,6 @@
 #include "Time.h"
 
-#include "../Globals.h"
+#include "../Configs/TimeConfig.h"
 
 using namespace std::chrono;
 
@@ -29,9 +29,9 @@ void Time::Tick()
 
 bool Time::PerformPhysicsUpdate()
 {
-	if (accumulator >= TimeSettings::FIXED_DELTA_TIME)
+	if (accumulator >= TimeConfig::FIXED_DELTA_TIME)
 	{
-		accumulator -= TimeSettings::FIXED_DELTA_TIME;
+		accumulator -= TimeConfig::FIXED_DELTA_TIME;
 		return true;
 	}
 	return false;

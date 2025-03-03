@@ -51,31 +51,31 @@
     <ClCompile Include="Vendors\imguizmo\ImGuizmo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\GameObject.cpp">
+    <ClCompile Include="Source\Engine\Entities\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\Components\Component.cpp">
+    <ClCompile Include="Source\Engine\Entities\Components\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\Components\Transform.cpp">
+    <ClCompile Include="Source\Engine\Entities\Components\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\Components\Camera.cpp">
+    <ClCompile Include="Source\Engine\Entities\Components\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\Components\Colliders\Collider.cpp">
+    <ClCompile Include="Source\Engine\Entities\Components\Colliders\Collider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\Components\Colliders\BoxCollider.cpp">
+    <ClCompile Include="Source\Engine\Entities\Components\Colliders\BoxCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\Components\Colliders\SphereCollider.cpp">
+    <ClCompile Include="Source\Engine\Entities\Components\Colliders\SphereCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\Components\PhysicsBody.cpp">
+    <ClCompile Include="Source\Engine\Entities\Components\PhysicsBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\Components\Visualizer.cpp">
+    <ClCompile Include="Source\Engine\Entities\Components\Visualizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Application\Runtimes\Runtime.cpp">
@@ -108,7 +108,7 @@
     <ClCompile Include="Source\Core\Renderer\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\Scene\Scene.cpp">
+    <ClCompile Include="Source\Engine\Scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -159,37 +159,37 @@
     <ClInclude Include="Vendors\imguizmo\ImZoomSlider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\GameObject.h">
+    <ClInclude Include="Source\Engine\Entities\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Interfaces\ISerializable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\Components\Component.h">
+    <ClInclude Include="Source\Engine\Entities\Components\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\Components\Transform.h">
+    <ClInclude Include="Source\Engine\Entities\Components\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Interfaces\IDebugWireframe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\Components\Camera.h">
+    <ClInclude Include="Source\Engine\Entities\Components\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\Components\Colliders\Collider.h">
+    <ClInclude Include="Source\Engine\Entities\Components\Colliders\Collider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\Components\Colliders\BoxCollider.h">
+    <ClInclude Include="Source\Engine\Entities\Components\Colliders\BoxCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\Components\Colliders\SphereCollider.h">
+    <ClInclude Include="Source\Engine\Entities\Components\Colliders\SphereCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\Components\PhysicsBody.h">
+    <ClInclude Include="Source\Engine\Entities\Components\PhysicsBody.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\Components\Visualizer.h">
+    <ClInclude Include="Source\Engine\Entities\Components\Visualizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Application\Runtimes\Runtime.h">
@@ -204,7 +204,7 @@
     <ClInclude Include="Source\Application\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Globals.h">
+    <ClInclude Include="Source\Core\Configs\DirectXConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Time\Time.h">
@@ -243,7 +243,19 @@
     <ClInclude Include="Source\Core\EventSystem\Events\ComponentRemovedEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Core\Scene\Scene.h">
+    <ClInclude Include="Source\Engine\Scene\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Configs\RuntimeConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Configs\EngineConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Configs\TimeConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Configs\RendererConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

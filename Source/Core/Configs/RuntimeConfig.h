@@ -1,6 +1,6 @@
 #pragma once
 
-namespace RuntimeState
+namespace RuntimeConfig
 {
 	enum class Mode
 	{
@@ -37,48 +37,4 @@ namespace RuntimeState
 	{
 		return Internal::enteredPlayMode;
 	}
-}
-
-namespace EngineSettings
-{
-	constexpr int WINDOW_WIDTH = 1280;
-	constexpr int WINDOW_HEIGHT = 720;
-}
-
-namespace TimeSettings
-{
-	constexpr float FIXED_DELTA_TIME = 0.02f; // INFO: 50 FPS
-}
-
-namespace RendererSettings
-{
-	constexpr bool ENABLE_VSYNC = false;
-}
-
-namespace DirectXConfig
-{
-	enum class ConstantBufferType
-	{
-		None,
-
-		Unlit
-	};
-
-	enum class ShaderType
-	{
-		Unlit, // INFO: Both Vertex and Pixel Shader
-		Skybox
-	};
-
-	enum class DepthWriteType
-	{
-		Enabled,
-		Disabled
-	};
-
-	enum class CullingModeType
-	{
-		FrontSolid,
-		BackSolid
-	};
 }
