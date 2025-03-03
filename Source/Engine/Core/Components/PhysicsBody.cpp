@@ -12,12 +12,15 @@ PhysicsBody::PhysicsBody() : rigidActor(nullptr), mass(1.0f), drag(0.0f), angula
 		positionConstraints[i] = false;
 		rotationConstraints[i] = false;
 	}
-
-	// TODO: Search for a collider component and create a rigid dynamic if found and get a reference to it here, set in collider component
 }
 
 PhysicsBody::~PhysicsBody()
 {
+}
+
+void PhysicsBody::PostConstruction()
+{
+	// TODO: Search for a collider component and create a rigid dynamic if found and get a reference to it here, set in collider component
 }
 
 void PhysicsBody::Serialize(nlohmann::ordered_json& json) const

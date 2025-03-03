@@ -1,13 +1,15 @@
 #pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include "../Interfaces/ISerializable.h"
 
 #include "Components/Colliders/Collider.h"
 #include "Components/Transform.h"
+#include "../../Core/EventSystem/EventDispatcher.h"
+#include "../../Core/EventSystem/Events/ComponentRemovedEvent.h"
+
+#include <memory>
+#include <string>
+#include <vector>
 
 class Component;
 
@@ -64,6 +66,8 @@ private:
 
 	std::string name; // INFO: Used by Editor GUI to display the name of the GameObject
 	std::string type; // INFO: Used by Serialization to determine the type of the GameObject to instantiate
+
+	EventDispatcher* eventDispatcher;
 };
 
 template<class T>
@@ -97,7 +101,10 @@ inline std::weak_ptr<T> GameObject::AddComponent(Args && ...args)
 	
 	// INFO: Set the owning GameObject of the component
 	if (!newComponent.expired())
+	{
 		newComponent.lock()->SetGameObject(this);
+		newComponent.lock()->PostConstruction();
+	}
 
 	// TODO: Add component to the component handler
 
@@ -118,7 +125,8 @@ inline void GameObject::RemoveComponent(std::weak_ptr<T> component)
 
 		if (castedComponent && component.get() == castedComponent)
 		{
-			// TODO: Notify the Event System of the removal of the component at the end of the frame
+			if (eventDispatcher)
+				eventDispatcher.QueueEvent(EventType::ComponentRemoved, std::make_shared<ComponentRemovedEvent>(component));
 
 			if (!component.expired())
 				component.lock()->SetIsActive(false);

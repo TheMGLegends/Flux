@@ -1,5 +1,6 @@
 #include "Collider.h"
 
+#include "../PhysicsBody.h"
 #include "../../GameObject.h"
 #include "../../../../Core/Debug/Debug.h"
 
@@ -24,7 +25,10 @@ Collider::Collider() : colliderShape(nullptr), rigidActor(nullptr)/*TODO: TEMPOR
 	collisionCallbacks.try_emplace(CollisionType::TriggerEnter, std::bind(&GameObject::OnTriggerEnter, gameObject, std::placeholders::_1));
 	collisionCallbacks.try_emplace(CollisionType::TriggerStay, std::bind(&GameObject::OnTriggerStay, gameObject, std::placeholders::_1));
 	collisionCallbacks.try_emplace(CollisionType::TriggerExit, std::bind(&GameObject::OnTriggerExit, gameObject, std::placeholders::_1));
+}
 
+void Collider::PostConstruction()
+{
 	// TODO: Set rigidActor granted rigidbody isn't found on GameObject
 }
 

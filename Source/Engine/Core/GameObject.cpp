@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject() : isActive(true)
+GameObject::GameObject() : isActive(true), eventDispatcher(nullptr)
 {
 	transform = AddComponent<Transform>();
 }

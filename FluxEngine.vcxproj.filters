@@ -108,6 +108,9 @@
     <ClCompile Include="Source\Core\Renderer\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Core\Scene\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -237,8 +240,20 @@
     <ClInclude Include="Source\Core\Renderer\ConstantBuffers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\EventSystem\Events\ComponentRemovedEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Core\Scene\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Vendors\imgui\debuggers\imgui.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\UnlitVertexShader.hlsl" />
+    <FxCompile Include="Shaders\UnlitPixelShader.hlsl" />
+    <FxCompile Include="Shaders\SkyboxVertexShader.hlsl" />
+    <FxCompile Include="Shaders\SkyboxPixelShader.hlsl" />
   </ItemGroup>
 </Project>

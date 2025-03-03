@@ -2,6 +2,10 @@
 
 #include "Runtime.h"
 
+#include <memory>
+
+class Scene;
+
 class EngineRuntime : public Runtime
 {
 public:
@@ -17,6 +21,7 @@ public:
 	void FixedUpate(float fixedDeltaTime);
 
 private:
+	std::unique_ptr<Scene> scene;
 	// TODO: Engine Specific Members
 };
 

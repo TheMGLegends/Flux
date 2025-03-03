@@ -1,6 +1,7 @@
 #include "EngineRuntime.h"
 
 #include "../../Core/Time/Time.h"
+#include "../../Engine/Core/Scene/Scene.h"
 
 EngineRuntime::EngineRuntime(EventDispatcher& _eventDispatcher) : Runtime(_eventDispatcher)
 {
@@ -26,9 +27,13 @@ bool EngineRuntime::Initialise()
 
 void EngineRuntime::Update(float deltaTime)
 {
-	// TODO: Update Logic from GameObjects in Scene
+	if (scene.get())
+		scene->Update(deltaTime);
 
 	// TODO: Update All Components
+
+	if (scene.get())
+		scene->LateUpdate(deltaTime);
 }
 
 void EngineRuntime::Release()
@@ -38,14 +43,16 @@ void EngineRuntime::Release()
 
 void EngineRuntime::Start()
 {
-	// TODO: Start Logic
+	if (scene.get())
+		scene->Start();
 }
 
 void EngineRuntime::FixedUpate(float fixedDeltaTime)
 {
 	while (Time::PerformPhysicsUpdate())
 	{
-		// TODO: Fixed Update Logic
-		// Simulate Physics Scene
+		if (scene.get())
+			scene->FixedUpdate(fixedDeltaTime);
+		// TODO: Simulate Physics Scene
 	}
 }

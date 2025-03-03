@@ -4,5 +4,6 @@ enum class EventType
 {
 	None = 0,
 
-	Quit
+	Quit,
+	ComponentRemoved
 };
