@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Interfaces/ISerializable.h"
+#include "Core/EventSystem/IEventListener.h"
 
 #include <memory>
 #include <unordered_map>
@@ -13,7 +14,7 @@ namespace Flux
 {
 	class GameObject;
 
-	class Scene : public ISerializable
+	class Scene : public ISerializable, public IEventListener
 	{
 		friend class SceneContext;
 
@@ -23,6 +24,8 @@ namespace Flux
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
+
+		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
 		void Start();
 		void Update(float deltaTime);

@@ -271,6 +271,9 @@
     <ClInclude Include="Source\Engine\Entities\Components\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\EventSystem\Events\GameObjectRemovedEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Vendors\imgui\debuggers\imgui.natvis" />

@@ -62,7 +62,7 @@ void EventDispatcher::ProcessEvents()
 {
 	while (!eventQueue.empty())
 	{
-		auto& event = eventQueue.front();
+		auto event = std::move(eventQueue.front());
 		eventQueue.pop();
 
 		Notify(event.first, event.second);

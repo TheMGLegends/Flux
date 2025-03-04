@@ -7,7 +7,8 @@ namespace Flux
 		None = 0,
 
 		Quit,
-		ComponentRemoved
+		ComponentRemoved,
+		GameObjectRemoved
 	};
 }
 

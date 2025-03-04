@@ -80,15 +80,8 @@ Application::~Application()
 
 void Application::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 {
-	switch (eventType)
-	{
-	case EventType::Quit:
+	if (eventType == EventType::Quit)
 		isRunning = false;
-		break;
-	case EventType::None:
-	default:
-		break;
-	}
 }
 
 void Application::Run()

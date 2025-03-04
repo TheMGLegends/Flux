@@ -1,5 +1,8 @@
 #include "GameObject.h"
 
+#include "Core/EventSystem/EventDispatcher.h"
+#include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
+
 using namespace Flux;
 
 GameObject::GameObject() : isActive(true)
@@ -39,7 +42,7 @@ void GameObject::Destroy()
 	// INFO: Handle any OnDestroy logic here
 	OnDestroy();
 
-	// TODO: Pass Destroy Event Info onto Event System so GOs are destroyed at the end of the frame (The listener will likely be the scene)
+	EventDispatcher::QueueEvent(EventType::GameObjectRemoved, std::make_shared<GameObjectRemovedEvent>(this));
 
 	SetIsActive(false);
 }

@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+#include "ConstantBuffers.h"
+#include "Core/Configs/DirectXConfig.h"
 #include "Core/Configs/RendererConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
@@ -8,9 +10,12 @@
 #include "Engine/Entities/Components/Camera.h"
 #include "Engine/Entities/Components/Transform.h"
 #include "Engine/Entities/Components/Visualizer.h"
+#include "Material.h"
 
 using namespace DirectX;
 using namespace Flux;
+using namespace Flux::ConstantBuffers;
+using namespace Flux::DirectXConfig;
 using namespace DirectX::SimpleMath;
 using namespace Microsoft::WRL;
 
@@ -176,13 +181,40 @@ void Renderer::RenderFrame(Scene& scene)
 	if (camera->UseSkybox())
 		camera->DrawSkybox(*deviceContext.Get(), translation, view, projection);
 
-	for (auto& visualizer : scene.GetComponents<Visualizer>())
+	for (auto& weakVisualizer : scene.GetComponents<Visualizer>())
 	{
+		if (weakVisualizer.expired())
+			continue;
 
+		std::shared_ptr<Visualizer> visualizer = weakVisualizer.lock();
+		Material& material = visualizer->GetMaterial();
+		GameObject* owningGameObject = visualizer->GetGameObject();
+		std::shared_ptr<Transform> transform = owningGameObject->transform.lock();
 
+		if (!visualizer->IsActive() || !owningGameObject->IsActive())
+			continue;
+
+		DirectX::XMMATRIX world = transform->GetWorldMatrix();
+
+		ConstantBufferData& constantBufferData = material.GetConstantBufferData();
+
+		switch (constantBufferData.constantBufferType)
+		{
+		case ConstantBufferType::Unlit:
+		{
+			UnlitVS unlitVS{};
+			unlitVS.wvp = world * translation * view * projection;
+			deviceContext->UpdateSubresource(constantBufferData.buffer, 0, nullptr, &unlitVS, 0, 0);
+
+			break;
+		}
+		case ConstantBufferType::None:
+		default:
+			break;
+		}
+
+		visualizer->Draw(*deviceContext.Get());
 	}
-
-	// TODO: Go through all visualizer components and render them
 
 	if (RuntimeConfig::IsInEditorMode())
 	{
