@@ -12,6 +12,8 @@ namespace Flux
 
 	class Scene : public ISerializable
 	{
+		friend class SceneContext;
+
 	public:
 		Scene();
 		~Scene();

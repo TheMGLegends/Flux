@@ -144,6 +144,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Scene\SceneContext.cpp" />
     <ClCompile Include="Source\Engine\Scene\Scene.cpp" />
     <ClCompile Include="Source\Core\Renderer\Model.cpp" />
     <ClCompile Include="Source\Core\Renderer\Material.cpp" />
@@ -183,6 +184,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\Engine\Scene\SceneContext.h" />
     <ClInclude Include="Source\Core\Configs\EngineConfig.h" />
     <ClInclude Include="Source\Core\Configs\RendererConfig.h" />
     <ClInclude Include="Source\Core\Configs\RuntimeConfig.h" />

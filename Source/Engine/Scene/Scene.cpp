@@ -20,6 +20,8 @@ Scene::~Scene()
 
 void Scene::Serialize(nlohmann::ordered_json& json) const
 {
+	// TODO: Serialize the type of GameObject and then serialize the GameObject itself
+
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->Serialize(json);
@@ -28,8 +30,10 @@ void Scene::Serialize(nlohmann::ordered_json& json) const
 
 void Scene::Deserialize(const nlohmann::ordered_json& json)
 {
-	// INFO: Clear existing game objects
+	// INFO: Clear existing game objects before "loading" new scene
 	gameObjects.clear();
+
+	// TODO: Get the type of GameObject from json file and instantiate it then pass the json to it
 
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
