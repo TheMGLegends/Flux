@@ -1,10 +1,16 @@
 #include "Renderer.h"
 
 #include "Core/Configs/RendererConfig.h"
+#include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
+#include "Engine/Scene/Scene.h"
+#include "Engine/Entities/GameObject.h"
+#include "Engine/Entities/Components/Camera.h"
+#include "Engine/Entities/Components/Transform.h"
 
 using namespace DirectX;
 using namespace Flux;
+using namespace DirectX::SimpleMath;
 using namespace Microsoft::WRL;
 
 Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullptr), renderTargetView(nullptr), 
@@ -147,21 +153,34 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 
 void Renderer::RenderFrame(Scene& scene)
 {
-	// TODO: Access currently active camera and set render target view colour to camera clear colour
-	deviceContext->ClearRenderTargetView(renderTargetView.Get(), Colors::DarkSeaGreen);
+	std::shared_ptr<Camera> camera = scene.GetCamera();
+
+	if (!camera)
+	{
+		Debug::LogError("Renderer::RenderFrame() - No Camera Found");
+		return;
+	}
+
+	deviceContext->ClearRenderTargetView(renderTargetView.Get(), camera->GetBackgroundColour().data());
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// TODO: Ensure camera is valid
+	Vector3 cameraPosition = camera->GetGameObject()->transform.expired() ? Vector3::Zero : camera->GetGameObject()->transform.lock()->GetPosition();
 
-	// TODO: Get matrices (Translation, View, Projection)
+	XMMATRIX translation = XMMatrixTranslationFromVector(cameraPosition);
+	XMMATRIX view = camera->GetViewMatrix();
+	XMMATRIX projection = camera->GetProjectionMatrix();
 
-	// TODO: Check if skybox game object has a skybox texture and is valid, if so render it otherwise use camera background colour
+	if (camera->UseSkybox())
+		camera->DrawSkybox(*deviceContext.Get(), translation, view, projection);
 
 	// TODO: Go through all visualizer components and render them
 
-	// TODO: Given we are in editor mode, go through all IDebugWireframe and render them
+	if (RuntimeConfig::IsInEditorMode())
+	{
+		// TODO: Given we are in editor mode, go through all IDebugWireframe and render them
+	}
 
 	spriteBatch->Begin();
 	// TODO: Render all UI elements (FPS Counter)

@@ -182,6 +182,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Core\Configs\EngineConfig.h" />
     <ClInclude Include="Source\Core\Configs\RendererConfig.h" />
     <ClInclude Include="Source\Core\Configs\RuntimeConfig.h" />
@@ -274,6 +275,12 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Compiled Shaders\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Compiled Shaders\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Default\FluxIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -26,7 +26,7 @@ Application::Application() : window(nullptr), isRunning(false)
 	}
 
 	// INFO: Window Creation
-	window = SDL_CreateWindow("Flux Engine", EngineConfig::windowWidth, EngineConfig::windowHeight, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Flux Engine", EngineConfig::windowWidth, EngineConfig::windowHeight, SDL_WINDOW_RESIZABLE);
 
 	if (!window)
 	{
@@ -112,7 +112,7 @@ void Application::Run()
 			engineRuntime.Update(Time::DeltaTime());
 		}
 
-		//renderer.RenderFrame(engineRuntime.GetActiveScene());
+		renderer.RenderFrame(engineRuntime.GetScene());
 		editorRuntime.RenderGUI();
 
 		EventDispatcher::ProcessEvents();

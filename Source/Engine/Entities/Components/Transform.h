@@ -9,7 +9,7 @@ namespace Flux
 	class Transform : public Component
 	{
 	public:
-		Transform();
+		Transform(GameObject* _gameObject);
 		virtual ~Transform() override;
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;

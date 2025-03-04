@@ -24,6 +24,8 @@ namespace Flux
 		void Start();
 		void FixedUpate(float fixedDeltaTime);
 
+		inline Scene& GetScene() const { return *scene; }
+
 	private:
 		std::unique_ptr<Scene> scene;
 		// TODO: Engine Specific Members

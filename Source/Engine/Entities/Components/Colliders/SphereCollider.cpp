@@ -2,7 +2,7 @@
 
 using namespace Flux;
 
-SphereCollider::SphereCollider() : radius(1.0f)
+SphereCollider::SphereCollider(GameObject* _gameObject) : Collider(_gameObject), radius(1.0f)
 {
 	// TODO: Set colliderShape to SphereShape
 }

@@ -13,7 +13,7 @@ namespace Flux
 	class Visualizer : public Component
 	{
 	public:
-		Visualizer();
+		Visualizer(GameObject* _gameObject);
 		virtual ~Visualizer() override;
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;

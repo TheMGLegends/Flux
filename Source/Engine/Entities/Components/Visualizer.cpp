@@ -6,7 +6,7 @@
 
 using namespace Flux;
 
-Visualizer::Visualizer() : model(nullptr), material(nullptr)
+Visualizer::Visualizer(GameObject* _gameObject) : Component(_gameObject), model(nullptr), material(nullptr)
 {
 }
 

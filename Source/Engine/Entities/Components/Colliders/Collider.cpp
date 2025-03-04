@@ -9,7 +9,7 @@
 using namespace Flux;
 using namespace DirectX::SimpleMath;
 
-Collider::Collider() : colliderShape(nullptr), rigidActor(nullptr), isTrigger(false), centre(Vector3::Zero)
+Collider::Collider(GameObject* _gameObject) : Component(_gameObject), colliderShape(nullptr), rigidActor(nullptr), isTrigger(false), centre(Vector3::Zero)
 {
 	GameObject* gameObject = GetGameObject();
 
@@ -26,10 +26,7 @@ Collider::Collider() : colliderShape(nullptr), rigidActor(nullptr), isTrigger(fa
 	collisionCallbacks.try_emplace(CollisionType::TriggerEnter, std::bind(&GameObject::OnTriggerEnter, gameObject, std::placeholders::_1));
 	collisionCallbacks.try_emplace(CollisionType::TriggerStay, std::bind(&GameObject::OnTriggerStay, gameObject, std::placeholders::_1));
 	collisionCallbacks.try_emplace(CollisionType::TriggerExit, std::bind(&GameObject::OnTriggerExit, gameObject, std::placeholders::_1));
-}
-
-void Collider::PostConstruction()
-{
+	
 	// TODO: Set rigidActor granted rigidbody isn't found on GameObject
 }
 

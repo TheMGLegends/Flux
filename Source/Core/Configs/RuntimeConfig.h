@@ -22,6 +22,11 @@ namespace Flux::RuntimeConfig
 		Internal::currentMode = newMode;
 	}
 
+	inline bool IsInEditorMode()
+	{
+		return Internal::currentMode == Mode::Editor;
+	}
+
 	inline bool IsInPlayMode()
 	{
 		return Internal::currentMode == Mode::Play;

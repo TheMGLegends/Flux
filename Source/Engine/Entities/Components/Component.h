@@ -11,11 +11,8 @@ namespace Flux
 		friend class GameObject;
 
 	public:
-		Component();
+		Component(GameObject* _gameObject);
 		virtual ~Component() = 0;
-
-		/// @brief Called after the component has been assigned to a GameObject
-		virtual void PostConstruction() {}
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;

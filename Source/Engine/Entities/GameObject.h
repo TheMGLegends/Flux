@@ -99,13 +99,6 @@ inline std::weak_ptr<T> Flux::GameObject::AddComponent(Args && ...args)
 
 	components.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
 	std::weak_ptr<T> newComponent = std::dynamic_pointer_cast<T>(components.back());
-	
-	// INFO: Set the owning GameObject of the component
-	if (!newComponent.expired())
-	{
-		newComponent.lock()->SetGameObject(this);
-		newComponent.lock()->PostConstruction();
-	}
 
 	// TODO: Add component to the component handler
 

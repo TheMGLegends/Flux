@@ -25,6 +25,8 @@ bool EngineRuntime::Initialise()
 {
 	// TODO: Initialisation Logic
 
+	scene = std::make_unique<Scene>();
+
 	return true; // INFO: Initialisation Successful
 }
 

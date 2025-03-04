@@ -7,7 +7,7 @@ namespace Flux
 	class BoxCollider : public Collider
 	{
 	public:
-		BoxCollider();
+		BoxCollider(GameObject* _gameObject);
 		virtual ~BoxCollider() override;
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;

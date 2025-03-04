@@ -11,7 +11,7 @@ Scene::Scene()
 
 	// INFO: Create a default play camera
 	gameObjects.emplace_back(std::make_unique<GameObject>());
-	camera = gameObjects.back().get()->AddComponent<Camera>();
+	camera = gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
 }
 
 Scene::~Scene()

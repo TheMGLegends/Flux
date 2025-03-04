@@ -256,6 +256,9 @@
     <ClInclude Include="Source\Core\Configs\RendererConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Vendors\imgui\debuggers\imgui.natvis" />
@@ -265,5 +268,15 @@
     <FxCompile Include="Shaders\UnlitPixelShader.hlsl" />
     <FxCompile Include="Shaders\SkyboxVertexShader.hlsl" />
     <FxCompile Include="Shaders\SkyboxPixelShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Default\FluxIcon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

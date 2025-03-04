@@ -20,10 +20,8 @@ namespace Flux
 	class PhysicsBody : public Component
 	{
 	public:
-		PhysicsBody();
+		PhysicsBody(GameObject* _gameObject);
 		virtual ~PhysicsBody() override;
-
-		virtual void PostConstruction() override;
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;

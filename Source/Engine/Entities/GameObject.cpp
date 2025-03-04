@@ -4,7 +4,7 @@ using namespace Flux;
 
 GameObject::GameObject() : isActive(true)
 {
-	transform = AddComponent<Transform>();
+	transform = AddComponent<Transform>(this);
 }
 
 GameObject::~GameObject()

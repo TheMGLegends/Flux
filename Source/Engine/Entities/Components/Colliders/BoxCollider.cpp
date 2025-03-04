@@ -3,7 +3,7 @@
 using namespace Flux;
 using namespace DirectX::SimpleMath;
 
-BoxCollider::BoxCollider() : size(Vector3::One)
+BoxCollider::BoxCollider(GameObject* _gameObject) : Collider(_gameObject), size(Vector3::One)
 {
 	// TODO: Set colliderShape to BoxShape
 }

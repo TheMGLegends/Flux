@@ -7,7 +7,7 @@ namespace Flux
 	class SphereCollider : public Collider
 	{
 	public:
-		SphereCollider();
+		SphereCollider(GameObject* _gameObject);
 		virtual ~SphereCollider() override;
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;

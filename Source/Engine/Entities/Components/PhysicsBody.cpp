@@ -6,7 +6,7 @@
 
 using namespace Flux;
 
-PhysicsBody::PhysicsBody() : rigidActor(nullptr), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
+PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), rigidActor(nullptr), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
 {
 	// INFO: No constraints by default
 	for (size_t i = 0; i < static_cast<size_t>(ConstraintAxis::Count); ++i)
@@ -14,15 +14,12 @@ PhysicsBody::PhysicsBody() : rigidActor(nullptr), mass(1.0f), drag(0.0f), angula
 		positionConstraints[i] = false;
 		rotationConstraints[i] = false;
 	}
+
+	// TODO: Search for a collider component and create a rigid dynamic if found and get a reference to it here, set in collider component
 }
 
 PhysicsBody::~PhysicsBody()
 {
-}
-
-void PhysicsBody::PostConstruction()
-{
-	// TODO: Search for a collider component and create a rigid dynamic if found and get a reference to it here, set in collider component
 }
 
 void PhysicsBody::Serialize(nlohmann::ordered_json& json) const

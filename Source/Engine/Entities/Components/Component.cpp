@@ -2,7 +2,7 @@
 
 using namespace Flux;
 
-Component::Component() : isActive(true), canHaveMultiple(false), isRemoveable(true), gameObject(nullptr)
+Component::Component(GameObject* _gameObject) : isActive(true), canHaveMultiple(false), isRemoveable(true), gameObject(_gameObject)
 {
 }
 

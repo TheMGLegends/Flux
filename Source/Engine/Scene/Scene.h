@@ -24,6 +24,8 @@ namespace Flux
 		void LateUpdate(float deltaTime);
 		void FixedUpdate(float fixedDeltaTime);
 
+		inline std::shared_ptr<Camera> GetCamera() const { return camera.expired() ? nullptr : camera.lock(); }
+
 	private:
 		std::vector<std::unique_ptr<GameObject>> gameObjects;
 		std::weak_ptr<Camera> camera;

@@ -16,7 +16,7 @@ namespace Flux
 	class Camera : public Component, public IDebugWireframe
 	{
 	public:
-		Camera();
+		Camera(GameObject* _gameObject);
 		virtual ~Camera() override;
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
@@ -33,6 +33,9 @@ namespace Flux
 
 		inline void SetRotation(const DirectX::SimpleMath::Quaternion& _rotation) { rotation = _rotation; }
 		inline const DirectX::SimpleMath::Quaternion& GetRotation() const { return rotation; }
+
+		inline const std::array<float, 4>& GetBackgroundColour() const { return backgroundColour; }
+		inline bool UseSkybox() const { return useSkybox; }
 
 		void DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection);
 
