@@ -11,6 +11,8 @@ using namespace DirectX::SimpleMath;
 
 Collider::Collider(GameObject* _gameObject) : Component(_gameObject), colliderShape(nullptr), rigidActor(nullptr), isTrigger(false), centre(Vector3::Zero)
 {
+	componentType = ComponentType::Collider;
+
 	GameObject* gameObject = GetGameObject();
 
 	if (!gameObject)

@@ -1,7 +1,6 @@
 #include "EngineRuntime.h"
 
 #include "Core/Time/Time.h"
-#include "Engine/Scene/SceneContext.h"
 
 using namespace Flux;
 
@@ -24,8 +23,6 @@ bool EngineRuntime::PreInitialise()
 bool EngineRuntime::Initialise()
 {
 	// TODO: Initialisation Logic
-
-	SceneContext::SetScene(&scene);
 
 	return true; // INFO: Initialisation Successful
 }

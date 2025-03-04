@@ -8,6 +8,7 @@ using namespace Flux;
 
 Visualizer::Visualizer(GameObject* _gameObject) : Component(_gameObject), model(nullptr), material(nullptr)
 {
+	componentType = ComponentType::Visualizer;
 }
 
 Visualizer::~Visualizer()

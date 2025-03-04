@@ -1,12 +1,15 @@
 #include "Scene.h"
 
+#include "Core/Debug/Debug.h"
 #include "Engine/Entities/GameObject.h"
-#include "Engine/Entities/Components/Camera.h"
+#include "Engine/Scene/SceneContext.h"
 
 using namespace Flux;
 
 Scene::Scene()
 {
+	SceneContext::SetScene(this);
+
 	// TODO: Create a editor camera as well
 
 	// INFO: Create a default play camera
@@ -71,4 +74,15 @@ void Scene::FixedUpdate(float fixedDeltaTime)
 	{
 		gameObjects[i]->FixedUpdate(fixedDeltaTime);
 	}
+}
+
+void Scene::AddComponent(std::weak_ptr<Component> component)
+{
+	if (component.expired())
+	{
+		Debug::LogError("Scene::AddComponent() - Component is expired");
+		return;
+	}
+
+	components[component.lock()->GetComponentType()].push_back(component);
 }

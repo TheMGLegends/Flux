@@ -7,6 +7,7 @@
 #include "Engine/Entities/GameObject.h"
 #include "Engine/Entities/Components/Camera.h"
 #include "Engine/Entities/Components/Transform.h"
+#include "Engine/Entities/Components/Visualizer.h"
 
 using namespace DirectX;
 using namespace Flux;
@@ -174,6 +175,12 @@ void Renderer::RenderFrame(Scene& scene)
 
 	if (camera->UseSkybox())
 		camera->DrawSkybox(*deviceContext.Get(), translation, view, projection);
+
+	for (auto& visualizer : scene.GetComponents<Visualizer>())
+	{
+
+
+	}
 
 	// TODO: Go through all visualizer components and render them
 

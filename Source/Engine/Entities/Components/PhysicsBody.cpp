@@ -8,6 +8,8 @@ using namespace Flux;
 
 PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), rigidActor(nullptr), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
 {
+	componentType = ComponentType::PhysicsBody;
+
 	// INFO: No constraints by default
 	for (size_t i = 0; i < static_cast<size_t>(ConstraintAxis::Count); ++i)
 	{

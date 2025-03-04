@@ -10,6 +10,7 @@
 #include "Components/Transform.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/EventSystem/Events/ComponentRemovedEvent.h"
+#include "Engine/Scene/SceneContext.h"
 
 namespace Flux
 {
@@ -99,7 +100,7 @@ namespace Flux
 		components.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
 		std::weak_ptr<T> newComponent = std::dynamic_pointer_cast<T>(components.back());
 
-		// TODO: Add component to the component handler
+		SceneContext::GetScene().AddComponent(newComponent);
 
 		return std::dynamic_pointer_cast<T>(components.back());
 	}

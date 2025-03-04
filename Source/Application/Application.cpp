@@ -15,7 +15,6 @@
 #include "assimp/scene.h"
 #include <assimp/postprocess.h>
 #include "Core/Renderer/Model.h"
-#include "Engine/Scene/SceneContext.h"
 
 using namespace Flux;
 
@@ -55,8 +54,6 @@ Application::Application() : window(nullptr), isRunning(false)
 
 	editorRuntime.Initialise();
 	engineRuntime.Initialise();
-
-	SceneContext::GetScene();
 
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::Quit, this);

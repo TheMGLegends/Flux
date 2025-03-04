@@ -15,6 +15,8 @@ Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quate
 									      nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(16.0f / 9.0f), backgroundColour({ 1.0f, 1.0f, 1.0f, 0.0f }), 
 										  skyboxMaterial(nullptr), skyboxModel(nullptr), useSkybox(false)
 {
+	componentType = ComponentType::Camera;
+
 	transform = GetGameObject()->GetComponent<Transform>();
 
 	if (transform.expired())

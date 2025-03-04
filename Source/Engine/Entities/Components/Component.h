@@ -2,6 +2,8 @@
 
 #include "Engine/Interfaces/ISerializable.h"
 
+#include "ComponentTypes.h"
+
 namespace Flux
 {
 	class GameObject;
@@ -25,6 +27,8 @@ namespace Flux
 		inline bool CanHaveMultiple() const { return canHaveMultiple; }
 		inline bool IsRemoveable() const { return isRemoveable; }
 
+		inline ComponentType GetComponentType() const { return componentType; }
+
 	private:
 		inline void SetGameObject(GameObject* _gameObject) { gameObject = _gameObject; }
 
@@ -32,6 +36,8 @@ namespace Flux
 		bool isActive;
 		bool canHaveMultiple;
 		bool isRemoveable;
+
+		ComponentType componentType;
 
 	private:
 		GameObject* gameObject;

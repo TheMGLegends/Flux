@@ -5,6 +5,7 @@ using namespace DirectX::SimpleMath;
 
 Transform::Transform(GameObject* _gameObject) : Component(_gameObject), position(Vector3::Zero), rotation(Quaternion::Identity), scale(Vector3::One)
 {
+	componentType = ComponentType::Transform;
 	isRemoveable = false;
 }
 

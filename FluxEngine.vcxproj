@@ -184,6 +184,8 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\Engine\Entities\Components\Components.h" />
+    <ClInclude Include="Source\Engine\Entities\Components\ComponentTypes.h" />
     <ClInclude Include="Source\Engine\Scene\SceneContext.h" />
     <ClInclude Include="Source\Core\Configs\EngineConfig.h" />
     <ClInclude Include="Source\Core\Configs\RendererConfig.h" />
