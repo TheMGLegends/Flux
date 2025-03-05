@@ -9,11 +9,12 @@ namespace Flux::DirectXConfig
 		Unlit
 	};
 
+	/// @brief Represents both the vertex and pixel shader types
 	enum class ShaderType
 	{
 		None = 0,
 
-		Unlit, // INFO: Both Vertex and Pixel Shader
+		Unlit,
 		Skybox
 	};
 
