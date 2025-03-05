@@ -7,18 +7,6 @@
 
 namespace Flux
 {
-	struct ConstantBufferData
-	{
-	public:
-		ConstantBufferData() : constantBufferType(DirectXConfig::ConstantBufferType::None), buffer(nullptr) {}
-		ConstantBufferData(DirectXConfig::ConstantBufferType _constantBufferType, ID3D11Buffer* _buffer) : constantBufferType(_constantBufferType),
-			buffer(_buffer) {}
-
-	public:
-		DirectXConfig::ConstantBufferType constantBufferType;
-		ID3D11Buffer* buffer;
-	};
-
 	class Material
 	{
 	public:
@@ -26,17 +14,20 @@ namespace Flux
 			DirectXConfig::CullingModeType cullingModeType, const std::string& textureName);
 		~Material();
 
-		inline ConstantBufferData& GetConstantBufferData() { return constantBufferData; }
+		inline DirectXConfig::ConstantBufferType GetConstantBufferType() const { return constantBufferType; }
+		inline ID3D11Buffer* GetConstantBuffer() const { return constantBuffer; }
+
 		inline void SetTexture(ID3D11ShaderResourceView* _texture) { texture = _texture; }
 
 		void Bind(ID3D11DeviceContext& deviceContext);
 
 	private:
-		ID3D11VertexShader* vertexShader;
-		ID3D11PixelShader* pixelShader;
-		ID3D11InputLayout* inputLayout;
+		ID3D11VertexShader* vertexShader; // INFO: Populated by AssetHandler from ShaderData
+		ID3D11PixelShader* pixelShader; // INFO: Populated by AssetHandler from ShaderData
+		ID3D11InputLayout* inputLayout; // INFO: Populated by AssetHandler from ShaderData
 
-		ConstantBufferData constantBufferData;
+		DirectXConfig::ConstantBufferType constantBufferType; // INFO: Populated by AssetHandler from ConstantBufferData
+		ID3D11Buffer* constantBuffer; // INFO: Populated by AssetHandler from ConstantBufferData
 
 		ID3D11DepthStencilState* depthWrite;
 		ID3D11RasterizerState* cullingMode;

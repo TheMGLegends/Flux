@@ -196,15 +196,13 @@ void Renderer::RenderFrame(Scene& scene)
 
 		DirectX::XMMATRIX world = transform->GetWorldMatrix();
 
-		ConstantBufferData& constantBufferData = material.GetConstantBufferData();
-
-		switch (constantBufferData.constantBufferType)
+		switch (material.GetConstantBufferType())
 		{
 		case ConstantBufferType::Unlit:
 		{
 			UnlitVS unlitVS{};
 			unlitVS.wvp = world * translation * view * projection;
-			deviceContext->UpdateSubresource(constantBufferData.buffer, 0, nullptr, &unlitVS, 0, 0);
+			deviceContext->UpdateSubresource(material.GetConstantBuffer(), 0, nullptr, &unlitVS, 0, 0);
 
 			break;
 		}

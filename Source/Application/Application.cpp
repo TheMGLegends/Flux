@@ -8,6 +8,7 @@
 
 #include "Core/Debug/Debug.h"
 #include "Core/Input/Input.h"
+#include "Core/Renderer/AssetHandler.h"
 #include "Core/Time/Time.h"
 
 // TODO: TESTING INCLUDES
@@ -47,6 +48,11 @@ Application::Application() : window(nullptr), isRunning(false)
 	if (FAILED(renderer.Initialise(GetWindowHandle(), /*TODO: Temporary*/Viewport(0.0f, 0.0f, (float)EngineConfig::windowWidth, (float)EngineConfig::windowHeight, 0.0f, 1.0f))))
 	{
 		Debug::LogError("Application::Application() - Failed to initialise Renderer");
+	}
+
+	if (FAILED(AssetHandler::Initialise(renderer.GetDevice(), renderer.GetDeviceContext())))
+	{
+		Debug::LogError("Application::Application() - Failed to initialise Asset Handler");
 	}
 
 	editorRuntime.PreInitialise();

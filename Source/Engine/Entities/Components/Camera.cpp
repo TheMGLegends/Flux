@@ -107,10 +107,8 @@ void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMAT
 	UnlitVS skyboxVS{};
 	skyboxVS.wvp = translation * view * projection;
 
-	ConstantBufferData& constantBufferData = skyboxMaterial->GetConstantBufferData();
-
-	if (constantBufferData.constantBufferType == ConstantBufferType::Unlit)
-		deviceContext.UpdateSubresource(constantBufferData.buffer, 0, nullptr, &skyboxVS, 0, 0);
+	if (skyboxMaterial->GetConstantBufferType() == ConstantBufferType::Unlit)
+		deviceContext.UpdateSubresource(skyboxMaterial->GetConstantBuffer(), 0, nullptr, &skyboxVS, 0, 0);
 
 	skyboxMaterial->Bind(deviceContext);
 	skyboxModel->Draw(deviceContext);

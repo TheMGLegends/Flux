@@ -144,6 +144,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Renderer\AssetHandler.cpp" />
     <ClCompile Include="Source\Engine\Scene\SceneContext.cpp" />
     <ClCompile Include="Source\Engine\Scene\Scene.cpp" />
     <ClCompile Include="Source\Core\Renderer\Model.cpp" />
@@ -183,8 +184,11 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Renderer\AssetHandler.h" />
     <ClInclude Include="Source\Core\EventSystem\Events\GameObjectRemovedEvent.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\Core\Renderer\ConstantBufferData.h" />
+    <ClInclude Include="Source\Core\Renderer\ShaderData.h" />
     <ClInclude Include="Source\Engine\Entities\Components\Components.h" />
     <ClInclude Include="Source\Engine\Entities\Components\ComponentTypes.h" />
     <ClInclude Include="Source\Engine\Scene\SceneContext.h" />

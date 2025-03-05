@@ -28,8 +28,8 @@ void Material::Bind(ID3D11DeviceContext& deviceContext)
 	if (pixelShader)
 		deviceContext.PSSetShader(pixelShader, nullptr, 0);
 
-	if (constantBufferData.buffer)
-		deviceContext.VSSetConstantBuffers(0, 1, &constantBufferData.buffer);
+	if (constantBuffer)
+		deviceContext.VSSetConstantBuffers(0, 1, &constantBuffer);
 
 	if (depthWrite)
 		deviceContext.OMSetDepthStencilState(depthWrite, 0);
