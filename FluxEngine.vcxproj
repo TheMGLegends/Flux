@@ -184,6 +184,8 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Configs\FiletypeConfig.h" />
+    <ClInclude Include="Source\Core\Helpers\StringHelpers.h" />
     <ClInclude Include="Source\Core\Renderer\AssetHandler.h" />
     <ClInclude Include="Source\Core\EventSystem\Events\GameObjectRemovedEvent.h" />
     <ClInclude Include="resource.h" />

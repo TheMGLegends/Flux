@@ -11,12 +11,6 @@
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Time/Time.h"
 
-// TODO: TESTING INCLUDES
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include <assimp/postprocess.h>
-#include "Core/Renderer/Model.h"
-
 using namespace Flux;
 
 Application::Application() : window(nullptr), isRunning(false)
@@ -63,17 +57,6 @@ Application::Application() : window(nullptr), isRunning(false)
 
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::Quit, this);
-
-	// TODO: TESTING CODE
-	Assimp::Importer importer;
-
-	const aiScene* yep = importer.ReadFile("Assets/Models/Cube.obj", aiProcessPreset_TargetRealtime_MaxQuality);
-
-	if (yep)
-	{
-		Model cube;
-		cube.Initialise(renderer.GetDevice(), renderer.GetDeviceContext(), yep, "Cube");
-	}
 
 	isRunning = true;
 }

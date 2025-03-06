@@ -6,17 +6,7 @@
 
 using namespace Flux;
 
-Model::Model()
-{
-}
-
-Model::~Model()
-{
-	vertices.clear();
-	indices.clear();
-}
-
-void Model::Initialise(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, const std::string& _modelName)
+Model::Model(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, const std::string& _modelName)
 {
 	if (!modelData)
 	{
@@ -119,6 +109,12 @@ void Model::Initialise(ID3D11Device& device, ID3D11DeviceContext& deviceContext,
 		Debug::LogError("Model::Initialise() - Failed to create index buffer");
 		return;
 	}
+}
+
+Model::~Model()
+{
+	vertices.clear();
+	indices.clear();
 }
 
 void Model::Draw(ID3D11DeviceContext& deviceContext)

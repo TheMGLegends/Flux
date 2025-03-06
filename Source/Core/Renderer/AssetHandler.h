@@ -12,6 +12,9 @@
 #include "ShaderData.h"
 #include "Core/Configs/DirectXConfig.h"
 
+// TODO: With this knowledge I can forward declare everything
+namespace Assimp { class Importer; }
+
 namespace Flux
 {
 	class Material;
@@ -30,11 +33,10 @@ namespace Flux
 		/// @brief Loads core assets as well as assets from the specified directory
 		static HRESULT LoadAssets(const std::filesystem::path& assetDirectory);
 
-		// TODO: Loading Fonts Maybe use the 3rd party library for this and convert it to usable/storable format
-		static HRESULT LoadFont(const std::filesystem::path& fontPath);
+		// TODO: Get rid of the FreeType font library and use SpriteFont instead
+		static bool LoadFont(const std::filesystem::path& fontPath); // INFO: SpriteFont for UI text rendering (ImGui Fonts are not stored/loaded here)
 		static HRESULT LoadTexture(const std::filesystem::path& texturePath);
-		// TODO: Model loading is inside model class itself, maybe take it out and put it in here instead so that the model is just a container for the data
-		static HRESULT LoadModel(const std::filesystem::path& modelPath);
+		static bool LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer);
 
 		// TODO: Getters
 

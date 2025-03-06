@@ -289,6 +289,12 @@
     <ClInclude Include="Source\Core\Renderer\ReadData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\Helpers\StringHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Configs\FiletypeConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Vendors\imgui\debuggers\imgui.natvis" />

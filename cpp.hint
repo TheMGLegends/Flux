@@ -2,3 +2,7 @@
 // such as names of functions and macros.
 // For more information see https://go.microsoft.com/fwlink/?linkid=865984
 #define SDL_INIT_VIDEO
+#define E_FAIL _HRESULT_TYPEDEF_(0x80004005L)
+#define E_FAIL _HRESULT_TYPEDEF_(0x80000008L)
+#define FAILED(hr) (((HRESULT)(hr)) < 0)
+#define S_OK ((HRESULT)0L)

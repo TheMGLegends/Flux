@@ -1,14 +1,21 @@
 #include "AssetHandler.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <DDSTextureLoader.h>
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
 #include <magic_enum.hpp>
+#include <WICTextureLoader.h>
 
 #include "ConstantBuffers.h"
 #include "Material.h"
 #include "Model.h"
 #include "ReadData.h"
+#include "Core/Configs/FiletypeConfig.h"
 #include "Core/Debug/Debug.h"
+#include "Core/Helpers/StringHelpers.h"
 
 using namespace Flux;
 using namespace Flux::DirectXConfig;
@@ -43,7 +50,137 @@ HRESULT AssetHandler::LoadAssets(const std::filesystem::path& assetDirectory)
 {
 	// TODO: Load Assets from the specified directory (Textures, Models etc.)
 
+	// TODO: When loading Models, create a local Assimp::Importer and pass it to each function call
+
 	return S_OK;
+}
+
+bool AssetHandler::LoadFont(const std::filesystem::path& fontPath)
+{
+	if (FAILED(VerifyDeviceAndContext()))
+	{
+		Debug::LogError("AssetHandler::LoadFont() - Unable to load font, see above error codes");
+		return false;
+	}
+
+	auto& deviceRef = device->get();
+
+	if (!fontPath.has_extension())
+	{
+		Debug::LogError("AssetHandler::LoadFont() - Font path does not have an extension. Filepath: " + fontPath.string());
+		return false;
+	}
+
+	// INFO: Ensure .spritefont extension
+	if (fontPath.has_extension())
+	{
+		std::string extensionType = StringHelpers::ToLower(fontPath.extension().string());
+
+		if (extensionType != FiletypeConfig::SPRITEFONT)
+		{
+			Debug::LogError("AssetHandler::LoadFont() - Font path is not a .spritefont file. Filepath: " + fontPath.string());
+			return false;
+		}
+	}
+
+	std::unique_ptr<DirectX::SpriteFont> font = std::make_unique<DirectX::SpriteFont>(&deviceRef, fontPath.c_str());
+
+	if (!font)
+	{
+		Debug::LogError("AssetHandler::LoadFont() - Failed to create font. Filepath: " + fontPath.string());
+		return false;
+	}
+
+	if (!fonts.insert({ fontPath.stem().string(), std::move(font) }).second)
+	{
+		Debug::LogError("AssetHandler::LoadFont() - Failed to insert font into map. Filepath: " + fontPath.string());
+		return false;
+	}
+
+	return false;
+}
+
+HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
+{
+	HRESULT hResult = S_OK;
+
+	if (FAILED(VerifyDeviceAndContext(true)))
+	{
+		Debug::LogError("AssetHandler::LoadTexture() - Unable to load texture, see above error codes");
+		return E_FAIL;
+	}
+
+	auto& deviceRef = device->get();
+	auto& deviceContextRef = deviceContext->get();
+
+	if (!texturePath.has_extension())
+	{
+		Debug::LogError("AssetHandler::LoadTexture() - Texture path does not have an extension. Filepath: " + texturePath.string());
+		return E_FAIL;
+	}
+
+	ComPtr<ID3D11ShaderResourceView> texture;
+
+	if (texturePath.has_extension())
+	{
+		std::string extensionType = StringHelpers::ToLower(texturePath.extension().string());
+
+		// INFO: DDS Mainly used for Skybox Textures
+		if (extensionType == FiletypeConfig::DDS)
+			hResult = DirectX::CreateDDSTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
+		else
+			hResult = DirectX::CreateWICTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
+	}
+
+	if (FAILED(hResult))
+	{
+		Debug::LogError("AssetHandler::LoadTexture() - Failed to create texture. Filepath: " + texturePath.string());
+		return hResult;
+	}
+
+	if (!textures.insert({ texturePath.stem().string(), std::move(texture) }).second)
+	{
+		Debug::LogError("AssetHandler::LoadTexture() - Failed to insert texture into map. Filepath: " + texturePath.string());
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+bool AssetHandler::LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer)
+{
+	if (FAILED(VerifyDeviceAndContext(true)))
+	{
+		Debug::LogError("AssetHandler::LoadModel() - Unable to load model, see above error codes");
+		return false;
+	}
+
+	auto& deviceRef = device->get();
+	auto& deviceContextRef = deviceContext->get();
+
+	const aiScene* scene = importer.ReadFile(modelPath.string(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+
+	if (!scene)
+	{
+		Debug::LogError("AssetHandler::LoadModel() - Failed to load model. Filepath: " + modelPath.string());
+		return false;
+	}
+
+	std::unique_ptr<Model> model = std::make_unique<Model>(deviceRef, deviceContextRef, scene, modelPath.stem().string());
+
+	if (!model)
+	{
+		Debug::LogError("AssetHandler::LoadModel() - Failed to create model. Filepath: " + modelPath.string());
+		return false;
+	}
+
+	if (!models.insert({ modelPath.stem().string(), std::move(model) }).second)
+	{
+		Debug::LogError("AssetHandler::LoadModel() - Failed to insert model into map. Filepath: " + modelPath.string());
+		return false;
+	}
+
+	return true;
 }
 
 HRESULT AssetHandler::LoadShaders(ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath)
@@ -258,7 +395,7 @@ HRESULT AssetHandler::LoadDepthWriteState(DepthWriteType depthWriteType)
 		return hResult;
 	}
 
-	if (!depthWriteStates.insert({ depthWriteType, depthStencilState }).second)
+	if (!depthWriteStates.insert({ depthWriteType, std::move(depthStencilState) }).second)
 	{
 		Debug::LogError("AssetHandler::LoadDepthWriteState() - Failed to insert depth write state into map. Depth Write Type: " + std::string(magic_enum::enum_name(depthWriteType)));
 		return E_FAIL;
@@ -316,7 +453,7 @@ HRESULT AssetHandler::LoadCullingModeState(CullingModeType cullingModeType)
 		return hResult;
 	}
 
-	if (!cullingModeStates.insert({ cullingModeType, rasterizerState }).second)
+	if (!cullingModeStates.insert({ cullingModeType, std::move(rasterizerState) }).second)
 	{
 		Debug::LogError("AssetHandler::LoadCullingModeState() - Failed to insert culling mode state into map. Culling Mode Type: " + std::string(magic_enum::enum_name(cullingModeType)));
 		return E_FAIL;

@@ -28,10 +28,9 @@ namespace Flux
 		};
 
 	public:
-		Model();
+		Model(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, const std::string& _modelName);
 		~Model();
 
-		void Initialise(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, const std::string& _modelName);
 		void Draw(ID3D11DeviceContext& deviceContext);
 
 		inline const std::string& GetModelName() const { return modelName; }
