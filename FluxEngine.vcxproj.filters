@@ -286,6 +286,9 @@
     <ClInclude Include="Source\Core\Renderer\ShaderData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\Renderer\ReadData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Vendors\imgui\debuggers\imgui.natvis" />

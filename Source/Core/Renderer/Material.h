@@ -10,7 +10,8 @@ namespace Flux
 	class Material
 	{
 	public:
-		Material(DirectXConfig::ShaderType shaderType, DirectXConfig::ConstantBufferType constantBufferType, DirectXConfig::DepthWriteType depthWriteType,
+		Material() = default;
+		Material(DirectXConfig::ShaderType shaderType, DirectXConfig::ConstantBufferType _constantBufferType, DirectXConfig::DepthWriteType depthWriteType,
 			DirectXConfig::CullingModeType cullingModeType, const std::string& textureName);
 		~Material();
 

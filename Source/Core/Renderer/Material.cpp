@@ -5,10 +5,7 @@
 using namespace Flux;
 using namespace Flux::DirectXConfig;
 
-Material::Material(ShaderType shaderType, ConstantBufferType constantBufferType, DepthWriteType depthWriteType, 
-	               CullingModeType cullingModeType, const std::string& textureName) : vertexShader(nullptr), pixelShader(nullptr), 
-																					  inputLayout(nullptr), depthWrite(nullptr), 
-																				      cullingMode(nullptr), texture(nullptr), sampler(nullptr)
+Material::Material(ShaderType shaderType, ConstantBufferType _constantBufferType, DepthWriteType depthWriteType, CullingModeType cullingModeType, const std::string& textureName)
 {
 	// TODO: Asset Handler to load all things
 }

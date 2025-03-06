@@ -36,13 +36,17 @@ namespace Flux
 		// TODO: Model loading is inside model class itself, maybe take it out and put it in here instead so that the model is just a container for the data
 		static HRESULT LoadModel(const std::filesystem::path& modelPath);
 
+		// TODO: Getters
+
 	private:
-		static HRESULT LoadShaders(const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath);
-		static HRESULT LoadConstantBuffers();
-		static HRESULT LoadDepthWriteStates();
-		static HRESULT LoadCullingModeStates();
+		static HRESULT LoadShaders(DirectXConfig::ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath);
+		static HRESULT LoadConstantBuffer(DirectXConfig::ConstantBufferType constantBufferType);
+		static HRESULT LoadDepthWriteState(DirectXConfig::DepthWriteType depthWriteType);
+		static HRESULT LoadCullingModeState(DirectXConfig::CullingModeType cullingModeType);
 		static HRESULT LoadSamplerState();
-		static HRESULT LoadMaterials();
+		static bool LoadMaterial(DirectXConfig::ShaderType shaderType);
+
+		static HRESULT VerifyDeviceAndContext(bool verifyContext = false);
 
 	private:
 		static std::optional<std::reference_wrapper<ID3D11Device>> device;
