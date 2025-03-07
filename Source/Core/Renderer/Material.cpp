@@ -1,13 +1,29 @@
 #include "Material.h"
 
 #include "Core/Debug/Debug.h"
+#include "Core/Renderer/AssetHandler.h"
+#include "Core/Renderer/ConstantBufferData.h"
+#include "Core/Renderer/ShaderData.h"
+
 
 using namespace Flux;
 using namespace Flux::DirectXConfig;
 
 Material::Material(ShaderType shaderType, ConstantBufferType _constantBufferType, DepthWriteType depthWriteType, CullingModeType cullingModeType, const std::string& textureName)
 {
-	// TODO: Asset Handler to load all things
+	ShaderData& shaderData = AssetHandler::GetShaderData(shaderType);
+	vertexShader = shaderData.GetVertexShader();
+	pixelShader = shaderData.GetPixelShader();
+	inputLayout = shaderData.GetInputLayout();
+
+	ConstantBufferData& constantBufferData = AssetHandler::GetConstantBufferData(_constantBufferType);
+	constantBuffer = constantBufferData.GetConstantBuffer();
+	constantBufferType = constantBufferData.GetConstantBufferType();
+
+	depthWrite = AssetHandler::GetDepthWriteState(depthWriteType);
+	cullingMode = AssetHandler::GetCullingModeState(cullingModeType);
+
+	texture = AssetHandler::GetTexture(textureName);
 }
 
 Material::~Material()

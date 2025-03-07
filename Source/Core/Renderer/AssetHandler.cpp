@@ -41,7 +41,23 @@ HRESULT AssetHandler::Initialise(ID3D11Device& _device, ID3D11DeviceContext& _de
 	device = _device;
 	deviceContext = _deviceContext;
 
-	// TODO: Load Required Assets (Shaders, Culling Modes, Depth Writes etc.)
+	// INFO: Load Default Assets
+	LoadShaders(ShaderType::Unlit, "CompiledShaders/UnlitVertexShader.cso", "CompiledShaders/UnlitPixelShader.cso");
+	LoadShaders(ShaderType::Skybox, "CompiledShaders/SkyboxVertexShader.cso", "CompiledShaders/SkyboxPixelShader.cso");
+
+	LoadConstantBuffer(ConstantBufferType::Unlit);
+
+	LoadDepthWriteState(DepthWriteType::Enabled);
+	LoadDepthWriteState(DepthWriteType::Disabled);
+
+	LoadCullingModeState(CullingModeType::FrontSolid);
+	LoadCullingModeState(CullingModeType::BackSolid);
+
+	LoadSamplerState();
+
+	LoadMaterial(ShaderType::Unlit);
+	LoadMaterial(ShaderType::Skybox);
+
 
 	return S_OK;
 }
@@ -181,6 +197,16 @@ bool AssetHandler::LoadModel(const std::filesystem::path& modelPath, Assimp::Imp
 	}
 
 	return true;
+}
+
+Model* AssetHandler::GetModel(const std::string& modelName)
+{
+	return models[modelName].get();
+}
+
+Material* AssetHandler::GetMaterial(DirectXConfig::ShaderType shaderType)
+{
+	return materials[shaderType].get();
 }
 
 HRESULT AssetHandler::LoadShaders(ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath)

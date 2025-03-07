@@ -405,7 +405,7 @@ FodyWeavers.xsd
 # Allow all .lib files in Vendors folder
 !Vendors/*.lib
 !Vendors/**
-/Compiled Shaders/SkyboxPixelShader.cso
-/Compiled Shaders/SkyboxVertexShader.cso
-/Compiled Shaders/UnlitPixelShader.cso
-/Compiled Shaders/UnlitVertexShader.cso
+/CompiledShaders/SkyboxPixelShader.cso
+/CompiledShaders/SkyboxVertexShader.cso
+/CompiledShaders/UnlitPixelShader.cso
+/CompiledShaders/UnlitVertexShader.cso

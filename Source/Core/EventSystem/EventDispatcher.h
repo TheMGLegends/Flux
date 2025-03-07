@@ -1,11 +1,11 @@
 #pragma once
 
-#include "EventTypes.h"
-
 #include <memory>
 #include <queue>
 #include <unordered_map>
 #include <vector>
+
+#include "EventTypes.h"
 
 namespace Flux
 {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Core/EventSystem/EventDispatcher.h"
-
 namespace Flux
 {
 	class Runtime

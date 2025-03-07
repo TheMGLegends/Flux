@@ -7,8 +7,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Engine/Entities/Components/ComponentTypes.h"
 #include "Engine/Entities/Components/Components.h"
+#include "Engine/Entities/Components/ComponentTypes.h"
 
 namespace Flux
 {

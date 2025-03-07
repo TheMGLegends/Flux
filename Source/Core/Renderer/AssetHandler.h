@@ -12,7 +12,6 @@
 #include "ShaderData.h"
 #include "Core/Configs/DirectXConfig.h"
 
-// TODO: With this knowledge I can forward declare everything
 namespace Assimp { class Importer; }
 
 namespace Flux
@@ -38,7 +37,18 @@ namespace Flux
 		static HRESULT LoadTexture(const std::filesystem::path& texturePath);
 		static bool LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer);
 
-		// TODO: Getters
+
+		// INFO: Getters
+
+		static inline ShaderData& GetShaderData(DirectXConfig::ShaderType shaderType) { return shaders[shaderType]; }
+		static inline ConstantBufferData& GetConstantBufferData(DirectXConfig::ConstantBufferType constantBufferType) { return constantBuffers[constantBufferType]; }
+		static inline ID3D11DepthStencilState* GetDepthWriteState(DirectXConfig::DepthWriteType depthWriteType) { return depthWriteStates[depthWriteType].Get(); }
+		static inline ID3D11RasterizerState* GetCullingModeState(DirectXConfig::CullingModeType cullingModeType) { return cullingModeStates[cullingModeType].Get(); }
+		static inline ID3D11SamplerState* GetSamplerState() { return samplerState.Get(); }
+		static inline DirectX::SpriteFont* GetFont(const std::string& fontName) { return fonts[fontName].get(); }
+		static inline ID3D11ShaderResourceView* GetTexture(const std::string& textureName) { return textures[textureName].Get(); }
+		static Model* GetModel(const std::string& modelName);
+		static Material* GetMaterial(DirectXConfig::ShaderType shaderType);
 
 	private:
 		static HRESULT LoadShaders(DirectXConfig::ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath);
@@ -65,9 +75,6 @@ namespace Flux
 		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textures;
 		static std::unordered_map<std::string, std::unique_ptr<Model>> models;
 		static std::unordered_map<DirectXConfig::ShaderType, std::unique_ptr<Material>> materials;
-
-		// TODO: Maybe key should be something else like filesystem::path or part of it for the ones with std::string as key
-
 	};
 }
 

@@ -6,8 +6,6 @@
 
 namespace Flux
 {
-	class Scene;
-
 	class EngineRuntime : public Runtime
 	{
 	public:

@@ -7,6 +7,7 @@
 #include "Core/Configs/TimeConfig.h"
 
 #include "Core/Debug/Debug.h"
+#include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Input/Input.h"
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Time/Time.h"

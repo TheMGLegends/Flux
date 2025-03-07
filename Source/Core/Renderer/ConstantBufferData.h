@@ -18,7 +18,7 @@ namespace Flux
 		~ConstantBufferData() = default;
 
 		inline DirectXConfig::ConstantBufferType GetConstantBufferType() const { return constantBufferType; }
-		inline ID3D11Buffer* GetBuffer() { return buffer.Get(); }
+		inline ID3D11Buffer* GetConstantBuffer() { return buffer.Get(); }
 
 	public:
 		static const ConstantBufferData EMPTY;

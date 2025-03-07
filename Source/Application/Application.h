@@ -4,7 +4,6 @@
 
 #include "Runtimes/EditorRuntime.h"
 #include "Runtimes/EngineRuntime.h"
-#include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Renderer/Renderer.h"
 
 struct SDL_Window;
