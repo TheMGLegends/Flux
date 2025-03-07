@@ -27,9 +27,10 @@ namespace Flux
 		AssetHandler(const AssetHandler&) = delete;
 		AssetHandler& operator=(const AssetHandler&) = delete;
 
+		/// @brief Initialises all core assets
 		static HRESULT Initialise(ID3D11Device& _device, ID3D11DeviceContext& _deviceContext);
 
-		/// @brief Loads core assets as well as assets from the specified directory
+		/// @brief Loads assets from the specified directory
 		static HRESULT LoadAssets(const std::filesystem::path& assetDirectory);
 
 		// TODO: Get rid of the FreeType font library and use SpriteFont instead

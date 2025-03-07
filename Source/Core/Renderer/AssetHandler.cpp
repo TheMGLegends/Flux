@@ -17,6 +17,8 @@
 #include "Core/Debug/Debug.h"
 #include "Core/Helpers/StringHelpers.h"
 
+constexpr const char* const ASSET_DIRECTORY = "Assets";
+
 using namespace Flux;
 using namespace Flux::DirectXConfig;
 using namespace Microsoft::WRL;
@@ -42,31 +44,63 @@ HRESULT AssetHandler::Initialise(ID3D11Device& _device, ID3D11DeviceContext& _de
 	deviceContext = _deviceContext;
 
 	// INFO: Load Default Assets
-	LoadShaders(ShaderType::Unlit, "CompiledShaders/UnlitVertexShader.cso", "CompiledShaders/UnlitPixelShader.cso");
-	LoadShaders(ShaderType::Skybox, "CompiledShaders/SkyboxVertexShader.cso", "CompiledShaders/SkyboxPixelShader.cso");
+	if (FAILED(LoadShaders(ShaderType::Unlit, "CompiledShaders/UnlitVertexShader.cso", "CompiledShaders/UnlitPixelShader.cso"))) return E_FAIL;
+	if (FAILED(LoadShaders(ShaderType::Skybox, "CompiledShaders/SkyboxVertexShader.cso", "CompiledShaders/SkyboxPixelShader.cso"))) return E_FAIL;
 
-	LoadConstantBuffer(ConstantBufferType::Unlit);
+	if (FAILED(LoadConstantBuffer(ConstantBufferType::Unlit))) return E_FAIL;
 
-	LoadDepthWriteState(DepthWriteType::Enabled);
-	LoadDepthWriteState(DepthWriteType::Disabled);
+	if (FAILED(LoadDepthWriteState(DepthWriteType::Enabled))) return E_FAIL;
+	if (FAILED(LoadDepthWriteState(DepthWriteType::Disabled))) return E_FAIL;
 
-	LoadCullingModeState(CullingModeType::FrontSolid);
-	LoadCullingModeState(CullingModeType::BackSolid);
+	if (FAILED(LoadCullingModeState(CullingModeType::FrontSolid))) return E_FAIL;
+	if (FAILED(LoadCullingModeState(CullingModeType::BackSolid))) return E_FAIL;
 
-	LoadSamplerState();
+	if (FAILED(LoadSamplerState())) return E_FAIL;
 
-	LoadMaterial(ShaderType::Unlit);
-	LoadMaterial(ShaderType::Skybox);
+	LoadAssets(ASSET_DIRECTORY);
 
+	if (!LoadMaterial(ShaderType::Unlit)) return E_FAIL;
+	if (!LoadMaterial(ShaderType::Skybox)) return E_FAIL;
+
+	// TODO: Get textures for DefaultTexture and DefaultSkybox into the Assets folder
 
 	return S_OK;
 }
 
 HRESULT AssetHandler::LoadAssets(const std::filesystem::path& assetDirectory)
 {
-	// TODO: Load Assets from the specified directory (Textures, Models etc.)
+	Assimp::Importer importer;
 
-	// TODO: When loading Models, create a local Assimp::Importer and pass it to each function call
+	// INFO: Go through all files and subdirectories in the specified directory and load assets
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(assetDirectory))
+	{
+		// INFO: Don't bother with checking directories (Folders)
+		if (entry.is_regular_file())
+		{
+			std::string extensionType = StringHelpers::ToLower(entry.path().extension().string());
+
+			// INFO: Font Loading
+			if (extensionType == FiletypeConfig::SPRITEFONT)
+			{
+				if (!LoadFont(entry.path())) return E_FAIL;
+				continue;
+			}
+
+			// INFO: Texture Loading
+			if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
+			{
+				if (FAILED(LoadTexture(entry.path()))) return E_FAIL;
+				continue;
+			}
+
+			// INFO: Model Loading
+			if (FiletypeConfig::IsSupportedModelFormat(extensionType))
+			{
+				if (!LoadModel(entry.path(), importer)) return E_FAIL;
+				continue;
+			}
+		}
+	}
 
 	return S_OK;
 }
