@@ -27,7 +27,7 @@ void SphereCollider::Deserialize(const nlohmann::ordered_json& json)
 	// TODO: Deserialize SphereCollider
 }
 
-void SphereCollider::DrawWireframe(ID3D11DeviceContext& deviceContext)
+void SphereCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 {
 	// TODO: Debug Draw Sphere Collider Wireframe
 }

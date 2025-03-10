@@ -154,6 +154,38 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 		return E_FAIL;
 	}
 
+	// INFO: Create the resources needed for the debug wireframe rendering
+	batchEffect = std::make_unique<BasicEffect>(device.Get());
+
+	if (!batchEffect)
+	{
+		Debug::LogError("Renderer::Initialise() - Failed to create Basic Effect");
+		return E_FAIL;
+	}
+
+	batchEffect->SetVertexColorEnabled(true);
+
+	primitiveBatch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(deviceContext.Get());
+
+	if (!primitiveBatch)
+	{
+		Debug::LogError("Renderer::Initialise() - Failed to create Primitive Batch");
+		return E_FAIL;
+	}
+
+	const void* vertexShaderBytecode = nullptr;
+	size_t vertexShaderBytecodeLength = 0;
+	batchEffect->GetVertexShaderBytecode(&vertexShaderBytecode, &vertexShaderBytecodeLength);
+
+	hResult = device->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount, 
+									    vertexShaderBytecode, vertexShaderBytecodeLength, &batchInputLayout);
+
+	if (FAILED(hResult))
+	{
+		Debug::LogError("Renderer::Initialise() - Failed to create Batch Input Layout");
+		return hResult;
+	}
+
 	return hResult; // INFO: S_OK so long as we've made it this far
 }
 
@@ -214,11 +246,18 @@ void Renderer::RenderFrame(Scene& scene)
 		visualizer->Draw(*deviceContext.Get());
 	}
 
+	// INFO: Render the Debug Wireframes
 	if (RuntimeConfig::IsInEditorMode())
 	{
-		// TODO: Given we are in editor mode, go through all IDebugWireframe and render them
+		batchEffect->Apply(deviceContext.Get());
+		deviceContext->IASetInputLayout(batchInputLayout.Get());
+
+		primitiveBatch->Begin();
+		scene.DrawWireframes(*deviceContext.Get(), *primitiveBatch.get());
+		primitiveBatch->End();
 	}
 
+	// INFO: Render the UI
 	spriteBatch->Begin();
 	// TODO: Render all UI elements (FPS Counter)
 	spriteBatch->End();

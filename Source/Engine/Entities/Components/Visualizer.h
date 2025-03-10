@@ -3,7 +3,7 @@
 #include "Component.h"
 
 #include <d3d11.h>
-#include <filesystem>
+#include <string>
 
 namespace Flux
 {
@@ -19,14 +19,14 @@ namespace Flux
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
-		void SetModel(const std::filesystem::path& _modelPath);
+		void SetModel(const std::string& _modelName);
 		inline Material& GetMaterial() const { return *material; }
 
 		void Draw(ID3D11DeviceContext& deviceContext);
 
 	private:
 		Model* model;
-		std::filesystem::path modelFilepath;
+		std::string modelName;
 		Material* material;
 	};
 }

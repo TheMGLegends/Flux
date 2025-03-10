@@ -13,7 +13,7 @@ namespace Flux
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
-		virtual void DrawWireframe(ID3D11DeviceContext& deviceContext) override;
+		virtual void DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch) override;
 
 		void SetSize(const DirectX::SimpleMath::Vector3& _size);
 		inline const DirectX::SimpleMath::Vector3& GetSize() const { return size; }

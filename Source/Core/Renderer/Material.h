@@ -18,7 +18,7 @@ namespace Flux
 		inline DirectXConfig::ConstantBufferType GetConstantBufferType() const { return constantBufferType; }
 		inline ID3D11Buffer* GetConstantBuffer() const { return constantBuffer; }
 
-		inline void SetTexture(ID3D11ShaderResourceView* _texture) { texture = _texture; }
+		void SetTexture(const std::string& textureName);
 
 		void Bind(ID3D11DeviceContext& deviceContext);
 

@@ -32,7 +32,9 @@ namespace Flux
 		void LateUpdate(float deltaTime);
 		void FixedUpdate(float fixedDeltaTime);
 
-		void AddComponent(std::weak_ptr<Component> component);
+		void DrawWireframes(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch);
+
+		void RegisterComponent(std::weak_ptr<Component> component);
 
 		template<class T>
 		std::vector<std::weak_ptr<T>> GetComponents();
@@ -40,8 +42,19 @@ namespace Flux
 		inline std::shared_ptr<Camera> GetCamera() const { return camera.expired() ? nullptr : camera.lock(); }
 
 	private:
+		struct DebugWireframeData
+		{
+			std::weak_ptr<Component> component;
+			IDebugWireframe* debugWireframe;
+
+			DebugWireframeData(std::weak_ptr<Component> _component, IDebugWireframe* _debugWireframe) : component(_component), debugWireframe(_debugWireframe) {}
+			~DebugWireframeData() = default;
+		};
+
+	private:
 		std::vector<std::unique_ptr<GameObject>> gameObjects;
 		std::unordered_map<ComponentType, std::vector<std::weak_ptr<Component>>> components;
+		std::vector<DebugWireframeData> debugWireframes;
 
 		std::weak_ptr<Camera> camera;
 	};

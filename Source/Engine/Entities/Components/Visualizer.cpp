@@ -1,14 +1,21 @@
 #include "Visualizer.h"
 
+#include "Core/Configs/DirectXConfig.h"
 #include "Core/Debug/Debug.h"
+#include "Core/Renderer/AssetHandler.h"
 #include "Core/Renderer/Material.h"
 #include "Core/Renderer/Model.h"
 
 using namespace Flux;
+using namespace Flux::DirectXConfig;
 
 Visualizer::Visualizer(GameObject* _gameObject) : Component(_gameObject), model(nullptr), material(nullptr)
 {
 	componentType = ComponentType::Visualizer;
+
+	// INFO: Load Default Model & Material 
+	SetModel("Cube");
+	material = AssetHandler::GetMaterial(ShaderType::Unlit);
 }
 
 Visualizer::~Visualizer()
@@ -31,11 +38,17 @@ void Visualizer::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize VisualizerComponent
 }
 
-void Visualizer::SetModel(const std::filesystem::path& _modelPath)
+void Visualizer::SetModel(const std::string& _modelName)
 {
-	// TODO: Check if model already exists, if it doesn't, create a new one and get the reference to it
-	// and its associated material and set the modelFilepath to the _modelPath otherwise get the reference
-	// to the existing model and material and set the modelFilepath to the _modelPath
+	modelName = _modelName;
+
+	model = AssetHandler::GetModel(modelName);
+
+	if (!model)
+	{
+		Debug::LogError("Visualizer::SetModel() - Failed to load Visualizer Model: " + modelName);
+		modelName = "";
+	}
 }
 
 void Visualizer::Draw(ID3D11DeviceContext& deviceContext)

@@ -1,8 +1,11 @@
 #pragma once
 
 #include <d3d11.h>
+#include <Effects.h>
 #include <memory>
+#include <PrimitiveBatch.h>
 #include <SpriteBatch.h>
+#include <VertexTypes.h>
 #include <Windows.h>
 #include <wrl.h>
 
@@ -49,7 +52,17 @@ namespace Flux
 
 		D3D11_VIEWPORT viewport;
 
+
+		// INFO: UI Rendering
+
 		std::unique_ptr<DirectX::SpriteBatch> spriteBatch;
+
+
+		// INFO: Debug Wireframe Rendering
+
+		std::unique_ptr<DirectX::BasicEffect> batchEffect;
+		std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> primitiveBatch;
+		Microsoft::WRL::ComPtr<ID3D11InputLayout> batchInputLayout;
 	};
 }
 

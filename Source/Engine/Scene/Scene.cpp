@@ -1,10 +1,18 @@
 #include "Scene.h"
 
+#include <magic_enum.hpp>
+
 #include "Core/Debug/Debug.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
 #include "Engine/Entities/GameObject.h"
 #include "Engine/Scene/SceneContext.h"
+
+// TODO: TESTING
+#include "Engine/Entities/Components/Visualizer.h"
+#include "Engine/Entities/Components/Colliders/BoxCollider.h"
+#include <SimpleMath.h>
+using namespace DirectX::SimpleMath;
 
 using namespace Flux;
 
@@ -20,6 +28,13 @@ Scene::Scene()
 	// INFO: Create a default play camera
 	gameObjects.emplace_back(std::make_unique<GameObject>());
 	camera = gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
+
+	// TODO: Testing
+	gameObjects.emplace_back(std::make_unique<GameObject>());
+	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
+	auto transform = gameObjects.back().get()->GetComponent<Transform>().lock();
+	transform->SetPosition(Vector3(0.0f, 0.0f, 3.0f));
+	gameObjects.back().get()->AddComponent<BoxCollider>(gameObjects.back().get());
 }
 
 Scene::~Scene()
@@ -74,6 +89,12 @@ void Flux::Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 			    [](std::weak_ptr<Component> component) { return component.expired(); }), 
 			componentList.second.end());
 		}
+
+		// INFO: Remove all now-expired debug wireframes associated with the removed GameObject
+		debugWireframes.erase(
+			std::remove_if(debugWireframes.begin(), debugWireframes.end(),
+			[](const DebugWireframeData& data) { return data.component.expired(); }),
+		debugWireframes.end());
 	}
 }
 
@@ -113,13 +134,53 @@ void Scene::FixedUpdate(float fixedDeltaTime)
 	}
 }
 
-void Scene::AddComponent(std::weak_ptr<Component> component)
+void Flux::Scene::DrawWireframes(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
+{
+	for (size_t i = 0; i < debugWireframes.size(); i++)
+	{
+		if (debugWireframes[i].component.expired())
+			continue;
+
+		auto underlyingComponent = debugWireframes[i].component.lock();
+
+		if (!underlyingComponent->IsActive() || !underlyingComponent->GetGameObject()->IsActive())
+			continue;
+
+		debugWireframes[i].debugWireframe->DrawWireframe(deviceContext, primitiveBatch);
+	}
+}
+
+void Scene::RegisterComponent(std::weak_ptr<Component> component)
 {
 	if (component.expired())
 	{
-		Debug::LogError("Scene::AddComponent() - Component is expired");
+		Debug::LogError("Scene::RegisterComponent() - Component is expired");
 		return;
 	}
 
-	components[component.lock()->GetComponentType()].push_back(component);
+	auto validComponent = component.lock();
+
+	switch (validComponent->GetComponentType())
+	{
+	// INFO: Both inherit from IDebugWireframe
+	case ComponentType::Camera:
+	case ComponentType::Collider:
+	{
+
+		std::weak_ptr<IDebugWireframe> debugWireframe = std::dynamic_pointer_cast<IDebugWireframe>(validComponent);
+
+		if (!debugWireframe.expired())
+		{
+			DebugWireframeData debugWireframeData(component, debugWireframe.lock().get());
+			debugWireframes.push_back(debugWireframeData);
+		}
+		else
+			Debug::LogError("Scene::RegisterComponent() - Component could not be added to IDebugWireframe container. Component Type: " + std::string(magic_enum::enum_name(validComponent->GetComponentType())));
+		break;
+	}
+	default:
+		break;
+	}
+
+	components[validComponent->GetComponentType()].push_back(component);
 }

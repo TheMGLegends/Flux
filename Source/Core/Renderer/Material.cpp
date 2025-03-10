@@ -31,6 +31,14 @@ Material::~Material()
 {
 }
 
+void Flux::Material::SetTexture(const std::string& textureName)
+{
+	texture = AssetHandler::GetTexture(textureName);
+
+	if (!texture)
+		Debug::LogError("Material::SetTexture() - Failed to load Texture: " + textureName);
+}
+
 void Material::Bind(ID3D11DeviceContext& deviceContext)
 {
 	if (inputLayout)

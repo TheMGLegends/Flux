@@ -29,6 +29,9 @@ Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quate
 	SetSkyboxModel("Cube");
 	skyboxMaterial = AssetHandler::GetMaterial(ShaderType::Skybox);
 
+	// TODO: TESTING
+	skyboxMaterial->SetTexture("DebugSkybox");
+
 	// TODO: Retrieve aspect ratio of screen
 }
 
@@ -52,7 +55,7 @@ void Camera::Deserialize(const nlohmann::ordered_json& json)
 	// TODO: Deserialize CameraComponent
 }
 
-void Camera::DrawWireframe(ID3D11DeviceContext& deviceContext)
+void Camera::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 {
 	// TODO: Debug Draw View Frustum
 }
@@ -101,6 +104,9 @@ Vector3 Camera::Up() const
 void Flux::Camera::SetSkyboxModel(const std::string& modelName)
 {
 	skyboxModel = AssetHandler::GetModel(modelName);
+
+	if (!skyboxModel)
+		Debug::LogError("Camera::SetSkyboxModel() - Failed to load Skybox Model: " + modelName);
 }
 
 void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection)
