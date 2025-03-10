@@ -10,7 +10,7 @@
 
 // TODO: TESTING
 #include "Engine/Entities/Components/Visualizer.h"
-#include "Engine/Entities/Components/Colliders/BoxCollider.h"
+#include "Engine/Entities/Components/Colliders/SphereCollider.h"
 #include <SimpleMath.h>
 using namespace DirectX::SimpleMath;
 
@@ -32,9 +32,13 @@ Scene::Scene()
 	// TODO: Testing
 	gameObjects.emplace_back(std::make_unique<GameObject>());
 	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
+	auto visualizer = gameObjects.back().get()->GetComponent<Visualizer>().lock();
+	visualizer->SetModel("Sphere");
 	auto transform = gameObjects.back().get()->GetComponent<Transform>().lock();
-	transform->SetPosition(Vector3(0.0f, 0.0f, 3.0f));
-	gameObjects.back().get()->AddComponent<BoxCollider>(gameObjects.back().get());
+	transform->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
+	gameObjects.back().get()->AddComponent<SphereCollider>(gameObjects.back().get());
+	auto sphereCollider = gameObjects.back().get()->GetComponent<SphereCollider>().lock();
+	sphereCollider->SetRadius(3.0f);
 }
 
 Scene::~Scene()
