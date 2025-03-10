@@ -10,7 +10,7 @@
 
 // TODO: TESTING
 #include "Engine/Entities/Components/Visualizer.h"
-#include "Engine/Entities/Components/Colliders/SphereCollider.h"
+#include "Engine/Entities/Components/Camera.h"
 #include <SimpleMath.h>
 using namespace DirectX::SimpleMath;
 
@@ -28,17 +28,16 @@ Scene::Scene()
 	// INFO: Create a default play camera
 	gameObjects.emplace_back(std::make_unique<GameObject>());
 	camera = gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
+	camera.lock()->SetDrawFrustum(false);
 
 	// TODO: Testing
 	gameObjects.emplace_back(std::make_unique<GameObject>());
 	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
 	auto visualizer = gameObjects.back().get()->GetComponent<Visualizer>().lock();
-	visualizer->SetModel("Sphere");
 	auto transform = gameObjects.back().get()->GetComponent<Transform>().lock();
-	transform->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
-	gameObjects.back().get()->AddComponent<SphereCollider>(gameObjects.back().get());
-	auto sphereCollider = gameObjects.back().get()->GetComponent<SphereCollider>().lock();
-	sphereCollider->SetRadius(3.0f);
+	transform->SetPosition(Vector3(0.0f, 0.0f, 50.0f));
+	transform->SetRotation(Quaternion::CreateFromYawPitchRoll(45.0f, 0.0f, 0.0f));
+	gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
 }
 
 Scene::~Scene()

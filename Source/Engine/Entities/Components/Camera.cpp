@@ -14,7 +14,7 @@ using namespace DirectX::SimpleMath;
 
 Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), 
 									      nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(16.0f / 9.0f), backgroundColour({ 1.0f, 1.0f, 1.0f, 0.0f }), 
-										  useSkybox(true)
+										  drawFrustum(true), useSkybox(true)
 {
 	componentType = ComponentType::Camera;
 
@@ -33,6 +33,9 @@ Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quate
 	skyboxMaterial->SetTexture("DebugSkybox");
 
 	// TODO: Retrieve aspect ratio of screen
+
+	// INFO: Initialise Bounding Frustum
+	SetFrustum();
 }
 
 Camera::~Camera()
@@ -57,7 +60,25 @@ void Camera::Deserialize(const nlohmann::ordered_json& json)
 
 void Camera::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 {
-	// TODO: Debug Draw View Frustum
+	if (!drawFrustum)
+		return;
+
+	std::shared_ptr<Transform> owningTransform = GetGameObject()->transform.lock();
+
+	if (owningTransform)
+	{
+		DirectX::XMMATRIX world = owningTransform->GetWorldMatrix();
+
+		DirectX::VertexPositionColor worldFrustumVertices[24]{};
+
+		for (size_t i = 0; i < 24; i++)
+		{
+			DirectX::XMStoreFloat3(&worldFrustumVertices[i].position, DirectX::XMVector3Transform(frustumVertices[i], world));
+			DirectX::XMStoreFloat4(&worldFrustumVertices[i].color, DirectX::Colors::White);
+		}
+
+		primitiveBatch.Draw(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, worldFrustumVertices, 24);
+	}
 }
 
 DirectX::XMMATRIX Camera::GetViewMatrix() const
@@ -128,4 +149,45 @@ void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMAT
 
 	skyboxMaterial->Bind(deviceContext);
 	skyboxModel->Draw(deviceContext);
+}
+
+void Flux::Camera::SetFrustum()
+{
+	DirectX::BoundingFrustum::CreateFromMatrix(frustum, GetAdjustedProjectionMatrix(nearClippingPlane, farClippingPlane * 0.1f));
+
+	DirectX::XMFLOAT3 corners[DirectX::BoundingFrustum::CORNER_COUNT]{};
+	frustum.GetCorners(corners);
+
+	frustumVertices[0] = DirectX::XMLoadFloat3(&corners[0]);
+	frustumVertices[1] = DirectX::XMLoadFloat3(&corners[1]);
+	frustumVertices[2] = DirectX::XMLoadFloat3(&corners[1]);
+	frustumVertices[3] = DirectX::XMLoadFloat3(&corners[2]);
+	frustumVertices[4] = DirectX::XMLoadFloat3(&corners[2]);
+	frustumVertices[5] = DirectX::XMLoadFloat3(&corners[3]);
+	frustumVertices[6] = DirectX::XMLoadFloat3(&corners[3]);
+	frustumVertices[7] = DirectX::XMLoadFloat3(&corners[0]);
+
+	frustumVertices[8] = DirectX::XMLoadFloat3(&corners[0]);
+	frustumVertices[9] = DirectX::XMLoadFloat3(&corners[4]);
+	frustumVertices[10] = DirectX::XMLoadFloat3(&corners[1]);
+	frustumVertices[11] = DirectX::XMLoadFloat3(&corners[5]);
+	frustumVertices[12] = DirectX::XMLoadFloat3(&corners[2]);
+	frustumVertices[13] = DirectX::XMLoadFloat3(&corners[6]);
+	frustumVertices[14] = DirectX::XMLoadFloat3(&corners[3]);
+	frustumVertices[15] = DirectX::XMLoadFloat3(&corners[7]);
+
+	frustumVertices[16] = DirectX::XMLoadFloat3(&corners[4]);
+	frustumVertices[17] = DirectX::XMLoadFloat3(&corners[5]);
+	frustumVertices[18] = DirectX::XMLoadFloat3(&corners[5]);
+	frustumVertices[19] = DirectX::XMLoadFloat3(&corners[6]);
+	frustumVertices[20] = DirectX::XMLoadFloat3(&corners[6]);
+	frustumVertices[21] = DirectX::XMLoadFloat3(&corners[7]);
+	frustumVertices[22] = DirectX::XMLoadFloat3(&corners[7]);
+	frustumVertices[23] = DirectX::XMLoadFloat3(&corners[4]);
+}
+
+DirectX::XMMATRIX Flux::Camera::GetAdjustedProjectionMatrix(float _nearClippingPlane, float _farClippingPlane) const
+{
+	return DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(verticalFOV),
+											 aspectRatio, _nearClippingPlane, _farClippingPlane);
 }

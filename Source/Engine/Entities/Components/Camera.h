@@ -36,6 +36,9 @@ namespace Flux
 
 		inline const std::array<float, 4>& GetBackgroundColour() const { return backgroundColour; }
 
+		inline void SetDrawFrustum(bool _drawFrustum) { drawFrustum = _drawFrustum; }
+		inline bool DrawFrustum() const { return drawFrustum; }
+
 		void SetSkyboxModel(const std::string& modelName);
 
 		inline void SetUseSkybox(bool _useSkybox) { useSkybox = _useSkybox; }
@@ -50,6 +53,9 @@ namespace Flux
 		inline void SetAspectRatio(float screenWidth, float screenHeight) { aspectRatio = screenWidth / screenHeight; }
 		inline void SetBackgroundColour(const std::array<float, 4>& _backgroundColour) { backgroundColour = _backgroundColour; }
 
+		void SetFrustum();
+		DirectX::XMMATRIX GetAdjustedProjectionMatrix(float _nearClippingPlane, float _farClippingPlane) const;
+
 	private:
 		std::weak_ptr<Transform> transform;
 
@@ -59,8 +65,12 @@ namespace Flux
 		float nearClippingPlane;
 		float farClippingPlane;
 		float aspectRatio;
-
+		
 		std::array<float, 4> backgroundColour;
+
+		DirectX::BoundingFrustum frustum;
+		DirectX::XMVECTOR frustumVertices[24];
+		bool drawFrustum;
 
 
 		// INFO: Skybox Properties
