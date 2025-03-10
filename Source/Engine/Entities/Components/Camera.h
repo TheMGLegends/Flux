@@ -35,6 +35,10 @@ namespace Flux
 		inline const DirectX::SimpleMath::Quaternion& GetRotation() const { return rotation; }
 
 		inline const std::array<float, 4>& GetBackgroundColour() const { return backgroundColour; }
+
+		void SetSkyboxModel(const std::string& modelName);
+
+		inline void SetUseSkybox(bool _useSkybox) { useSkybox = _useSkybox; }
 		inline bool UseSkybox() const { return useSkybox; }
 
 		void DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection);

@@ -62,8 +62,6 @@ HRESULT AssetHandler::Initialise(ID3D11Device& _device, ID3D11DeviceContext& _de
 	if (!LoadMaterial(ShaderType::Unlit)) return E_FAIL;
 	if (!LoadMaterial(ShaderType::Skybox)) return E_FAIL;
 
-	// TODO: Get textures for DefaultTexture and DefaultSkybox into the Assets folder
-
 	return S_OK;
 }
 
@@ -115,24 +113,6 @@ bool AssetHandler::LoadFont(const std::filesystem::path& fontPath)
 
 	auto& deviceRef = device->get();
 
-	if (!fontPath.has_extension())
-	{
-		Debug::LogError("AssetHandler::LoadFont() - Font path does not have an extension. Filepath: " + fontPath.string());
-		return false;
-	}
-
-	// INFO: Ensure .spritefont extension
-	if (fontPath.has_extension())
-	{
-		std::string extensionType = StringHelpers::ToLower(fontPath.extension().string());
-
-		if (extensionType != FiletypeConfig::SPRITEFONT)
-		{
-			Debug::LogError("AssetHandler::LoadFont() - Font path is not a .spritefont file. Filepath: " + fontPath.string());
-			return false;
-		}
-	}
-
 	std::unique_ptr<DirectX::SpriteFont> font = std::make_unique<DirectX::SpriteFont>(&deviceRef, fontPath.c_str());
 
 	if (!font)
@@ -147,7 +127,7 @@ bool AssetHandler::LoadFont(const std::filesystem::path& fontPath)
 		return false;
 	}
 
-	return false;
+	return true;
 }
 
 HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
@@ -163,24 +143,15 @@ HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
 	auto& deviceRef = device->get();
 	auto& deviceContextRef = deviceContext->get();
 
-	if (!texturePath.has_extension())
-	{
-		Debug::LogError("AssetHandler::LoadTexture() - Texture path does not have an extension. Filepath: " + texturePath.string());
-		return E_FAIL;
-	}
-
 	ComPtr<ID3D11ShaderResourceView> texture;
 
-	if (texturePath.has_extension())
-	{
-		std::string extensionType = StringHelpers::ToLower(texturePath.extension().string());
+	std::string extensionType = StringHelpers::ToLower(texturePath.extension().string());
 
-		// INFO: DDS Mainly used for Skybox Textures
-		if (extensionType == FiletypeConfig::DDS)
-			hResult = DirectX::CreateDDSTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
-		else
-			hResult = DirectX::CreateWICTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
-	}
+	// INFO: DDS Mainly used for Skybox Textures
+	if (extensionType == FiletypeConfig::DDS)
+		hResult = DirectX::CreateDDSTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
+	else
+		hResult = DirectX::CreateWICTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
 
 	if (FAILED(hResult))
 	{

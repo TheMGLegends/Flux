@@ -2,10 +2,12 @@
 
 #include "Runtime.h"
 
-#include "Engine/Scene/Scene.h"
+#include <memory>
 
 namespace Flux
 {
+	class Scene;
+
 	class EngineRuntime : public Runtime
 	{
 	public:
@@ -24,10 +26,10 @@ namespace Flux
 		void Start();
 		void FixedUpate(float fixedDeltaTime);
 
-		inline Scene& GetScene() { return scene; }
+		inline Scene& GetScene() { return *scene.get(); }
 
 	private:
-		Scene scene;
+		std::unique_ptr<Scene> scene;
 		// TODO: Engine Specific Members
 	};
 }

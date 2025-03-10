@@ -24,6 +24,7 @@ Material::Material(ShaderType shaderType, ConstantBufferType _constantBufferType
 	cullingMode = AssetHandler::GetCullingModeState(cullingModeType);
 
 	texture = AssetHandler::GetTexture(textureName);
+	sampler = AssetHandler::GetSamplerState();
 }
 
 Material::~Material()

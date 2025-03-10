@@ -1,6 +1,8 @@
 #include "EngineRuntime.h"
 
+#include "Core/Debug/Debug.h"
 #include "Core/Time/Time.h"
+#include "Engine/Scene/Scene.h"
 
 using namespace Flux;
 
@@ -24,28 +26,37 @@ bool EngineRuntime::Initialise()
 {
 	// TODO: Initialisation Logic
 
+	// INFO: Initialise the scene
+	scene = std::make_unique<Scene>();
+
+	if (!scene)
+	{
+		Debug::LogError("EngineRuntime::Initialise() - Failed to create Scene");
+		return false;
+	}
+
 	return true; // INFO: Initialisation Successful
 }
 
 void EngineRuntime::Update(float deltaTime)
 {
-	scene.Update(deltaTime);
+	scene->Update(deltaTime);
 
 	// TODO: Update All Components
 
-	scene.LateUpdate(deltaTime);
+	scene->LateUpdate(deltaTime);
 }
 
 void EngineRuntime::Start()
 {
-	scene.Start();
+	scene->Start();
 }
 
 void EngineRuntime::FixedUpate(float fixedDeltaTime)
 {
 	while (Time::PerformPhysicsUpdate())
 	{
-		scene.FixedUpdate(fixedDeltaTime);
+		scene->FixedUpdate(fixedDeltaTime);
 		// TODO: Simulate Physics Scene
 	}
 }

@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 #include "Core/Debug/Debug.h"
+#include "Core/Renderer/AssetHandler.h"
 #include "Core/Renderer/ConstantBuffers.h"
 #include "Core/Renderer/Material.h"
 #include "Core/Renderer/Model.h"
@@ -13,7 +14,7 @@ using namespace DirectX::SimpleMath;
 
 Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), 
 									      nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(16.0f / 9.0f), backgroundColour({ 1.0f, 1.0f, 1.0f, 0.0f }), 
-										  skyboxMaterial(nullptr), skyboxModel(nullptr), useSkybox(false)
+										  useSkybox(true)
 {
 	componentType = ComponentType::Camera;
 
@@ -23,6 +24,10 @@ Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quate
 	{
 		Debug::LogError("Camera::Camera() - Camera Component must be attached to a GameObject with a Transform Component");
 	}
+
+	// INFO: Load Default Skybox Model & Material
+	SetSkyboxModel("Cube");
+	skyboxMaterial = AssetHandler::GetMaterial(ShaderType::Skybox);
 
 	// TODO: Retrieve aspect ratio of screen
 }
@@ -91,6 +96,11 @@ Vector3 Camera::Right() const
 Vector3 Camera::Up() const
 {
 	return Vector3::Transform(Vector3::Up, rotation);
+}
+
+void Flux::Camera::SetSkyboxModel(const std::string& modelName)
+{
+	skyboxModel = AssetHandler::GetModel(modelName);
 }
 
 void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection)
