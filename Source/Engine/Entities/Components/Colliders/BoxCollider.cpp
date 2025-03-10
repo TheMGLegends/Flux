@@ -67,15 +67,17 @@ void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::Pri
 
 	if (owningTransform)
 	{
-		DirectX::XMMATRIX world = owningTransform->GetWorldMatrix();
+		DirectX::XMMATRIX world = owningTransform->GetWorldMatrix(size);
 
 		// INFO: Translate the vertices to world space
 		DirectX::VertexPositionColor worldVertices[8]{};
 
+		bool isTrigger = IsTrigger();
+
 		for (size_t i = 0; i < 8; i++)
 		{
 			DirectX::XMStoreFloat3(&worldVertices[i].position, DirectX::XMVector3Transform(vertices[i], world));
-			DirectX::XMStoreFloat4(&worldVertices[i].color, IsTrigger() ? DirectX::Colors::Yellow : DirectX::Colors::Green);
+			DirectX::XMStoreFloat4(&worldVertices[i].color, isTrigger ? DirectX::Colors::Yellow : DirectX::Colors::LawnGreen);
 		}
 
 		primitiveBatch.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, indices, 24, worldVertices, 8);

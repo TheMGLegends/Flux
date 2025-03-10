@@ -38,13 +38,10 @@ DirectX::XMMATRIX Transform::GetWorldMatrix() const
 	return scaleMatrix * rotationMatrix * translationMatrix;
 }
 
-DirectX::XMMATRIX Transform::GetWorldMatrix(const Vector3& additionalScale) const
+DirectX::XMMATRIX Transform::GetWorldMatrix(const Vector3& otherScale) const
 {
 	DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslationFromVector(position);
-
-	Vector3 newScale = scale + additionalScale;
-	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScalingFromVector(newScale);
-
+	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScalingFromVector(otherScale);
 	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationQuaternion(rotation);
 
 	return scaleMatrix * rotationMatrix * translationMatrix;

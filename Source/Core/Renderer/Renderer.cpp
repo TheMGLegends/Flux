@@ -249,7 +249,10 @@ void Renderer::RenderFrame(Scene& scene)
 	// INFO: Render the Debug Wireframes
 	if (RuntimeConfig::IsInEditorMode())
 	{
+		batchEffect->SetView(view);
+		batchEffect->SetProjection(projection);
 		batchEffect->Apply(deviceContext.Get());
+
 		deviceContext->IASetInputLayout(batchInputLayout.Get());
 
 		primitiveBatch->Begin();

@@ -16,7 +16,7 @@ namespace Flux
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
 		DirectX::XMMATRIX GetWorldMatrix() const;
-		DirectX::XMMATRIX GetWorldMatrix(const DirectX::SimpleMath::Vector3& additionalScale) const;
+		DirectX::XMMATRIX GetWorldMatrix(const DirectX::SimpleMath::Vector3& otherScale) const;
 
 		DirectX::SimpleMath::Vector3 Forward() const;
 		DirectX::SimpleMath::Vector3 Right() const;
