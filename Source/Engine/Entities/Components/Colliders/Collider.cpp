@@ -3,7 +3,7 @@
 #include <magic_enum.hpp>
 
 #include "Core/Debug/Debug.h"
-#include "Engine/Entities/GameObject.h"
+#include "Engine/Entities/GameObjects/GameObject.h"
 #include "Engine/Entities/Components/PhysicsBody.h"
 
 using namespace Flux;

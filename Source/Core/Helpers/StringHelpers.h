@@ -33,3 +33,4 @@ namespace Flux::StringHelpers
 		std::transform(string.begin(), string.end(), string.begin(), ::toupper);
 	}
 }
+

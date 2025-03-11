@@ -90,10 +90,9 @@ void Application::Run()
 		}
 
 		if (RuntimeConfig::IsInPlayMode())
-		{
 			engineRuntime.FixedUpate(TimeConfig::FIXED_DELTA_TIME);
-			engineRuntime.Update(Time::DeltaTime());
-		}
+			
+		engineRuntime.Update(Time::DeltaTime());
 
 		renderer.RenderFrame(engineRuntime.GetScene());
 		editorRuntime.RenderGUI();

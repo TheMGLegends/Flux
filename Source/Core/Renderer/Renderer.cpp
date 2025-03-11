@@ -6,7 +6,7 @@
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Engine/Scene/Scene.h"
-#include "Engine/Entities/GameObject.h"
+#include "Engine/Entities/GameObjects/GameObject.h"
 #include "Engine/Entities/Components/Camera.h"
 #include "Engine/Entities/Components/Transform.h"
 #include "Engine/Entities/Components/Visualizer.h"
@@ -191,7 +191,7 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 
 void Renderer::RenderFrame(Scene& scene)
 {
-	std::shared_ptr<Camera> camera = scene.GetCamera();
+	std::shared_ptr<Camera> camera = scene.GetCamera().lock();
 
 	if (!camera)
 	{
@@ -233,7 +233,7 @@ void Renderer::RenderFrame(Scene& scene)
 		case ConstantBufferType::Unlit:
 		{
 			UnlitVS unlitVS{};
-			unlitVS.wvp = world * translation * view * projection;
+			unlitVS.wvp = world * view * projection;
 			deviceContext->UpdateSubresource(material.GetConstantBuffer(), 0, nullptr, &unlitVS, 0, 0);
 
 			break;

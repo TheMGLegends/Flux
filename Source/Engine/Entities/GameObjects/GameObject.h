@@ -6,10 +6,10 @@
 #include <string>
 #include <vector>
 
-#include "Components/Colliders/Collider.h"
-#include "Components/Transform.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/EventSystem/Events/ComponentRemovedEvent.h"
+#include "Engine/Entities/Components/Colliders/Collider.h"
+#include "Engine/Entities/Components/Transform.h"
 #include "Engine/Scene/SceneContext.h"
 
 namespace Flux

@@ -144,6 +144,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Entities\GameObjects\SceneViewCamera.cpp" />
     <ClCompile Include="Source\Core\Renderer\AssetHandler.cpp" />
     <ClCompile Include="Source\Engine\Scene\SceneContext.cpp" />
     <ClCompile Include="Source\Engine\Scene\Scene.cpp" />
@@ -160,7 +161,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <ClCompile Include="Source\Engine\Entities\Components\Colliders\Collider.cpp" />
     <ClCompile Include="Source\Engine\Entities\Components\Camera.cpp" />
     <ClCompile Include="Source\Engine\Entities\Components\Component.cpp" />
-    <ClCompile Include="Source\Engine\Entities\GameObject.cpp" />
+    <ClCompile Include="Source\Engine\Entities\GameObjects\GameObject.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Engine\Entities\Components\Transform.cpp" />
     <ClCompile Include="Source\Engine\Entities\Components\Colliders\SphereCollider.cpp" />
@@ -184,6 +185,8 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Helpers\MathHelpers.h" />
+    <ClInclude Include="Source\Engine\Entities\GameObjects\SceneViewCamera.h" />
     <ClInclude Include="Source\Core\Configs\FiletypeConfig.h" />
     <ClInclude Include="Source\Core\Helpers\StringHelpers.h" />
     <ClInclude Include="Source\Core\Renderer\AssetHandler.h" />
@@ -223,7 +226,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <ClInclude Include="Source\Engine\Interfaces\IDebugWireframe.h" />
     <ClInclude Include="Source\Engine\Entities\Components\Component.h" />
     <ClInclude Include="Source\Engine\Interfaces\ISerializable.h" />
-    <ClInclude Include="Source\Engine\Entities\GameObject.h" />
+    <ClInclude Include="Source\Engine\Entities\GameObjects\GameObject.h" />
     <ClInclude Include="Source\Engine\Entities\Components\Transform.h" />
     <ClInclude Include="Source\Engine\Entities\Components\Colliders\SphereCollider.h" />
     <ClInclude Include="Source\Core\Time\Time.h" />

@@ -13,6 +13,7 @@
 namespace Flux
 {
 	class GameObject;
+	class SceneViewCamera;
 
 	class Scene : public ISerializable, public IEventListener
 	{
@@ -39,7 +40,8 @@ namespace Flux
 		template<class T>
 		std::vector<std::weak_ptr<T>> GetComponents();
 
-		inline std::shared_ptr<Camera> GetCamera() const { return camera.expired() ? nullptr : camera.lock(); }
+		/// @brief Returns the scene view camera if in editor mode otherwise returns play mode camera
+		std::weak_ptr<Camera> GetCamera() const;
 
 	private:
 		struct DebugWireframeData
@@ -56,7 +58,8 @@ namespace Flux
 		std::unordered_map<ComponentType, std::vector<std::weak_ptr<Component>>> components;
 		std::vector<DebugWireframeData> debugWireframes;
 
-		std::weak_ptr<Camera> camera;
+		std::weak_ptr<Camera> playModeCamera;
+		std::unique_ptr<SceneViewCamera> sceneViewCamera;
 	};
 
 	template<class T>

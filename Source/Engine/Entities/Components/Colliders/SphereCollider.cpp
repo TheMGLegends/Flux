@@ -2,7 +2,7 @@
 
 #include <DirectXColors.h>
 
-#include "Engine/Entities/GameObject.h"
+#include "Engine/Entities/GameObjects/GameObject.h"
 #include "Engine/Entities/Components/Transform.h"
 
 using namespace Flux;

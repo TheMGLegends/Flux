@@ -2,15 +2,19 @@
 
 #include <magic_enum.hpp>
 
+#include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
-#include "Engine/Entities/GameObject.h"
+#include "Engine/Entities/Components/Camera.h"
+#include "Engine/Entities/GameObjects/GameObject.h"
+#include "Engine/Entities/GameObjects/SceneViewCamera.h"
 #include "Engine/Scene/SceneContext.h"
 
 // TODO: TESTING
 #include "Engine/Entities/Components/Visualizer.h"
-#include "Engine/Entities/Components/Camera.h"
+#include "Engine/Entities/Components/Colliders/BoxCollider.h"
+#include "Engine/Entities/Components/Colliders/SphereCollider.h"
 #include <SimpleMath.h>
 using namespace DirectX::SimpleMath;
 
@@ -23,21 +27,29 @@ Scene::Scene()
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::GameObjectRemoved, this);
 
-	// TODO: Create a editor camera as well
+	// INFO: Create a scene view camera
+	sceneViewCamera = std::make_unique<SceneViewCamera>();
 
-	// INFO: Create a default play camera
+	// INFO: Create a default play mode camera
 	gameObjects.emplace_back(std::make_unique<GameObject>());
-	camera = gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
-	camera.lock()->SetDrawFrustum(false);
+	playModeCamera = gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
 
 	// TODO: Testing
 	gameObjects.emplace_back(std::make_unique<GameObject>());
 	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
+	gameObjects.back().get()->AddComponent<BoxCollider>(gameObjects.back().get());
 	auto visualizer = gameObjects.back().get()->GetComponent<Visualizer>().lock();
 	auto transform = gameObjects.back().get()->GetComponent<Transform>().lock();
-	transform->SetPosition(Vector3(0.0f, 0.0f, 50.0f));
+	transform->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
 	transform->SetRotation(Quaternion::CreateFromYawPitchRoll(45.0f, 0.0f, 0.0f));
-	gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
+
+	gameObjects.emplace_back(std::make_unique<GameObject>());
+	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
+	gameObjects.back().get()->GetComponent<Visualizer>().lock()->SetModel("Sphere");
+	gameObjects.back().get()->AddComponent<SphereCollider>(gameObjects.back().get());
+	gameObjects.back().get()->GetComponent<SphereCollider>().lock()->SetRadius(3.0f);
+	transform = gameObjects.back().get()->GetComponent<Transform>().lock();
+	transform->SetPosition(Vector3(-10.0f, 0.0f, 5.0f));
 }
 
 Scene::~Scene()
@@ -112,11 +124,17 @@ void Scene::Start()
 
 void Scene::Update(float deltaTime)
 {
-	for (size_t i = 0; i < gameObjects.size(); i++)
+	if (RuntimeConfig::IsInPlayMode())
 	{
-		if (gameObjects[i]->IsActive())
-			gameObjects[i]->Update(deltaTime);
+		for (size_t i = 0; i < gameObjects.size(); i++)
+		{
+			if (gameObjects[i]->IsActive())
+				gameObjects[i]->Update(deltaTime);
+		}
 	}
+
+	if (RuntimeConfig::IsInEditorMode())
+		sceneViewCamera->Update(deltaTime);
 }
 
 void Scene::LateUpdate(float deltaTime)
@@ -186,4 +204,12 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 	}
 
 	components[validComponent->GetComponentType()].push_back(component);
+}
+
+std::weak_ptr<Camera> Flux::Scene::GetCamera() const
+{
+	if (RuntimeConfig::IsInPlayMode())
+		return playModeCamera;
+	else
+		return sceneViewCamera->GetCamera();
 }

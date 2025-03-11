@@ -51,7 +51,7 @@
     <ClCompile Include="Vendors\imguizmo\ImGuizmo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Entities\GameObject.cpp">
+    <ClCompile Include="Source\Engine\Entities\GameObjects\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Entities\Components\Component.cpp">
@@ -114,6 +114,9 @@
     <ClCompile Include="Source\Core\Renderer\AssetHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Entities\GameObjects\SceneViewCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -163,7 +166,7 @@
     <ClInclude Include="Vendors\imguizmo\ImZoomSlider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Entities\GameObject.h">
+    <ClInclude Include="Source\Engine\Entities\GameObjects\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Interfaces\ISerializable.h">
@@ -293,6 +296,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Configs\FiletypeConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Entities\GameObjects\SceneViewCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Helpers\MathHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,7 +5,7 @@
 #include "Core/Renderer/ConstantBuffers.h"
 #include "Core/Renderer/Material.h"
 #include "Core/Renderer/Model.h"
-#include "Engine/Entities/GameObject.h"
+#include "Engine/Entities/GameObjects/GameObject.h"
 
 using namespace Flux;
 using namespace Flux::ConstantBuffers;
@@ -122,7 +122,7 @@ Vector3 Camera::Up() const
 	return Vector3::Transform(Vector3::Up, rotation);
 }
 
-void Flux::Camera::SetSkyboxModel(const std::string& modelName)
+void Camera::SetSkyboxModel(const std::string& modelName)
 {
 	skyboxModel = AssetHandler::GetModel(modelName);
 
@@ -151,7 +151,7 @@ void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMAT
 	skyboxModel->Draw(deviceContext);
 }
 
-void Flux::Camera::SetFrustum()
+void Camera::SetFrustum()
 {
 	DirectX::BoundingFrustum::CreateFromMatrix(frustum, GetAdjustedProjectionMatrix(nearClippingPlane, farClippingPlane * 0.1f));
 
@@ -186,7 +186,7 @@ void Flux::Camera::SetFrustum()
 	frustumVertices[23] = DirectX::XMLoadFloat3(&corners[4]);
 }
 
-DirectX::XMMATRIX Flux::Camera::GetAdjustedProjectionMatrix(float _nearClippingPlane, float _farClippingPlane) const
+DirectX::XMMATRIX Camera::GetAdjustedProjectionMatrix(float _nearClippingPlane, float _farClippingPlane) const
 {
 	return DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(verticalFOV),
 											 aspectRatio, _nearClippingPlane, _farClippingPlane);
