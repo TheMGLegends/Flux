@@ -33,9 +33,6 @@
     <ClCompile Include="Vendors\imgui\string\imgui_stdlib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vendors\imgui\freetype\imgui_freetype.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Vendors\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -143,9 +140,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vendors\imgui\string\imgui_stdlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vendors\imgui\freetype\imgui_freetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vendors\imgui\backends\imgui_impl_sdl3.h">

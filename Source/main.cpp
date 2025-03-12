@@ -11,9 +11,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 #include <fmod.hpp>
 
 #include <PxPhysicsAPI.h>
@@ -74,13 +71,6 @@ int main()
 		{
 			std::cout << "Model has meshes: " << testImport->mNumMeshes << std::endl;
 		}
-	}*/
-
-	// INFO: FreeType Integration Test
-	/*FT_Library library;
-	if (FT_Init_FreeType(&library) == FT_Err_Ok)
-	{
-		std::cout << "Initialized FreeType successfully!" << std::endl;
 	}*/
 
 	// INFO: FMOD Integration Test
