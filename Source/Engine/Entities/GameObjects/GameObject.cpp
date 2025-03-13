@@ -46,3 +46,17 @@ void GameObject::Destroy()
 
 	SetIsActive(false);
 }
+
+std::unique_ptr<GameObject> GameObject::CreateGameObject(const std::string& typeName)
+{
+	auto it = gameObjectTypes.find(typeName);
+	return it != gameObjectTypes.end() ? it->second() : nullptr;
+}
+
+void GameObject::RegisterGameObjectType(const std::string& typeName, std::function<std::unique_ptr<GameObject>()> creator)
+{
+	auto result = gameObjectTypes.try_emplace(typeName, std::move(creator));
+
+	if (!result.second)
+		Debug::LogError("GameObject::RegisterGameObjectType - GameObject type already registered: " + typeName);
+}

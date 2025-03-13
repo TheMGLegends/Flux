@@ -28,19 +28,6 @@ Sint16* Input::currentGamepadAxisState = nullptr;
 Sint16* Input::previousGamepadAxisState = nullptr;
 int Input::gamepadAxisLength = 0;
 
-bool Input::PreInitialise()
-{
-	SDL_InitFlags flags = SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC;
-
-	if (!SDL_InitSubSystem(flags))
-	{
-		Debug::LogError("Input::PreInitialise() - Failed to initialise SDL Gamepad and Haptic Subsystems");
-		return false;
-	}
-
-	return true; // INFO: Pre-Initialisation Successful
-}
-
 bool Input::Initialise(SDL_Window* _window)
 {
 	window = _window;
@@ -201,8 +188,6 @@ void Input::Release()
 			previousGamepadAxisState = nullptr;
 		}
 	}
-
-	SDL_QuitSubSystem(SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC);
 }
 
 void Input::SetMouseMode(bool _isRelative)

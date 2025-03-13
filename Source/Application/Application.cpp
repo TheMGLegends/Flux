@@ -16,9 +16,9 @@ using namespace Flux;
 
 Application::Application() : window(nullptr), isRunning(false)
 {
-	if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
 	{
-		Debug::LogError("Application::Application() - Failed to initialise SDL Video Subsystem");
+		Debug::LogError("Application::Application() - Failed to initialise SDL Systems");
 	}
 
 	// INFO: Window Creation
@@ -27,11 +27,6 @@ Application::Application() : window(nullptr), isRunning(false)
 	if (!window)
 	{
 		Debug::LogError("Application::Application() - Failed to create SDL Window");
-	}
-
-	if (!Input::PreInitialise())
-	{
-		Debug::LogError("Application::Application() - Failed to pre-initialise Input System");
 	}
 
 	if (!Input::Initialise(window))
@@ -65,7 +60,9 @@ Application::Application() : window(nullptr), isRunning(false)
 Application::~Application()
 {
 	Input::Release();
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 }
 
 void Application::OnNotify(EventType eventType, std::shared_ptr<Event> event)

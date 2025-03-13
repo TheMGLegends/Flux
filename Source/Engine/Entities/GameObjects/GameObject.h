@@ -2,8 +2,10 @@
 
 #include "Engine/Interfaces/ISerializable.h"
 
+#include <functional>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "Core/EventSystem/EventDispatcher.h"
@@ -69,6 +71,24 @@ namespace Flux
 
 		std::string name; // INFO: Used by Editor GUI to display the name of the GameObject
 		std::string type; // INFO: Used by Serialization to determine the type of the GameObject to instantiate
+
+	// INFO: GameObject Factory (Reflection)
+	public:
+		static std::unique_ptr<GameObject> CreateGameObject(const std::string& typeName);
+
+	protected:
+		static void RegisterGameObjectType(const std::string& typeName, std::function<std::unique_ptr<GameObject>()> creator);
+
+#define REFLECT(className) \
+	static std::unique_ptr<GameObject> Create() { return std::make_unique<className>(); } \
+	struct ObjectRegister \
+	{ \
+		ObjectRegister() { GameObject::RegisterGameObjectType(#className, &className::Create); } \
+	}; \
+	inline static ObjectRegister objectRegister;
+
+	private:
+		inline static std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>> gameObjectTypes;
 	};
 
 	template<class T>

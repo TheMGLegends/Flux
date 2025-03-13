@@ -6,3 +6,4 @@
 #define E_FAIL _HRESULT_TYPEDEF_(0x80000008L)
 #define FAILED(hr) (((HRESULT)(hr)) < 0)
 #define S_OK ((HRESULT)0L)
+#define REFLECT(className) static std::unique_ptr<GameObject> Create() { return std::make_unique<className>(); } struct ObjectRegister { ObjectRegister() { GameObject::RegisterGameObjectType(#className, &className::Create); } }; inline static ObjectRegister objectRegister;

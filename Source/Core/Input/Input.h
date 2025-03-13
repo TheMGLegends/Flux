@@ -19,7 +19,6 @@ namespace Flux
 		Input(const Input&) = delete;
 		Input& operator=(const Input&) = delete;
 
-		static bool PreInitialise();
 		static bool Initialise(SDL_Window* _window);
 
 		static void Update();

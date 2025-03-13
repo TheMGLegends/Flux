@@ -8,6 +8,9 @@ namespace Flux
 
 	class SceneViewCamera : public GameObject
 	{
+		// TODO: TEST
+		REFLECT(SceneViewCamera)
+
 	public:
 		SceneViewCamera();
 		virtual ~SceneViewCamera() override;
