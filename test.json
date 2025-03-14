@@ -1,0 +1,23 @@
+{
+    "SceneName": "Default",
+    "GameObjects": [
+        {
+            "Name": "GameObject",
+            "Type": "GameObject",
+            "IsActive": true,
+            "Components": []
+        },
+        {
+            "Name": "GameObject",
+            "Type": "GameObject",
+            "IsActive": true,
+            "Components": []
+        },
+        {
+            "Name": "GameObject",
+            "Type": "GameObject",
+            "IsActive": true,
+            "Components": []
+        }
+    ]
+}

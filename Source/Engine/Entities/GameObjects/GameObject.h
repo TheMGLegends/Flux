@@ -70,7 +70,7 @@ namespace Flux
 		std::vector<std::shared_ptr<Component>> components;
 
 		std::string name; // INFO: Used by Editor GUI to display the name of the GameObject
-		std::string type; // INFO: Used by Serialization to determine the type of the GameObject to instantiate
+		std::string type; // INFO: Used by Deserialization to determine the type of the GameObject to instantiate
 
 	// INFO: GameObject Factory (Reflection)
 	public:

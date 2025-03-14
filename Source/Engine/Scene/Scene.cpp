@@ -16,11 +16,12 @@
 #include "Engine/Entities/Components/Colliders/BoxCollider.h"
 #include "Engine/Entities/Components/Colliders/SphereCollider.h"
 #include <SimpleMath.h>
+#include <fstream>
 using namespace DirectX::SimpleMath;
 
 using namespace Flux;
 
-Scene::Scene()
+Scene::Scene() : sceneName("Default")
 {
 	SceneContext::SetScene(this);
 
@@ -50,6 +51,12 @@ Scene::Scene()
 	gameObjects.back().get()->GetComponent<SphereCollider>().lock()->SetRadius(3.0f);
 	transform = gameObjects.back().get()->GetComponent<Transform>().lock();
 	transform->SetPosition(Vector3(-10.0f, 0.0f, 5.0f));
+
+	// TODO: TESTING
+	nlohmann::ordered_json json;
+	Serialize(json);
+	std::ofstream jsonTest("test.json");
+	jsonTest << json.dump(4);
 }
 
 Scene::~Scene()
@@ -58,8 +65,13 @@ Scene::~Scene()
 
 void Scene::Serialize(nlohmann::ordered_json& json) const
 {
-	// TODO: Serialize the type of GameObject and then serialize the GameObject itself
+	// INFO: Save the name of the Scene
+	json["SceneName"] = sceneName; // TODO: For now only one scene is supported
 
+	// INFO: Create a JSON array to store all GameObjects
+	json["GameObjects"] = nlohmann::json::array();
+
+	// INFO: Serialize each GameObject in the Scene
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->Serialize(json);
@@ -68,9 +80,12 @@ void Scene::Serialize(nlohmann::ordered_json& json) const
 
 void Scene::Deserialize(const nlohmann::ordered_json& json)
 {
-	// INFO: Clear existing game objects and components before "loading" new scene
+	// INFO: Clear existing scene contents before loading 'new' scene
 	gameObjects.clear();
 	components.clear();
+	debugWireframes.clear();
+	playModeCamera.reset();
+
 
 	// TODO: Get the type of GameObject from json file and instantiate it then pass the json to it
 

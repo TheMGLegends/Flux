@@ -5,7 +5,7 @@
 
 using namespace Flux;
 
-GameObject::GameObject() : isActive(true)
+GameObject::GameObject() : isActive(true), name("GameObject"), type("GameObject")
 {
 	transform = AddComponent<Transform>(this);
 }
@@ -16,6 +16,19 @@ GameObject::~GameObject()
 
 void GameObject::Serialize(nlohmann::ordered_json& json) const
 {
+	// INFO: Serialize GameObject Data
+	json["GameObjects"].push_back({
+		{"Name", name},
+		{"Type", type},
+		{"IsActive", isActive},
+		{"Components", nlohmann::json::array()} // INFO: JSON array to store all Components
+		});
+
+	// INFO: Serialize each Component on the GameObject
+	for (size_t i = 0; i < components.size(); i++)
+	{
+		components[i]->Serialize(json);
+	}
 }
 
 void GameObject::Deserialize(const nlohmann::ordered_json& json)
@@ -49,8 +62,28 @@ void GameObject::Destroy()
 
 std::unique_ptr<GameObject> GameObject::CreateGameObject(const std::string& typeName)
 {
+	std::unique_ptr<GameObject> gameObject;
+
+	// INFO: Default GameObject type creation
+	if (typeName == "GameObject")
+	{ 
+		gameObject = std::make_unique<GameObject>();
+		gameObject.get()->SetName("GameObject");
+		gameObject.get()->SetType("GameObject");
+
+		return gameObject;
+	}
+
 	auto it = gameObjectTypes.find(typeName);
-	return it != gameObjectTypes.end() ? it->second() : nullptr;
+	if (it != gameObjectTypes.end())
+	{
+		gameObject = it->second();
+		gameObject.get()->SetName(typeName);
+		gameObject.get()->SetType(typeName);
+		return gameObject;
+	}
+
+	return nullptr;
 }
 
 void GameObject::RegisterGameObjectType(const std::string& typeName, std::function<std::unique_ptr<GameObject>()> creator)

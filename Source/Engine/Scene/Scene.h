@@ -60,6 +60,8 @@ namespace Flux
 
 		std::weak_ptr<Camera> playModeCamera;
 		std::unique_ptr<SceneViewCamera> sceneViewCamera;
+
+		std::string sceneName;
 	};
 
 	template<class T>
