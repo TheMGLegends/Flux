@@ -24,10 +24,13 @@ void GameObject::Serialize(nlohmann::ordered_json& json) const
 		{"Components", nlohmann::json::array()} // INFO: JSON array to store all Components
 		});
 
+	// INFO: Get the last Component JSON array
+	nlohmann::ordered_json& gameObjectJson = json["GameObjects"].back();
+
 	// INFO: Serialize each Component on the GameObject
 	for (size_t i = 0; i < components.size(); i++)
 	{
-		components[i]->Serialize(json);
+		components[i]->Serialize(gameObjectJson);
 	}
 }
 

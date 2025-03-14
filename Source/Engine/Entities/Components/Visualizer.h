@@ -20,6 +20,8 @@ namespace Flux
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
 		void SetModel(const std::string& _modelName);
+
+		void SetMaterialTexture(const std::string& _textureName);
 		inline Material& GetMaterial() const { return *material; }
 
 		void Draw(ID3D11DeviceContext& deviceContext);
@@ -28,6 +30,7 @@ namespace Flux
 		Model* model;
 		std::string modelName;
 		Material* material;
+		std::string textureName;
 	};
 }
 

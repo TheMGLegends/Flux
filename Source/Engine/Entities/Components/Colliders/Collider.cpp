@@ -37,7 +37,9 @@ void Collider::Serialize(nlohmann::ordered_json& json) const
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
 
-	// TODO: Serialize ColliderComponent
+	auto& jsonBack = json["Components"].back();
+	jsonBack["IsTrigger"] = isTrigger;
+	jsonBack["Centre"] = { centre.x, centre.y, centre.z };
 }
 
 void Collider::Deserialize(const nlohmann::ordered_json& json)

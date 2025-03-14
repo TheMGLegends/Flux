@@ -42,7 +42,7 @@ Scene::Scene() : sceneName("Default")
 	auto visualizer = gameObjects.back().get()->GetComponent<Visualizer>().lock();
 	auto transform = gameObjects.back().get()->GetComponent<Transform>().lock();
 	transform->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
-	transform->SetRotation(Quaternion::CreateFromYawPitchRoll(45.0f, 0.0f, 0.0f));
+	transform->SetRotation(Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(45.0f), 0.0f, 0.0f));
 
 	gameObjects.emplace_back(std::make_unique<GameObject>());
 	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());

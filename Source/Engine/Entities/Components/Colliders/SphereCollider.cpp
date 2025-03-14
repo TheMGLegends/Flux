@@ -9,6 +9,8 @@ using namespace Flux;
 
 SphereCollider::SphereCollider(GameObject* _gameObject) : Collider(_gameObject), radius(1.0f)
 {
+	name = "SphereCollider";
+
 	// TODO: Set colliderShape to SphereShape
 }
 
@@ -21,7 +23,7 @@ void SphereCollider::Serialize(nlohmann::ordered_json& json) const
 	// INFO: Serialize Parent Class
 	Collider::Serialize(json);
 
-	// TODO: Serialize SphereCollider
+	json["Components"].back()["Radius"] = radius;
 }
 
 void SphereCollider::Deserialize(const nlohmann::ordered_json& json)

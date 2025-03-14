@@ -10,6 +10,7 @@ using namespace DirectX::SimpleMath;
 
 BoxCollider::BoxCollider(GameObject* _gameObject) : Collider(_gameObject), size(Vector3::One)
 {
+	name = "BoxCollider";
 	// TODO: Set colliderShape to BoxShape
 }
 
@@ -22,7 +23,7 @@ void BoxCollider::Serialize(nlohmann::ordered_json& json) const
 	// INFO: Serialize Parent Class
 	Collider::Serialize(json);
 
-	// TODO: Serialize BoxCollider
+	json["Components"].back()["Size"] = { size.x, size.y, size.z };
 }
 
 void BoxCollider::Deserialize(const nlohmann::ordered_json& json)

@@ -37,6 +37,7 @@ namespace Flux
 		bool canHaveMultiple;
 		bool isRemoveable;
 
+		std::string name;
 		ComponentType componentType;
 
 	private:

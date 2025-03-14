@@ -16,6 +16,7 @@ Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quate
 									      nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(16.0f / 9.0f), backgroundColour({ 1.0f, 1.0f, 1.0f, 0.0f }), 
 										  drawFrustum(true), useSkybox(true)
 {
+	name = "Camera";
 	componentType = ComponentType::Camera;
 
 	transform = GetGameObject()->GetComponent<Transform>();
@@ -30,7 +31,7 @@ Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quate
 	skyboxMaterial = AssetHandler::GetMaterial(ShaderType::Skybox);
 
 	// TODO: TESTING
-	skyboxMaterial->SetTexture("DebugSkybox");
+	SetMaterialTexture("DebugSkybox");
 
 	// TODO: Retrieve aspect ratio of screen
 
@@ -47,7 +48,12 @@ void Camera::Serialize(nlohmann::ordered_json& json) const
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
 
-	// TODO: Serialize CameraComponent
+	auto& jsonBack = json["Components"].back();
+	jsonBack["FOV"] = verticalFOV;
+	jsonBack["NearClippingPlane"] = nearClippingPlane;
+	jsonBack["FarClippingPlane"] = farClippingPlane;
+	jsonBack["BackgroundColour"] = { backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3] };
+	jsonBack["SkyboxTexture"] = skyboxTextureName;
 }
 
 void Camera::Deserialize(const nlohmann::ordered_json& json)
@@ -128,6 +134,13 @@ void Camera::SetSkyboxModel(const std::string& modelName)
 
 	if (!skyboxModel)
 		Debug::LogError("Camera::SetSkyboxModel() - Failed to load Skybox Model: " + modelName);
+}
+
+void Camera::SetMaterialTexture(const std::string& _textureName)
+{
+	skyboxTextureName = _textureName;
+
+	skyboxMaterial->SetTexture(skyboxTextureName);
 }
 
 void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection)

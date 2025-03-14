@@ -8,6 +8,7 @@ using namespace Flux;
 
 PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), rigidActor(nullptr), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
 {
+	name = "PhysicsBody";
 	componentType = ComponentType::PhysicsBody;
 
 	// INFO: No constraints by default
@@ -29,7 +30,13 @@ void PhysicsBody::Serialize(nlohmann::ordered_json& json) const
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
 
-	// TODO: Serialize PhysicsBodyComponent
+	auto& jsonBack = json["Components"].back();
+	jsonBack["Mass"] = mass;
+	jsonBack["Drag"] = drag;
+	jsonBack["AngularDrag"] = angularDrag;
+	jsonBack["UseGravity"] = useGravity;
+	jsonBack["PositionConstraints"] = { positionConstraints[0], positionConstraints[1], positionConstraints[2] };
+	jsonBack["RotationConstraints"] = { rotationConstraints[0], rotationConstraints[1], rotationConstraints[2] };
 }
 
 void PhysicsBody::Deserialize(const nlohmann::ordered_json& json)

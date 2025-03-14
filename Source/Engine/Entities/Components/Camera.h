@@ -40,6 +40,7 @@ namespace Flux
 		inline bool DrawFrustum() const { return drawFrustum; }
 
 		void SetSkyboxModel(const std::string& modelName);
+		void SetMaterialTexture(const std::string& _textureName);
 
 		inline void SetUseSkybox(bool _useSkybox) { useSkybox = _useSkybox; }
 		inline bool UseSkybox() const { return useSkybox; }
@@ -77,6 +78,7 @@ namespace Flux
 
 		Model* skyboxModel;
 		Material* skyboxMaterial;
+		std::string skyboxTextureName;
 		bool useSkybox;
 	};
 }

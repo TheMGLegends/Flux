@@ -5,19 +5,139 @@
             "Name": "GameObject",
             "Type": "GameObject",
             "IsActive": true,
-            "Components": []
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "Name": "Camera",
+                    "IsActive": true,
+                    "ComponentType": 2,
+                    "FOV": 90.0,
+                    "NearClippingPlane": 0.10000000149011612,
+                    "FarClippingPlane": 100.0,
+                    "BackgroundColour": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "SkyboxTexture": "DebugSkybox"
+                }
+            ]
         },
         {
             "Name": "GameObject",
             "Type": "GameObject",
             "IsActive": true,
-            "Components": []
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        0.0,
+                        5.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        44.999996185302734,
+                        0.0
+                    ],
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "Name": "Visualizer",
+                    "IsActive": true,
+                    "ComponentType": 4,
+                    "ModelName": "Cube",
+                    "TextureName": "DefaultTexture"
+                },
+                {
+                    "Name": "BoxCollider",
+                    "IsActive": true,
+                    "ComponentType": 5,
+                    "IsTrigger": false,
+                    "Centre": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Size": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ]
         },
         {
             "Name": "GameObject",
             "Type": "GameObject",
             "IsActive": true,
-            "Components": []
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        -10.0,
+                        0.0,
+                        5.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "Name": "Visualizer",
+                    "IsActive": true,
+                    "ComponentType": 4,
+                    "ModelName": "Sphere",
+                    "TextureName": "DefaultTexture"
+                },
+                {
+                    "Name": "SphereCollider",
+                    "IsActive": true,
+                    "ComponentType": 5,
+                    "IsTrigger": false,
+                    "Centre": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Radius": 3.0
+                }
+            ]
         }
     ]
 }

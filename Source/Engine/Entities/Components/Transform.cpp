@@ -1,10 +1,14 @@
 #include "Transform.h"
 
+// TODO: TESTING
+#include "Core/Debug/Debug.h"
+
 using namespace Flux;
 using namespace DirectX::SimpleMath;
 
 Transform::Transform(GameObject* _gameObject) : Component(_gameObject), position(Vector3::Zero), rotation(Quaternion::Identity), scale(Vector3::One)
 {
+	name = "Transform";
 	componentType = ComponentType::Transform;
 	isRemoveable = false;
 }
@@ -18,7 +22,14 @@ void Transform::Serialize(nlohmann::ordered_json& json) const
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
 
-	// TODO: Serialize TransformComponent
+	auto& jsonBack = json["Components"].back();
+	jsonBack["Position"] = { position.x, position.y, position.z };
+
+	Vector3 eulerRotation = rotation.ToEuler();
+	jsonBack["Rotation"] = { DirectX::XMConvertToDegrees(eulerRotation.x),
+							 DirectX::XMConvertToDegrees(eulerRotation.y),
+							 DirectX::XMConvertToDegrees(eulerRotation.z) }; // INFO: Rotation Values saved in degrees for readability
+	jsonBack["Scale"] = { scale.x, scale.y, scale.z };
 }
 
 void Transform::Deserialize(const nlohmann::ordered_json& json)
