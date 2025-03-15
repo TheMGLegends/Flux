@@ -44,7 +44,23 @@ void PhysicsBody::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);
 
-	// TODO: Deserialize PhysicsBodyComponent
+	// INFO: Deserialize PhysicsBody Data
+	SetMass(json["Mass"].get<float>());
+	SetDrag(json["Drag"].get<float>());
+	SetAngularDrag(json["AngularDrag"].get<float>());
+	SetUseGravity(json["UseGravity"].get<bool>());
+
+	auto& positionConstraintsJson = json["PositionConstraints"];
+	for (size_t i = 0; i < positionConstraintsJson.size(); ++i)
+	{
+		SetPositionConstraint(positionConstraintsJson[i].get<bool>(), static_cast<ConstraintAxis>(i));
+	}
+
+	auto& rotationConstraintsJson = json["RotationConstraints"];
+	for (size_t i = 0; i < rotationConstraintsJson.size(); ++i)
+	{
+		SetRotationConstraint(rotationConstraintsJson[i].get<bool>(), static_cast<ConstraintAxis>(i));
+	}
 }
 
 void PhysicsBody::SetMass(float _mass)

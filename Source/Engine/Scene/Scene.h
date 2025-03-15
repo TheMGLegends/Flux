@@ -80,8 +80,10 @@ namespace Flux
 			componentType = ComponentType::PhysicsBody;
 		else if constexpr (std::is_same<T, Visualizer>::value)
 			componentType = ComponentType::Visualizer;
-		else if constexpr (std::is_same<T, Collider>::value)
-			componentType = ComponentType::Collider;
+		else if constexpr (std::is_same<T, BoxCollider>::value)
+			componentType = ComponentType::BoxCollider;
+		else if constexpr (std::is_same<T, SphereCollider>::value)
+			componentType = ComponentType::SphereCollider;
 
 		for (size_t i = 0; i < components[componentType].size(); i++)
 		{

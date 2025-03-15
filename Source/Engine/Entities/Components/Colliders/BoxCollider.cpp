@@ -11,6 +11,8 @@ using namespace DirectX::SimpleMath;
 BoxCollider::BoxCollider(GameObject* _gameObject) : Collider(_gameObject), size(Vector3::One)
 {
 	name = "BoxCollider";
+	componentType = ComponentType::BoxCollider;
+	
 	// TODO: Set colliderShape to BoxShape
 }
 
@@ -31,7 +33,8 @@ void BoxCollider::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize Parent Class
 	Collider::Deserialize(json);
 
-	// TODO: Deserialize BoxCollider
+	// INFO: Deserialize BoxCollider Data
+	size = Vector3(json["Size"][0].get<float>(), json["Size"][1].get<float>(), json["Size"][2].get<float>());
 }
 
 void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)

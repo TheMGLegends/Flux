@@ -38,7 +38,9 @@ void Visualizer::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);
 
-	// INFO: Deserialize VisualizerComponent
+	// INFO: Deserialize Visualizer Data
+	SetModel(json["ModelName"].get<std::string>());
+	SetMaterialTexture(json["TextureName"].get<std::string>());
 }
 
 void Visualizer::SetModel(const std::string& _modelName)

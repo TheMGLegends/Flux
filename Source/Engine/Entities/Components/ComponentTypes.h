@@ -10,6 +10,7 @@ namespace Flux
 		Camera,
 		PhysicsBody,
 		Visualizer,
-		Collider
+		BoxCollider,
+		SphereCollider
 	};
 }

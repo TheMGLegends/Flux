@@ -32,11 +32,11 @@ Scene::Scene() : sceneName("Default")
 	sceneViewCamera = std::make_unique<SceneViewCamera>();
 
 	// INFO: Create a default play mode camera
-	gameObjects.emplace_back(std::make_unique<GameObject>());
-	playModeCamera = gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
+	//gameObjects.emplace_back(std::make_unique<GameObject>());
+	//playModeCamera = gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
 
 	// TODO: Testing
-	gameObjects.emplace_back(std::make_unique<GameObject>());
+	/*gameObjects.emplace_back(std::make_unique<GameObject>());
 	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
 	gameObjects.back().get()->AddComponent<BoxCollider>(gameObjects.back().get());
 	auto visualizer = gameObjects.back().get()->GetComponent<Visualizer>().lock();
@@ -50,13 +50,16 @@ Scene::Scene() : sceneName("Default")
 	gameObjects.back().get()->AddComponent<SphereCollider>(gameObjects.back().get());
 	gameObjects.back().get()->GetComponent<SphereCollider>().lock()->SetRadius(3.0f);
 	transform = gameObjects.back().get()->GetComponent<Transform>().lock();
-	transform->SetPosition(Vector3(-10.0f, 0.0f, 5.0f));
+	transform->SetPosition(Vector3(-10.0f, 0.0f, 5.0f));*/
 
 	// TODO: TESTING
-	nlohmann::ordered_json json;
-	Serialize(json);
-	std::ofstream jsonTest("test.json");
-	jsonTest << json.dump(4);
+	//nlohmann::ordered_json json;
+	//Serialize(json);
+	//std::ofstream jsonTest("test.json");
+	//jsonTest << json.dump(4);
+	std::ifstream jsonTest("test.json");
+	nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonTest);
+	Deserialize(json);
 }
 
 Scene::~Scene()
@@ -86,12 +89,23 @@ void Scene::Deserialize(const nlohmann::ordered_json& json)
 	debugWireframes.clear();
 	playModeCamera.reset();
 
+	// INFO: Load the name of the Scene
+	sceneName = json["SceneName"].get<std::string>();
 
-	// TODO: Get the type of GameObject from json file and instantiate it then pass the json to it
+	// INFO: Find out how many game objects are in the scene
+	size_t gameObjectCount = json["GameObjects"].size();
 
-	for (size_t i = 0; i < gameObjects.size(); i++)
+	// INFO: Deserialize each GameObject in the Scene
+	for (size_t i = 0; i < gameObjectCount; i++)
 	{
-		gameObjects[i]->Deserialize(json);
+		// INFO: Retrieve the game object data from the json file
+		auto& gameObjectData = json["GameObjects"][i];
+
+		// INFO: Create the GameObject based on the type
+		gameObjects.emplace_back(GameObject::CreateGameObject(gameObjectData["Type"].get<std::string>()));
+
+		// INFO: Deserialize the newly created GameObject with the gameObjects data
+		gameObjects.back()->Deserialize(gameObjectData);
 	}
 }
 
@@ -200,9 +214,9 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 	{
 	// INFO: Both inherit from IDebugWireframe
 	case ComponentType::Camera:
-	case ComponentType::Collider:
+	case ComponentType::BoxCollider:
+	case ComponentType::SphereCollider:
 	{
-
 		std::weak_ptr<IDebugWireframe> debugWireframe = std::dynamic_pointer_cast<IDebugWireframe>(validComponent);
 
 		if (!debugWireframe.expired())

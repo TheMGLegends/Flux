@@ -39,7 +39,8 @@
                         1.0,
                         0.0
                     ],
-                    "SkyboxTexture": "DebugSkybox"
+                    "SkyboxTexture": "DebugSkybox",
+                    "UseSkybox": true
                 }
             ]
         },
@@ -128,7 +129,7 @@
                 {
                     "Name": "SphereCollider",
                     "IsActive": true,
-                    "ComponentType": 5,
+                    "ComponentType": 6,
                     "IsTrigger": false,
                     "Centre": [
                         0.0,

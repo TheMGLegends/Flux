@@ -1,8 +1,5 @@
 #include "Transform.h"
 
-// TODO: TESTING
-#include "Core/Debug/Debug.h"
-
 using namespace Flux;
 using namespace DirectX::SimpleMath;
 
@@ -37,7 +34,12 @@ void Transform::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);
 
-	// TODO: Deserialize TransformComponent
+	// INFO: Deserialize Transform Data
+	position = Vector3(json["Position"][0].get<float>(), json["Position"][1].get<float>(), json["Position"][2].get<float>());
+	rotation = Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(json["Rotation"][1].get<float>()),
+												  DirectX::XMConvertToRadians(json["Rotation"][0].get<float>()),
+												  DirectX::XMConvertToRadians(json["Rotation"][2].get<float>())); // INFO: In degrees so need to convert to radians
+	scale = Vector3(json["Scale"][0].get<float>(), json["Scale"][1].get<float>(), json["Scale"][2].get<float>());
 }
 
 DirectX::XMMATRIX Transform::GetWorldMatrix() const

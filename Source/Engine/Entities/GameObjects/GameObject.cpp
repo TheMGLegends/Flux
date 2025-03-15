@@ -2,6 +2,7 @@
 
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
+#include "Engine/Entities/Components/Components.h"
 
 using namespace Flux;
 
@@ -36,6 +37,53 @@ void GameObject::Serialize(nlohmann::ordered_json& json) const
 
 void GameObject::Deserialize(const nlohmann::ordered_json& json)
 {
+	// INFO: Deserialize GameObject Data
+	name = json["Name"].get<std::string>();
+	type = json["Type"].get<std::string>();
+	isActive = json["IsActive"].get<bool>();
+
+	// INFO: Find out how many components are on the GameObject
+	size_t componentCount = json["Components"].size();
+
+	// INFO: Deserialize each Component on the GameObject
+	for (size_t i = 0; i < componentCount; i++)
+	{
+		// INFO: Retrieve the component data from the json file
+		auto& componentData = json["Components"][i];
+
+		// INFO: Create the Component based on the type
+		ComponentType componentType = static_cast<ComponentType>(componentData["ComponentType"].get<unsigned int>());
+
+		std::weak_ptr<Component> component;
+
+		switch (componentType)
+		{
+		case ComponentType::Transform:
+			component = AddComponent<Transform>(this);
+			break;
+		case ComponentType::Camera:
+			component = AddComponent<Camera>(this);
+			break;
+		case ComponentType::PhysicsBody:
+			component = AddComponent<PhysicsBody>(this);
+			break;
+		case ComponentType::Visualizer:
+			component = AddComponent<Visualizer>(this);
+			break;
+		case ComponentType::BoxCollider:
+			component = AddComponent<BoxCollider>(this);
+			break;
+		case ComponentType::SphereCollider:
+			component = AddComponent<SphereCollider>(this);
+			break;
+		case ComponentType::None:
+		default:
+			break;
+		}
+
+		if (!component.expired())
+			component.lock()->Deserialize(componentData);
+	}
 }
 
 void GameObject::SetIsActive(bool _isActive)

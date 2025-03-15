@@ -11,8 +11,6 @@ using namespace DirectX::SimpleMath;
 
 Collider::Collider(GameObject* _gameObject) : Component(_gameObject), colliderShape(nullptr), rigidActor(nullptr), isTrigger(false), centre(Vector3::Zero)
 {
-	componentType = ComponentType::Collider;
-
 	GameObject* gameObject = GetGameObject();
 
 	if (!gameObject)
@@ -47,7 +45,9 @@ void Collider::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);
 
-	// TODO: Deserialize ColliderComponent
+	// INFO: Deserialize Collider Data
+	isTrigger = json["IsTrigger"].get<bool>();
+	centre = Vector3(json["Centre"][0].get<float>(), json["Centre"][1].get<float>(), json["Centre"][2].get<float>());
 }
 
 void Collider::ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other)

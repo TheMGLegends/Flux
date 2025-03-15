@@ -10,6 +10,7 @@ using namespace Flux;
 SphereCollider::SphereCollider(GameObject* _gameObject) : Collider(_gameObject), radius(1.0f)
 {
 	name = "SphereCollider";
+	componentType = ComponentType::SphereCollider;
 
 	// TODO: Set colliderShape to SphereShape
 }
@@ -31,7 +32,8 @@ void SphereCollider::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize Parent Class
 	Collider::Deserialize(json);
 
-	// TODO: Deserialize SphereCollider
+	// INFO: Deserialize SphereCollider Data
+	radius = json["Radius"].get<float>();
 }
 
 void SphereCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)

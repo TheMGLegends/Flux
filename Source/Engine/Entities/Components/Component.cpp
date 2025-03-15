@@ -13,6 +13,7 @@ Component::~Component()
 
 void Component::Serialize(nlohmann::ordered_json& json) const
 {
+	// INFO: Serialize Component Data
 	json["Components"].push_back({
 		{"Name", name},
 		{"IsActive", isActive},
@@ -22,5 +23,7 @@ void Component::Serialize(nlohmann::ordered_json& json) const
 
 void Component::Deserialize(const nlohmann::ordered_json& json)
 {
-	// TODO: Deserialize Component
+	// INFO: Deserialize Component Data
+	name = json["Name"].get<std::string>();
+	isActive = json["IsActive"].get<bool>();
 }

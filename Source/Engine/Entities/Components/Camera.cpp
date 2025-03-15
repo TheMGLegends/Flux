@@ -54,6 +54,7 @@ void Camera::Serialize(nlohmann::ordered_json& json) const
 	jsonBack["FarClippingPlane"] = farClippingPlane;
 	jsonBack["BackgroundColour"] = { backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3] };
 	jsonBack["SkyboxTexture"] = skyboxTextureName;
+	jsonBack["UseSkybox"] = useSkybox;
 }
 
 void Camera::Deserialize(const nlohmann::ordered_json& json)
@@ -61,7 +62,22 @@ void Camera::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);
 
-	// TODO: Deserialize CameraComponent
+	// INFO: Deserialize Camera Data
+	verticalFOV = json["FOV"].get<float>();
+	nearClippingPlane = json["NearClippingPlane"].get<float>();
+	farClippingPlane = json["FarClippingPlane"].get<float>();
+
+	auto& backgroundColourJson = json["BackgroundColour"];
+	for (size_t i = 0; i < backgroundColourJson.size(); i++)
+	{
+		backgroundColour[i] = backgroundColourJson[i].get<float>();
+	}
+
+	SetMaterialTexture(json["SkyboxTexture"].get<std::string>());
+	SetUseSkybox(json["UseSkybox"].get<bool>());
+
+	// INFO: Initialise Bounding Frustum
+	SetFrustum();
 }
 
 void Camera::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
