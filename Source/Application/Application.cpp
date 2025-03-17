@@ -12,6 +12,9 @@
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Time/Time.h"
 
+// TODO: TESTING
+#include "Engine/Audio/Audio.h"
+
 using namespace Flux;
 
 Application::Application() : window(nullptr), isRunning(false)
@@ -54,11 +57,15 @@ Application::Application() : window(nullptr), isRunning(false)
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::Quit, this);
 
+	// TODO: Testing
+	Audio::PlaySound3D("testSound", FMOD_VECTOR{ 0.0f, 0.0f, 0.0f }, 1.0f, 500.0f, true);
+
 	isRunning = true;
 }
 
 Application::~Application()
 {
+	engineRuntime.Release();
 	Input::Release();
 
 	SDL_DestroyWindow(window);

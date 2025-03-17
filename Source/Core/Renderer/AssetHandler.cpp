@@ -6,6 +6,8 @@
 #include <DDSTextureLoader.h>
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
+#include <fmod.hpp>
+#include <fmod_errors.h>
 #include <magic_enum.hpp>
 #include <WICTextureLoader.h>
 
@@ -23,6 +25,8 @@ using namespace Flux;
 using namespace Flux::DirectXConfig;
 using namespace Microsoft::WRL;
 
+const std::filesystem::path AssetHandler::EMPTY_PATH = std::filesystem::path();
+
 std::optional<std::reference_wrapper<ID3D11Device>> AssetHandler::device;
 std::optional<std::reference_wrapper<ID3D11DeviceContext>> AssetHandler::deviceContext;
 
@@ -37,6 +41,7 @@ std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>> AssetHandl
 std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> AssetHandler::textures;
 std::unordered_map<std::string, std::unique_ptr<Model>> AssetHandler::models;
 std::unordered_map<DirectXConfig::ShaderType, std::unique_ptr<Material>> AssetHandler::materials;
+std::unordered_map<std::string, std::filesystem::path> AssetHandler::audioPaths;
 
 HRESULT AssetHandler::Initialise(ID3D11Device& _device, ID3D11DeviceContext& _deviceContext)
 {
@@ -95,6 +100,13 @@ HRESULT AssetHandler::LoadAssets(const std::filesystem::path& assetDirectory)
 			if (FiletypeConfig::IsSupportedModelFormat(extensionType))
 			{
 				if (!LoadModel(entry.path(), importer)) return E_FAIL;
+				continue;
+			}
+
+			// INFO: Audio Loading
+			if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
+			{
+				if (!LoadAudio(entry.path())) return E_FAIL;
 				continue;
 			}
 		}
@@ -204,6 +216,17 @@ bool AssetHandler::LoadModel(const std::filesystem::path& modelPath, Assimp::Imp
 	return true;
 }
 
+bool AssetHandler::LoadAudio(const std::filesystem::path& audioPath)
+{
+	if (!audioPaths.insert({ audioPath.stem().string(), audioPath }).second)
+	{
+		Debug::LogError("AssetHandler::LoadAudio() - Failed to insert audio path into map. Filepath: " + audioPath.string());
+		return false;
+	}
+
+	return true;
+}
+
 Model* AssetHandler::GetModel(const std::string& modelName)
 {
 	return models[modelName].get();
@@ -212,6 +235,17 @@ Model* AssetHandler::GetModel(const std::string& modelName)
 Material* AssetHandler::GetMaterial(DirectXConfig::ShaderType shaderType)
 {
 	return materials[shaderType].get();
+}
+
+const std::filesystem::path& Flux::AssetHandler::GetAudioPath(const std::string& audioName)
+{
+	if (auto audioPath = audioPaths.find(audioName); audioPath != audioPaths.end())
+		return audioPath->second;
+	else
+	{
+		Debug::LogError("AssetHandler::GetAudioPath() - Failed to find audio path. Audio Name: " + audioName);
+		return EMPTY_PATH;
+	}
 }
 
 HRESULT AssetHandler::LoadShaders(ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath)

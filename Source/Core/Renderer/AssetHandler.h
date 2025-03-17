@@ -33,10 +33,10 @@ namespace Flux
 		/// @brief Loads assets from the specified directory
 		static HRESULT LoadAssets(const std::filesystem::path& assetDirectory);
 
-		// TODO: Get rid of the FreeType font library and use SpriteFont instead
 		static bool LoadFont(const std::filesystem::path& fontPath); // INFO: SpriteFont for UI text rendering (ImGui Fonts are not stored/loaded here)
 		static HRESULT LoadTexture(const std::filesystem::path& texturePath);
 		static bool LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer);
+		static bool LoadAudio(const std::filesystem::path& audioPath);
 
 
 		// INFO: Getters
@@ -50,6 +50,7 @@ namespace Flux
 		static inline ID3D11ShaderResourceView* GetTexture(const std::string& textureName) { return textures[textureName].Get(); }
 		static Model* GetModel(const std::string& modelName);
 		static Material* GetMaterial(DirectXConfig::ShaderType shaderType);
+		static const std::filesystem::path& GetAudioPath(const std::string& audioName);
 
 	private:
 		static HRESULT LoadShaders(DirectXConfig::ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath);
@@ -60,6 +61,9 @@ namespace Flux
 		static bool LoadMaterial(DirectXConfig::ShaderType shaderType);
 
 		static HRESULT VerifyDeviceAndContext(bool verifyContext = false);
+
+	public:
+		static const std::filesystem::path EMPTY_PATH;
 
 	private:
 		static std::optional<std::reference_wrapper<ID3D11Device>> device;
@@ -76,6 +80,7 @@ namespace Flux
 		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textures;
 		static std::unordered_map<std::string, std::unique_ptr<Model>> models;
 		static std::unordered_map<DirectXConfig::ShaderType, std::unique_ptr<Material>> materials;
+		static std::unordered_map<std::string, std::filesystem::path> audioPaths;
 	};
 }
 

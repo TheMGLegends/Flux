@@ -144,6 +144,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Audio\Audio.cpp" />
     <ClCompile Include="Source\Engine\Entities\GameObjects\Player.cpp" />
     <ClCompile Include="Source\Engine\Entities\GameObjects\SceneViewCamera.cpp" />
     <ClCompile Include="Source\Core\Renderer\AssetHandler.cpp" />
@@ -185,6 +186,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine\Audio\Audio.h" />
     <ClInclude Include="Source\Engine\Entities\GameObjects\Player.h" />
     <ClInclude Include="Source\Core\Helpers\MathHelpers.h" />
     <ClInclude Include="Source\Engine\Entities\GameObjects\SceneViewCamera.h" />
