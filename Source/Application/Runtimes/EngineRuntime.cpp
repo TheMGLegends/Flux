@@ -4,6 +4,7 @@
 #include "Core/Debug/Debug.h"
 #include "Core/Time/Time.h"
 #include "Engine/Audio/Audio.h"
+#include "Engine/Physics/Physics.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Entities/Components/Camera.h"
 #include "Engine/Entities/Components/Transform.h"
@@ -24,6 +25,13 @@ EngineRuntime::~EngineRuntime()
 bool EngineRuntime::PreInitialise()
 {
 	// TODO: Pre-Initialisation Logic (Systems)
+
+	// INFO: Initialise the Physics System
+	if (!Physics::Initialise())
+	{
+		Debug::LogError("EngineRuntime::PreInitialise() - Failed to initialise Physics System");
+		return false;
+	}
 
 	// INFO: Initialise the Audio System
 	if (!Audio::Initialise())
@@ -104,4 +112,5 @@ void EngineRuntime::FixedUpate(float fixedDeltaTime)
 void EngineRuntime::Release()
 {
 	Audio::Release();
+	Physics::Release();
 }
