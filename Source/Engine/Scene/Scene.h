@@ -10,6 +10,8 @@
 #include "Engine/Entities/Components/Components.h"
 #include "Engine/Entities/Components/ComponentTypes.h"
 
+namespace physx { class PxScene; }
+
 namespace Flux
 {
 	class GameObject;
@@ -43,6 +45,8 @@ namespace Flux
 		/// @brief Returns the scene view camera if in editor mode otherwise returns play mode camera
 		std::weak_ptr<Camera> GetCamera() const;
 
+		inline physx::PxScene& GetPhysicsScene() const { return *physicsScene; }
+
 	private:
 		struct DebugWireframeData
 		{
@@ -62,6 +66,8 @@ namespace Flux
 		std::unique_ptr<SceneViewCamera> sceneViewCamera;
 
 		std::string sceneName;
+
+		physx::PxScene* physicsScene;
 	};
 
 	template<class T>

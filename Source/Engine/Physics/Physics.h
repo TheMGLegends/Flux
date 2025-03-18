@@ -16,6 +16,7 @@ namespace Flux
 		static void Release();
 
 		static inline physx::PxPhysics& GetPhysics() { return *physics; }
+		static inline const physx::PxMaterial& GetDefaultPhysicsMaterial() { return *defaultPhysicsMaterial; }
 
 	private:
 		static physx::PxFoundation* foundation;
@@ -23,6 +24,7 @@ namespace Flux
 		static physx::PxDefaultErrorCallback defaultErrorCallback;
 
 		static physx::PxPhysics* physics;
+		static physx::PxMaterial* defaultPhysicsMaterial;
 	};
 }
 

@@ -9,6 +9,7 @@ physx::PxDefaultAllocator Physics::defaultAllocatorCallback;
 physx::PxDefaultErrorCallback Physics::defaultErrorCallback;
 
 physx::PxPhysics* Physics::physics = nullptr;
+physx::PxMaterial* Physics::defaultPhysicsMaterial = nullptr;
 
 bool Physics::Initialise()
 {
@@ -28,6 +29,9 @@ bool Physics::Initialise()
 		Debug::LogError("Physics::Initialise() - Failed to create PhysX Physics");
 		return false;
 	}
+
+	// INFO: Create Default Physics Material
+	defaultPhysicsMaterial = physics->createMaterial(0.5f, 0.5f, 0.1f);
 
 	return true;
 }

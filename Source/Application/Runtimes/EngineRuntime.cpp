@@ -104,13 +104,16 @@ void EngineRuntime::FixedUpate(float fixedDeltaTime)
 {
 	while (Time::PerformPhysicsUpdate())
 	{
+		scene->GetPhysicsScene().simulate(fixedDeltaTime);
 		scene->FixedUpdate(fixedDeltaTime);
-		// TODO: Simulate Physics Scene
+		scene->GetPhysicsScene().fetchResults(true);
 	}
 }
 
 void EngineRuntime::Release()
 {
+	scene.reset();
+
 	Audio::Release();
 	Physics::Release();
 }

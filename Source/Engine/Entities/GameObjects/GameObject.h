@@ -28,6 +28,9 @@ namespace Flux
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
 		template<class T>
+		bool HasComponent();
+
+		template<class T>
 		std::weak_ptr<T> GetComponent();
 
 		template<class T, typename... Args>
@@ -92,8 +95,25 @@ namespace Flux
 	};
 
 	template<class T>
+	inline bool GameObject::HasComponent()
+	{
+		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+
+		// INFO: Check if component exists
+		for (auto& component : components)
+		{
+			std::weak_ptr<T> castedComponent = std::dynamic_pointer_cast<T>(component);
+			if (!castedComponent.expired())
+				return true;
+		}
+		return false;
+	}
+
+	template<class T>
 	inline std::weak_ptr<T> GameObject::GetComponent()
 	{
+		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+
 		// INFO: Check if component exists
 		for (auto& component : components)
 		{
@@ -116,6 +136,15 @@ namespace Flux
 		// INFO: Do not add the component if it already exists and we can only have one
 		if (!existingComponent.expired() && !existingComponent.lock()->CanHaveMultiple())
 			return existingComponent;
+
+		// INFO: Special Case for Collider Components
+		if (std::is_base_of<Collider, T>::value)
+		{
+			std::weak_ptr<Collider> existingCollider = GetComponent<Collider>();
+
+			if (!existingCollider.expired())
+				return std::dynamic_pointer_cast<T>(existingCollider.lock());
+		}
 
 		components.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
 		std::weak_ptr<T> newComponent = std::dynamic_pointer_cast<T>(components.back());

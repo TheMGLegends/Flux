@@ -2,21 +2,48 @@
 
 #include <DirectXColors.h>
 
+#include "Engine/Physics/Physics.h"
+#include "Engine/Scene/SceneContext.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
+#include "Engine/Entities/Components/PhysicsBody.h"
 #include "Engine/Entities/Components/Transform.h"
 
 using namespace Flux;
+using namespace DirectX::SimpleMath;
 
 SphereCollider::SphereCollider(GameObject* _gameObject) : Collider(_gameObject), radius(1.0f)
 {
 	name = "SphereCollider";
 	componentType = ComponentType::SphereCollider;
 
-	// TODO: Set colliderShape to SphereShape
+	auto& physics = Physics::GetPhysics();
+
+	// INFO: Create Sphere Collider Shape
+	colliderShape = physics.createShape(physx::PxSphereGeometry(radius), Physics::GetDefaultPhysicsMaterial());
+
+	// INFO: Search for existing physics body component
+	GameObject* owningGameObject = GetGameObject();
+
+	if (owningGameObject)
+	{
+		// INFO: Setup as rigid static actor
+		if (!owningGameObject->HasComponent<PhysicsBody>())
+		{
+			const Vector3& position = owningGameObject->transform.lock()->GetPosition();
+			rigidStatic = physics.createRigidStatic(physx::PxTransform(position.x, position.y, position.z, physx::PxIdentity));
+			rigidStatic->attachShape(*colliderShape);
+			SceneContext::GetScene().GetPhysicsScene().addActor(*rigidStatic);
+		}
+	}
 }
 
 SphereCollider::~SphereCollider()
 {
+	if (rigidStatic)
+	{
+		rigidStatic->release();
+		rigidStatic = nullptr;
+	}
 }
 
 void SphereCollider::Serialize(nlohmann::ordered_json& json) const

@@ -8,8 +8,11 @@
 #include <SimpleMath.h>
 #include <unordered_map>
 
-class PxRigidActor;
-class PxShape;
+namespace physx
+{
+	class PxRigidStatic;
+	class PxShape;
+}
 
 namespace Flux
 {
@@ -42,12 +45,14 @@ namespace Flux
 
 		void ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other);
 
+		inline physx::PxShape& GetColliderShape() const { return *colliderShape; }
+		inline physx::PxRigidStatic& GetRigidStatic() const { return *rigidStatic; }
+
 	protected:
-		PxShape* colliderShape;
+		physx::PxShape* colliderShape;
+		physx::PxRigidStatic* rigidStatic;
 
 	private:
-		PxRigidActor* rigidActor;
-
 		bool isTrigger;
 		DirectX::SimpleMath::Vector3 centre;
 

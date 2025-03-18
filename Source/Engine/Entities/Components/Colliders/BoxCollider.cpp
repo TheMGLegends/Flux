@@ -2,7 +2,10 @@
 
 #include <DirectXColors.h>
 
+#include "Engine/Physics/Physics.h"
+#include "Engine/Scene/SceneContext.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
+#include "Engine/Entities/Components/PhysicsBody.h"
 #include "Engine/Entities/Components/Transform.h"
 
 using namespace Flux;
@@ -13,11 +16,36 @@ BoxCollider::BoxCollider(GameObject* _gameObject) : Collider(_gameObject), size(
 	name = "BoxCollider";
 	componentType = ComponentType::BoxCollider;
 	
-	// TODO: Set colliderShape to BoxShape
+	auto& physics = Physics::GetPhysics();
+
+	// INFO: Create Box Collider Shape
+	colliderShape = physics.createShape(physx::PxBoxGeometry(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f), Physics::GetDefaultPhysicsMaterial());
+
+	// INFO: Search for existing physics body component
+	GameObject* owningGameObject = GetGameObject();
+
+	if (owningGameObject)
+	{
+		// INFO: Setup as rigid static actor
+		if (!owningGameObject->HasComponent<PhysicsBody>())
+		{
+			const Vector3& position = owningGameObject->transform.lock()->GetPosition();
+			const Quaternion& rotation = owningGameObject->transform.lock()->GetRotation();
+			rigidStatic = physics.createRigidStatic(physx::PxTransform(position.x, position.y, position.z, 
+													physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
+			rigidStatic->attachShape(*colliderShape);
+			SceneContext::GetScene().GetPhysicsScene().addActor(*rigidStatic);
+		}
+	}
 }
 
 BoxCollider::~BoxCollider()
 {
+	if (rigidStatic)
+	{
+		rigidStatic->release();
+		rigidStatic = nullptr;
+	}
 }
 
 void BoxCollider::Serialize(nlohmann::ordered_json& json) const

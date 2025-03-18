@@ -3,10 +3,16 @@
 #include <magic_enum.hpp>
 
 #include "Core/Debug/Debug.h"
+#include "Engine/Physics/Physics.h"
+#include "Engine/Scene/SceneContext.h"
+#include "Engine/Entities/Components/Transform.h"
+#include "Engine/Entities/Components/Colliders/BoxCollider.h"
+#include "Engine/Entities/GameObjects/GameObject.h"
 
 using namespace Flux;
+using namespace DirectX::SimpleMath;
 
-PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), rigidActor(nullptr), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
+PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
 {
 	name = "PhysicsBody";
 	componentType = ComponentType::PhysicsBody;
@@ -18,11 +24,53 @@ PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), rigi
 		rotationConstraints[i] = false;
 	}
 
-	// TODO: Search for a collider component and create a rigid dynamic if found and get a reference to it here, set in collider component
+	// INFO: Search for existing collider component
+	GameObject* owningGameObject = GetGameObject();
+
+	if (owningGameObject)
+	{
+		// INFO: Setup rigid dynamic actor
+		auto& physics = Physics::GetPhysics();
+		auto& physicsScene = SceneContext::GetScene().GetPhysicsScene();
+
+		const Vector3& position = owningGameObject->transform.lock()->GetPosition();
+		const Quaternion& rotation = owningGameObject->transform.lock()->GetRotation();
+		rigidDynamic = physics.createRigidDynamic(physx::PxTransform(position.x, position.y, position.z,
+												  physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
+
+		std::shared_ptr<Collider> collider;
+		bool hadCollider = false;
+
+		if (!owningGameObject->HasComponent<Collider>())
+		{
+			Debug::LogWarning("PhysicsBody::PhysicsBody() - No collider found on GameObject, adding a default BoxCollider");
+			collider = owningGameObject->AddComponent<BoxCollider>(owningGameObject).lock();
+		}
+		else
+		{
+			hadCollider = true;
+			collider = owningGameObject->GetComponent<Collider>().lock();
+		}
+
+		// INFO: Attach Collider Shape to Rigid Dynamic Actor
+		rigidDynamic->attachShape(collider->GetColliderShape());
+
+		// INFO: Remove the Rigid Static Actor from the Physics Scene (If it existed beforehand)
+		if (hadCollider)
+			physicsScene.removeActor(collider->GetRigidStatic());
+
+		// INFO: Add the Rigid Dynamic Actor to the Physics Scene
+		physicsScene.addActor(*rigidDynamic);
+	}
 }
 
 PhysicsBody::~PhysicsBody()
 {
+	if (rigidDynamic)
+	{
+		rigidDynamic->release();
+		rigidDynamic = nullptr;
+	}
 }
 
 void PhysicsBody::Serialize(nlohmann::ordered_json& json) const

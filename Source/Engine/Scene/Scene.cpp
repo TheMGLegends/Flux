@@ -9,6 +9,7 @@
 #include "Engine/Entities/Components/Camera.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
 #include "Engine/Entities/GameObjects/SceneViewCamera.h"
+#include "Engine/Physics/Physics.h"
 #include "Engine/Scene/SceneContext.h"
 
 // TODO: TESTING
@@ -30,6 +31,21 @@ Scene::Scene() : sceneName("Default")
 
 	// INFO: Create a scene view camera
 	sceneViewCamera = std::make_unique<SceneViewCamera>();
+
+	// INFO: Setup the physics scene
+	auto& physics = Physics::GetPhysics();
+
+	physx::PxSceneDesc sceneDesc(physics.getTolerancesScale());
+	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
+	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+
+	physicsScene = physics.createScene(sceneDesc);
+	if (!physicsScene)
+	{
+		Debug::LogError("Scene::Scene() - Failed to create PhysX Scene");
+		return;
+	}
 
 	// INFO: Create a default play mode camera
 	//gameObjects.emplace_back(std::make_unique<GameObject>());
@@ -64,6 +80,11 @@ Scene::Scene() : sceneName("Default")
 
 Scene::~Scene()
 {
+	if (physicsScene)
+	{
+		physicsScene->release();
+		physicsScene = nullptr;
+	}
 }
 
 void Scene::Serialize(nlohmann::ordered_json& json) const
@@ -184,7 +205,7 @@ void Scene::FixedUpdate(float fixedDeltaTime)
 	}
 }
 
-void Flux::Scene::DrawWireframes(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
+void Scene::DrawWireframes(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 {
 	for (size_t i = 0; i < debugWireframes.size(); i++)
 	{
@@ -235,7 +256,7 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 	components[validComponent->GetComponentType()].push_back(component);
 }
 
-std::weak_ptr<Camera> Flux::Scene::GetCamera() const
+std::weak_ptr<Camera> Scene::GetCamera() const
 {
 	if (RuntimeConfig::IsInPlayMode())
 		return playModeCamera;

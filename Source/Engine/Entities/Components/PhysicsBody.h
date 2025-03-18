@@ -4,7 +4,7 @@
 
 #include <array>
 
-class PxRigidActor;
+namespace physx { class PxRigidDynamic; }
 
 namespace Flux
 {
@@ -45,7 +45,7 @@ namespace Flux
 		inline bool IsRotationConstrained(ConstraintAxis axis) const { return rotationConstraints[static_cast<size_t>(axis)]; }
 
 	private:
-		PxRigidActor* rigidActor;
+		physx::PxRigidDynamic* rigidDynamic;
 
 		float mass;
 		float drag;
