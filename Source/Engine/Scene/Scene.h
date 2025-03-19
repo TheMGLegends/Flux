@@ -18,7 +18,7 @@ namespace Flux
 	class GameObject;
 	class SceneViewCamera;
 
-	class Scene : public ISerializable, public IEventListener, public physx::PxSimulationEventCallback
+	class Scene : public ISerializable, public IEventListener/*, public physx::PxSimulationEventCallback*/
 	{
 		friend class SceneContext;
 
