@@ -16,6 +16,7 @@ namespace Flux
 		virtual void DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch) override;
 
 		void SetSize(const DirectX::SimpleMath::Vector3& _size);
+		inline void SetSize(float xHalfExtent, float yHalfExtent, float zHalfExtent) { SetSize(DirectX::SimpleMath::Vector3(xHalfExtent, yHalfExtent, zHalfExtent)); }
 		inline const DirectX::SimpleMath::Vector3& GetSize() const { return size; }
 
 	private:

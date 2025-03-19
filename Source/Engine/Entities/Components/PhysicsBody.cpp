@@ -1,6 +1,7 @@
 #include "PhysicsBody.h"
 
 #include <magic_enum.hpp>
+#include <extensions/PxRigidBodyExt.h>
 
 #include "Core/Debug/Debug.h"
 #include "Engine/Physics/Physics.h"
@@ -12,7 +13,7 @@
 using namespace Flux;
 using namespace DirectX::SimpleMath;
 
-PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
+PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), rigidDynamic(nullptr), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
 {
 	name = "PhysicsBody";
 	componentType = ComponentType::PhysicsBody;
@@ -52,8 +53,18 @@ PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), mass
 			collider = owningGameObject->GetComponent<Collider>().lock();
 		}
 
+		// INFO: Set RigidActor Properties
+		SetMass(mass);
+		SetDrag(drag);
+		SetAngularDrag(angularDrag);
+
+		// INFO: Collider Shape is exclusive so we first need to detach it from the Rigid Static Actor
+		if (collider->GetColliderShape().isExclusive())
+			collider->GetRigidStatic().detachShape(collider->GetColliderShape());
+
 		// INFO: Attach Collider Shape to Rigid Dynamic Actor
-		rigidDynamic->attachShape(collider->GetColliderShape());
+		if (!rigidDynamic->attachShape(collider->GetColliderShape()))
+			Debug::LogError("PhysicsBody::PhysicsBody() - Failed to attach shape to Rigid Dynamic Actor");
 
 		// INFO: Remove the Rigid Static Actor from the Physics Scene (If it existed beforehand)
 		if (hadCollider)
@@ -70,6 +81,18 @@ PhysicsBody::~PhysicsBody()
 	{
 		rigidDynamic->release();
 		rigidDynamic = nullptr;
+	}
+}
+
+void PhysicsBody::Update()
+{
+	if (rigidDynamic)
+	{
+		physx::PxTransform physxTransform = rigidDynamic->getGlobalPose();
+
+		auto owningTransform = GetGameObject()->transform.lock();
+		owningTransform->SetPosition(Vector3(physxTransform.p.x, physxTransform.p.y, physxTransform.p.z));
+		owningTransform->SetRotation(Quaternion(physxTransform.q.x, physxTransform.q.y, physxTransform.q.z, physxTransform.q.w));
 	}
 }
 
@@ -114,29 +137,33 @@ void PhysicsBody::Deserialize(const nlohmann::ordered_json& json)
 void PhysicsBody::SetMass(float _mass)
 {
 	mass = _mass;
-	
-	// TODO: Set Mass on RigidActor
+
+	if (rigidDynamic)
+		physx::PxRigidBodyExt::updateMassAndInertia(*rigidDynamic, mass);
 }
 
 void PhysicsBody::SetDrag(float _drag)
 {
 	drag = _drag;
 
-	// TODO: Set Drag on RigidActor
+	if (rigidDynamic)
+		rigidDynamic->setLinearDamping(drag);
 }
 
 void PhysicsBody::SetAngularDrag(float _angularDrag)
 {
 	angularDrag = _angularDrag;
 
-	// TODO: Set Angular Drag on RigidActor
+	if (rigidDynamic)
+		rigidDynamic->setAngularDamping(angularDrag);
 }
 
 void PhysicsBody::SetUseGravity(bool _useGravity)
 {
 	useGravity = _useGravity;
 
-	// TODO: Set Use Gravity on RigidActor
+	if (rigidDynamic)
+		rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !useGravity);
 }
 
 void PhysicsBody::SetPositionConstraint(bool isConstrained, ConstraintAxis axis)
@@ -149,7 +176,12 @@ void PhysicsBody::SetPositionConstraint(bool isConstrained, ConstraintAxis axis)
 
 	positionConstraints[static_cast<size_t>(axis)] = isConstrained;
 
-	// TODO: Set Position Constraint on RigidActor
+	if (rigidDynamic)
+	{
+		rigidDynamic->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, positionConstraints[0]); // INFO: X-Axis
+		rigidDynamic->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, positionConstraints[1]); // INFO: Y-Axis
+		rigidDynamic->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, positionConstraints[2]); // INFO: Z-Axis
+	}
 }
 
 void PhysicsBody::SetRotationConstraint(bool isConstrained, ConstraintAxis axis)
@@ -162,5 +194,10 @@ void PhysicsBody::SetRotationConstraint(bool isConstrained, ConstraintAxis axis)
 
 	rotationConstraints[static_cast<size_t>(axis)] = isConstrained;
 
-	// TODO: Set Rotation Constraint on RigidActor
+	if (rigidDynamic)
+	{
+		rigidDynamic->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, rotationConstraints[0]); // INFO: X-Axis
+		rigidDynamic->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, rotationConstraints[1]); // INFO: Y-Axis
+		rigidDynamic->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, rotationConstraints[2]); // INFO: Z-Axis
+	}
 }

@@ -247,7 +247,7 @@ void Renderer::RenderFrame(Scene& scene)
 	}
 
 	// INFO: Render the Debug Wireframes
-	if (RuntimeConfig::IsInEditorMode())
+	/*if (RuntimeConfig::IsInEditorMode())
 	{
 		batchEffect->SetView(view);
 		batchEffect->SetProjection(projection);
@@ -258,7 +258,16 @@ void Renderer::RenderFrame(Scene& scene)
 		primitiveBatch->Begin();
 		scene.DrawWireframes(*deviceContext.Get(), *primitiveBatch.get());
 		primitiveBatch->End();
-	}
+	}*/
+
+	// TODO: TESTING
+	batchEffect->SetView(view);
+	batchEffect->SetProjection(projection);
+	batchEffect->Apply(deviceContext.Get());
+	deviceContext->IASetInputLayout(batchInputLayout.Get());
+	primitiveBatch->Begin();
+	scene.DrawWireframes(*deviceContext.Get(), *primitiveBatch.get());
+	primitiveBatch->End();
 
 	// INFO: Render the UI
 	spriteBatch->Begin();

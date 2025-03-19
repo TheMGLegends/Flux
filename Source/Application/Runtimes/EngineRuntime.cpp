@@ -62,13 +62,10 @@ bool EngineRuntime::Initialise()
 void EngineRuntime::Update(float deltaTime)
 {
 	scene->Update(deltaTime);
-
-	// TODO: Update All Components
-
 	scene->LateUpdate(deltaTime);
 
 	// INFO: Update Audio System and current listener if in play mode
-	if (RuntimeConfig::IsInPlayMode())
+	/*if (RuntimeConfig::IsInPlayMode())
 	{
 		if (auto camera = scene->GetCamera().lock())
 		{
@@ -80,7 +77,7 @@ void EngineRuntime::Update(float deltaTime)
 		}
 
 		Audio::Update();
-	}
+	}*/
 
 	// TODO: TESTING
 	if (auto camera = scene->GetCamera().lock())
@@ -88,8 +85,8 @@ void EngineRuntime::Update(float deltaTime)
 		Vector3 position = camera->GetGameObject()->transform.lock()->GetPosition();
 		Vector3 forward = camera->Forward();
 		Vector3 up = camera->Up();
-		Audio::SetListenerAttributes({ position.x, position.y, position.z }, { 0.0f, 0.0f, 0.0f }, 
-									 { forward.x, forward.y, forward.z }, { up.x, up.y, up.z });
+		Audio::SetListenerAttributes({ position.x, position.y, position.z }, { 0.0f, 0.0f, 0.0f },
+			{ forward.x, forward.y, forward.z }, { up.x, up.y, up.z });
 	}
 
 	Audio::Update();

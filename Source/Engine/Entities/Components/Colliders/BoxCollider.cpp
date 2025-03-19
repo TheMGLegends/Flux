@@ -19,7 +19,7 @@ BoxCollider::BoxCollider(GameObject* _gameObject) : Collider(_gameObject), size(
 	auto& physics = Physics::GetPhysics();
 
 	// INFO: Create Box Collider Shape
-	colliderShape = physics.createShape(physx::PxBoxGeometry(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f), Physics::GetDefaultPhysicsMaterial());
+	colliderShape = physics.createShape(physx::PxBoxGeometry(size.x, size.y, size.z), Physics::GetDefaultPhysicsMaterial(), true);
 
 	// INFO: Search for existing physics body component
 	GameObject* owningGameObject = GetGameObject();
@@ -33,7 +33,10 @@ BoxCollider::BoxCollider(GameObject* _gameObject) : Collider(_gameObject), size(
 			const Quaternion& rotation = owningGameObject->transform.lock()->GetRotation();
 			rigidStatic = physics.createRigidStatic(physx::PxTransform(position.x, position.y, position.z, 
 													physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
-			rigidStatic->attachShape(*colliderShape);
+
+			if (!rigidStatic->attachShape(*colliderShape))
+				Debug::LogError("BoxCollider::BoxCollider() - Failed to attach shape to Rigid Static Actor");
+
 			SceneContext::GetScene().GetPhysicsScene().addActor(*rigidStatic);
 		}
 	}
@@ -62,7 +65,7 @@ void BoxCollider::Deserialize(const nlohmann::ordered_json& json)
 	Collider::Deserialize(json);
 
 	// INFO: Deserialize BoxCollider Data
-	size = Vector3(json["Size"][0].get<float>(), json["Size"][1].get<float>(), json["Size"][2].get<float>());
+	SetSize(Vector3(json["Size"][0].get<float>(), json["Size"][1].get<float>(), json["Size"][2].get<float>()));
 }
 
 void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
@@ -120,5 +123,22 @@ void BoxCollider::SetSize(const DirectX::SimpleMath::Vector3& _size)
 {
 	size = _size;
 
-	// TODO: Access colliderShape and update size
+	if (colliderShape)
+	{
+		// INFO: Get reference to actor that the shape is attached to
+		physx::PxRigidActor* rigidActor = colliderShape->getActor();
+
+		// INFO: Remove the shape from the actor to allow for geometry changes
+		rigidActor->detachShape(*colliderShape);
+
+		physx::PxBoxGeometry boxGeometry{};
+		if (colliderShape->getBoxGeometry(boxGeometry))
+		{
+			boxGeometry.halfExtents = { size.x, size.y, size.z };
+			colliderShape->setGeometry(boxGeometry);
+		}
+
+		// INFO: Re-attach the shape to the actor
+		rigidActor->attachShape(*colliderShape);
+	}
 }

@@ -1,5 +1,6 @@
 #include "Time.h"
 
+#include "Core/Configs/RuntimeConfig.h"
 #include "Core/Configs/TimeConfig.h"
 
 using namespace Flux;
@@ -21,7 +22,9 @@ void Time::Tick()
 
 	deltaTime = duration_cast<microseconds>(currentTime - previousTime).count() / MICRO_TO_SEC;
 	elapsedTime += deltaTime;
-	accumulator += deltaTime;
+
+	if (RuntimeConfig::IsInPlayMode())
+		accumulator += deltaTime;
 
 	previousTime = currentTime;
 

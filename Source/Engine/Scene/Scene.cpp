@@ -16,6 +16,7 @@
 #include "Engine/Entities/Components/Visualizer.h"
 #include "Engine/Entities/Components/Colliders/BoxCollider.h"
 #include "Engine/Entities/Components/Colliders/SphereCollider.h"
+#include "Engine/Entities/Components/PhysicsBody.h"
 #include <SimpleMath.h>
 #include <fstream>
 using namespace DirectX::SimpleMath;
@@ -42,10 +43,7 @@ Scene::Scene() : sceneName("Default")
 
 	physicsScene = physics.createScene(sceneDesc);
 	if (!physicsScene)
-	{
 		Debug::LogError("Scene::Scene() - Failed to create PhysX Scene");
-		return;
-	}
 
 	// INFO: Create a default play mode camera
 	//gameObjects.emplace_back(std::make_unique<GameObject>());
@@ -58,7 +56,8 @@ Scene::Scene() : sceneName("Default")
 	auto visualizer = gameObjects.back().get()->GetComponent<Visualizer>().lock();
 	auto transform = gameObjects.back().get()->GetComponent<Transform>().lock();
 	transform->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
-	transform->SetRotation(Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(45.0f), 0.0f, 0.0f));
+	transform->SetRotation(Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, DirectX::XMConvertToRadians(40.0f)));
+	gameObjects.back().get()->AddComponent<PhysicsBody>(gameObjects.back().get());
 
 	gameObjects.emplace_back(std::make_unique<GameObject>());
 	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
@@ -66,13 +65,24 @@ Scene::Scene() : sceneName("Default")
 	gameObjects.back().get()->AddComponent<SphereCollider>(gameObjects.back().get());
 	gameObjects.back().get()->GetComponent<SphereCollider>().lock()->SetRadius(3.0f);
 	transform = gameObjects.back().get()->GetComponent<Transform>().lock();
-	transform->SetPosition(Vector3(-10.0f, 0.0f, 5.0f));*/
+	transform->SetPosition(Vector3(-10.0f, 0.0f, 5.0f));
 
-	// TODO: TESTING
+	gameObjects.emplace_back(std::make_unique<GameObject>());
+	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
+	gameObjects.back().get()->AddComponent<BoxCollider>(gameObjects.back().get());
+	transform = gameObjects.back().get()->GetComponent<Transform>().lock();
+	transform->SetPosition(Vector3(0.0f, -10.0f, 0.0f));
+	transform->SetScale(Vector3(10.0f, 1.0f, 10.0f));
+	auto boxCollider = gameObjects.back().get()->GetComponent<BoxCollider>().lock();
+	boxCollider->SetSize(10.0f, 1.0f, 10.0f);*/
+
+	// TODO: Serialization Testing
 	//nlohmann::ordered_json json;
 	//Serialize(json);
 	//std::ofstream jsonTest("test.json");
 	//jsonTest << json.dump(4);
+
+	// TODO: Deserialization Testing
 	std::ifstream jsonTest("test.json");
 	nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonTest);
 	Deserialize(json);
@@ -176,19 +186,66 @@ void Scene::Update(float deltaTime)
 {
 	if (RuntimeConfig::IsInPlayMode())
 	{
+		// INFO: Update all custom user scripts
 		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
 			if (gameObjects[i]->IsActive())
 				gameObjects[i]->Update(deltaTime);
 		}
+
+		// INFO: Update transform values based on physics bodies
+		auto physicsBodies = GetComponents<PhysicsBody>();
+		for (size_t i = 0; i < physicsBodies.size(); i++)
+		{
+			if (physicsBodies[i].expired())
+				continue;
+
+			auto physicsBody = physicsBodies[i].lock();
+			
+			if (!physicsBody->GetGameObject()->IsActive())
+				continue;
+
+			if (physicsBody->IsActive())
+				physicsBody->Update();
+		}
+
+		// INFO: Update rigid static actors on colliders without physics bodies based on transform values
+		std::vector<std::weak_ptr<Collider>> colliders;
+
+		auto boxColliders = GetComponents<BoxCollider>();
+		for (auto& boxCollider : boxColliders)
+			colliders.push_back(boxCollider);
+
+		auto sphereColliders = GetComponents<SphereCollider>();
+		for (auto& sphereCollider : sphereColliders)
+			colliders.push_back(sphereCollider);
+
+		for (size_t i = 0; i < colliders.size(); i++)
+		{
+			if (colliders[i].expired())
+				continue;
+
+			auto collider = colliders[i].lock();
+			if (!collider->GetGameObject()->IsActive())
+				continue;
+
+			if (collider->IsActive())
+				collider->Update();
+		}
 	}
 
-	if (RuntimeConfig::IsInEditorMode())
-		sceneViewCamera->Update(deltaTime);
+	//if (RuntimeConfig::IsInEditorMode())
+	//	sceneViewCamera->Update(deltaTime);
+
+	// TODO: TESTING
+	sceneViewCamera->Update(deltaTime);
 }
 
 void Scene::LateUpdate(float deltaTime)
 {
+	if (!RuntimeConfig::IsInPlayMode())
+		return;
+
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
 		if (gameObjects[i]->IsActive())
@@ -258,8 +315,11 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 
 std::weak_ptr<Camera> Scene::GetCamera() const
 {
-	if (RuntimeConfig::IsInPlayMode())
+	/*if (RuntimeConfig::IsInPlayMode())
 		return playModeCamera;
 	else
-		return sceneViewCamera->GetCamera();
+		return sceneViewCamera->GetCamera();*/
+
+	// TODO: TESTING
+	return sceneViewCamera->GetCamera();
 }

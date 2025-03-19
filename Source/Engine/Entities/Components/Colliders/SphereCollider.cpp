@@ -19,7 +19,7 @@ SphereCollider::SphereCollider(GameObject* _gameObject) : Collider(_gameObject),
 	auto& physics = Physics::GetPhysics();
 
 	// INFO: Create Sphere Collider Shape
-	colliderShape = physics.createShape(physx::PxSphereGeometry(radius), Physics::GetDefaultPhysicsMaterial());
+	colliderShape = physics.createShape(physx::PxSphereGeometry(radius), Physics::GetDefaultPhysicsMaterial(), true);
 
 	// INFO: Search for existing physics body component
 	GameObject* owningGameObject = GetGameObject();
@@ -31,7 +31,10 @@ SphereCollider::SphereCollider(GameObject* _gameObject) : Collider(_gameObject),
 		{
 			const Vector3& position = owningGameObject->transform.lock()->GetPosition();
 			rigidStatic = physics.createRigidStatic(physx::PxTransform(position.x, position.y, position.z, physx::PxIdentity));
-			rigidStatic->attachShape(*colliderShape);
+			
+			if (!rigidStatic->attachShape(*colliderShape))
+				Debug::LogError("SphereCollider::SphereCollider() - Failed to attach shape to Rigid Static Actor");
+
 			SceneContext::GetScene().GetPhysicsScene().addActor(*rigidStatic);
 		}
 	}
@@ -60,7 +63,7 @@ void SphereCollider::Deserialize(const nlohmann::ordered_json& json)
 	Collider::Deserialize(json);
 
 	// INFO: Deserialize SphereCollider Data
-	radius = json["Radius"].get<float>();
+	SetRadius(json["Radius"].get<float>());
 }
 
 void SphereCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
@@ -82,10 +85,27 @@ void SphereCollider::SetRadius(float _radius)
 {
 	radius = _radius;
 
-	// TODO: Access colliderShape and update radius
+	if (colliderShape)
+	{
+		// INFO: Get reference to actor that the shape is attached to
+		physx::PxRigidActor* rigidActor = colliderShape->getActor();
+
+		// INFO: Remove the shape from the actor to allow for geometry changes
+		rigidActor->detachShape(*colliderShape);
+
+		physx::PxSphereGeometry sphereGeometry{};
+		if (colliderShape->getSphereGeometry(sphereGeometry))
+		{
+			sphereGeometry.radius = radius;
+			colliderShape->setGeometry(sphereGeometry);
+		}
+
+		// INFO: Re-attach the shape to the actor
+		rigidActor->attachShape(*colliderShape);
+	}
 }
 
-void Flux::SphereCollider::DrawRing(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch, 
+void SphereCollider::DrawRing(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch, 
 									const DirectX::XMVECTOR& centre, const DirectX::XMVECTOR& majorAxis, const DirectX::XMVECTOR& minorAxis, bool isTrigger)
 {
 	static const int ringSegments = 32;

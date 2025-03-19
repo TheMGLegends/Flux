@@ -1,6 +1,8 @@
 #include "Collider.h"
 
 #include <magic_enum.hpp>
+#include <PxRigidStatic.h>
+#include <PxShape.h>
 
 #include "Core/Debug/Debug.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
@@ -28,6 +30,21 @@ Collider::Collider(GameObject* _gameObject) : Component(_gameObject), colliderSh
 	collisionCallbacks.try_emplace(CollisionType::TriggerExit, std::bind(&GameObject::OnTriggerExit, gameObject, std::placeholders::_1));
 }
 
+void Collider::Update()
+{
+	if (rigidStatic)
+	{
+		GameObject* owningGameObject = GetGameObject();
+
+		const Vector3& position = owningGameObject->transform.lock()->GetPosition();
+		const Quaternion& rotation = owningGameObject->transform.lock()->GetRotation();
+
+		physx::PxTransform physxTransform(physx::PxVec3(position.x, position.y, position.z), 
+										  physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w));
+		rigidStatic->setGlobalPose(physxTransform);
+	}
+}
+
 void Collider::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class
@@ -46,6 +63,25 @@ void Collider::Deserialize(const nlohmann::ordered_json& json)
 	// INFO: Deserialize Collider Data
 	isTrigger = json["IsTrigger"].get<bool>();
 	centre = Vector3(json["Centre"][0].get<float>(), json["Centre"][1].get<float>(), json["Centre"][2].get<float>());
+}
+
+void Collider::SetIsTrigger(bool _isTrigger)
+{
+	isTrigger = _isTrigger;
+
+	if (colliderShape)
+	{
+		if (isTrigger)
+		{
+			colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else
+		{
+			colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
+	}
 }
 
 void Collider::ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other)

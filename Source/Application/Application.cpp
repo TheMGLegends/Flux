@@ -58,7 +58,7 @@ Application::Application() : window(nullptr), isRunning(false)
 	EventDispatcher::AddListener(EventType::Quit, this);
 
 	// TODO: Testing
-	Audio::PlaySound3D("testSound", FMOD_VECTOR{ 0.0f, 0.0f, 0.0f }, 1.0f, 500.0f, true);
+	Audio::PlaySound3D("testSound", FMOD_VECTOR{ 0.0f, 0.0f, 10.0f }, 1.0f, 500.0f, true);
 
 	isRunning = true;
 }
@@ -84,6 +84,15 @@ void Application::Run()
 	{
 		Time::Tick();
 		Input::Update();
+
+		// TODO: TESTING CODE
+		if (Input::GetKeyDown(SDL_SCANCODE_P))
+		{
+			if (RuntimeConfig::IsInPlayMode())
+				RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
+			else
+				RuntimeConfig::SetMode(RuntimeConfig::Mode::Play);
+		}
 
 		editorRuntime.Update(Time::DeltaTime());
 

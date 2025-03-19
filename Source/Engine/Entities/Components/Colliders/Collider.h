@@ -34,10 +34,13 @@ namespace Flux
 	public:
 		Collider(GameObject* _gameObject);
 
+		/// @brief Update the rigid static actor based on transform values granted it is being used (No PhysicsBody)
+		void Update();
+
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
-		inline void SetIsTrigger(bool _isTrigger) { isTrigger = _isTrigger; }
+		void SetIsTrigger(bool _isTrigger);
 		inline bool IsTrigger() const { return isTrigger; }
 
 		inline void SetCentre(const DirectX::SimpleMath::Vector3& _centre) { centre = _centre; }

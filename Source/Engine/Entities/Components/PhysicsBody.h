@@ -23,6 +23,9 @@ namespace Flux
 		PhysicsBody(GameObject* _gameObject);
 		virtual ~PhysicsBody() override;
 
+		/// @brief Updates Transform values based on physics simulation
+		void Update();
+
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
