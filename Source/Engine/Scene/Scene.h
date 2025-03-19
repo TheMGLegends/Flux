@@ -2,6 +2,7 @@
 
 #include "Engine/Interfaces/ISerializable.h"
 #include "Core/EventSystem/IEventListener.h"
+#include <PxSimulationEventCallback.h>
 
 #include <memory>
 #include <unordered_map>
@@ -17,7 +18,7 @@ namespace Flux
 	class GameObject;
 	class SceneViewCamera;
 
-	class Scene : public ISerializable, public IEventListener
+	class Scene : public ISerializable, public IEventListener, public physx::PxSimulationEventCallback
 	{
 		friend class SceneContext;
 

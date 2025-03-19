@@ -50,11 +50,9 @@ namespace Flux
 		virtual void FixedUpdate(float fixedDeltaTime) {}
 
 		virtual void OnCollisionEnter(std::shared_ptr<Collider> other) {}
-		virtual void OnCollisionStay(std::shared_ptr<Collider> other) {}
 		virtual void OnCollisionExit(std::shared_ptr<Collider> other) {}
 
 		virtual void OnTriggerEnter(std::shared_ptr<Collider> other) {}
-		virtual void OnTriggerStay(std::shared_ptr<Collider> other) {}
 		virtual void OnTriggerExit(std::shared_ptr<Collider> other) {}
 
 		virtual void OnDisable() {}

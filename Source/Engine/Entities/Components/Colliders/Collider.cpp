@@ -22,11 +22,9 @@ Collider::Collider(GameObject* _gameObject) : Component(_gameObject), colliderSh
 
 	// INFO: Set Default Collision Callbacks
 	collisionCallbacks.try_emplace(CollisionType::CollisionEnter, std::bind(&GameObject::OnCollisionEnter, gameObject, std::placeholders::_1));
-	collisionCallbacks.try_emplace(CollisionType::CollisionStay, std::bind(&GameObject::OnCollisionStay, gameObject, std::placeholders::_1));
 	collisionCallbacks.try_emplace(CollisionType::CollisionExit, std::bind(&GameObject::OnCollisionExit, gameObject, std::placeholders::_1));
 
 	collisionCallbacks.try_emplace(CollisionType::TriggerEnter, std::bind(&GameObject::OnTriggerEnter, gameObject, std::placeholders::_1));
-	collisionCallbacks.try_emplace(CollisionType::TriggerStay, std::bind(&GameObject::OnTriggerStay, gameObject, std::placeholders::_1));
 	collisionCallbacks.try_emplace(CollisionType::TriggerExit, std::bind(&GameObject::OnTriggerExit, gameObject, std::placeholders::_1));
 }
 

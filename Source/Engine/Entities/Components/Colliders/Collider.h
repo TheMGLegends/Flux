@@ -19,11 +19,9 @@ namespace Flux
 	enum class CollisionType
 	{
 		CollisionEnter,
-		CollisionStay,
 		CollisionExit,
 
 		TriggerEnter,
-		TriggerStay,
 		TriggerExit,
 
 		Count
