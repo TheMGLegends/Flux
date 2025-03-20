@@ -1,24 +1,22 @@
 #include "Collider.h"
 
 #include <magic_enum.hpp>
-#include <PxRigidStatic.h>
-#include <PxShape.h>
 
 #include "Core/Debug/Debug.h"
+#include "Engine/Physics/Physics.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
 #include "Engine/Entities/Components/PhysicsBody.h"
 
 using namespace Flux;
 using namespace DirectX::SimpleMath;
 
-Collider::Collider(GameObject* _gameObject) : Component(_gameObject), colliderShape(nullptr), rigidStatic(nullptr), isTrigger(false), centre(Vector3::Zero)
+Collider::Collider(GameObject* _gameObject) : Component(_gameObject), rigidActor(nullptr), colliderShape(nullptr), isTrigger(false), 
+										      centre(Vector3::Zero), rigidActorType(RigidActorType::Static)
 {
 	GameObject* gameObject = GetGameObject();
 
 	if (!gameObject)
-	{
 		Debug::LogError("Collider::Collider() - Collider Component must be attached to a GameObject");
-	}
 
 	// INFO: Set Default Collision Callbacks
 	collisionCallbacks.try_emplace(CollisionType::CollisionEnter, std::bind(&GameObject::OnCollisionEnter, gameObject, std::placeholders::_1));
@@ -26,20 +24,48 @@ Collider::Collider(GameObject* _gameObject) : Component(_gameObject), colliderSh
 
 	collisionCallbacks.try_emplace(CollisionType::TriggerEnter, std::bind(&GameObject::OnTriggerEnter, gameObject, std::placeholders::_1));
 	collisionCallbacks.try_emplace(CollisionType::TriggerExit, std::bind(&GameObject::OnTriggerExit, gameObject, std::placeholders::_1));
+
+	// INFO: Set the Rigid Actor
+	SetRigidActor();
 }
 
 void Collider::Update()
 {
-	if (rigidStatic)
+	GameObject* gameObject = GetGameObject();
+	auto transform = gameObject->transform.lock();
+
+	if (gameObject && transform && rigidActor)
 	{
-		GameObject* owningGameObject = GetGameObject();
+		switch (rigidActorType)
+		{
+		case RigidActorType::Static:
+		{
+			// INFO: Granted that it's static we update the actor using transform values
+			physx::PxRigidStatic* rigidStatic = static_cast<physx::PxRigidStatic*>(rigidActor);
 
-		const Vector3& position = owningGameObject->transform.lock()->GetPosition();
-		const Quaternion& rotation = owningGameObject->transform.lock()->GetRotation();
+			const Vector3& position = transform->GetPosition();
+			const Quaternion& rotation = transform->GetRotation();
 
-		physx::PxTransform physxTransform(physx::PxVec3(position.x, position.y, position.z), 
-										  physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w));
-		rigidStatic->setGlobalPose(physxTransform);
+			physx::PxTransform physxTransform(physx::PxVec3(position.x, position.y, position.z),
+												physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w));
+			rigidStatic->setGlobalPose(physxTransform);
+
+			break;
+		}
+		case RigidActorType::Dynamic:
+		{
+			// INFO: Granted that it's dynamic we update the transform using physics simulation values
+			physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+
+			physx::PxTransform physxTransform = rigidDynamic->getGlobalPose();
+			transform->SetPosition(Vector3(physxTransform.p.x, physxTransform.p.y, physxTransform.p.z));
+			transform->SetRotation(Quaternion(physxTransform.q.x, physxTransform.q.y, physxTransform.q.z, physxTransform.q.w));
+
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }
 
@@ -91,4 +117,37 @@ void Collider::ExecuteCollisionCallback(CollisionType collisionType, std::shared
 
 	// INFO: Perform the Collision Callback
 	collisionCallbacks[collisionType](other);
+}
+
+void Collider::SetRigidActor()
+{
+	auto& physics = Physics::GetPhysics();
+	GameObject* gameObject = GetGameObject();
+
+	// INFO: Clear RigidActor if it already exists
+	if (rigidActor)
+	{
+		rigidActor->release();
+		rigidActor = nullptr;
+	}
+
+	if (gameObject)
+	{
+		const Vector3& position = gameObject->transform.lock()->GetPosition();
+		const Quaternion& rotation = gameObject->transform.lock()->GetRotation();
+
+		// INFO: Setup as rigid static actor
+		if (!gameObject->HasComponent<PhysicsBody>())
+		{
+			rigidActor = physics.createRigidStatic(physx::PxTransform(position.x, position.y, position.z,
+												   physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
+			rigidActorType = RigidActorType::Static;
+		}
+		else
+		{
+			rigidActor = physics.createRigidDynamic(physx::PxTransform(position.x, position.y, position.z,
+													physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
+			rigidActorType = RigidActorType::Dynamic;
+		}
+	}
 }

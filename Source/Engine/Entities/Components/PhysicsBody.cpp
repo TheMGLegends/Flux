@@ -13,7 +13,7 @@
 using namespace Flux;
 using namespace DirectX::SimpleMath;
 
-PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), rigidDynamic(nullptr), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
+PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
 {
 	name = "PhysicsBody";
 	componentType = ComponentType::PhysicsBody;
@@ -24,75 +24,45 @@ PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), rigi
 		positionConstraints[i] = false;
 		rotationConstraints[i] = false;
 	}
+}
 
-	// INFO: Search for existing collider component
-	GameObject* owningGameObject = GetGameObject();
+PhysicsBody::~PhysicsBody()
+{
+}
 
-	if (owningGameObject)
+void PhysicsBody::PostConstruction()
+{
+	GameObject* gameObject = GetGameObject();
+
+	if (gameObject)
 	{
-		// INFO: Setup rigid dynamic actor
-		auto& physics = Physics::GetPhysics();
-		auto& physicsScene = SceneContext::GetScene().GetPhysicsScene();
-
-		const Vector3& position = owningGameObject->transform.lock()->GetPosition();
-		const Quaternion& rotation = owningGameObject->transform.lock()->GetRotation();
-		rigidDynamic = physics.createRigidDynamic(physx::PxTransform(position.x, position.y, position.z,
-												  physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
-
-		std::shared_ptr<Collider> collider;
-		bool hadCollider = false;
-
-		if (!owningGameObject->HasComponent<Collider>())
+		// INFO: Add Default BoxCollider if no Collider is found
+		if (!gameObject->HasComponent<Collider>())
 		{
 			Debug::LogWarning("PhysicsBody::PhysicsBody() - No collider found on GameObject, adding a default BoxCollider");
-			collider = owningGameObject->AddComponent<BoxCollider>(owningGameObject).lock();
+			attachedCollider = gameObject->AddComponent<BoxCollider>(gameObject);
 		}
 		else
 		{
-			hadCollider = true;
-			collider = owningGameObject->GetComponent<Collider>().lock();
+			attachedCollider = gameObject->GetComponent<Collider>();
+
+			// INFO: If collider was already present, it defaulted to static so we need to set it to dynamic
+			if (!attachedCollider.expired())
+			{
+				std::shared_ptr<Collider> collider = attachedCollider.lock();
+
+				// INFO: Reset the Rigid Actor to be dynamic
+				collider->SetRigidActor();
+
+				// INFO: Reset the Collider Shape to be attached to the new Rigid Actor
+				collider->SetColliderShape();
+			}
 		}
 
 		// INFO: Set RigidActor Properties
 		SetMass(mass);
 		SetDrag(drag);
 		SetAngularDrag(angularDrag);
-
-		// INFO: Collider Shape is exclusive so we first need to detach it from the Rigid Static Actor
-		if (collider->GetColliderShape().isExclusive())
-			collider->GetRigidStatic().detachShape(collider->GetColliderShape());
-
-		// INFO: Attach Collider Shape to Rigid Dynamic Actor
-		if (!rigidDynamic->attachShape(collider->GetColliderShape()))
-			Debug::LogError("PhysicsBody::PhysicsBody() - Failed to attach shape to Rigid Dynamic Actor");
-
-		// INFO: Remove the Rigid Static Actor from the Physics Scene (If it existed beforehand)
-		if (hadCollider)
-			physicsScene.removeActor(collider->GetRigidStatic());
-
-		// INFO: Add the Rigid Dynamic Actor to the Physics Scene
-		physicsScene.addActor(*rigidDynamic);
-	}
-}
-
-PhysicsBody::~PhysicsBody()
-{
-	if (rigidDynamic)
-	{
-		rigidDynamic->release();
-		rigidDynamic = nullptr;
-	}
-}
-
-void PhysicsBody::Update()
-{
-	if (rigidDynamic)
-	{
-		physx::PxTransform physxTransform = rigidDynamic->getGlobalPose();
-
-		auto owningTransform = GetGameObject()->transform.lock();
-		owningTransform->SetPosition(Vector3(physxTransform.p.x, physxTransform.p.y, physxTransform.p.z));
-		owningTransform->SetRotation(Quaternion(physxTransform.q.x, physxTransform.q.y, physxTransform.q.z, physxTransform.q.w));
 	}
 }
 
@@ -138,6 +108,8 @@ void PhysicsBody::SetMass(float _mass)
 {
 	mass = _mass;
 
+	auto rigidDynamic = VerifyRigidActor();
+
 	if (rigidDynamic)
 		physx::PxRigidBodyExt::updateMassAndInertia(*rigidDynamic, mass);
 }
@@ -145,6 +117,8 @@ void PhysicsBody::SetMass(float _mass)
 void PhysicsBody::SetDrag(float _drag)
 {
 	drag = _drag;
+
+	auto rigidDynamic = VerifyRigidActor();
 
 	if (rigidDynamic)
 		rigidDynamic->setLinearDamping(drag);
@@ -154,6 +128,8 @@ void PhysicsBody::SetAngularDrag(float _angularDrag)
 {
 	angularDrag = _angularDrag;
 
+	auto rigidDynamic = VerifyRigidActor();
+
 	if (rigidDynamic)
 		rigidDynamic->setAngularDamping(angularDrag);
 }
@@ -161,6 +137,8 @@ void PhysicsBody::SetAngularDrag(float _angularDrag)
 void PhysicsBody::SetUseGravity(bool _useGravity)
 {
 	useGravity = _useGravity;
+
+	auto rigidDynamic = VerifyRigidActor();
 
 	if (rigidDynamic)
 		rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !useGravity);
@@ -175,6 +153,8 @@ void PhysicsBody::SetPositionConstraint(bool isConstrained, ConstraintAxis axis)
 	}
 
 	positionConstraints[static_cast<size_t>(axis)] = isConstrained;
+
+	auto rigidDynamic = VerifyRigidActor();
 
 	if (rigidDynamic)
 	{
@@ -194,10 +174,24 @@ void PhysicsBody::SetRotationConstraint(bool isConstrained, ConstraintAxis axis)
 
 	rotationConstraints[static_cast<size_t>(axis)] = isConstrained;
 
+	auto rigidDynamic = VerifyRigidActor();
+
 	if (rigidDynamic)
 	{
 		rigidDynamic->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, rotationConstraints[0]); // INFO: X-Axis
 		rigidDynamic->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, rotationConstraints[1]); // INFO: Y-Axis
 		rigidDynamic->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, rotationConstraints[2]); // INFO: Z-Axis
 	}
+}
+
+physx::PxRigidDynamic* PhysicsBody::VerifyRigidActor()
+{
+	if (auto collider = attachedCollider.lock())
+	{
+		if (collider->GetRigidActorType() == RigidActorType::Dynamic)
+			return static_cast<physx::PxRigidDynamic*>(collider->GetRigidActor());
+	}
+
+	Debug::LogError("PhysicsBody::VerifyRigidActor() - No Collider found or Collider is not dynamic");
+	return nullptr;
 }

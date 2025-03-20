@@ -14,6 +14,8 @@ namespace Flux
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
 		virtual void DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch) override;
+		
+		virtual void SetColliderShape() override;
 
 		void SetRadius(float _radius);
 		inline float GetRadius() const { return radius; }

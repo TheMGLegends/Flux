@@ -17,14 +17,15 @@ namespace Flux
 		Count
 	};
 
+	class Collider;
+
 	class PhysicsBody : public Component
 	{
 	public:
 		PhysicsBody(GameObject* _gameObject);
 		virtual ~PhysicsBody() override;
 
-		/// @brief Updates Transform values based on physics simulation
-		void Update();
+		virtual void PostConstruction() override;
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
@@ -47,8 +48,10 @@ namespace Flux
 		void SetRotationConstraint(bool isConstrained, ConstraintAxis axis);
 		inline bool IsRotationConstrained(ConstraintAxis axis) const { return rotationConstraints[static_cast<size_t>(axis)]; }
 
+		physx::PxRigidDynamic* VerifyRigidActor();
+
 	private:
-		physx::PxRigidDynamic* rigidDynamic;
+		std::weak_ptr<Collider> attachedCollider;
 
 		float mass;
 		float drag;

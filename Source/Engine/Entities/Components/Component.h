@@ -16,6 +16,9 @@ namespace Flux
 		Component(GameObject* _gameObject);
 		virtual ~Component() = 0;
 
+		/// @brief Called after the Component is constructed and added to the GameObject
+		virtual void PostConstruction() {}
+
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 

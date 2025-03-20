@@ -193,23 +193,7 @@ void Scene::Update(float deltaTime)
 				gameObjects[i]->Update(deltaTime);
 		}
 
-		// INFO: Update transform values based on physics bodies
-		auto physicsBodies = GetComponents<PhysicsBody>();
-		for (size_t i = 0; i < physicsBodies.size(); i++)
-		{
-			if (physicsBodies[i].expired())
-				continue;
-
-			auto physicsBody = physicsBodies[i].lock();
-			
-			if (!physicsBody->GetGameObject()->IsActive())
-				continue;
-
-			if (physicsBody->IsActive())
-				physicsBody->Update();
-		}
-
-		// INFO: Update rigid static actors on colliders without physics bodies based on transform values
+		// INFO: Update Colliders (Physics Simulation if PhysicsBody, otherwise updated using Transform)
 		std::vector<std::weak_ptr<Collider>> colliders;
 
 		auto boxColliders = GetComponents<BoxCollider>();

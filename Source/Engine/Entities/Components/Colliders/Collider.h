@@ -10,7 +10,7 @@
 
 namespace physx
 {
-	class PxRigidStatic;
+	class PxRigidActor;
 	class PxShape;
 }
 
@@ -25,6 +25,12 @@ namespace Flux
 		TriggerExit,
 
 		Count
+	};
+
+	enum class RigidActorType
+	{
+		Static,
+		Dynamic
 	};
 
 	class Collider : public Component, public IDebugWireframe
@@ -46,18 +52,25 @@ namespace Flux
 
 		void ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other);
 
+		/// @brief Sets the rigid actor to be either static or dynamic depending on if a physics body is found on the GameObject
+		void SetRigidActor();
+
+		virtual void SetColliderShape() = 0;
+
+		inline physx::PxRigidActor* GetRigidActor() const { return rigidActor; }
 		inline physx::PxShape& GetColliderShape() const { return *colliderShape; }
-		inline physx::PxRigidStatic& GetRigidStatic() const { return *rigidStatic; }
+		inline RigidActorType GetRigidActorType() const { return rigidActorType; }
 
 	protected:
+		physx::PxRigidActor* rigidActor;
 		physx::PxShape* colliderShape;
-		physx::PxRigidStatic* rigidStatic;
 
 	private:
 		bool isTrigger;
 		DirectX::SimpleMath::Vector3 centre;
 
 		std::unordered_map<CollisionType, std::function<void(std::shared_ptr<Collider>)>> collisionCallbacks;
+		RigidActorType rigidActorType;
 	};
 }
 

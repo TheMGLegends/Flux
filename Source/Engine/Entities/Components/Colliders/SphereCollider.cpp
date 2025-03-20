@@ -16,36 +16,16 @@ SphereCollider::SphereCollider(GameObject* _gameObject) : Collider(_gameObject),
 	name = "SphereCollider";
 	componentType = ComponentType::SphereCollider;
 
-	auto& physics = Physics::GetPhysics();
-
 	// INFO: Create Sphere Collider Shape
-	colliderShape = physics.createShape(physx::PxSphereGeometry(radius), Physics::GetDefaultPhysicsMaterial(), true);
-
-	// INFO: Search for existing physics body component
-	GameObject* owningGameObject = GetGameObject();
-
-	if (owningGameObject)
-	{
-		// INFO: Setup as rigid static actor
-		if (!owningGameObject->HasComponent<PhysicsBody>())
-		{
-			const Vector3& position = owningGameObject->transform.lock()->GetPosition();
-			rigidStatic = physics.createRigidStatic(physx::PxTransform(position.x, position.y, position.z, physx::PxIdentity));
-			
-			if (!rigidStatic->attachShape(*colliderShape))
-				Debug::LogError("SphereCollider::SphereCollider() - Failed to attach shape to Rigid Static Actor");
-
-			SceneContext::GetScene().GetPhysicsScene().addActor(*rigidStatic);
-		}
-	}
+	SetColliderShape();
 }
 
 SphereCollider::~SphereCollider()
 {
-	if (rigidStatic)
+	if (rigidActor)
 	{
-		rigidStatic->release();
-		rigidStatic = nullptr;
+		rigidActor->release();
+		rigidActor = nullptr;
 	}
 }
 
@@ -79,6 +59,28 @@ void SphereCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::
 	DrawRing(deviceContext, primitiveBatch, centre, xRange, yRange, isTrigger);
 	DrawRing(deviceContext, primitiveBatch, centre, xRange, zRange, isTrigger);
 	DrawRing(deviceContext, primitiveBatch, centre, yRange, zRange, isTrigger);
+}
+
+void SphereCollider::SetColliderShape()
+{
+	// INFO: Clear Collider Shape if it already exists
+	if (colliderShape)
+	{
+		colliderShape->release();
+		colliderShape = nullptr;
+	}
+
+	// INFO: Create Sphere Collider Shape
+	colliderShape = Physics::GetPhysics().createShape(physx::PxSphereGeometry(radius), Physics::GetDefaultPhysicsMaterial(), true);
+
+	// INFO: Ensure Rigid Actor is valid
+	if (rigidActor)
+	{
+		if (!rigidActor->attachShape(*colliderShape))
+			Debug::LogError("SphereCollider::SphereCollider() - Failed to attach shape to Rigid Actor");
+
+		SceneContext::GetScene().GetPhysicsScene().addActor(*rigidActor);
+	}
 }
 
 void SphereCollider::SetRadius(float _radius)

@@ -15,39 +15,17 @@ BoxCollider::BoxCollider(GameObject* _gameObject) : Collider(_gameObject), size(
 {
 	name = "BoxCollider";
 	componentType = ComponentType::BoxCollider;
-	
-	auto& physics = Physics::GetPhysics();
 
 	// INFO: Create Box Collider Shape
-	colliderShape = physics.createShape(physx::PxBoxGeometry(size.x, size.y, size.z), Physics::GetDefaultPhysicsMaterial(), true);
-
-	// INFO: Search for existing physics body component
-	GameObject* owningGameObject = GetGameObject();
-
-	if (owningGameObject)
-	{
-		// INFO: Setup as rigid static actor
-		if (!owningGameObject->HasComponent<PhysicsBody>())
-		{
-			const Vector3& position = owningGameObject->transform.lock()->GetPosition();
-			const Quaternion& rotation = owningGameObject->transform.lock()->GetRotation();
-			rigidStatic = physics.createRigidStatic(physx::PxTransform(position.x, position.y, position.z, 
-													physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
-
-			if (!rigidStatic->attachShape(*colliderShape))
-				Debug::LogError("BoxCollider::BoxCollider() - Failed to attach shape to Rigid Static Actor");
-
-			SceneContext::GetScene().GetPhysicsScene().addActor(*rigidStatic);
-		}
-	}
+	SetColliderShape();
 }
 
 BoxCollider::~BoxCollider()
 {
-	if (rigidStatic)
+	if (rigidActor)
 	{
-		rigidStatic->release();
-		rigidStatic = nullptr;
+		rigidActor->release();
+		rigidActor = nullptr;
 	}
 }
 
@@ -116,6 +94,28 @@ void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::Pri
 		}
 
 		primitiveBatch.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, indices, 24, worldVertices, 8);
+	}
+}
+
+void BoxCollider::SetColliderShape()
+{
+	// INFO: Clear Collider Shape if it already exists
+	if (colliderShape)
+	{
+		colliderShape->release();
+		colliderShape = nullptr;
+	}
+
+	// INFO: Create Box Collider Shape
+	colliderShape = Physics::GetPhysics().createShape(physx::PxBoxGeometry(size.x, size.y, size.z), Physics::GetDefaultPhysicsMaterial(), true);
+
+	// INFO: Ensure Rigid Actor is valid
+	if (rigidActor)
+	{
+		if (!rigidActor->attachShape(*colliderShape))
+			Debug::LogError("BoxCollider::BoxCollider() - Failed to attach shape to Rigid Actor");
+
+		SceneContext::GetScene().GetPhysicsScene().addActor(*rigidActor);
 	}
 }
 
