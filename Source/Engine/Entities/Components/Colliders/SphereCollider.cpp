@@ -73,6 +73,12 @@ void SphereCollider::SetColliderShape()
 	// INFO: Create Sphere Collider Shape
 	colliderShape = Physics::GetPhysics().createShape(physx::PxSphereGeometry(radius), Physics::GetDefaultPhysicsMaterial(), true);
 
+	// INFO: Default Collisions with everything
+	physx::PxFilterData filterData{};
+	filterData.word0 = 1;
+	filterData.word1 = 1;
+	colliderShape->setSimulationFilterData(filterData);
+
 	// INFO: Ensure Rigid Actor is valid
 	if (rigidActor)
 	{

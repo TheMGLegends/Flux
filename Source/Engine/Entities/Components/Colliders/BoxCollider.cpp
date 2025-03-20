@@ -109,6 +109,15 @@ void BoxCollider::SetColliderShape()
 	// INFO: Create Box Collider Shape
 	colliderShape = Physics::GetPhysics().createShape(physx::PxBoxGeometry(size.x, size.y, size.z), Physics::GetDefaultPhysicsMaterial(), true);
 
+	// INFO: Default Collisions with everything
+	physx::PxFilterData filterData{};
+	filterData.word0 = 1;
+	filterData.word1 = 1;
+	colliderShape->setSimulationFilterData(filterData);
+
+	// INFO: Reset trigger state
+	SetIsTrigger(IsTrigger());
+
 	// INFO: Ensure Rigid Actor is valid
 	if (rigidActor)
 	{

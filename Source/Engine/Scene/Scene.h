@@ -11,14 +11,18 @@
 #include "Engine/Entities/Components/Components.h"
 #include "Engine/Entities/Components/ComponentTypes.h"
 
-namespace physx { class PxScene; }
+namespace physx 
+{ 
+	class PxRigidActor;
+	class PxScene; 
+}
 
 namespace Flux
 {
 	class GameObject;
 	class SceneViewCamera;
 
-	class Scene : public ISerializable, public IEventListener/*, public physx::PxSimulationEventCallback*/
+	class Scene : public ISerializable, public IEventListener, public physx::PxSimulationEventCallback
 	{
 		friend class SceneContext;
 
@@ -31,6 +35,18 @@ namespace Flux
 
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
+		static physx::PxFilterFlags CustomFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+			physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+			physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize);
+
+		virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override;
+		virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override;
+
+		virtual void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override {}
+		virtual void onWake(physx::PxActor** actors, physx::PxU32 count) override {}
+		virtual void onSleep(physx::PxActor** actors, physx::PxU32 count) override {}
+		virtual void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) override {}
+
 		void Start();
 		void Update(float deltaTime);
 		void LateUpdate(float deltaTime);
@@ -39,6 +55,10 @@ namespace Flux
 		void DrawWireframes(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch);
 
 		void RegisterComponent(std::weak_ptr<Component> component);
+
+		void RemoveRigidActorToColliderEntry(physx::PxRigidActor* rigidActor);
+		void RegisterRigidActorToCollider(std::weak_ptr<Collider> collider, physx::PxRigidActor* rigidActor);
+		std::weak_ptr<Collider> GetCollider(physx::PxRigidActor* rigidActor);
 
 		template<class T>
 		std::vector<std::weak_ptr<T>> GetComponents();
@@ -61,6 +81,7 @@ namespace Flux
 	private:
 		std::vector<std::unique_ptr<GameObject>> gameObjects;
 		std::unordered_map<ComponentType, std::vector<std::weak_ptr<Component>>> components;
+		std::unordered_map<physx::PxRigidActor*, std::weak_ptr<Collider>> rigidActorsToColliders;
 		std::vector<DebugWireframeData> debugWireframes;
 
 		std::weak_ptr<Camera> playModeCamera;

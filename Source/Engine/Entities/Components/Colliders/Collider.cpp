@@ -98,7 +98,7 @@ void Collider::Deserialize(const nlohmann::ordered_json& json)
 	Component::Deserialize(json);
 
 	// INFO: Deserialize Collider Data
-	isTrigger = json["IsTrigger"].get<bool>();
+	SetIsTrigger(json["IsTrigger"].get<bool>());
 	centre = Vector3(json["Centre"][0].get<float>(), json["Centre"][1].get<float>(), json["Centre"][2].get<float>());
 }
 
@@ -112,11 +112,27 @@ void Collider::SetIsTrigger(bool _isTrigger)
 		{
 			colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 			colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+
+			// INFO: Disable gravity and prevent physics movement by changing to kinematic
+			if (rigidActorType == RigidActorType::Dynamic)
+			{
+				physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+				rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+				rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
+			}
 		}
 		else
 		{
 			colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 			colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+
+			// INFO: Re-enable gravity and physics movement
+			if (rigidActorType == RigidActorType::Dynamic)
+			{
+				physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+				//rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+				//rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
+			}
 		}
 	}
 }
@@ -137,9 +153,18 @@ void Collider::SetRigidActor()
 	auto& physics = Physics::GetPhysics();
 	GameObject* gameObject = GetGameObject();
 
+	bool existed = false;
+
+	std::weak_ptr<Collider> collider = SceneContext::GetScene().GetCollider(rigidActor);
+
 	// INFO: Clear RigidActor if it already exists
 	if (rigidActor)
 	{
+		existed = true;
+
+		// INFO: Remove Entry corresponding to Rigid Actor from Scene of rigidActorsToColliders before setting new Rigid Actor
+		SceneContext::GetScene().RemoveRigidActorToColliderEntry(rigidActor);
+
 		rigidActor->release();
 		rigidActor = nullptr;
 	}
@@ -161,6 +186,12 @@ void Collider::SetRigidActor()
 			rigidActor = physics.createRigidDynamic(physx::PxTransform(position.x, position.y, position.z,
 													physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
 			rigidActorType = RigidActorType::Dynamic;
+		}
+
+		if (existed && !collider.expired())
+		{
+			// INFO: Register the newly created Rigid Actor to the Collider
+			SceneContext::GetScene().RegisterRigidActorToCollider(collider, rigidActor);
 		}
 	}
 }

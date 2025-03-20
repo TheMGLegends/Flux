@@ -40,7 +40,8 @@ Scene::Scene() : sceneName("Default")
 	physx::PxSceneDesc sceneDesc(physics.getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
-	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	sceneDesc.filterShader = CustomFilterShader;
+	sceneDesc.simulationEventCallback = this;
 
 	physicsScene = physics.createScene(sceneDesc);
 	if (!physicsScene)
@@ -171,6 +172,97 @@ void Flux::Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 			std::remove_if(debugWireframes.begin(), debugWireframes.end(),
 			[](const DebugWireframeData& data) { return data.component.expired(); }),
 		debugWireframes.end());
+
+		// INFO: Remove all now-expired rigid actors associated with the removed GameObject
+		for (auto it = rigidActorsToColliders.begin(); it != rigidActorsToColliders.end();)
+		{
+			if (it->second.expired())
+				it = rigidActorsToColliders.erase(it);
+			else
+				++it;
+		}
+	}
+}
+
+physx::PxFilterFlags Scene::CustomFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0, physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1, physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
+{
+	// let triggers through
+	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+		return physx::PxFilterFlag::eDEFAULT;
+	}
+	// generate contacts for all that were not filtered above
+	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+
+	// trigger the contact callback for pairs (A,B) where
+	// the filtermask of A contains the ID of B and vice versa.
+	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+	{
+		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
+	}
+
+	return physx::PxFilterFlag::eDEFAULT;
+}
+
+void Scene::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
+{
+	physx::PxRigidActor* actor0 = pairHeader.actors[0];
+	physx::PxRigidActor* actor1 = pairHeader.actors[1];
+
+	std::shared_ptr<Collider> collider0 = rigidActorsToColliders[actor0].lock();
+	std::shared_ptr<Collider> collider1 = rigidActorsToColliders[actor1].lock();
+
+	if (!collider0 || !collider1)
+	{
+		Debug::LogError("Scene::onContact() - Collider is expired");
+		return;
+	}
+
+	for (physx::PxU32 i = 0; i < nbPairs; i++)
+	{
+		// INFO: OnCollisionEnter
+		if (pairs[i].events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			collider0->ExecuteCollisionCallback(CollisionType::CollisionEnter, collider1);
+			collider1->ExecuteCollisionCallback(CollisionType::CollisionEnter, collider0);
+		}
+		// INFO: OnCollisionExit
+		else if (pairs[i].events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			collider0->ExecuteCollisionCallback(CollisionType::CollisionExit, collider1);
+			collider1->ExecuteCollisionCallback(CollisionType::CollisionExit, collider0);
+		}
+	}
+}
+
+void Scene::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+{
+	physx::PxRigidActor* triggerActor = pairs->triggerActor;
+	physx::PxRigidActor* otherActor = pairs->otherActor;
+
+	std::shared_ptr<Collider> triggerCollider = rigidActorsToColliders[triggerActor].lock();
+	std::shared_ptr<Collider> otherCollider = rigidActorsToColliders[otherActor].lock();
+
+	if (!triggerCollider || !otherCollider)
+	{
+		Debug::LogError("Scene::onTrigger() - Other Collider is expired");
+		return;
+	}
+
+	for (physx::PxU32 i = 0; i < count; i++)
+	{
+		// INFO: OnTriggerEnter
+		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			triggerCollider->ExecuteCollisionCallback(CollisionType::TriggerEnter, otherCollider);
+		}
+		// INFO: OnTriggerExit
+		else if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			triggerCollider->ExecuteCollisionCallback(CollisionType::TriggerExit, otherCollider);
+		}
 	}
 }
 
@@ -273,9 +365,17 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 	switch (validComponent->GetComponentType())
 	{
 	// INFO: Both inherit from IDebugWireframe
-	case ComponentType::Camera:
 	case ComponentType::BoxCollider:
 	case ComponentType::SphereCollider:
+	{
+		std::weak_ptr<Collider> collider = std::dynamic_pointer_cast<Collider>(validComponent);
+
+		if (std::shared_ptr<Collider> validCollider = collider.lock())
+			RegisterRigidActorToCollider(collider, validCollider->GetRigidActor());
+
+		[[fallthrough]];
+	}
+	case ComponentType::Camera:
 	{
 		std::weak_ptr<IDebugWireframe> debugWireframe = std::dynamic_pointer_cast<IDebugWireframe>(validComponent);
 
@@ -293,6 +393,26 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 	}
 
 	components[validComponent->GetComponentType()].push_back(component);
+}
+
+void Scene::RemoveRigidActorToColliderEntry(physx::PxRigidActor* rigidActor)
+{
+	auto it = rigidActorsToColliders.find(rigidActor);
+	if (it != rigidActorsToColliders.end())
+		rigidActorsToColliders.erase(it);
+}
+
+void Scene::RegisterRigidActorToCollider(std::weak_ptr<Collider> collider, physx::PxRigidActor* rigidActor)
+{
+	rigidActorsToColliders[rigidActor] = collider;
+}
+
+std::weak_ptr<Collider> Scene::GetCollider(physx::PxRigidActor* rigidActor)
+{
+	auto it = rigidActorsToColliders.find(rigidActor);
+	if (it != rigidActorsToColliders.end())
+		return it->second;
+	return std::weak_ptr<Collider>();
 }
 
 std::weak_ptr<Camera> Scene::GetCamera() const
