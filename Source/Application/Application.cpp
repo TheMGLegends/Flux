@@ -103,10 +103,13 @@ void Application::Run()
 		}
 
 		if (RuntimeConfig::IsInPlayMode())
+		{
+			engineRuntime.Update(Time::DeltaTime());
 			engineRuntime.FixedUpate(TimeConfig::FIXED_DELTA_TIME);
-		
+		}
+
 		// INFO: Internal Runtime Config Checks to accompany editor VS play mode cameras
-		engineRuntime.Update(Time::DeltaTime());
+		engineRuntime.LateUpdate(Time::DeltaTime());
 
 		renderer.RenderFrame(engineRuntime.GetScene());
 		editorRuntime.RenderGUI();

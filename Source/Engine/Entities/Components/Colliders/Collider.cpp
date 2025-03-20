@@ -29,7 +29,7 @@ Collider::Collider(GameObject* _gameObject) : Component(_gameObject), rigidActor
 	SetRigidActor();
 }
 
-void Collider::Update()
+void Collider::Update(float alpha)
 {
 	GameObject* gameObject = GetGameObject();
 	auto transform = gameObject->transform.lock();
@@ -43,12 +43,15 @@ void Collider::Update()
 			// INFO: Granted that it's static we update the actor using transform values
 			physx::PxRigidStatic* rigidStatic = static_cast<physx::PxRigidStatic*>(rigidActor);
 
-			const Vector3& position = transform->GetPosition();
-			const Quaternion& rotation = transform->GetRotation();
+			if (rigidStatic)
+			{
+				const Vector3& position = transform->GetPosition();
+				const Quaternion& rotation = transform->GetRotation();
 
-			physx::PxTransform physxTransform(physx::PxVec3(position.x, position.y, position.z),
-												physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w));
-			rigidStatic->setGlobalPose(physxTransform);
+				physx::PxTransform physxTransform(physx::PxVec3(position.x, position.y, position.z),
+					physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w));
+				rigidStatic->setGlobalPose(physxTransform);
+			}
 
 			break;
 		}
@@ -57,9 +60,19 @@ void Collider::Update()
 			// INFO: Granted that it's dynamic we update the transform using physics simulation values
 			physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
 
-			physx::PxTransform physxTransform = rigidDynamic->getGlobalPose();
-			transform->SetPosition(Vector3(physxTransform.p.x, physxTransform.p.y, physxTransform.p.z));
-			transform->SetRotation(Quaternion(physxTransform.q.x, physxTransform.q.y, physxTransform.q.z, physxTransform.q.w));
+			if (rigidDynamic)
+			{
+				physx::PxTransform physxTransform = rigidDynamic->getGlobalPose();
+				Vector3 currentPosition = transform->GetPosition();
+				Quaternion currentRotation = transform->GetRotation();
+
+				Vector3 newPosition(physxTransform.p.x, physxTransform.p.y, physxTransform.p.z);
+				Quaternion newRotation(physxTransform.q.x, physxTransform.q.y, physxTransform.q.z, physxTransform.q.w);
+
+				// INFO: Lerp the position and rotation to avoid jittering
+				transform->SetPosition(Vector3::Lerp(currentPosition, newPosition, alpha));
+				transform->SetRotation(Quaternion::Slerp(currentRotation, newRotation, alpha));
+			}
 
 			break;
 		}

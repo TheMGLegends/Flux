@@ -25,6 +25,7 @@ namespace Flux
 
 		void Start();
 		void FixedUpate(float fixedDeltaTime);
+		void LateUpdate(float deltaTime);
 		void Release();
 
 		inline Scene& GetScene() { return *scene.get(); }

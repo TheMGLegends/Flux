@@ -11,6 +11,7 @@ constexpr float MICRO_TO_SEC = 1000000.0f;
 double Time::deltaTime = 0.0f;
 double Time::elapsedTime = 0.0f;
 double Time::accumulator = 0.0f;
+double Time::alpha = 0.0f;
 unsigned int Time::frameCount = 0;
 
 time_point<steady_clock> Time::currentTime;
@@ -24,7 +25,10 @@ void Time::Tick()
 	elapsedTime += deltaTime;
 
 	if (RuntimeConfig::IsInPlayMode())
+	{
 		accumulator += deltaTime;
+		alpha = accumulator / TimeConfig::FIXED_DELTA_TIME;
+	}
 
 	previousTime = currentTime;
 
@@ -35,8 +39,12 @@ bool Time::PerformPhysicsUpdate()
 {
 	if (accumulator >= TimeConfig::FIXED_DELTA_TIME)
 	{
-		accumulator -= TimeConfig::FIXED_DELTA_TIME;
 		return true;
 	}
 	return false;
+}
+
+void Time::DecrementAccumulator()
+{
+	accumulator -= static_cast<double>(TimeConfig::FIXED_DELTA_TIME);
 }

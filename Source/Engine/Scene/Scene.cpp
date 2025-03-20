@@ -6,6 +6,7 @@
 #include "Core/Debug/Debug.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
+#include "Core/Time/Time.h"
 #include "Engine/Entities/Components/Camera.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
 #include "Engine/Entities/GameObjects/SceneViewCamera.h"
@@ -184,57 +185,54 @@ void Scene::Start()
 
 void Scene::Update(float deltaTime)
 {
-	if (RuntimeConfig::IsInPlayMode())
+	// INFO: Update all custom user scripts
+	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
-		// INFO: Update all custom user scripts
-		for (size_t i = 0; i < gameObjects.size(); i++)
-		{
-			if (gameObjects[i]->IsActive())
-				gameObjects[i]->Update(deltaTime);
-		}
-
-		// INFO: Update Colliders (Physics Simulation if PhysicsBody, otherwise updated using Transform)
-		std::vector<std::weak_ptr<Collider>> colliders;
-
-		auto boxColliders = GetComponents<BoxCollider>();
-		for (auto& boxCollider : boxColliders)
-			colliders.push_back(boxCollider);
-
-		auto sphereColliders = GetComponents<SphereCollider>();
-		for (auto& sphereCollider : sphereColliders)
-			colliders.push_back(sphereCollider);
-
-		for (size_t i = 0; i < colliders.size(); i++)
-		{
-			if (colliders[i].expired())
-				continue;
-
-			auto collider = colliders[i].lock();
-			if (!collider->GetGameObject()->IsActive())
-				continue;
-
-			if (collider->IsActive())
-				collider->Update();
-		}
+		if (gameObjects[i]->IsActive())
+			gameObjects[i]->Update(deltaTime);
 	}
 
-	//if (RuntimeConfig::IsInEditorMode())
-	//	sceneViewCamera->Update(deltaTime);
+	// INFO: Update Colliders (Physics Simulation if PhysicsBody, otherwise updated using Transform)
+	std::vector<std::weak_ptr<Collider>> colliders;
 
-	// TODO: TESTING
-	sceneViewCamera->Update(deltaTime);
+	auto boxColliders = GetComponents<BoxCollider>();
+	for (auto& boxCollider : boxColliders)
+		colliders.push_back(boxCollider);
+
+	auto sphereColliders = GetComponents<SphereCollider>();
+	for (auto& sphereCollider : sphereColliders)
+		colliders.push_back(sphereCollider);
+
+	for (size_t i = 0; i < colliders.size(); i++)
+	{
+		if (colliders[i].expired())
+			continue;
+
+		auto collider = colliders[i].lock();
+		if (!collider->GetGameObject()->IsActive())
+			continue;
+
+		if (collider->IsActive())
+			collider->Update(Time::Alpha());
+	}
 }
 
 void Scene::LateUpdate(float deltaTime)
 {
-	if (!RuntimeConfig::IsInPlayMode())
-		return;
-
-	for (size_t i = 0; i < gameObjects.size(); i++)
+	if (RuntimeConfig::IsInPlayMode())
 	{
-		if (gameObjects[i]->IsActive())
-			gameObjects[i]->LateUpdate(deltaTime);
+		for (size_t i = 0; i < gameObjects.size(); i++)
+		{
+			if (gameObjects[i]->IsActive())
+				gameObjects[i]->LateUpdate(deltaTime);
+		}
 	}
+
+	//if (RuntimeConfig::IsInEditorMode())
+	//	sceneViewCamera->LateUpdate(deltaTime);
+
+	// TODO: TESTING
+	sceneViewCamera->LateUpdate(deltaTime);
 }
 
 void Scene::FixedUpdate(float fixedDeltaTime)

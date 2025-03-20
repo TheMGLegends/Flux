@@ -22,7 +22,7 @@ SceneViewCamera::~SceneViewCamera()
 {
 }
 
-void SceneViewCamera::Update(float deltaTime)
+void SceneViewCamera::LateUpdate(float deltaTime)
 {
 	// INFO: Mouse Mode Switching Logic
 	if (Input::GetMouseButtonDown(SDL_BUTTON_RIGHT))

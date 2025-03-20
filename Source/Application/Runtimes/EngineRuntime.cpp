@@ -62,6 +62,26 @@ bool EngineRuntime::Initialise()
 void EngineRuntime::Update(float deltaTime)
 {
 	scene->Update(deltaTime);
+}
+
+void EngineRuntime::Start()
+{
+	scene->Start();
+}
+
+void EngineRuntime::FixedUpate(float fixedDeltaTime)
+{
+	while (Time::PerformPhysicsUpdate())
+	{
+		scene->GetPhysicsScene().simulate(fixedDeltaTime);
+		scene->FixedUpdate(fixedDeltaTime);
+		scene->GetPhysicsScene().fetchResults(true);
+		Time::DecrementAccumulator();
+	}
+}
+
+void EngineRuntime::LateUpdate(float deltaTime)
+{
 	scene->LateUpdate(deltaTime);
 
 	// INFO: Update Audio System and current listener if in play mode
@@ -72,7 +92,7 @@ void EngineRuntime::Update(float deltaTime)
 			Vector3 position = camera->GetGameObject()->transform.lock()->GetPosition();
 			Vector3 forward = camera->Forward();
 			Vector3 up = camera->Up();
-			Audio::SetListenerAttributes({ position.x, position.y, position.z }, { 0.0f, 0.0f, 0.0f }, 
+			Audio::SetListenerAttributes({ position.x, position.y, position.z }, { 0.0f, 0.0f, 0.0f },
 										 { forward.x, forward.y, forward.z }, { up.x, up.y, up.z });
 		}
 
@@ -90,21 +110,6 @@ void EngineRuntime::Update(float deltaTime)
 	}
 
 	Audio::Update();
-}
-
-void EngineRuntime::Start()
-{
-	scene->Start();
-}
-
-void EngineRuntime::FixedUpate(float fixedDeltaTime)
-{
-	while (Time::PerformPhysicsUpdate())
-	{
-		scene->GetPhysicsScene().simulate(fixedDeltaTime);
-		scene->FixedUpdate(fixedDeltaTime);
-		scene->GetPhysicsScene().fetchResults(true);
-	}
 }
 
 void EngineRuntime::Release()
