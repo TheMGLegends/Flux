@@ -104,6 +104,21 @@ void PhysicsBody::Deserialize(const nlohmann::ordered_json& json)
 	}
 }
 
+void PhysicsBody::AddForce(const Vector3& force, physx::PxForceMode::Enum forceMode)
+{
+	auto rigidDynamic = VerifyRigidActor();
+
+	if (rigidDynamic)
+	{
+		// INFO: Check to see if the rigid body is not kinematic
+		if (!rigidDynamic->getRigidBodyFlags().isSet(physx::PxRigidBodyFlag::eKINEMATIC))
+		{
+			physx::PxVec3 physxForce(force.x, force.y, force.z);
+			rigidDynamic->addForce(physxForce, forceMode);
+		}
+	}
+}
+
 void PhysicsBody::SetMass(float _mass)
 {
 	mass = _mass;

@@ -130,8 +130,8 @@ void Collider::SetIsTrigger(bool _isTrigger)
 			if (rigidActorType == RigidActorType::Dynamic)
 			{
 				physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
-				//rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-				//rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
+				rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+				rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
 			}
 		}
 	}

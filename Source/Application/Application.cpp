@@ -14,6 +14,9 @@
 
 // TODO: TESTING
 #include "Engine/Audio/Audio.h"
+#include "Engine/Scene/Scene.h"
+#include "Engine/Entities/Components/PhysicsBody.h"
+#include "Engine/Physics/Physics.h"
 
 using namespace Flux;
 
@@ -92,6 +95,24 @@ void Application::Run()
 				RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
 			else
 				RuntimeConfig::SetMode(RuntimeConfig::Mode::Play);
+		}
+
+		// TODO: TESTING CODE
+		if (Input::GetKeyDown(SDL_SCANCODE_O))
+		{
+			if (RuntimeConfig::IsInPlayMode())
+			{
+				auto physicsBodies = engineRuntime.GetScene().GetComponents<PhysicsBody>();
+
+				for (auto& physicBody : physicsBodies)
+				{
+					if (physicBody.expired())
+						continue;
+
+					std::shared_ptr<PhysicsBody> physicsBody = physicBody.lock();
+					physicsBody->AddForce(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 100.0f), physx::PxForceMode::eIMPULSE);
+				}
+			}
 		}
 
 		editorRuntime.Update(Time::DeltaTime());

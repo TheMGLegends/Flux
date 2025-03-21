@@ -3,8 +3,10 @@
 #include "Component.h"
 
 #include <array>
+#include <PxForceMode.h>
 
 namespace physx { class PxRigidDynamic; }
+namespace DirectX::SimpleMath { struct Vector3; }
 
 namespace Flux
 {
@@ -29,6 +31,8 @@ namespace Flux
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
+
+		void AddForce(const DirectX::SimpleMath::Vector3& force, physx::PxForceMode::Enum forceMode = physx::PxForceMode::eFORCE);
 
 		void SetMass(float _mass);
 		inline float GetMass() const { return mass; }

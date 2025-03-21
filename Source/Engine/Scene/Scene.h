@@ -35,10 +35,6 @@ namespace Flux
 
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
-		static physx::PxFilterFlags CustomFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
-			physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
-			physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize);
-
 		virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override;
 		virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override;
 
