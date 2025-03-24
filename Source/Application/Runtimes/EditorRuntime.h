@@ -2,12 +2,18 @@
 
 #include "Runtime.h"
 
+#include <memory>
+#include <vector>
+
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct SDL_Window;
 
 namespace Flux
 {
+	class EditorPanel;
+	class SceneView;
+
 	class EditorRuntime : public Runtime
 	{
 	public:
@@ -25,7 +31,11 @@ namespace Flux
 		void Update(float deltaTime);
 
 	private:
-		// TODO: Editor Specific Members
+		void SetCustomStyle();
+
+	private:
+		std::vector<std::unique_ptr<EditorPanel>> editorPanels;
+		SceneView* sceneView;
 	};
 }
 

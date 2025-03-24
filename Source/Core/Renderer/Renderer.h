@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/EventSystem/IEventListener.h"
+
 #include <d3d11.h>
 #include <Effects.h>
 #include <memory>
@@ -27,13 +29,13 @@ namespace Flux
 		}
 	};
 
-	// TODO: Potentially make renderer listener for window resize events
-
-	class Renderer
+	class Renderer : public IEventListener
 	{
 	public:
 		Renderer();
 		~Renderer();
+
+		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
 		/// @param: _viewport The viewport to use for rendering (Scene View Panel Dimensions)
 		HRESULT Initialise(HWND hWnd, const Viewport& _viewport);
@@ -42,6 +44,9 @@ namespace Flux
 
 		inline ID3D11Device& GetDevice() { return *device.Get(); }
 		inline ID3D11DeviceContext& GetDeviceContext() { return *deviceContext.Get(); }
+
+	private:
+		void OnWindowResized();
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> device;

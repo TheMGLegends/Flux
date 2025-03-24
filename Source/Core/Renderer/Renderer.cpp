@@ -5,9 +5,11 @@
 
 #include "ConstantBuffers.h"
 #include "Core/Configs/DirectXConfig.h"
+#include "Core/Configs/EngineConfig.h"
 #include "Core/Configs/RendererConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
+#include "Core/EventSystem/EventDispatcher.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
 #include "Engine/Entities/Components/Camera.h"
@@ -29,6 +31,12 @@ Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullpt
 
 Renderer::~Renderer()
 {
+}
+
+void Renderer::OnNotify(EventType eventType, std::shared_ptr<Event> event)
+{
+	if (eventType == EventType::WindowResized)
+		OnWindowResized();
 }
 
 HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
@@ -189,6 +197,9 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 		return hResult;
 	}
 
+	// INFO: Setup Events to Listen For
+	EventDispatcher::AddListener(EventType::WindowResized, this);
+
 	return hResult; // INFO: S_OK so long as we've made it this far
 }
 
@@ -250,7 +261,7 @@ void Renderer::RenderFrame(Scene& scene)
 	}
 
 	// INFO: Render the Debug Wireframes
-	/*if (RuntimeConfig::IsInEditorMode())
+	if (RuntimeConfig::IsInEditorMode())
 	{
 		batchEffect->SetView(view);
 		batchEffect->SetProjection(projection);
@@ -261,16 +272,7 @@ void Renderer::RenderFrame(Scene& scene)
 		primitiveBatch->Begin();
 		scene.DrawWireframes(*deviceContext.Get(), *primitiveBatch.get());
 		primitiveBatch->End();
-	}*/
-
-	// TODO: TESTING
-	batchEffect->SetView(view);
-	batchEffect->SetProjection(projection);
-	batchEffect->Apply(deviceContext.Get());
-	deviceContext->IASetInputLayout(batchInputLayout.Get());
-	primitiveBatch->Begin();
-	scene.DrawWireframes(*deviceContext.Get(), *primitiveBatch.get());
-	primitiveBatch->End();
+	}
 
 	// INFO: Render the UI
 	spriteBatch->Begin();
@@ -282,4 +284,91 @@ void Renderer::RenderFrame(Scene& scene)
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	swapChain->Present((UINT)RendererConfig::vsyncEnabled, 0);
+}
+
+void Renderer::OnWindowResized()
+{
+	if (EngineConfig::windowWidth == 0 || EngineConfig::windowHeight == 0)
+		return;
+
+	if (swapChain)
+	{
+		deviceContext->OMSetRenderTargets(0, 0, 0);
+
+		renderTargetView->Release();
+		depthStencilView->Release();
+
+		HRESULT hResult = { S_OK };
+
+		hResult = swapChain->ResizeBuffers(0, EngineConfig::windowWidth, EngineConfig::windowHeight, DXGI_FORMAT_UNKNOWN, 0);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::OnWindowResized() - Failed to resize buffers");
+			return;
+		}
+
+		ComPtr<ID3D11Resource> backBuffer;
+
+		hResult = swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::OnWindowResized() - Failed to get back buffer");
+			return;
+		}
+
+		hResult = device->CreateRenderTargetView(backBuffer.Get(), nullptr, renderTargetView.GetAddressOf());
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::OnWindowResized() - Failed to create render target view");
+			return;
+		}
+
+		D3D11_TEXTURE2D_DESC dsb = { 0 };
+		dsb.Width = EngineConfig::windowWidth;
+		dsb.Height = EngineConfig::windowHeight;
+		dsb.MipLevels = 1;
+		dsb.ArraySize = 1;
+		dsb.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		dsb.SampleDesc.Count = 1;
+		dsb.SampleDesc.Quality = 0;
+
+		dsb.Usage = D3D11_USAGE_DEFAULT;
+		dsb.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		dsb.CPUAccessFlags = 0;
+		dsb.MiscFlags = 0;
+
+		ComPtr<ID3D11Texture2D> depthStencilBuffer;
+		hResult = device->CreateTexture2D(&dsb, nullptr, &depthStencilBuffer);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::OnWindowResized() - Failed to create depth stencil buffer");
+			return;
+		}
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
+		ZeroMemory(&dsvd, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+		dsvd.Format = dsb.Format;
+		dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		dsvd.Flags = 0;
+
+		hResult = device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsvd, depthStencilView.GetAddressOf());
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::OnWindowResized() - Failed to create depth stencil view");
+			return;
+		}
+
+		deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+
+		viewport.Width = static_cast<float>(EngineConfig::windowWidth);
+		viewport.Height = static_cast<float>(EngineConfig::windowHeight);
+
+		deviceContext->RSSetViewports(1, &viewport);
+	}
 }

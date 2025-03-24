@@ -3,6 +3,7 @@
 #include <cmath>
 #include <backends/imgui_impl_sdl3.h>
 
+#include "Core/Configs/EngineConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/EventSystem/EventDispatcher.h"
 
@@ -147,6 +148,16 @@ void Input::Update()
 		case SDL_EVENT_QUIT:
 		{
 			EventDispatcher::QueueEvent(EventType::Quit, nullptr);
+			break;
+		}
+		case SDL_EVENT_WINDOW_RESIZED:
+		{
+			// INFO: Update global window size variables
+			EngineConfig::windowWidth = event.window.data1;
+			EngineConfig::windowHeight = event.window.data2;
+
+			// INFO: Instantaneous Notify Event
+			EventDispatcher::Notify(EventType::WindowResized, nullptr);
 			break;
 		}
 		default:

@@ -126,6 +126,9 @@
     <ClCompile Include="Vendors\imgui\imgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Panels\SceneView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -317,6 +320,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Physics\Physics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Editor\Panels\SceneView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Editor\Panels\EditorPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Configs\EditorConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
