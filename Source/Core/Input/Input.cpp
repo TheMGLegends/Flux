@@ -1,6 +1,7 @@
 #include "Input.h"
 
 #include <cmath>
+#include <backends/imgui_impl_sdl3.h>
 
 #include "Core/Debug/Debug.h"
 #include "Core/EventSystem/EventDispatcher.h"
@@ -138,6 +139,9 @@ void Input::Update()
 
 	while (SDL_PollEvent(&event))
 	{
+		// INFO: ImGui Event Handling
+		ImGui_ImplSDL3_ProcessEvent(&event);
+
 		switch (event.type)
 		{
 		case SDL_EVENT_QUIT:

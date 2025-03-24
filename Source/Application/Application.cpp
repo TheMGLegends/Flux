@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include <backends/imgui_impl_dx11.h>
+#include <backends/imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
 
 #include "Core/Configs/EngineConfig.h"
@@ -51,7 +53,7 @@ Application::Application() : window(nullptr), isRunning(false)
 		Debug::LogError("Application::Application() - Failed to initialise Asset Handler");
 	}
 
-	editorRuntime.PreInitialise();
+	editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext());
 	engineRuntime.PreInitialise();
 
 	editorRuntime.Initialise();
@@ -69,6 +71,7 @@ Application::Application() : window(nullptr), isRunning(false)
 Application::~Application()
 {
 	engineRuntime.Release();
+	editorRuntime.Release();
 	Input::Release();
 
 	SDL_DestroyWindow(window);
@@ -132,8 +135,8 @@ void Application::Run()
 		// INFO: Internal Runtime Config Checks to accompany editor VS play mode cameras
 		engineRuntime.LateUpdate(Time::DeltaTime());
 
+		// INFO: Renders the scene and ImGui
 		renderer.RenderFrame(engineRuntime.GetScene());
-		editorRuntime.RenderGUI();
 
 		EventDispatcher::ProcessEvents();
 	}

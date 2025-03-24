@@ -1,5 +1,8 @@
 #include "Renderer.h"
 
+#include <imgui.h>
+#include <backends/imgui_impl_dx11.h>
+
 #include "ConstantBuffers.h"
 #include "Core/Configs/DirectXConfig.h"
 #include "Core/Configs/RendererConfig.h"
@@ -273,6 +276,10 @@ void Renderer::RenderFrame(Scene& scene)
 	spriteBatch->Begin();
 	// TODO: Render all UI elements (FPS Counter)
 	spriteBatch->End();
+
+	// INFO: Render ImGui
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	swapChain->Present((UINT)RendererConfig::vsyncEnabled, 0);
 }

@@ -19,7 +19,14 @@ EngineRuntime::EngineRuntime()
 
 EngineRuntime::~EngineRuntime()
 {
-	// TODO: Cleanup Logic
+}
+
+void EngineRuntime::Release()
+{
+	scene.reset();
+
+	Audio::Release();
+	Physics::Release();
 }
 
 bool EngineRuntime::PreInitialise()
@@ -59,14 +66,14 @@ bool EngineRuntime::Initialise()
 	return true; // INFO: Initialisation Successful
 }
 
-void EngineRuntime::Update(float deltaTime)
-{
-	scene->Update(deltaTime);
-}
-
 void EngineRuntime::Start()
 {
 	scene->Start();
+}
+
+void EngineRuntime::Update(float deltaTime)
+{
+	scene->Update(deltaTime);
 }
 
 void EngineRuntime::FixedUpate(float fixedDeltaTime)
@@ -110,12 +117,4 @@ void EngineRuntime::LateUpdate(float deltaTime)
 	}
 
 	Audio::Update();
-}
-
-void EngineRuntime::Release()
-{
-	scene.reset();
-
-	Audio::Release();
-	Physics::Release();
 }

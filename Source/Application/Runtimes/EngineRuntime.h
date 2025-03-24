@@ -14,25 +14,23 @@ namespace Flux
 		EngineRuntime();
 		virtual ~EngineRuntime() override;
 
+		virtual void Release() override;
+
 		/// @brief Used for initializing systems before the main initialisation
-		bool PreInitialise() override;
+		bool PreInitialise();
+
 		/// @brief Used for initializing data that uses the systems
-		bool Initialise() override;
-		void Update(float deltaTime) override;
-
-
-		// INFO: Engine Specific Methods
+		bool Initialise();
 
 		void Start();
+		void Update(float deltaTime);
 		void FixedUpate(float fixedDeltaTime);
 		void LateUpdate(float deltaTime);
-		void Release();
 
 		inline Scene& GetScene() { return *scene.get(); }
 
 	private:
 		std::unique_ptr<Scene> scene;
-		// TODO: Engine Specific Members
 	};
 }
 

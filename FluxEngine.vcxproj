@@ -175,6 +175,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <ClCompile Include="Vendors\imgui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="Vendors\imgui\backends\imgui_impl_sdl3.cpp" />
     <ClCompile Include="Vendors\imgui\imgui.cpp" />
+    <ClCompile Include="Vendors\imgui\imgui_demo.cpp" />
     <ClCompile Include="Vendors\imgui\imgui_draw.cpp" />
     <ClCompile Include="Vendors\imgui\imgui_tables.cpp" />
     <ClCompile Include="Vendors\imgui\imgui_widgets.cpp" />

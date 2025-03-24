@@ -15,9 +15,6 @@
 
 #include <PxPhysicsAPI.h>
 
-#include <imgui.h>
-#include <backends/imgui_impl_sdl3.h>
-#include <backends/imgui_impl_dx11.h>
 #include <d3d11.h>
 #include <wrl.h>
 

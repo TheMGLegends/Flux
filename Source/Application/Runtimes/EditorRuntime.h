@@ -2,6 +2,10 @@
 
 #include "Runtime.h"
 
+struct ID3D11Device;
+struct ID3D11DeviceContext;
+struct SDL_Window;
+
 namespace Flux
 {
 	class EditorRuntime : public Runtime
@@ -10,16 +14,15 @@ namespace Flux
 		EditorRuntime();
 		virtual ~EditorRuntime() override;
 
+		virtual void Release() override;
+
 		/// @brief Used for initializing systems before the main initialisation
-		bool PreInitialise() override;
+		bool PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext);
+
 		/// @brief Used for initializing data that uses the systems
-		bool Initialise() override;
-		void Update(float deltaTime) override;
+		bool Initialise();
 
-
-		// INFO: Editor Specific Methods
-
-		void RenderGUI();
+		void Update(float deltaTime);
 
 	private:
 		// TODO: Editor Specific Members
