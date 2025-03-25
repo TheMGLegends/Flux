@@ -59,10 +59,10 @@ bool EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D
 	return true; // INFO: Pre-Initialisation Successful
 }
 
-bool EditorRuntime::Initialise()
+bool EditorRuntime::Initialise(Renderer& renderer)
 {
 	// INFO: Editor Panel Initialisation
-	editorPanels.emplace_back(std::make_unique<SceneView>());
+	editorPanels.emplace_back(std::make_unique<SceneView>(renderer));
 	sceneView = static_cast<SceneView*>(editorPanels.back().get());
 
 	// TODO: Initialisation Logic

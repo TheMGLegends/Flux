@@ -12,6 +12,7 @@ struct SDL_Window;
 namespace Flux
 {
 	class EditorPanel;
+	class Renderer;
 	class SceneView;
 
 	class EditorRuntime : public Runtime
@@ -26,7 +27,7 @@ namespace Flux
 		bool PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext);
 
 		/// @brief Used for initializing data that uses the systems
-		bool Initialise();
+		bool Initialise(Renderer& renderer);
 
 		void Update(float deltaTime);
 

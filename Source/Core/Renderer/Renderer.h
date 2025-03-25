@@ -37,26 +37,32 @@ namespace Flux
 
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
-		/// @param: _viewport The viewport to use for rendering (Scene View Panel Dimensions)
-		HRESULT Initialise(HWND hWnd, const Viewport& _viewport);
-
+		HRESULT Initialise(HWND hWnd);
 		void RenderFrame(Scene& scene);
 
 		inline ID3D11Device& GetDevice() { return *device.Get(); }
 		inline ID3D11DeviceContext& GetDeviceContext() { return *deviceContext.Get(); }
+		inline ID3D11ShaderResourceView* GetRenderTextureShaderResourceView() { return renderTextureShaderResourceView.Get(); }
 
 	private:
+		/// @brief Resizes the buffer responsible for ImGui rendering
 		void OnWindowResized();
+
+		/// @brief Resizes the buffer responsible for Scene rendering
+		void OnSceneViewResized();
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> device;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> renderTexture; // INFO: Acts as our back buffer
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferRenderTargetView;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> renderTextureShaderResourceView; // INFO: Used by ImGui to read the texture
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 
-		D3D11_VIEWPORT viewport;
-
+		D3D11_VIEWPORT backBufferViewport;
+		D3D11_VIEWPORT sceneViewViewport;
 
 		// INFO: UI Rendering
 

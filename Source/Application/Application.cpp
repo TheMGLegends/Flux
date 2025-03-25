@@ -4,6 +4,7 @@
 #include <backends/imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
 
+#include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/EngineConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/Configs/TimeConfig.h"
@@ -13,6 +14,7 @@
 #include "Core/Input/Input.h"
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Time/Time.h"
+
 
 // TODO: TESTING
 #include "Engine/Audio/Audio.h"
@@ -45,7 +47,7 @@ Application::Application() : window(nullptr), isRunning(false)
 	// INFO: Update Window Size Config based on SDL Window Size
 	SDL_GetWindowSize(window, &EngineConfig::windowWidth, &EngineConfig::windowHeight);
 
-	if (FAILED(renderer.Initialise(GetWindowHandle(), Viewport(0.0f, 0.0f, (float)EngineConfig::windowWidth, (float)EngineConfig::windowHeight, 0.0f, 1.0f))))
+	if (FAILED(renderer.Initialise(GetWindowHandle())))
 	{
 		Debug::LogError("Application::Application() - Failed to initialise Renderer");
 	}
@@ -58,7 +60,7 @@ Application::Application() : window(nullptr), isRunning(false)
 	editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext());
 	engineRuntime.PreInitialise();
 
-	editorRuntime.Initialise();
+	editorRuntime.Initialise(renderer);
 	engineRuntime.Initialise();
 
 	// INFO: Setup Events to Listen For

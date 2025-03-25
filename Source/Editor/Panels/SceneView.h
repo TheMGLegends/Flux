@@ -5,10 +5,12 @@
 
 namespace Flux
 {
+	class Renderer;
+
 	class SceneView : public EditorPanel, public IEventListener
 	{
 	public:
-		SceneView();
+		SceneView(Renderer& _renderer);
 		virtual ~SceneView() override;
 
 		virtual void Initialise() override;
@@ -19,6 +21,7 @@ namespace Flux
 		// TODO: Load Scene Event
 
 	private:
+		Renderer& renderer;
 		// TODO: SceneView Data
 	};
 }

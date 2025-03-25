@@ -1,5 +1,6 @@
 #include "Camera.h"
 
+#include "Core/Configs/EngineConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Renderer/ConstantBuffers.h"
@@ -12,8 +13,8 @@ using namespace Flux::ConstantBuffers;
 using namespace Flux::DirectXConfig;
 using namespace DirectX::SimpleMath;
 
-Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(110.0f), 
-									      nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(16.0f / 9.0f), backgroundColour({ 0.501960814f, 0.501960814f, 0.501960814f, 1.0f }),
+Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), 
+									      nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(EngineConfig::ASPECT_RATIO), backgroundColour({ 0.5f, 0.5f, 0.5f, 1.0f }),
 										  drawFrustum(true), useSkybox(true)
 {
 	name = "Camera";
@@ -32,8 +33,6 @@ Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quate
 
 	// TODO: TESTING
 	SetMaterialTexture("DebugSkybox");
-
-	// TODO: Retrieve aspect ratio of screen
 
 	// INFO: Initialise Bounding Frustum
 	SetFrustum();

@@ -156,8 +156,7 @@ void Input::Update()
 			EngineConfig::windowWidth = event.window.data1;
 			EngineConfig::windowHeight = event.window.data2;
 
-			// INFO: Instantaneous Notify Event
-			EventDispatcher::Notify(EventType::WindowResized, nullptr);
+			EventDispatcher::QueueEvent(EventType::WindowResized, nullptr);
 			break;
 		}
 		default:

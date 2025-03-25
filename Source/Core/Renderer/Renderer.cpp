@@ -5,6 +5,7 @@
 
 #include "ConstantBuffers.h"
 #include "Core/Configs/DirectXConfig.h"
+#include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/EngineConfig.h"
 #include "Core/Configs/RendererConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
@@ -25,7 +26,7 @@ using namespace DirectX::SimpleMath;
 using namespace Microsoft::WRL;
 
 Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullptr), renderTargetView(nullptr), 
-					   depthStencilView(nullptr), spriteBatch(nullptr), viewport()
+					   depthStencilView(nullptr), spriteBatch(nullptr), backBufferViewport(), sceneViewViewport()
 {
 }
 
@@ -37,19 +38,33 @@ void Renderer::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 {
 	if (eventType == EventType::WindowResized)
 		OnWindowResized();
+	else if (eventType == EventType::SceneViewResized)
+		OnSceneViewResized();
 }
 
-HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
+HRESULT Renderer::Initialise(HWND hWnd)
 {
 	HRESULT hResult = { S_OK };
 
-	// INFO: Store the viewport
-	viewport = _viewport;
+	// INFO: Set the viewports
+	backBufferViewport.Width = static_cast<float>(EngineConfig::windowWidth);
+	backBufferViewport.Height = static_cast<float>(EngineConfig::windowHeight);
+	backBufferViewport.MinDepth = 0.0f;
+	backBufferViewport.MaxDepth = 1.0f;
+	backBufferViewport.TopLeftX = 0.0f;
+	backBufferViewport.TopLeftY = 0.0f;
+
+	sceneViewViewport.Width = static_cast<float>(EditorConfig::sceneViewWidth);
+	sceneViewViewport.Height = static_cast<float>(EditorConfig::sceneViewHeight);
+	sceneViewViewport.MinDepth = 0.0f;
+	sceneViewViewport.MaxDepth = 1.0f;
+	sceneViewViewport.TopLeftX = 0.0f;
+	sceneViewViewport.TopLeftY = 0.0f;
 
 	// INFO: Create the swap chain description
 	DXGI_SWAP_CHAIN_DESC scd = { 0 };
-	scd.BufferDesc.Width = static_cast<UINT>(viewport.Width);
-	scd.BufferDesc.Height = static_cast<UINT>(viewport.Height);
+	scd.BufferDesc.Width = static_cast<UINT>(backBufferViewport.Width);
+	scd.BufferDesc.Height = static_cast<UINT>(backBufferViewport.Height);
 	scd.BufferDesc.RefreshRate.Numerator = 0;
 	scd.BufferDesc.RefreshRate.Denominator = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -88,8 +103,42 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 		return hResult;
 	}
 
-	// INFO: Get the back buffer
-	ComPtr<ID3D11Resource> backBuffer;
+	// INFO: Create the texture description for the render texture & depth stencil buffer
+	D3D11_TEXTURE2D_DESC td = { 0 };
+	td.Width = static_cast<UINT>(EditorConfig::sceneViewWidth);
+	td.Height = static_cast<UINT>(EditorConfig::sceneViewHeight);
+	td.MipLevels = 1;
+	td.ArraySize = 1;
+	td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	td.SampleDesc.Count = scd.SampleDesc.Count;
+	td.SampleDesc.Quality = scd.SampleDesc.Quality;
+
+	td.Usage = D3D11_USAGE_DEFAULT;
+	td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	td.CPUAccessFlags = 0;
+	td.MiscFlags = 0;
+
+	// INFO: Instead of accessing back buffer, we create a new texture for the render target
+	hResult = device->CreateTexture2D(&td, nullptr, &renderTexture);
+
+	if (FAILED(hResult))
+	{
+		Debug::LogError("Renderer::Initialise() - Failed to create Render Texture");
+		return hResult;
+	}
+
+	// INFO: Create the render target view for the render texture
+	hResult = device->CreateRenderTargetView(renderTexture.Get(), nullptr, &renderTargetView);
+
+	if (FAILED(hResult))
+	{
+		Debug::LogError("Renderer::Initialise() - Failed to create Render Target View");
+		return hResult;
+	}
+
+	// INFO: Create the back buffer render target view for ImGui
+	ComPtr<ID3D11Texture2D> backBuffer;
 
 	hResult = swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer);
 
@@ -99,34 +148,36 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 		return hResult;
 	}
 
-	// INFO: Create the render target view
-	hResult = device->CreateRenderTargetView(backBuffer.Get(), nullptr, &renderTargetView);
+	hResult = device->CreateRenderTargetView(backBuffer.Get(), nullptr, &backBufferRenderTargetView);
 
 	if (FAILED(hResult))
 	{
-		Debug::LogError("Renderer::Initialise() - Failed to create Render Target View");
+		Debug::LogError("Renderer::Initialise() - Failed to create Back Buffer Render Target View");
 		return hResult;
 	}
 
-	// INFO: Create the depth stencil buffer description
-	D3D11_TEXTURE2D_DESC dsbd = { 0 };
-	dsbd.Width = static_cast<UINT>(viewport.Width);
-	dsbd.Height = static_cast<UINT>(viewport.Height);
-	dsbd.MipLevels = 1;
-	dsbd.ArraySize = 1;
-	dsbd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	// INFO: Create the shader resource view for the render texture
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
+	ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+	srvd.Format = td.Format;
+	srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvd.Texture2D.MipLevels = 1;
 
-	dsbd.SampleDesc.Count = scd.SampleDesc.Count;
-	dsbd.SampleDesc.Quality = scd.SampleDesc.Quality;
+	hResult = device->CreateShaderResourceView(renderTexture.Get(), &srvd, &renderTextureShaderResourceView);
 
-	dsbd.Usage = D3D11_USAGE_DEFAULT;
-	dsbd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	dsbd.CPUAccessFlags = 0;
-	dsbd.MiscFlags = 0;
+	if (FAILED(hResult))
+	{
+		Debug::LogError("Renderer::Initialise() - Failed to create Render Texture Shader Resource View");
+		return hResult;
+	}
+
+	// INFO: Adjust the texture description to work for the depth stencil buffer
+	td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
 	// INFO: Create the depth stencil buffer
 	ComPtr<ID3D11Texture2D> depthStencilBuffer;
-	hResult = device->CreateTexture2D(&dsbd, nullptr, &depthStencilBuffer);
+	hResult = device->CreateTexture2D(&td, nullptr, &depthStencilBuffer);
 
 	if (FAILED(hResult))
 	{
@@ -137,7 +188,7 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 	// INFO: Create the depth stencil view description
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
 	ZeroMemory(&dsvd, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-	dsvd.Format = dsbd.Format;
+	dsvd.Format = td.Format;
 	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvd.Flags = 0;
 
@@ -153,8 +204,8 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 	// INFO: Set the render target view and depth stencil view
 	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
 
-	// INFO: Set the viewport
-	deviceContext->RSSetViewports(1, &viewport);
+	// INFO: Set the viewport to scene view
+	deviceContext->RSSetViewports(1, &sceneViewViewport);
 
 	// INFO: Create the sprite batch
 	spriteBatch = std::make_unique<SpriteBatch>(deviceContext.Get());
@@ -199,6 +250,7 @@ HRESULT Renderer::Initialise(HWND hWnd, const Viewport& _viewport)
 
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::WindowResized, this);
+	EventDispatcher::AddListener(EventType::SceneViewResized, this);
 
 	return hResult; // INFO: S_OK so long as we've made it this far
 }
@@ -212,6 +264,12 @@ void Renderer::RenderFrame(Scene& scene)
 		Debug::LogError("Renderer::RenderFrame() - No Camera Found");
 		return;
 	}
+
+	// INFO: Set the render target to be the texture
+	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+
+	// INFO: Set the matching viewport
+	deviceContext->RSSetViewports(1, &sceneViewViewport);
 
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), camera->GetBackgroundColour().data());
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -279,6 +337,12 @@ void Renderer::RenderFrame(Scene& scene)
 	// TODO: Render all UI elements (FPS Counter)
 	spriteBatch->End();
 
+	// INFO: Set the render target to be the back buffer
+	deviceContext->OMSetRenderTargets(1, backBufferRenderTargetView.GetAddressOf(), nullptr);
+
+	// INFO: Set the matching viewport
+	deviceContext->RSSetViewports(1, &backBufferViewport);
+
 	// INFO: Render ImGui
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -295,8 +359,7 @@ void Renderer::OnWindowResized()
 	{
 		deviceContext->OMSetRenderTargets(0, 0, 0);
 
-		renderTargetView->Release();
-		depthStencilView->Release();
+		backBufferRenderTargetView->Release();
 
 		HRESULT hResult = { S_OK };
 
@@ -308,67 +371,129 @@ void Renderer::OnWindowResized()
 			return;
 		}
 
-		ComPtr<ID3D11Resource> backBuffer;
+		// INFO: Create the back buffer render target view for ImGui
+		ComPtr<ID3D11Texture2D> backBuffer;
 
 		hResult = swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer);
 
 		if (FAILED(hResult))
 		{
-			Debug::LogError("Renderer::OnWindowResized() - Failed to get back buffer");
+			Debug::LogError("Renderer::Initialise() - Failed to get Back Buffer");
 			return;
 		}
 
-		hResult = device->CreateRenderTargetView(backBuffer.Get(), nullptr, renderTargetView.GetAddressOf());
+		hResult = device->CreateRenderTargetView(backBuffer.Get(), nullptr, backBufferRenderTargetView.GetAddressOf());
 
 		if (FAILED(hResult))
 		{
-			Debug::LogError("Renderer::OnWindowResized() - Failed to create render target view");
+			Debug::LogError("Renderer::Initialise() - Failed to create Back Buffer Render Target View");
 			return;
 		}
 
-		D3D11_TEXTURE2D_DESC dsb = { 0 };
-		dsb.Width = EngineConfig::windowWidth;
-		dsb.Height = EngineConfig::windowHeight;
-		dsb.MipLevels = 1;
-		dsb.ArraySize = 1;
-		dsb.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		backBufferViewport.Width = static_cast<float>(EngineConfig::windowWidth);
+		backBufferViewport.Height = static_cast<float>(EngineConfig::windowHeight);
 
-		dsb.SampleDesc.Count = 1;
-		dsb.SampleDesc.Quality = 0;
+		deviceContext->OMSetRenderTargets(1, backBufferRenderTargetView.GetAddressOf(), nullptr);
+		deviceContext->RSSetViewports(1, &backBufferViewport);
+	}
+}
 
-		dsb.Usage = D3D11_USAGE_DEFAULT;
-		dsb.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		dsb.CPUAccessFlags = 0;
-		dsb.MiscFlags = 0;
+void Renderer::OnSceneViewResized()
+{
+	if (EditorConfig::sceneViewWidth == 0 || EditorConfig::sceneViewHeight == 0)
+		return;
+
+	if (renderTargetView)
+	{
+		deviceContext->OMSetRenderTargets(0, 0, 0);
+
+		renderTexture.Reset();
+		renderTextureShaderResourceView.Reset();
+		renderTargetView.Reset();
+		depthStencilView.Reset();
+
+		HRESULT hResult = { S_OK };
+
+		// INFO: Create the texture description for the render texture & depth stencil buffer
+		D3D11_TEXTURE2D_DESC td = { 0 };
+		td.Width = static_cast<UINT>(EditorConfig::sceneViewWidth);
+		td.Height = static_cast<UINT>(EditorConfig::sceneViewHeight);
+		td.MipLevels = 1;
+		td.ArraySize = 1;
+		td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		td.SampleDesc.Count = 1;
+		td.SampleDesc.Quality = 0;
+
+		td.Usage = D3D11_USAGE_DEFAULT;
+		td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		td.CPUAccessFlags = 0;
+		td.MiscFlags = 0;
+
+		// INFO: Instead of accessing back buffer, we create a new texture for the render target
+		hResult = device->CreateTexture2D(&td, nullptr, &renderTexture);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::OnSceneViewResized() - Failed to create Render Texture");
+			return;
+		}
+
+		// INFO: Create the render target view for the render texture
+		hResult = device->CreateRenderTargetView(renderTexture.Get(), nullptr, &renderTargetView);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::OnSceneViewResized() - Failed to create Render Target View");
+			return;
+		}
+
+		// INFO: Create the shader resource view for the render texture
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
+		ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+		srvd.Format = td.Format;
+		srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvd.Texture2D.MipLevels = 1;
+
+		hResult = device->CreateShaderResourceView(renderTexture.Get(), &srvd, &renderTextureShaderResourceView);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::OnSceneViewResized() - Failed to create Render Texture Shader Resource View");
+			return;
+		}
+
+		// INFO: Adjust the texture description to work for the depth stencil buffer
+		td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
 		ComPtr<ID3D11Texture2D> depthStencilBuffer;
-		hResult = device->CreateTexture2D(&dsb, nullptr, &depthStencilBuffer);
+		hResult = device->CreateTexture2D(&td, nullptr, &depthStencilBuffer);
 
 		if (FAILED(hResult))
 		{
-			Debug::LogError("Renderer::OnWindowResized() - Failed to create depth stencil buffer");
+			Debug::LogError("Renderer::OnSceneViewResized() - Failed to create depth stencil buffer");
 			return;
 		}
 
 		D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
 		ZeroMemory(&dsvd, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-		dsvd.Format = dsb.Format;
+		dsvd.Format = td.Format;
 		dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		dsvd.Flags = 0;
 
-		hResult = device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsvd, depthStencilView.GetAddressOf());
+		hResult = device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsvd, &depthStencilView);
 
 		if (FAILED(hResult))
 		{
-			Debug::LogError("Renderer::OnWindowResized() - Failed to create depth stencil view");
+			Debug::LogError("Renderer::OnSceneViewResized() - Failed to create depth stencil view");
 			return;
 		}
 
+		sceneViewViewport.Width = static_cast<float>(EditorConfig::sceneViewWidth);
+		sceneViewViewport.Height = static_cast<float>(EditorConfig::sceneViewHeight);
+
 		deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
-
-		viewport.Width = static_cast<float>(EngineConfig::windowWidth);
-		viewport.Height = static_cast<float>(EngineConfig::windowHeight);
-
-		deviceContext->RSSetViewports(1, &viewport);
+		deviceContext->RSSetViewports(1, &sceneViewViewport);
 	}
 }
