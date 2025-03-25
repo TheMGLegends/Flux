@@ -12,7 +12,7 @@ using namespace Flux::ConstantBuffers;
 using namespace Flux::DirectXConfig;
 using namespace DirectX::SimpleMath;
 
-Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), 
+Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(110.0f), 
 									      nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(16.0f / 9.0f), backgroundColour({ 1.0f, 1.0f, 1.0f, 0.0f }), 
 										  drawFrustum(true), useSkybox(true)
 {

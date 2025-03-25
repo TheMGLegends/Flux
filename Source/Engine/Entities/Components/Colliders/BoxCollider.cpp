@@ -80,7 +80,13 @@ void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::Pri
 
 	if (owningTransform)
 	{
-		DirectX::XMMATRIX world = owningTransform->GetWorldMatrix(size);
+		// INFO: Add a small offset to prevent Z-Fighting
+		Vector3 offsetSize = size;
+		offsetSize.x += 0.01f;
+		offsetSize.y += 0.01f;
+		offsetSize.z += 0.01f;
+
+		DirectX::XMMATRIX world = owningTransform->GetWorldMatrix(offsetSize);
 
 		// INFO: Translate the vertices to world space
 		DirectX::VertexPositionColor worldVertices[8]{};
