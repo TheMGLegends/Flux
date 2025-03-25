@@ -548,7 +548,7 @@ HRESULT AssetHandler::LoadSamplerState()
 	samplerDescription.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDescription.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDescription.MipLODBias = 0.0f;
-	samplerDescription.MaxAnisotropy = 16;
+	samplerDescription.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
 	samplerDescription.ComparisonFunc = D3D11_COMPARISON_NEVER;
 
 	samplerDescription.BorderColor[0] = 0;

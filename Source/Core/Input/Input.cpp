@@ -123,7 +123,12 @@ void Input::Update()
 
 	previousMouseState = currentMouseState;
 	if (isRelative)
+	{
+		// INFO: Keep the mouse at the same position to prevent ImGui interactions
+		SDL_WarpMouseInWindow(window, latestAbsoluteMousePosition.x, latestAbsoluteMousePosition.y);
+
 		currentMouseState = SDL_GetRelativeMouseState(&mousePosition.x, &mousePosition.y);
+	}
 	else
 		currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
 
@@ -215,7 +220,6 @@ void Input::SetMouseMode(bool _isRelative)
 	// INFO: Going from relative to absolute
 	if (isRelative && !_isRelative)
 	{
-		SDL_WarpMouseInWindow(window, latestAbsoluteMousePosition.x, latestAbsoluteMousePosition.y);
 		SDL_SetWindowRelativeMouseMode(window, false);
 	}
 	// INFO: Going from absolute to relative
