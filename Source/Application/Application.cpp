@@ -30,7 +30,7 @@ Application::Application() : window(nullptr), isRunning(false)
 	}
 
 	// INFO: Window Creation
-	window = SDL_CreateWindow("Flux Engine", EngineConfig::windowWidth, EngineConfig::windowHeight, SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Flux Engine", EngineConfig::windowWidth, EngineConfig::windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
 
 	if (!window)
 	{
@@ -43,7 +43,7 @@ Application::Application() : window(nullptr), isRunning(false)
 	}
 
 	// TODO: Get viewport information from scene view panel
-	if (FAILED(renderer.Initialise(GetWindowHandle(), /*TODO: Temporary*/Viewport(0.0f, 0.0f, (float)EngineConfig::windowWidth, (float)EngineConfig::windowHeight, 0.0f, 1.0f))))
+	if (FAILED(renderer.Initialise(GetWindowHandle(), /*TODO: Temporary*/Viewport(50.0f, 50.0f, 1280, 720, 0.0f, 1.0f))))
 	{
 		Debug::LogError("Application::Application() - Failed to initialise Renderer");
 	}
