@@ -76,6 +76,7 @@ void EditorRuntime::Update(float deltaTime)
 	ImGui_ImplSDL3_NewFrame();
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
+	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID);
 
 	// TODO: TESTING
 	ImGui::ShowDemoWindow();
