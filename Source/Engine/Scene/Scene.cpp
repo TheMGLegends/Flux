@@ -317,7 +317,7 @@ void Scene::LateUpdate(float deltaTime)
 		}
 	}
 
-	if (RuntimeConfig::IsInEditorMode())
+	if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused())
 		sceneViewCamera->LateUpdate(deltaTime);
 }
 
@@ -411,7 +411,7 @@ std::weak_ptr<Collider> Scene::GetCollider(physx::PxRigidActor* rigidActor)
 
 std::weak_ptr<Camera> Scene::GetCamera() const
 {
-	if (RuntimeConfig::IsInPlayMode())
+	if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 		return playModeCamera;
 	else
 		return sceneViewCamera->GetCamera();

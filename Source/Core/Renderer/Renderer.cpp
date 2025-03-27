@@ -320,7 +320,7 @@ void Renderer::RenderFrame(Scene& scene)
 	}
 
 	// INFO: Render the Debug Wireframes
-	if (RuntimeConfig::IsInEditorMode())
+	if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused())
 	{
 		batchEffect->SetView(view);
 		batchEffect->SetProjection(projection);
