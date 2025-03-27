@@ -11,6 +11,7 @@
 #include "Engine/Audio/Audio.h"
 
 using namespace Flux;
+using namespace Flux::EditorConfig;
 
 SceneView::SceneView(Renderer& _renderer) : renderer(_renderer)
 {
@@ -28,19 +29,118 @@ void SceneView::Update(float deltaTime)
 {
 	if (ImGui::Begin("Scene View"))
 	{
+		ImVec2 windowSize = ImGui::GetWindowSize();
 		ImVec2 sceneViewSize = ImGui::GetWindowSize();
 		MaintainAspectRatio(sceneViewSize);
+
+		// INFO: Centre Scene View
+		ImGui::SetCursorPos({ (windowSize.x - sceneViewSize.x) * 0.5f, (windowSize.y - sceneViewSize.y) * 0.5f });
+
+		ImGui::Image((ImTextureID)renderer.GetRenderTextureShaderResourceView(), sceneViewSize);
+
+		// INFO: Check and Update Scene View Size if Necessary
+		if (EditorConfig::sceneViewWidth != sceneViewSize.x || EditorConfig::sceneViewHeight != sceneViewSize.y)
+		{
+			EditorConfig::sceneViewWidth = sceneViewSize.x;
+			EditorConfig::sceneViewHeight = sceneViewSize.y;
+			EventDispatcher::QueueEvent(EventType::SceneViewResized, nullptr);
+		}
+
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
 		// INFO: Remove Background Colour for Buttons
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBackground;
+		// INFO: Gizmo Selection Buttons
+		ImGui::SetCursorPos({ (windowSize.x - sceneViewSize.x) * 0.5f, (windowSize.y - sceneViewSize.y) * 0.5f });
+
+		if (ImGui::BeginChild("DummyChild", { 0, 0 }, true, windowFlags))
+		{
+			// INFO: Panel Background Styles
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.172f, 0.169f, 0.169f, 1.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 2.5f, 2.5f });
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
+
+			// INFO: Gizmo Selector Panel
+			if (ImGui::BeginChild("GizmoSelectors", { 196, 50 }, true, windowFlags))
+			{
+				ImTextureID panTexture = (ImTextureID)AssetHandler::GetTexture("PanButton");
+				ImTextureID translationTexture = (ImTextureID)AssetHandler::GetTexture("TranslationButton");
+				ImTextureID rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButton");
+				ImTextureID scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButton");
+
+				switch (EditorConfig::currentTransformMode)
+				{
+				case TransformMode::Pan:
+					panTexture = (ImTextureID)AssetHandler::GetTexture("PanButtonSelected");
+					break;
+				case TransformMode::Translate:
+					translationTexture = (ImTextureID)AssetHandler::GetTexture("TranslationButtonSelected");
+					break;
+				case TransformMode::Rotate:
+					rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButtonSelected");
+					break;
+				case TransformMode::Scale:
+					scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButtonSelected");
+					break;
+				default:
+					break;
+				}
+
+				// INFO: Pan Button
+				if (ImGui::ImageButton("PanButton", panTexture, { 40.0f, 40.0f }))
+				{
+					// TODO: Logic for Pan Button
+
+					EditorConfig::currentTransformMode = TransformMode::Pan;
+				}
+
+				ImGui::SameLine();
+
+				// INFO: Translation Button
+				if (ImGui::ImageButton("TranslationButton", translationTexture, { 40.0f, 40.0f }))
+				{
+					// TODO: Logic for Translation Button
+
+					EditorConfig::currentTransformMode = TransformMode::Translate;
+				}
+
+				ImGui::SameLine();
+
+				// INFO: Rotation Button
+				if (ImGui::ImageButton("RotationButton", rotationTexture, { 40.0f, 40.0f }))
+				{
+					// TODO: Logic for Rotation Button
+
+					EditorConfig::currentTransformMode = TransformMode::Rotate;
+				}
+
+				ImGui::SameLine();
+
+				// INFO: Scale Button
+				if (ImGui::ImageButton("ScaleButton", scaleTexture, { 40.0f, 40.0f }))
+				{
+					// TODO: Logic for Scale Button
+
+					EditorConfig::currentTransformMode = TransformMode::Scale;
+				}
+
+				ImGui::PopStyleColor();
+				ImGui::PopStyleVar(3);
+				ImGui::EndChild();
+			}
+
+			ImGui::EndChild();
+		}
+
+		windowFlags |= ImGuiWindowFlags_NoBackground;
 		ImTextureID buttonTexture = 0;
 
-		// INFO: Play Button Code
-		ImGui::SetCursorPos({ (ImGui::GetWindowSize().x / 2.0f) - 55.0f, (ImGui::GetWindowSize().y - sceneViewSize.y) * 0.5f });
+		// INFO: Play Button
+		ImGui::SetCursorPos({ (windowSize.x / 2.0f) - 55.0f, (windowSize.y - sceneViewSize.y) * 0.5f });
 
 		if (ImGui::BeginChild("PlayButton", { 0.0f, 0.0f }, true, windowFlags))
 		{
@@ -71,8 +171,8 @@ void SceneView::Update(float deltaTime)
 			ImGui::EndChild();
 		}
 
-		// INFO: Pause Button Code
-		ImGui::SetCursorPos({ (ImGui::GetWindowSize().x / 2.0f) + 5.0f, (ImGui::GetWindowSize().y - sceneViewSize.y) * 0.5f });
+		// INFO: Pause Button
+		ImGui::SetCursorPos({ (windowSize.x / 2.0f) + 5.0f, (windowSize.y - sceneViewSize.y) * 0.5f });
 
 		if (ImGui::BeginChild("PauseButton", { 0.0f, 0.0f }, true, windowFlags))
 		{
@@ -104,20 +204,6 @@ void SceneView::Update(float deltaTime)
 		}
 
 		ImGui::PopStyleColor(3);
-
-		// INFO: Centre Scene View
-		ImGui::SetCursorPos({ (ImGui::GetWindowSize().x - sceneViewSize.x) * 0.5f, (ImGui::GetWindowSize().y - sceneViewSize.y) * 0.5f });
-
-		ImGui::Image((ImTextureID)renderer.GetRenderTextureShaderResourceView(), sceneViewSize);
-
-		// INFO: Check and Update Scene View Size if Necessary
-		if (EditorConfig::sceneViewWidth != sceneViewSize.x || EditorConfig::sceneViewHeight != sceneViewSize.y)
-		{
-			EditorConfig::sceneViewWidth = sceneViewSize.x;
-			EditorConfig::sceneViewHeight = sceneViewSize.y;
-			EventDispatcher::QueueEvent(EventType::SceneViewResized, nullptr);
-		}
-
 		ImGui::End();
 	}
 }
