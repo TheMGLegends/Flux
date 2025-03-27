@@ -53,7 +53,7 @@ namespace Flux::FrameRateMonitor
 		if (!isActive)
 			return;
 
-		spriteFont->DrawString(spriteBatch, frameRate.c_str(), Vector2(5.0f, 5.0f), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), scale);
+		spriteFont->DrawString(spriteBatch, frameRate.c_str(), Vector2(0.0f, EditorConfig::sceneViewHeight - 24.0f), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), scale);
 	}
 
 	/// @brief Toggles Active State (Starts as Active)
