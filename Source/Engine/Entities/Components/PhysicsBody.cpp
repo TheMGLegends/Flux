@@ -1,7 +1,9 @@
 #include "PhysicsBody.h"
 
 #include <magic_enum.hpp>
+#pragma warning (push, 0)
 #include <extensions/PxRigidBodyExt.h>
+#pragma warning (pop)
 
 #include "Core/Debug/Debug.h"
 #include "Engine/Physics/Physics.h"

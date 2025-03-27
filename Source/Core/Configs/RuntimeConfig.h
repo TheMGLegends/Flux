@@ -12,35 +12,54 @@ namespace Flux::RuntimeConfig
 	{
 		inline Mode currentMode = Mode::Editor;
 		inline bool enteredPlayMode = false;
+		inline bool isPaused = false;
 	}
 
 	inline void SetMode(Mode newMode)
 	{
-		if (Internal::currentMode == Mode::Editor && newMode == Mode::Play)
-			Internal::enteredPlayMode = true;
+		using namespace Internal;
 
-		Internal::currentMode = newMode;
+		if (currentMode == Mode::Editor && newMode == Mode::Play)
+			enteredPlayMode = true;
+
+		currentMode = newMode;
 	}
 
 	inline bool IsInEditorMode()
 	{
-		return Internal::currentMode == Mode::Editor;
+		using namespace Internal;
+		return currentMode == Mode::Editor;
 	}
 
 	inline bool IsInPlayMode()
 	{
-		return Internal::currentMode == Mode::Play;
+		using namespace Internal;
+		return currentMode == Mode::Play;
 	}
 
 	/// @brief Program has entered play mode and is now running the game
 	inline void PlayModeEntered()
 	{
-		Internal::enteredPlayMode = false;
+		using namespace Internal;
+		enteredPlayMode = false;
 	}
 
 	inline bool HasEnteredPlayMode()
 	{
-		return Internal::enteredPlayMode;
+		using namespace Internal;
+		return enteredPlayMode;
+	}
+
+	inline bool IsPaused()
+	{
+		using namespace Internal;
+		return isPaused;
+	}
+
+	inline void TogglePause()
+	{
+		using namespace Internal;
+		isPaused = !isPaused;
 	}
 }
 

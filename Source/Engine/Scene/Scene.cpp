@@ -30,6 +30,7 @@ Scene::Scene() : sceneName("Default")
 
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::GameObjectRemoved, this);
+	EventDispatcher::AddListener(EventType::PlayModeExited, this);
 
 	// INFO: Create a scene view camera
 	sceneViewCamera = std::make_unique<SceneViewCamera>();
@@ -140,6 +141,16 @@ void Scene::Deserialize(const nlohmann::ordered_json& json)
 		// INFO: Deserialize the newly created GameObject with the gameObjects data
 		gameObjects.back()->Deserialize(gameObjectData);
 	}
+
+	// INFO: Find the first camera in the scene and set it as the play mode camera
+	for (size_t i = 0; i < gameObjects.size(); i++)
+	{
+		if (gameObjects[i]->HasComponent<Camera>())
+		{
+			playModeCamera = gameObjects[i]->GetComponent<Camera>().lock();
+			break;
+		}
+	}
 }
 
 void Flux::Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
@@ -181,6 +192,13 @@ void Flux::Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 			else
 				++it;
 		}
+	}
+	else if (eventType == EventType::PlayModeExited)
+	{
+		// TODO: TESTING CODE
+		std::ifstream jsonTest("test.json");
+		nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonTest);
+		Deserialize(json);
 	}
 }
 
@@ -289,7 +307,7 @@ void Scene::Update(float deltaTime)
 
 void Scene::LateUpdate(float deltaTime)
 {
-	if (RuntimeConfig::IsInPlayMode())
+	if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 	{
 		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
@@ -298,11 +316,8 @@ void Scene::LateUpdate(float deltaTime)
 		}
 	}
 
-	//if (RuntimeConfig::IsInEditorMode())
-	//	sceneViewCamera->LateUpdate(deltaTime);
-
-	// TODO: TESTING
-	sceneViewCamera->LateUpdate(deltaTime);
+	if (RuntimeConfig::IsInEditorMode())
+		sceneViewCamera->LateUpdate(deltaTime);
 }
 
 void Scene::FixedUpdate(float fixedDeltaTime)
@@ -351,8 +366,8 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 		if (std::shared_ptr<Collider> validCollider = collider.lock())
 			RegisterRigidActorToCollider(collider, validCollider->GetRigidActor());
 
-		[[fallthrough]];
 	}
+		[[fallthrough]];
 	case ComponentType::Camera:
 	{
 		std::weak_ptr<IDebugWireframe> debugWireframe = std::dynamic_pointer_cast<IDebugWireframe>(validComponent);
@@ -395,11 +410,8 @@ std::weak_ptr<Collider> Scene::GetCollider(physx::PxRigidActor* rigidActor)
 
 std::weak_ptr<Camera> Scene::GetCamera() const
 {
-	/*if (RuntimeConfig::IsInPlayMode())
+	if (RuntimeConfig::IsInPlayMode())
 		return playModeCamera;
 	else
-		return sceneViewCamera->GetCamera();*/
-
-	// TODO: TESTING
-	return sceneViewCamera->GetCamera();
+		return sceneViewCamera->GetCamera();
 }

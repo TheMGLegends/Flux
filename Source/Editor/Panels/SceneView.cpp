@@ -4,8 +4,11 @@
 
 #include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/EngineConfig.h"
+#include "Core/Configs/RuntimeConfig.h"
 #include "Core/EventSystem/EventDispatcher.h"
+#include "Core/Renderer/AssetHandler.h"
 #include "Core/Renderer/Renderer.h"
+#include "Engine/Audio/Audio.h"
 
 using namespace Flux;
 
@@ -28,6 +31,80 @@ void SceneView::Update(float deltaTime)
 		ImVec2 sceneViewSize = ImGui::GetWindowSize();
 		MaintainAspectRatio(sceneViewSize);
 
+		// INFO: Remove Background Colour for Buttons
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBackground;
+		ImTextureID buttonTexture = 0;
+
+		// INFO: Play Button Code
+		ImGui::SetCursorPos({ (ImGui::GetWindowSize().x / 2.0f) - 55.0f, (ImGui::GetWindowSize().y - sceneViewSize.y) * 0.5f });
+
+		if (ImGui::BeginChild("PlayButton", { 0.0f, 0.0f }, true, windowFlags))
+		{
+			// INFO: Determine Play Button Texture
+			buttonTexture = (ImTextureID)(RuntimeConfig::IsInEditorMode() ? AssetHandler::GetTexture("PlayButtonEditorMode") : AssetHandler::GetTexture("PlayButtonPlayMode"));
+
+			// INFO: If the Play Button is Pressed
+			if (ImGui::ImageButton("PlayButton", buttonTexture, { 50.0f, 50.0f }))
+			{
+				// INFO: Logic for entering Play Mode
+				if (RuntimeConfig::IsInEditorMode())
+					RuntimeConfig::SetMode(RuntimeConfig::Mode::Play);
+				// INFO: Logic for exiting Play Mode
+				else
+				{
+					RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
+					Audio::StopAllSounds();
+
+					// INFO: Unpause the game if it was paused
+					if (RuntimeConfig::IsPaused())
+						RuntimeConfig::TogglePause();
+
+					// TODO: Event to Reset Scene
+					EventDispatcher::QueueEvent(EventType::PlayModeExited, nullptr);
+				}
+			}
+
+			ImGui::EndChild();
+		}
+
+		// INFO: Pause Button Code
+		ImGui::SetCursorPos({ (ImGui::GetWindowSize().x / 2.0f) + 5.0f, (ImGui::GetWindowSize().y - sceneViewSize.y) * 0.5f });
+
+		if (ImGui::BeginChild("PauseButton", { 0.0f, 0.0f }, true, windowFlags))
+		{
+			if (RuntimeConfig::IsInEditorMode())
+				buttonTexture = (ImTextureID)AssetHandler::GetTexture("PauseButtonUnavailable");
+			else
+			{
+				if (RuntimeConfig::IsPaused())
+					buttonTexture = (ImTextureID)AssetHandler::GetTexture("PauseButtonSelected");
+				else
+					buttonTexture = (ImTextureID)AssetHandler::GetTexture("PauseButtonAvailable");
+			}
+
+			if (ImGui::ImageButton("PauseButton", buttonTexture, { 50.0f, 50.0f }))
+			{
+				if (RuntimeConfig::IsInPlayMode())
+				{
+					RuntimeConfig::TogglePause();
+
+					// INFO: Pause/Unpause Audio
+					if (RuntimeConfig::IsPaused())
+						Audio::ControlSounds(true);
+					else
+						Audio::ControlSounds(false);
+				}
+			}
+
+			ImGui::EndChild();
+		}
+
+		ImGui::PopStyleColor(3);
+
 		// INFO: Centre Scene View
 		ImGui::SetCursorPos({ (ImGui::GetWindowSize().x - sceneViewSize.x) * 0.5f, (ImGui::GetWindowSize().y - sceneViewSize.y) * 0.5f });
 
@@ -40,9 +117,9 @@ void SceneView::Update(float deltaTime)
 			EditorConfig::sceneViewHeight = sceneViewSize.y;
 			EventDispatcher::QueueEvent(EventType::SceneViewResized, nullptr);
 		}
-	}
 
-	ImGui::End();
+		ImGui::End();
+	}
 }
 
 void SceneView::OnNotify(EventType eventType, std::shared_ptr<Event> event)

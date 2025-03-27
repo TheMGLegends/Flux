@@ -24,7 +24,7 @@ void Time::Tick()
 	deltaTime = duration_cast<microseconds>(currentTime - previousTime).count() / MICRO_TO_SEC;
 	elapsedTime += deltaTime;
 
-	if (RuntimeConfig::IsInPlayMode())
+	if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 	{
 		accumulator += deltaTime;
 		alpha = accumulator / TimeConfig::FIXED_DELTA_TIME;

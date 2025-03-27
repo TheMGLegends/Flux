@@ -66,9 +66,6 @@ Application::Application() : window(nullptr), isRunning(false)
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::Quit, this);
 
-	// TODO: Testing
-	Audio::PlaySound3D("testSound", FMOD_VECTOR{ 0.0f, 0.0f, 10.0f }, 1.0f, 500.0f, true);
-
 	isRunning = true;
 }
 
@@ -95,43 +92,37 @@ void Application::Run()
 		Time::Tick();
 		Input::Update();
 
-		// TODO: TESTING CODE
-		if (Input::GetKeyDown(SDL_SCANCODE_P))
-		{
-			if (RuntimeConfig::IsInPlayMode())
-				RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
-			else
-				RuntimeConfig::SetMode(RuntimeConfig::Mode::Play);
-		}
-
-		// TODO: TESTING CODE
-		if (Input::GetKeyDown(SDL_SCANCODE_O))
-		{
-			if (RuntimeConfig::IsInPlayMode())
-			{
-				auto physicsBodies = engineRuntime.GetScene().GetComponents<PhysicsBody>();
-
-				for (auto& physicBody : physicsBodies)
-				{
-					if (physicBody.expired())
-						continue;
-
-					std::shared_ptr<PhysicsBody> physicsBody = physicBody.lock();
-					physicsBody->AddForce(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 100.0f), physx::PxForceMode::eIMPULSE);
-				}
-			}
-		}
-
 		editorRuntime.Update(Time::DeltaTime());
 
-		if (RuntimeConfig::HasEnteredPlayMode())
+		if (RuntimeConfig::HasEnteredPlayMode() && !RuntimeConfig::IsPaused())
 		{
+			// TODO: TESTING CODE
+			Audio::PlaySound3D("testSound", FMOD_VECTOR{ 0.0f, 0.0f, 10.0f }, 1.0f, 500.0f, true);
+
 			engineRuntime.Start();
 			RuntimeConfig::PlayModeEntered();
 		}
 
-		if (RuntimeConfig::IsInPlayMode())
+		if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 		{
+			// TODO: TESTING CODE
+			if (Input::GetKeyDown(SDL_SCANCODE_O))
+			{
+				if (RuntimeConfig::IsInPlayMode())
+				{
+					auto physicsBodies = engineRuntime.GetScene().GetComponents<PhysicsBody>();
+
+					for (auto& physicBody : physicsBodies)
+					{
+						if (physicBody.expired())
+							continue;
+
+						std::shared_ptr<PhysicsBody> physicsBody = physicBody.lock();
+						physicsBody->AddForce(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 100.0f), physx::PxForceMode::eIMPULSE);
+					}
+				}
+			}
+
 			engineRuntime.Update(Time::DeltaTime());
 			engineRuntime.FixedUpate(TimeConfig::FIXED_DELTA_TIME);
 		}

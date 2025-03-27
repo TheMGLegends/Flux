@@ -1,6 +1,8 @@
 #pragma once
 
+#pragma warning (push, 0)
 #include <PxPhysicsAPI.h>
+#pragma warning (pop)
 
 namespace Flux
 {

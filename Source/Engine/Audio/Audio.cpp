@@ -198,6 +198,14 @@ void Audio::StopAllSounds()
 	audios.clear();
 }
 
+void Audio::ControlSounds(bool isPaused)
+{
+	for (auto& audio : audios)
+	{
+		audio.channel->setPaused(isPaused);
+	}
+}
+
 void Audio::SetListenerAttributes(const FMOD_VECTOR& position, const FMOD_VECTOR& velocity, const FMOD_VECTOR& forward, const FMOD_VECTOR& up)
 {
 	system->set3DListenerAttributes(0, &position, &velocity, &forward, &up);

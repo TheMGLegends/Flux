@@ -58,6 +58,8 @@ namespace Flux
 		static void StopSound(const std::string& audioName);
 		static void StopAllSounds();
 
+		static void ControlSounds(bool isPaused);
+
 		static void SetListenerAttributes(const FMOD_VECTOR& position, const FMOD_VECTOR& velocity, const FMOD_VECTOR& forward, const FMOD_VECTOR& up);
 
 	private:
