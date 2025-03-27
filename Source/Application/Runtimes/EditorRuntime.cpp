@@ -6,6 +6,8 @@
 
 #include "Core/Configs/EditorConfig.h"
 #include "Core/Debug/Debug.h"
+#include "Core/Debug/FrameRateMonitor.h"
+#include "Core/Input/Input.h"
 #include "Editor/Panels/SceneView.h"
 
 using namespace Flux;
@@ -61,6 +63,9 @@ bool EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D
 
 bool EditorRuntime::Initialise(Renderer& renderer)
 {
+	// INFO: Initialise Frame Rate Monitor
+	FrameRateMonitor::Initialise();
+
 	// INFO: Editor Panel Initialisation
 	editorPanels.emplace_back(std::make_unique<SceneView>(renderer));
 	sceneView = static_cast<SceneView*>(editorPanels.back().get());
@@ -72,6 +77,11 @@ bool EditorRuntime::Initialise(Renderer& renderer)
 
 void EditorRuntime::Update(float deltaTime)
 {
+	if (Input::GetKeyDown(SDL_SCANCODE_F3))
+		FrameRateMonitor::Toggle();
+
+	FrameRateMonitor::Update(deltaTime);
+
 	// INFO: ImGui New Frame
 	ImGui_ImplSDL3_NewFrame();
 	ImGui_ImplDX11_NewFrame();

@@ -10,6 +10,7 @@
 #include "Core/Configs/RendererConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
+#include "Core/Debug/FrameRateMonitor.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
@@ -334,7 +335,7 @@ void Renderer::RenderFrame(Scene& scene)
 
 	// INFO: Render the UI
 	spriteBatch->Begin();
-	// TODO: Render all UI elements (FPS Counter)
+	FrameRateMonitor::Render(spriteBatch.get());
 	spriteBatch->End();
 
 	// INFO: Set the render target to be the back buffer

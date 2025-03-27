@@ -22,8 +22,7 @@ namespace Flux
 
 		static inline float Alpha() { return static_cast<float>(alpha); }
 
-		static void SetFrameCount(const unsigned int _frameCount) { frameCount = _frameCount; }
-		static inline unsigned int GetFrameCount() { return frameCount; }
+		static unsigned int GetFrameCount();
 
 	private:
 		static double deltaTime;

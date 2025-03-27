@@ -48,3 +48,12 @@ void Time::DecrementAccumulator()
 {
 	accumulator -= static_cast<double>(TimeConfig::FIXED_DELTA_TIME);
 }
+
+unsigned int Time::GetFrameCount()
+{
+	// INFO: Copy over frame count and reset it for the next frame
+	unsigned int count = frameCount;
+	frameCount = 0;
+
+	return count;
+}

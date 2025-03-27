@@ -32,3 +32,4 @@ namespace Flux::Debug
 		std::cout << "\033[0m";
 	}
 }
+

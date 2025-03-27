@@ -190,6 +190,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\Configs\EditorConfig.h" />
+    <ClInclude Include="Source\Core\Debug\FrameRateMonitor.h" />
     <ClInclude Include="Source\Editor\Panels\EditorPanel.h" />
     <ClInclude Include="Source\Editor\Panels\SceneView.h" />
     <ClInclude Include="Source\Engine\Physics\Physics.h" />
