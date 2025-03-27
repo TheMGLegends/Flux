@@ -121,6 +121,7 @@ void Scene::Deserialize(const nlohmann::ordered_json& json)
 	gameObjects.clear();
 	components.clear();
 	debugWireframes.clear();
+	rigidActorsToColliders.clear();
 	playModeCamera.reset();
 
 	// INFO: Load the name of the Scene
