@@ -3,6 +3,8 @@
 #include "EditorPanel.h"
 #include "Core/EventSystem/IEventListener.h"
 
+struct ImVec2;
+
 namespace Flux
 {
 	class Renderer;
@@ -19,6 +21,9 @@ namespace Flux
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
 		// TODO: Load Scene Event
+
+	private:
+		void MaintainAspectRatio(ImVec2& sceneViewSize);
 
 	private:
 		Renderer& renderer;

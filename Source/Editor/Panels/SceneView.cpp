@@ -23,10 +23,34 @@ void SceneView::Initialise()
 
 void SceneView::Update(float deltaTime)
 {
-	ImGui::Begin("Scene View");
+	if (ImGui::Begin("Scene View"))
+	{
+		ImVec2 sceneViewSize = ImGui::GetWindowSize();
+		MaintainAspectRatio(sceneViewSize);
 
-	ImVec2 sceneViewSize = ImGui::GetWindowSize();
+		// INFO: Centre Scene View
+		ImGui::SetCursorPos({ (ImGui::GetWindowSize().x - sceneViewSize.x) * 0.5f, (ImGui::GetWindowSize().y - sceneViewSize.y) * 0.5f });
 
+		ImGui::Image((ImTextureID)renderer.GetRenderTextureShaderResourceView(), sceneViewSize);
+
+		// INFO: Check and Update Scene View Size if Necessary
+		if (EditorConfig::sceneViewWidth != sceneViewSize.x || EditorConfig::sceneViewHeight != sceneViewSize.y)
+		{
+			EditorConfig::sceneViewWidth = sceneViewSize.x;
+			EditorConfig::sceneViewHeight = sceneViewSize.y;
+			EventDispatcher::QueueEvent(EventType::SceneViewResized, nullptr);
+		}
+	}
+
+	ImGui::End();
+}
+
+void SceneView::OnNotify(EventType eventType, std::shared_ptr<Event> event)
+{
+}
+
+void SceneView::MaintainAspectRatio(ImVec2& sceneViewSize)
+{
 	// INFO: Maintain Aspect Ratio
 	float adheringWidth = sceneViewSize.y * EngineConfig::ASPECT_RATIO;
 	float adheringHeight = sceneViewSize.x * (1.0f / EngineConfig::ASPECT_RATIO);
@@ -39,23 +63,4 @@ void SceneView::Update(float deltaTime)
 	// INFO: Adjust for Top Bar and Scroll Bar
 	sceneViewSize.x -= 15.0f;
 	sceneViewSize.y -= 40.0f;
-
-	// INFO: Centre Scene View
-	ImGui::SetCursorPos({ (ImGui::GetWindowSize().x - sceneViewSize.x) * 0.5f, (ImGui::GetWindowSize().y - sceneViewSize.y) * 0.5f });
-
-	ImGui::Image((ImTextureID)renderer.GetRenderTextureShaderResourceView(), sceneViewSize);
-
-	// INFO: Check and Update Scene View Size if Necessary
-	if (EditorConfig::sceneViewWidth != sceneViewSize.x || EditorConfig::sceneViewHeight != sceneViewSize.y)
-	{
-		EditorConfig::sceneViewWidth = sceneViewSize.x;
-		EditorConfig::sceneViewHeight = sceneViewSize.y;
-		EventDispatcher::QueueEvent(EventType::SceneViewResized, nullptr);
-	}
-
-	ImGui::End();
-}
-
-void SceneView::OnNotify(EventType eventType, std::shared_ptr<Event> event)
-{
 }
