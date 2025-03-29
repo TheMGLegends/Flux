@@ -15,7 +15,7 @@ using namespace DirectX::SimpleMath;
 
 Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), 
 									      nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(EngineConfig::ASPECT_RATIO), backgroundColour({ 0.5f, 0.5f, 0.5f, 1.0f }),
-										  drawFrustum(true), useSkybox(true)
+										  shouldDrawFrustum(true), useSkybox(true)
 {
 	name = "Camera";
 	componentType = ComponentType::Camera;
@@ -81,7 +81,7 @@ void Camera::Deserialize(const nlohmann::ordered_json& json)
 
 void Camera::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 {
-	if (!drawFrustum)
+	if (!shouldDrawFrustum)
 		return;
 
 	std::shared_ptr<Transform> owningTransform = GetGameObject()->transform.lock();

@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fmod_errors.h>
 
+#include "Core/GlobalDefines.h"
 #include "Core/Debug/Debug.h"
 #include "Core/Renderer/AssetHandler.h"
 
@@ -11,7 +12,7 @@ using namespace Flux;
 FMOD::System* Audio::system = nullptr;
 std::vector<AudioData> Audio::audios;
 
-bool Audio::Initialise()
+int Audio::Initialise()
 {
 	FMOD_RESULT result = FMOD_OK;
 
@@ -19,17 +20,17 @@ bool Audio::Initialise()
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::Initialise() - Failed to create FMOD system. FMOD Error: " + std::string(FMOD_ErrorString(result)));
-		return false;
+		return EXIT_FAILURE;
 	}
 
 	result = system->init(512, FMOD_INIT_NORMAL, nullptr);
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::Initialise() - Failed to initialise FMOD system. FMOD Error: " + std::string(FMOD_ErrorString(result)));
-		return false;
+		return EXIT_FAILURE;
 	}
 
-	return true;
+	return EXIT_SUCCESS;
 }
 
 void Audio::Update()

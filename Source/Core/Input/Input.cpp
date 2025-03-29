@@ -3,6 +3,7 @@
 #include <cmath>
 #include <backends/imgui_impl_sdl3.h>
 
+#include "Core/GlobalDefines.h"
 #include "Core/Configs/EngineConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/EventSystem/EventDispatcher.h"
@@ -30,14 +31,14 @@ Sint16* Input::currentGamepadAxisState = nullptr;
 Sint16* Input::previousGamepadAxisState = nullptr;
 int Input::gamepadAxisLength = 0;
 
-bool Input::Initialise(SDL_Window* _window)
+int Input::Initialise(SDL_Window* _window)
 {
 	window = _window;
 
 	if (!window)
 	{
 		Debug::LogError("Input::Initialise() - Window is nullptr");
-		return false;
+		return EXIT_FAILURE;
 	}
 
 	currentKeyboardState = SDL_GetKeyboardState(&keyLength);
@@ -45,7 +46,7 @@ bool Input::Initialise(SDL_Window* _window)
 	if (!currentKeyboardState)
 	{
 		Debug::LogError("Input::Initialise() - Failed to get Keyboard State");
-		return false;
+		return EXIT_FAILURE;
 	}
 
 	previousKeyboardState = new bool[keyLength];
@@ -54,12 +55,11 @@ bool Input::Initialise(SDL_Window* _window)
 	if (!previousKeyboardState)
 	{
 		Debug::LogError("Input::Initialise() - Failed to allocate memory for previous Keyboard State");
-		return false;
+		return EXIT_FAILURE;
 	}
 
 	currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
 	previousMouseState = currentMouseState;
-
 
 	int count = 0;
 	SDL_JoystickID* joysticks = SDL_GetJoysticks(&count);
@@ -87,7 +87,7 @@ bool Input::Initialise(SDL_Window* _window)
 		if (!currentGamepadButtonState)
 		{
 			Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Button State");
-			return false;
+			return EXIT_FAILURE;
 		}
 
 		previousGamepadButtonState = new bool[SDL_GAMEPAD_BUTTON_COUNT];
@@ -96,7 +96,7 @@ bool Input::Initialise(SDL_Window* _window)
 		if (!previousGamepadButtonState)
 		{
 			Debug::LogError("Input::Initialise() - Failed to allocate memory for previous Gamepad Button State");
-			return false;
+			return EXIT_FAILURE;
 		}
 
 		currentGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
@@ -107,14 +107,14 @@ bool Input::Initialise(SDL_Window* _window)
 		if (!currentGamepadAxisState)
 		{
 			Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Axis State");
-			return false;
+			return EXIT_FAILURE;
 		}
 
 		previousGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
 		memcpy(previousGamepadAxisState, currentGamepadAxisState, gamepadAxisLength);
 	}
 
-	return true; // INFO: Initialisation Successful
+	return EXIT_SUCCESS; // INFO: Initialisation Successful
 }
 
 void Input::Update()

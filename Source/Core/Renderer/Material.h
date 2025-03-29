@@ -12,7 +12,7 @@ namespace Flux
 	public:
 		Material() = default;
 		Material(DirectXConfig::ShaderType shaderType, DirectXConfig::ConstantBufferType _constantBufferType, DirectXConfig::DepthWriteType depthWriteType,
-			DirectXConfig::CullingModeType cullingModeType, const std::string& textureName);
+			     DirectXConfig::CullingModeType cullingModeType, const std::string& textureName);
 		~Material();
 
 		inline DirectXConfig::ConstantBufferType GetConstantBufferType() const { return constantBufferType; }

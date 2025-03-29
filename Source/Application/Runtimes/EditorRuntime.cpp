@@ -4,6 +4,7 @@
 #include <backends/imgui_impl_dx11.h>
 #include <backends/imgui_impl_sdl3.h>
 
+#include "Core/GlobalDefines.h"
 #include "Core/Configs/EditorConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/Debug/FrameRateMonitor.h"
@@ -27,7 +28,7 @@ void EditorRuntime::Release()
 	ImGui::DestroyContext();
 }
 
-bool EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext)
+int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext)
 {
 	// INFO: ImGui Initialisation
 	IMGUI_CHECKVERSION();
@@ -49,19 +50,19 @@ bool EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D
 	if (!ImGui_ImplSDL3_InitForD3D(window))
 	{
 		Debug::LogError("EditorRuntime::PreInitialise() - Failed to initialise ImGui SDL3 Implementation");
-		return false;
+		return EXIT_FAILURE;
 	}
 
 	if (!ImGui_ImplDX11_Init(&device, &deviceContext))
 	{
 		Debug::LogError("EditorRuntime::PreInitialise() - Failed to initialise ImGui DirectX11 Implementation");
-		return false;
+		return EXIT_FAILURE;
 	}
 
-	return true; // INFO: Pre-Initialisation Successful
+	return EXIT_SUCCESS;
 }
 
-bool EditorRuntime::Initialise(Renderer& renderer)
+int EditorRuntime::Initialise(Renderer& renderer)
 {
 	// INFO: Initialise Frame Rate Monitor
 	FrameRateMonitor::Initialise();
@@ -72,7 +73,7 @@ bool EditorRuntime::Initialise(Renderer& renderer)
 
 	// TODO: Initialisation Logic
 
-	return true; // INFO: Initialisation Successful
+	return EXIT_SUCCESS;
 }
 
 void EditorRuntime::Update(float deltaTime)

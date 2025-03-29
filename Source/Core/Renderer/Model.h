@@ -18,7 +18,7 @@ namespace Flux
 		{
 		public:
 			Vertex() : position(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)), color(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)),
-				texCoord(DirectX::XMFLOAT2(0.0f, 0.0f)), normal(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)) {}
+				       texCoord(DirectX::XMFLOAT2(0.0f, 0.0f)), normal(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)) {}
 			~Vertex() = default;
 
 		public:

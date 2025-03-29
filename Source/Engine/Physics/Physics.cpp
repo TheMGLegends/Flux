@@ -1,5 +1,6 @@
 #include "Physics.h"
 
+#include "Core/GlobalDefines.h"
 #include "Core/Debug/Debug.h"
 
 using namespace Flux;
@@ -11,14 +12,14 @@ physx::PxDefaultErrorCallback Physics::defaultErrorCallback;
 physx::PxPhysics* Physics::physics = nullptr;
 physx::PxMaterial* Physics::defaultPhysicsMaterial = nullptr;
 
-bool Physics::Initialise()
+int Physics::Initialise()
 {
 	// INFO: Create Foundation
 	foundation = PxCreateFoundation(PX_PHYSICS_VERSION, defaultAllocatorCallback, defaultErrorCallback);
 	if (!foundation)
 	{
 		Debug::LogError("Physics::Initialise() - Failed to create PhysX Foundation");
-		return false;
+		return EXIT_FAILURE;
 	}
 
 	// INFO: Create Physics
@@ -27,13 +28,13 @@ bool Physics::Initialise()
 	if (!physics)
 	{
 		Debug::LogError("Physics::Initialise() - Failed to create PhysX Physics");
-		return false;
+		return EXIT_FAILURE;
 	}
 
 	// INFO: Create Default Physics Material
 	defaultPhysicsMaterial = physics->createMaterial(0.5f, 0.5f, 0.1f);
 
-	return true;
+	return EXIT_SUCCESS;
 }
 
 void Physics::Release()

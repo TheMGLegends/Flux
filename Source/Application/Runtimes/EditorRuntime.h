@@ -24,10 +24,12 @@ namespace Flux
 		virtual void Release() override;
 
 		/// @brief Used for initializing systems before the main initialisation
-		bool PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext);
+		/// @return 0 if successful
+		int PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext);
 
 		/// @brief Used for initializing data that uses the systems
-		bool Initialise(Renderer& renderer);
+		/// @return 0 if successful
+		int Initialise(Renderer& renderer);
 
 		void Update(float deltaTime);
 

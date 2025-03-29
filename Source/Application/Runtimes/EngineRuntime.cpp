@@ -1,5 +1,6 @@
 #include "EngineRuntime.h"
 
+#include "Core/GlobalDefines.h"
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/Time/Time.h"
@@ -11,6 +12,7 @@
 #include "Engine/Entities/GameObjects/GameObject.h"
 
 using namespace Flux;
+using namespace Flux::GlobalDefines;
 using namespace DirectX::SimpleMath;
 
 EngineRuntime::EngineRuntime()
@@ -29,28 +31,28 @@ void EngineRuntime::Release()
 	Physics::Release();
 }
 
-bool EngineRuntime::PreInitialise()
+int EngineRuntime::PreInitialise()
 {
 	// TODO: Pre-Initialisation Logic (Systems)
 
 	// INFO: Initialise the Physics System
-	if (!Physics::Initialise())
+	if (IS_FAILURE(Physics::Initialise()))
 	{
 		Debug::LogError("EngineRuntime::PreInitialise() - Failed to initialise Physics System");
-		return false;
+		return EXIT_FAILURE;
 	}
 
 	// INFO: Initialise the Audio System
-	if (!Audio::Initialise())
+	if (IS_FAILURE(Audio::Initialise()))
 	{
 		Debug::LogError("EngineRuntime::PreInitialise() - Failed to initialise Audio System");
-		return false;
+		return EXIT_FAILURE;
 	}
 
-	return true; // INFO: Pre-Initialisation Successful
+	return EXIT_SUCCESS;
 }
 
-bool EngineRuntime::Initialise()
+int EngineRuntime::Initialise()
 {
 	// TODO: Initialisation Logic
 
@@ -60,10 +62,10 @@ bool EngineRuntime::Initialise()
 	if (!scene)
 	{
 		Debug::LogError("EngineRuntime::Initialise() - Failed to create Scene");
-		return false;
+		return EXIT_FAILURE;
 	}
 
-	return true; // INFO: Initialisation Successful
+	return EXIT_SUCCESS;
 }
 
 void EngineRuntime::Start()

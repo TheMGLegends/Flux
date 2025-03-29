@@ -33,7 +33,9 @@ namespace Flux
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;
 
-		static bool Initialise();
+		/// return 0 if success
+		static int Initialise();
+
 		static void Update();
 		static void Release();
 

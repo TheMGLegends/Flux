@@ -4,6 +4,7 @@
 #include <backends/imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
 
+#include "Core/GlobalDefines.h"
 #include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/EngineConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
@@ -23,6 +24,7 @@
 #include "Engine/Physics/Physics.h"
 
 using namespace Flux;
+using namespace Flux::GlobalDefines;
 
 Application::Application() : window(nullptr), isRunning(false)
 {
@@ -39,7 +41,7 @@ Application::Application() : window(nullptr), isRunning(false)
 		Debug::LogError("Application::Application() - Failed to create SDL Window");
 	}
 
-	if (!Input::Initialise(window))
+	if (IS_FAILURE(Input::Initialise(window)))
 	{
 		Debug::LogError("Application::Application() - Failed to initialise Input System");
 	}
@@ -57,11 +59,25 @@ Application::Application() : window(nullptr), isRunning(false)
 		Debug::LogError("Application::Application() - Failed to initialise Asset Handler");
 	}
 
-	editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext());
-	engineRuntime.PreInitialise();
+	if (IS_FAILURE(editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext())))
+	{
+		Debug::LogError("Application::Application() - Failed to pre-initialise Editor Runtime");
+	}
+	
+	if (IS_FAILURE(engineRuntime.PreInitialise()))
+	{
+		Debug::LogError("Application::Application() - Failed to pre-initialise Engine Runtime");
+	}
 
-	editorRuntime.Initialise(renderer);
-	engineRuntime.Initialise();
+	if (IS_FAILURE(editorRuntime.Initialise(renderer)))
+	{
+		Debug::LogError("Application::Application() - Failed to initialise Editor Runtime");
+	}
+
+	if (IS_FAILURE(engineRuntime.Initialise()))
+	{
+		Debug::LogError("Application::Application() - Failed to initialise Engine Runtime");
+	}
 
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::Quit, this);

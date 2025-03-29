@@ -36,8 +36,8 @@ namespace Flux
 
 		inline const std::array<float, 4>& GetBackgroundColour() const { return backgroundColour; }
 
-		inline void SetDrawFrustum(bool _drawFrustum) { drawFrustum = _drawFrustum; }
-		inline bool DrawFrustum() const { return drawFrustum; }
+		inline void SetDrawFrustum(bool _drawFrustum) { shouldDrawFrustum = _drawFrustum; }
+		inline bool ShouldDrawFrustum() const { return shouldDrawFrustum; }
 
 		void SetSkyboxModel(const std::string& modelName);
 		void SetMaterialTexture(const std::string& _textureName);
@@ -71,7 +71,7 @@ namespace Flux
 
 		DirectX::BoundingFrustum frustum;
 		DirectX::XMVECTOR frustumVertices[24];
-		bool drawFrustum;
+		bool shouldDrawFrustum;
 
 
 		// INFO: Skybox Properties

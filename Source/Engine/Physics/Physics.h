@@ -14,7 +14,9 @@ namespace Flux
 		Physics(const Physics&) = delete;
 		Physics& operator=(const Physics&) = delete;
 
-		static bool Initialise();
+		/// return 0 if successful 
+		static int Initialise();
+
 		static void Release();
 
 		static physx::PxFilterFlags CustomFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
