@@ -28,7 +28,7 @@ using namespace Flux::GlobalDefines;
 
 Application::Application() : window(nullptr), isRunning(false)
 {
-	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
+	if (!SDL_Init(SDL_INIT_VIDEO /*| SDL_INIT_GAMEPAD*/))
 	{
 		Debug::LogError("Application::Application() - Failed to initialise SDL Systems");
 	}

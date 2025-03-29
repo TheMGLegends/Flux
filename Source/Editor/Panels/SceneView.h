@@ -27,8 +27,6 @@ namespace Flux
 
 	private:
 		Renderer& renderer;
-		ImVec2 minWindowSize;
-		ImVec2 maxWindowSize;
 
 		// TODO: SceneView Data
 	};

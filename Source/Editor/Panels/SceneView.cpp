@@ -17,7 +17,7 @@
 using namespace Flux;
 using namespace Flux::EditorConfig;
 
-SceneView::SceneView(Renderer& _renderer) : renderer(_renderer), minWindowSize(700.0f, 410.0f), maxWindowSize(16384.0f, 16384.0f) // INFO: Max Texture2D Size for D3D11
+SceneView::SceneView(Renderer& _renderer) : renderer(_renderer)
 {
 }
 
@@ -31,10 +31,7 @@ void SceneView::Initialise()
 
 void SceneView::Update(float deltaTime)
 {
-	// INFO: Restricts Window Size when Undocked
-	ImGui::SetNextWindowSizeConstraints(minWindowSize, maxWindowSize);
-
-	if (ImGui::Begin("Scene View"))
+	if (ImGui::Begin("Scene View", nullptr, ImGuiWindowFlags_NoResize))
 	{
 		ImVec2 windowSize = ImGui::GetWindowSize();
 		ImVec2 sceneViewSize = ImGui::GetWindowSize();

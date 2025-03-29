@@ -37,8 +37,7 @@ int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D1
 
 	// INFO: Set Flags for ImGui
 	ImGuiIO& io = ImGui::GetIO();
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	// INFO: Set Custom ImGui Style
@@ -90,7 +89,15 @@ void EditorRuntime::Update(float deltaTime)
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID);
 
 	// TODO: TESTING
-	ImGui::ShowDemoWindow();
+	ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoResize);
+	ImGui::Text("Hello, World!");
+	ImGui::End();
+	ImGui::Begin("Details", nullptr, ImGuiWindowFlags_NoResize);
+	ImGui::Text("Hello, World!");
+	ImGui::End();
+	ImGui::Begin("Content Browser", nullptr, ImGuiWindowFlags_NoResize);
+	ImGui::Text("Hello, World!");
+	ImGui::End();
 
 	// INFO: Update Editor Panels
 	for (auto& editorPanel : editorPanels) { editorPanel->Update(deltaTime); }
