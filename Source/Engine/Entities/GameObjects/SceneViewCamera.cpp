@@ -77,4 +77,15 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 	{
 		transformRef->Translate(-transformRef->Right() * movementSpeed * deltaTime);
 	}
+
+	// INFO: Up & Down Movement Logic (World Space)
+	if (Input::GetKey(SDL_SCANCODE_E))
+	{
+		transformRef->Translate(Vector3::Up * movementSpeed * deltaTime);
+	}
+
+	if (Input::GetKey(SDL_SCANCODE_Q))
+	{
+		transformRef->Translate(-Vector3::Up * movementSpeed * deltaTime);
+	}
 }
