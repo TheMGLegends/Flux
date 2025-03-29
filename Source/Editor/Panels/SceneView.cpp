@@ -1,19 +1,23 @@
 #include "SceneView.h"
 
-#include <imgui.h>
+#include <imgui_internal.h>
 
 #include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/EngineConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/EventSystem/EventDispatcher.h"
+#include "Core/Helpers/MathHelpers.h"
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Renderer/Renderer.h"
 #include "Engine/Audio/Audio.h"
 
+// TODO: TESTING
+#include "Core/Debug/Debug.h"
+
 using namespace Flux;
 using namespace Flux::EditorConfig;
 
-SceneView::SceneView(Renderer& _renderer) : renderer(_renderer)
+SceneView::SceneView(Renderer& _renderer) : renderer(_renderer), minWindowSize(700.0f, 410.0f), maxWindowSize(16384.0f, 16384.0f) // INFO: Max Texture2D Size for D3D11
 {
 }
 
@@ -27,6 +31,9 @@ void SceneView::Initialise()
 
 void SceneView::Update(float deltaTime)
 {
+	// INFO: Restricts Window Size when Undocked
+	ImGui::SetNextWindowSizeConstraints(minWindowSize, maxWindowSize);
+
 	if (ImGui::Begin("Scene View"))
 	{
 		ImVec2 windowSize = ImGui::GetWindowSize();
@@ -46,7 +53,7 @@ void SceneView::Update(float deltaTime)
 			EventDispatcher::QueueEvent(EventType::SceneViewResized, nullptr);
 		}
 
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBackground;
 
 		// INFO: Remove Background Colour for Buttons
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
@@ -63,6 +70,8 @@ void SceneView::Update(float deltaTime)
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10.0f);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 2.5f, 2.5f });
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
+
+			windowFlags &= ~ImGuiWindowFlags_NoBackground;
 
 			// INFO: Gizmo Selector Panel
 			if (ImGui::BeginChild("GizmoSelectors", { 196, 50 }, true, windowFlags))

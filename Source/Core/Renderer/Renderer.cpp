@@ -354,7 +354,7 @@ void Renderer::RenderFrame(Scene& scene)
 
 void Renderer::OnWindowResized()
 {
-	if (EngineConfig::windowWidth == 0 || EngineConfig::windowHeight == 0) { return; }
+	if (EngineConfig::windowWidth == 0.0f || EngineConfig::windowHeight == 0.0f) { return; }
 
 	if (swapChain)
 	{
@@ -401,7 +401,7 @@ void Renderer::OnWindowResized()
 
 void Renderer::OnSceneViewResized()
 {
-	if (EditorConfig::sceneViewWidth == 0 || EditorConfig::sceneViewHeight == 0) { return; }
+	if (EditorConfig::sceneViewWidth < 1.0f || EditorConfig::sceneViewHeight < 1.0f) { return; }
 
 	if (renderTargetView)
 	{

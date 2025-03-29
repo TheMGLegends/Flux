@@ -3,7 +3,7 @@
 #include "EditorPanel.h"
 #include "Core/EventSystem/IEventListener.h"
 
-struct ImVec2;
+#include <imgui.h>
 
 namespace Flux
 {
@@ -27,6 +27,9 @@ namespace Flux
 
 	private:
 		Renderer& renderer;
+		ImVec2 minWindowSize;
+		ImVec2 maxWindowSize;
+
 		// TODO: SceneView Data
 	};
 }

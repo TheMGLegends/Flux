@@ -93,6 +93,11 @@ Scene::Scene() : sceneName("Default")
 	std::ifstream jsonTest("test.json");
 	nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonTest);
 	Deserialize(json);
+
+	for (size_t i = 0; i < gameObjects.size(); i++)
+	{
+		Debug::Log(gameObjects[i]->GetComponent<Transform>().lock()->GetRotation());
+	}
 }
 
 Scene::~Scene()
