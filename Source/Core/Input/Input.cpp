@@ -23,6 +23,7 @@ SDL_MouseButtonFlags Input::previousMouseState = 0;
 Vector2 Input::mousePosition = Vector2::Zero;
 Vector2 Input::latestAbsoluteMousePosition = Vector2::Zero;
 bool Input::isRelative = false;
+float Input::mouseVerticalScroll = 0.0f;
 
 SDL_Gamepad* Input::gamepad = nullptr;
 bool* Input::currentGamepadButtonState = nullptr;
@@ -135,6 +136,9 @@ void Input::Update()
 		currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y); 
 	}
 
+	// INFO: Reset the vertical scroll value
+	mouseVerticalScroll = 0.0f;
+
 	if (gamepad)
 	{
 		memcpy(previousGamepadButtonState, currentGamepadButtonState, gamepadButtonLength);
@@ -165,6 +169,11 @@ void Input::Update()
 			EngineConfig::windowHeight = event.window.data2;
 
 			EventDispatcher::QueueEvent(EventType::WindowResized, nullptr);
+			break;
+		}
+		case SDL_EVENT_MOUSE_WHEEL:
+		{
+			mouseVerticalScroll = event.wheel.y;
 			break;
 		}
 		default:
@@ -235,6 +244,14 @@ void Input::SetMouseMode(bool _isRelative)
 	}
 
 	isRelative = _isRelative;
+}
+
+bool Input::GetMouseVerticalScroll(float& verticalScroll)
+{
+	if (mouseVerticalScroll == 0.0f) { return false; }
+
+	verticalScroll = mouseVerticalScroll;
+	return true;
 }
 
 bool Input::GetTrigger(SDL_GamepadAxis trigger, float* axisState)

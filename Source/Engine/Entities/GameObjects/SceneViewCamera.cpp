@@ -1,5 +1,7 @@
 #include "SceneViewCamera.h"
 
+#include <sstream>
+
 #include "Core/Debug/Debug.h"
 #include "Core/Helpers/MathHelpers.h"
 #include "Core/Input/Input.h"
@@ -8,7 +10,8 @@
 using namespace Flux;
 using namespace DirectX::SimpleMath;
 
-SceneViewCamera::SceneViewCamera() : rotationSpeed(0.001f), movementSpeed(10.0f), pitchConstraints(-1.49f, 1.49f)
+SceneViewCamera::SceneViewCamera() : rotationSpeed(0.001f), movementSpeed(10.0f), minMovementSpeed(1.0f), 
+									 maxMovementSpeed(50.0f), pitchConstraints(-1.49f, 1.49f)
 {
 	camera = AddComponent<Camera>(this);
 
@@ -87,5 +90,24 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 	if (Input::GetKey(SDL_SCANCODE_Q))
 	{
 		transformRef->Translate(-Vector3::Up * movementSpeed * deltaTime);
+	}
+
+	// INFO: Movement Speed Adjustment Logic
+	float scrollValue = 0.0f;
+	if (Input::GetMouseVerticalScroll(scrollValue))
+	{
+		float oldMovementSpeed = movementSpeed;
+
+		movementSpeed += scrollValue;
+		movementSpeed = MathHelpers::Clamp(movementSpeed, minMovementSpeed, maxMovementSpeed);
+
+		if (oldMovementSpeed != movementSpeed)
+		{
+			std::stringstream ss;
+			ss << std::fixed << std::setprecision(0) << movementSpeed;
+			std::string movementSpeedStr = ss.str();
+
+			Debug::Log("Movement Speed: " + movementSpeedStr);
+		}
 	}
 }

@@ -24,6 +24,8 @@ namespace Flux
 
 		float rotationSpeed;
 		float movementSpeed;
+		float minMovementSpeed;
+		float maxMovementSpeed;
 		DirectX::SimpleMath::Vector2 pitchConstraints;
 	};
 }

@@ -38,6 +38,11 @@ namespace Flux
 		/// @param isRelative: true = relative, false = absolute
 		static void SetMouseMode(bool _isRelative);
 
+		/// @brief Get the vertical scroll of the mouse wheel
+		/// @param verticalScroll: The variable that will be populated with the vertical scroll value
+		/// @return true if the scroll wheel is being scrolled (not 0)
+		static bool GetMouseVerticalScroll(float& verticalScroll);
+
 		static inline bool GetGamepadButton(SDL_GamepadButton button) { return currentGamepadButtonState[button]; }
 		static inline bool GetGamepadButtonDown(SDL_GamepadButton button) { return currentGamepadButtonState[button] && !previousGamepadButtonState[button]; }
 		static inline bool GetGamepadButtonUp(SDL_GamepadButton button) { return !currentGamepadButtonState[button] && previousGamepadButtonState[button]; }
@@ -73,6 +78,7 @@ namespace Flux
 		static DirectX::SimpleMath::Vector2 mousePosition;
 		static DirectX::SimpleMath::Vector2 latestAbsoluteMousePosition;
 		static bool isRelative;
+		static float mouseVerticalScroll;
 
 		static SDL_Gamepad* gamepad;
 		static bool* currentGamepadButtonState;
