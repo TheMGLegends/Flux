@@ -98,9 +98,11 @@ void EngineRuntime::LateUpdate(float deltaTime)
 	{
 		if (auto camera = scene->GetCamera().lock())
 		{
-			Vector3 position = camera->GetGameObject()->transform.lock()->GetPosition();
-			Vector3 forward = camera->Forward();
-			Vector3 up = camera->Up();
+			auto cameraTransform = camera->GetGameObject()->transform.lock();
+
+			Vector3 position = cameraTransform->GetPosition();
+			Vector3 forward = cameraTransform->Forward();
+			Vector3 up = cameraTransform->Up();
 			Audio::SetListenerAttributes({ position.x, position.y, position.z }, { 0.0f, 0.0f, 0.0f },
 										 { forward.x, forward.y, forward.z }, { up.x, up.y, up.z });
 		}

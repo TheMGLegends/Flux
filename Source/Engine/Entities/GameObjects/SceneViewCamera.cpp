@@ -48,8 +48,7 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 	if (Input::GetMouseButton(SDL_BUTTON_RIGHT) && !Input::GetMouseButtonDown(SDL_BUTTON_RIGHT))
 	{
 		Vector2 mouseInput = Input::GetMousePosition();
-
-		Vector3 eulerRotation = cameraRef->GetRotation().ToEuler();
+		Vector3 eulerRotation = transformRef->GetRotation().ToEuler();
 
 		eulerRotation.y += mouseInput.x * rotationSpeed;
 		eulerRotation.x -= mouseInput.y * rotationSpeed;
@@ -57,7 +56,6 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 		eulerRotation.x = MathHelpers::Clamp(eulerRotation.x, pitchConstraints.x, pitchConstraints.y);
 
 		transformRef->SetRotation(Quaternion::CreateFromYawPitchRoll(eulerRotation.y, eulerRotation.x, 0.0f));
-		cameraRef->SetRotation(transformRef->GetRotation());
 	}
 
 	// INFO: Movement Logic

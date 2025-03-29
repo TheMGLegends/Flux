@@ -13,8 +13,8 @@ using namespace Flux::ConstantBuffers;
 using namespace Flux::DirectXConfig;
 using namespace DirectX::SimpleMath;
 
-Camera::Camera(GameObject* _gameObject) : Component(_gameObject), rotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f)), verticalFOV(90.0f), 
-									      nearClippingPlane(0.1f), farClippingPlane(100.0f), aspectRatio(EngineConfig::ASPECT_RATIO), backgroundColour({ 0.5f, 0.5f, 0.5f, 1.0f }),
+Camera::Camera(GameObject* _gameObject) : Component(_gameObject), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f), 
+										  aspectRatio(EngineConfig::ASPECT_RATIO), backgroundColour({ 0.5f, 0.5f, 0.5f, 1.0f }),
 										  shouldDrawFrustum(true), useSkybox(true)
 {
 	name = "Camera";
@@ -108,15 +108,15 @@ DirectX::XMMATRIX Camera::GetViewMatrix() const
 	if (transform.expired())
 	{
 		Debug::LogError("Camera::GetViewMatrix() - Transform Component has expired");
-	}
-	else
-	{
-		DirectX::XMStoreFloat3(&position, transform.lock()->GetPosition());
+		return DirectX::XMMatrixIdentity();
 	}
 
+	std::shared_ptr<Transform> sharedTransform = transform.lock();
+	DirectX::XMStoreFloat3(&position, sharedTransform->GetPosition());
+
 	DirectX::XMVECTOR eye = DirectX::XMLoadFloat3(&position);
-	DirectX::XMVECTOR lookTo = DirectX::XMVectorAdd(eye, Forward());
-	DirectX::XMVECTOR up = Up();
+	DirectX::XMVECTOR lookTo = DirectX::XMVectorAdd(eye, sharedTransform->Forward());
+	DirectX::XMVECTOR up = sharedTransform->Up();
 
 	return DirectX::XMMatrixLookAtLH(eye, lookTo, up);
 }
@@ -125,21 +125,6 @@ DirectX::XMMATRIX Camera::GetProjectionMatrix() const
 {
 	return DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(verticalFOV), 
 							                 aspectRatio, nearClippingPlane, farClippingPlane);
-}
-
-Vector3 Camera::Forward() const
-{
-	return Vector3::Transform(Vector3::Forward, rotation);
-}
-
-Vector3 Camera::Right() const
-{
-	return Vector3::Transform(Vector3::Right, rotation);
-}
-
-Vector3 Camera::Up() const
-{
-	return Vector3::Transform(Vector3::Up, rotation);
 }
 
 void Camera::SetSkyboxModel(const std::string& modelName)
@@ -218,6 +203,6 @@ void Camera::SetFrustum()
 
 DirectX::XMMATRIX Camera::GetAdjustedProjectionMatrix(float _nearClippingPlane, float _farClippingPlane) const
 {
-	return DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(verticalFOV),
+	return DirectX::XMMatrixPerspectiveFovRH(DirectX::XMConvertToRadians(verticalFOV),
 											 aspectRatio, _nearClippingPlane, _farClippingPlane);
 }

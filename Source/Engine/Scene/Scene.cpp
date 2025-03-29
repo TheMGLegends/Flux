@@ -34,6 +34,7 @@ Scene::Scene() : sceneName("Default")
 
 	// INFO: Create a scene view camera
 	sceneViewCamera = std::make_unique<SceneViewCamera>();
+	sceneViewCamera->transform.lock()->SetRotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f));
 
 	// INFO: Setup the physics scene
 	auto& physics = Physics::GetPhysics();

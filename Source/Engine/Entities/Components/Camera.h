@@ -27,13 +27,6 @@ namespace Flux
 		DirectX::XMMATRIX GetViewMatrix() const;
 		DirectX::XMMATRIX GetProjectionMatrix() const;
 
-		DirectX::SimpleMath::Vector3 Forward() const;
-		DirectX::SimpleMath::Vector3 Right() const;
-		DirectX::SimpleMath::Vector3 Up() const;
-
-		inline void SetRotation(const DirectX::SimpleMath::Quaternion& _rotation) { rotation = _rotation; }
-		inline const DirectX::SimpleMath::Quaternion& GetRotation() const { return rotation; }
-
 		inline const std::array<float, 4>& GetBackgroundColour() const { return backgroundColour; }
 
 		inline void SetDrawFrustum(bool _drawFrustum) { shouldDrawFrustum = _drawFrustum; }
@@ -59,8 +52,6 @@ namespace Flux
 
 	private:
 		std::weak_ptr<Transform> transform;
-
-		DirectX::SimpleMath::Quaternion rotation;
 
 		float verticalFOV; // INFO: In degrees
 		float nearClippingPlane;
