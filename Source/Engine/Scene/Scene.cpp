@@ -44,9 +44,13 @@ Scene::Scene() : sceneName("Default")
 	sceneDesc.filterShader = Physics::CustomFilterShader;
 	sceneDesc.simulationEventCallback = this;
 
+	// INFO: Create the PhysX Scene
 	physicsScene = physics.createScene(sceneDesc);
+
 	if (!physicsScene)
+	{
 		Debug::LogError("Scene::Scene() - Failed to create PhysX Scene");
+	}
 
 	// INFO: Create a default play mode camera
 	//gameObjects.emplace_back(std::make_unique<GameObject>());
@@ -189,9 +193,13 @@ void Flux::Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 		for (auto it = rigidActorsToColliders.begin(); it != rigidActorsToColliders.end();)
 		{
 			if (it->second.expired())
+			{
 				it = rigidActorsToColliders.erase(it);
+			}
 			else
+			{
 				++it;
+			}
 		}
 	}
 	else if (eventType == EventType::PlayModeExited)
@@ -267,8 +275,7 @@ void Scene::Start()
 {
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
-		if (gameObjects[i]->IsActive())
-			gameObjects[i]->Start();
+		if (gameObjects[i]->IsActive()) { gameObjects[i]->Start(); }
 	}
 }
 
@@ -277,32 +284,26 @@ void Scene::Update(float deltaTime)
 	// INFO: Update all custom user scripts
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
-		if (gameObjects[i]->IsActive())
-			gameObjects[i]->Update(deltaTime);
+		if (gameObjects[i]->IsActive()) { gameObjects[i]->Update(deltaTime); }
 	}
 
 	// INFO: Update Colliders (Physics Simulation if PhysicsBody, otherwise updated using Transform)
 	std::vector<std::weak_ptr<Collider>> colliders;
 
 	auto boxColliders = GetComponents<BoxCollider>();
-	for (auto& boxCollider : boxColliders)
-		colliders.push_back(boxCollider);
+	for (auto& boxCollider : boxColliders) { colliders.push_back(boxCollider); } 
 
 	auto sphereColliders = GetComponents<SphereCollider>();
-	for (auto& sphereCollider : sphereColliders)
-		colliders.push_back(sphereCollider);
+	for (auto& sphereCollider : sphereColliders) { colliders.push_back(sphereCollider); }
 
 	for (size_t i = 0; i < colliders.size(); i++)
 	{
-		if (colliders[i].expired())
-			continue;
+		if (colliders[i].expired()) { continue; }
 
 		auto collider = colliders[i].lock();
-		if (!collider->GetGameObject()->IsActive())
-			continue;
+		if (!collider->GetGameObject()->IsActive()) { continue; }
 
-		if (collider->IsActive())
-			collider->Update(Time::Alpha());
+		if (collider->IsActive()) { collider->Update(Time::Alpha()); } 
 	}
 }
 
@@ -312,21 +313,18 @@ void Scene::LateUpdate(float deltaTime)
 	{
 		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
-			if (gameObjects[i]->IsActive())
-				gameObjects[i]->LateUpdate(deltaTime);
+			if (gameObjects[i]->IsActive()) { gameObjects[i]->LateUpdate(deltaTime); }
 		}
 	}
 
-	if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused())
-		sceneViewCamera->LateUpdate(deltaTime);
+	if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused()) { sceneViewCamera->LateUpdate(deltaTime); }
 }
 
 void Scene::FixedUpdate(float fixedDeltaTime)
 {
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
-		if (gameObjects[i]->IsActive())
-			gameObjects[i]->FixedUpdate(fixedDeltaTime);
+		if (gameObjects[i]->IsActive()) { gameObjects[i]->FixedUpdate(fixedDeltaTime); }
 	}
 }
 
@@ -334,13 +332,11 @@ void Scene::DrawWireframes(ID3D11DeviceContext& deviceContext, DirectX::Primitiv
 {
 	for (size_t i = 0; i < debugWireframes.size(); i++)
 	{
-		if (debugWireframes[i].component.expired())
-			continue;
+		if (debugWireframes[i].component.expired()) { continue; }
 
 		auto underlyingComponent = debugWireframes[i].component.lock();
 
-		if (!underlyingComponent->IsActive() || !underlyingComponent->GetGameObject()->IsActive())
-			continue;
+		if (!underlyingComponent->IsActive() || !underlyingComponent->GetGameObject()->IsActive()) { continue; }
 
 		debugWireframes[i].debugWireframe->DrawWireframe(deviceContext, primitiveBatch);
 	}
@@ -379,7 +375,11 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 			debugWireframes.push_back(debugWireframeData);
 		}
 		else
-			Debug::LogError("Scene::RegisterComponent() - Component could not be added to IDebugWireframe container. Component Type: " + std::string(magic_enum::enum_name(validComponent->GetComponentType())));
+		{
+			Debug::LogError("Scene::RegisterComponent() - Component could not be added to IDebugWireframe container. Component Type: " + 
+							std::string(magic_enum::enum_name(validComponent->GetComponentType())));
+		}
+
 		break;
 	}
 	default:
@@ -392,8 +392,7 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 void Scene::RemoveRigidActorToColliderEntry(physx::PxRigidActor* rigidActor)
 {
 	auto it = rigidActorsToColliders.find(rigidActor);
-	if (it != rigidActorsToColliders.end())
-		rigidActorsToColliders.erase(it);
+	if (it != rigidActorsToColliders.end()) { rigidActorsToColliders.erase(it); }
 }
 
 void Scene::RegisterRigidActorToCollider(std::weak_ptr<Collider> collider, physx::PxRigidActor* rigidActor)
@@ -404,15 +403,19 @@ void Scene::RegisterRigidActorToCollider(std::weak_ptr<Collider> collider, physx
 std::weak_ptr<Collider> Scene::GetCollider(physx::PxRigidActor* rigidActor)
 {
 	auto it = rigidActorsToColliders.find(rigidActor);
-	if (it != rigidActorsToColliders.end())
-		return it->second;
+	if (it != rigidActorsToColliders.end()) { return it->second; }
+
 	return std::weak_ptr<Collider>();
 }
 
 std::weak_ptr<Camera> Scene::GetCamera() const
 {
 	if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
+	{
 		return playModeCamera;
+	}
 	else
+	{
 		return sceneViewCamera->GetCamera();
+	}
 }

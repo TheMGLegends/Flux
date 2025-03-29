@@ -128,7 +128,9 @@ void BoxCollider::SetColliderShape()
 	if (rigidActor)
 	{
 		if (!rigidActor->attachShape(*colliderShape))
+		{
 			Debug::LogError("BoxCollider::BoxCollider() - Failed to attach shape to Rigid Actor");
+		}
 
 		SceneContext::GetScene().GetPhysicsScene().addActor(*rigidActor);
 	}

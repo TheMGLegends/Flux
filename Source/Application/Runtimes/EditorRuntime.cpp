@@ -12,6 +12,7 @@
 #include "Editor/Panels/SceneView.h"
 
 using namespace Flux;
+using namespace Flux::GlobalDefines;
 
 EditorRuntime::EditorRuntime() : sceneView(nullptr)
 {
@@ -36,8 +37,8 @@ int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D1
 
 	// INFO: Set Flags for ImGui
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	// INFO: Set Custom ImGui Style
@@ -50,16 +51,16 @@ int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D1
 	if (!ImGui_ImplSDL3_InitForD3D(window))
 	{
 		Debug::LogError("EditorRuntime::PreInitialise() - Failed to initialise ImGui SDL3 Implementation");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
 	if (!ImGui_ImplDX11_Init(&device, &deviceContext))
 	{
 		Debug::LogError("EditorRuntime::PreInitialise() - Failed to initialise ImGui DirectX11 Implementation");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
-	return EXIT_SUCCESS;
+	return FLUX_SUCCESS;
 }
 
 int EditorRuntime::Initialise(Renderer& renderer)
@@ -73,13 +74,12 @@ int EditorRuntime::Initialise(Renderer& renderer)
 
 	// TODO: Initialisation Logic
 
-	return EXIT_SUCCESS;
+	return FLUX_SUCCESS;
 }
 
 void EditorRuntime::Update(float deltaTime)
 {
-	if (Input::GetKeyDown(SDL_SCANCODE_F3))
-		FrameRateMonitor::Toggle();
+	if (Input::GetKeyDown(SDL_SCANCODE_F3)) { FrameRateMonitor::Toggle(); }
 
 	FrameRateMonitor::Update(deltaTime);
 
@@ -93,10 +93,7 @@ void EditorRuntime::Update(float deltaTime)
 	ImGui::ShowDemoWindow();
 
 	// INFO: Update Editor Panels
-	for (auto& editorPanel : editorPanels)
-	{
-		editorPanel->Update(deltaTime);
-	}
+	for (auto& editorPanel : editorPanels) { editorPanel->Update(deltaTime); }
 }
 
 void EditorRuntime::SetCustomStyle()

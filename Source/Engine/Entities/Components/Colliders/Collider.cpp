@@ -16,7 +16,9 @@ Collider::Collider(GameObject* _gameObject) : Component(_gameObject), rigidActor
 	GameObject* gameObject = GetGameObject();
 
 	if (!gameObject)
+	{
 		Debug::LogError("Collider::Collider() - Collider Component must be attached to a GameObject");
+	}
 
 	// INFO: Set Default Collision Callbacks
 	collisionCallbacks.try_emplace(CollisionType::CollisionEnter, std::bind(&GameObject::OnCollisionEnter, gameObject, std::placeholders::_1));

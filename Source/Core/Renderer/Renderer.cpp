@@ -38,9 +38,13 @@ Renderer::~Renderer()
 void Renderer::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 {
 	if (eventType == EventType::WindowResized)
+	{
 		OnWindowResized();
+	}
 	else if (eventType == EventType::SceneViewResized)
+	{
 		OnSceneViewResized();
+	}
 }
 
 HRESULT Renderer::Initialise(HWND hWnd)
@@ -283,21 +287,18 @@ void Renderer::RenderFrame(Scene& scene)
 	XMMATRIX view = camera->GetViewMatrix();
 	XMMATRIX projection = camera->GetProjectionMatrix();
 
-	if (camera->UseSkybox())
-		camera->DrawSkybox(*deviceContext.Get(), translation, view, projection);
+	if (camera->UseSkybox()) { camera->DrawSkybox(*deviceContext.Get(), translation, view, projection); }
 
 	for (auto& weakVisualizer : scene.GetComponents<Visualizer>())
 	{
-		if (weakVisualizer.expired())
-			continue;
+		if (weakVisualizer.expired()) { continue; }
 
 		std::shared_ptr<Visualizer> visualizer = weakVisualizer.lock();
 		Material& material = visualizer->GetMaterial();
 		GameObject* owningGameObject = visualizer->GetGameObject();
 		std::shared_ptr<Transform> transform = owningGameObject->transform.lock();
 
-		if (!visualizer->IsActive() || !owningGameObject->IsActive())
-			continue;
+		if (!visualizer->IsActive() || !owningGameObject->IsActive()) { continue; }
 
 		DirectX::XMMATRIX world = transform->GetWorldMatrix();
 
@@ -353,8 +354,7 @@ void Renderer::RenderFrame(Scene& scene)
 
 void Renderer::OnWindowResized()
 {
-	if (EngineConfig::windowWidth == 0 || EngineConfig::windowHeight == 0)
-		return;
+	if (EngineConfig::windowWidth == 0 || EngineConfig::windowHeight == 0) { return; }
 
 	if (swapChain)
 	{
@@ -401,8 +401,7 @@ void Renderer::OnWindowResized()
 
 void Renderer::OnSceneViewResized()
 {
-	if (EditorConfig::sceneViewWidth == 0 || EditorConfig::sceneViewHeight == 0)
-		return;
+	if (EditorConfig::sceneViewWidth == 0 || EditorConfig::sceneViewHeight == 0) { return; }
 
 	if (renderTargetView)
 	{

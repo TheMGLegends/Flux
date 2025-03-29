@@ -81,8 +81,7 @@ void GameObject::Deserialize(const nlohmann::ordered_json& json)
 			break;
 		}
 
-		if (!component.expired())
-			component.lock()->Deserialize(componentData);
+		if (!component.expired()) { component.lock()->Deserialize(componentData); }
 	}
 }
 
@@ -98,7 +97,9 @@ void GameObject::SetIsActive(bool _isActive)
 		// TODO: Notify Event System of recent enabling of GO, so that it's start can be called at the start of the next frame
 	}
 	else
+	{
 		OnDisable();
+	}
 }
 
 void GameObject::Destroy()
@@ -142,5 +143,7 @@ void GameObject::RegisterGameObjectType(const std::string& typeName, std::functi
 	auto result = gameObjectTypes.try_emplace(typeName, std::move(creator));
 
 	if (!result.second)
+	{
 		Debug::LogError("GameObject::RegisterGameObjectType - GameObject type already registered: " + typeName);
+	}
 }

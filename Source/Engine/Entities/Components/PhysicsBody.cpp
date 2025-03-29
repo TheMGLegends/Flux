@@ -128,7 +128,9 @@ void PhysicsBody::SetMass(float _mass)
 	auto rigidDynamic = VerifyRigidActor();
 
 	if (rigidDynamic)
+	{
 		physx::PxRigidBodyExt::updateMassAndInertia(*rigidDynamic, mass);
+	}
 }
 
 void PhysicsBody::SetDrag(float _drag)
@@ -138,7 +140,9 @@ void PhysicsBody::SetDrag(float _drag)
 	auto rigidDynamic = VerifyRigidActor();
 
 	if (rigidDynamic)
+	{
 		rigidDynamic->setLinearDamping(drag);
+	}
 }
 
 void PhysicsBody::SetAngularDrag(float _angularDrag)
@@ -148,7 +152,9 @@ void PhysicsBody::SetAngularDrag(float _angularDrag)
 	auto rigidDynamic = VerifyRigidActor();
 
 	if (rigidDynamic)
+	{
 		rigidDynamic->setAngularDamping(angularDrag);
+	}
 }
 
 void PhysicsBody::SetUseGravity(bool _useGravity)
@@ -158,7 +164,9 @@ void PhysicsBody::SetUseGravity(bool _useGravity)
 	auto rigidDynamic = VerifyRigidActor();
 
 	if (rigidDynamic)
+	{
 		rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !useGravity);
+	}
 }
 
 void PhysicsBody::SetPositionConstraint(bool isConstrained, ConstraintAxis axis)
@@ -206,7 +214,9 @@ physx::PxRigidDynamic* PhysicsBody::VerifyRigidActor()
 	if (auto collider = attachedCollider.lock())
 	{
 		if (collider->GetRigidActorType() == RigidActorType::Dynamic)
+		{
 			return static_cast<physx::PxRigidDynamic*>(collider->GetRigidActor());
+		}
 	}
 
 	Debug::LogError("PhysicsBody::VerifyRigidActor() - No Collider found or Collider is not dynamic");

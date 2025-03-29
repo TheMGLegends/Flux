@@ -4,6 +4,7 @@
 #include "Core/Debug/Debug.h"
 
 using namespace Flux;
+using namespace Flux::GlobalDefines;
 
 physx::PxFoundation* Physics::foundation = nullptr;
 physx::PxDefaultAllocator Physics::defaultAllocatorCallback;
@@ -16,25 +17,27 @@ int Physics::Initialise()
 {
 	// INFO: Create Foundation
 	foundation = PxCreateFoundation(PX_PHYSICS_VERSION, defaultAllocatorCallback, defaultErrorCallback);
+
 	if (!foundation)
 	{
 		Debug::LogError("Physics::Initialise() - Failed to create PhysX Foundation");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
 	// INFO: Create Physics
 	bool recordMemoryAllocations = true;
 	physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, physx::PxTolerancesScale(), recordMemoryAllocations);
+
 	if (!physics)
 	{
 		Debug::LogError("Physics::Initialise() - Failed to create PhysX Physics");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
 	// INFO: Create Default Physics Material
 	defaultPhysicsMaterial = physics->createMaterial(0.5f, 0.5f, 0.1f);
 
-	return EXIT_SUCCESS;
+	return FLUX_SUCCESS;
 }
 
 void Physics::Release()

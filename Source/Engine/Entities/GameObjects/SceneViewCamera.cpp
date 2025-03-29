@@ -13,9 +13,13 @@ SceneViewCamera::SceneViewCamera() : rotationSpeed(0.001f), movementSpeed(10.0f)
 	camera = AddComponent<Camera>(this);
 
 	if (camera.expired())
+	{
 		Debug::LogError("SceneViewCamera::SceneViewCamera() - Failed to add Camera component to SceneViewCamera");
+	}
 	else
+	{
 		camera.lock()->SetDrawFrustum(false);
+	}
 }
 
 SceneViewCamera::~SceneViewCamera()
@@ -55,14 +59,22 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 
 	// INFO: Movement Logic
 	if (Input::GetKey(SDL_SCANCODE_W))
+	{
 		transformRef->Translate(transformRef->Forward() * movementSpeed * deltaTime);
+	}
 
 	if (Input::GetKey(SDL_SCANCODE_S))
+	{
 		transformRef->Translate(-transformRef->Forward() * movementSpeed * deltaTime);
+	}
 
 	if (Input::GetKey(SDL_SCANCODE_A))
+	{
 		transformRef->Translate(transformRef->Right() * movementSpeed * deltaTime);
+	}
 
 	if (Input::GetKey(SDL_SCANCODE_D))
+	{
 		transformRef->Translate(-transformRef->Right() * movementSpeed * deltaTime);
+	}
 }

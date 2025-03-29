@@ -81,8 +81,7 @@ void Camera::Deserialize(const nlohmann::ordered_json& json)
 
 void Camera::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 {
-	if (!shouldDrawFrustum)
-		return;
+	if (!shouldDrawFrustum) { return; }
 
 	std::shared_ptr<Transform> owningTransform = GetGameObject()->transform.lock();
 
@@ -148,7 +147,9 @@ void Camera::SetSkyboxModel(const std::string& modelName)
 	skyboxModel = AssetHandler::GetModel(modelName);
 
 	if (!skyboxModel)
+	{
 		Debug::LogError("Camera::SetSkyboxModel() - Failed to load Skybox Model: " + modelName);
+	}
 }
 
 void Camera::SetMaterialTexture(const std::string& _textureName)
@@ -160,8 +161,7 @@ void Camera::SetMaterialTexture(const std::string& _textureName)
 
 void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection)
 {
-	if (!useSkybox)
-		return;
+	if (!useSkybox) { return; }
 
 	if (!skyboxModel || !skyboxMaterial)
 	{
@@ -173,7 +173,9 @@ void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMAT
 	skyboxVS.wvp = translation * view * projection;
 
 	if (skyboxMaterial->GetConstantBufferType() == ConstantBufferType::Unlit)
+	{
 		deviceContext.UpdateSubresource(skyboxMaterial->GetConstantBuffer(), 0, nullptr, &skyboxVS, 0, 0);
+	}
 
 	skyboxMaterial->Bind(deviceContext);
 	skyboxModel->Draw(deviceContext);

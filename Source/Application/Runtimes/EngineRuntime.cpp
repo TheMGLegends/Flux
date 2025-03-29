@@ -39,17 +39,17 @@ int EngineRuntime::PreInitialise()
 	if (IS_FAILURE(Physics::Initialise()))
 	{
 		Debug::LogError("EngineRuntime::PreInitialise() - Failed to initialise Physics System");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
 	// INFO: Initialise the Audio System
 	if (IS_FAILURE(Audio::Initialise()))
 	{
 		Debug::LogError("EngineRuntime::PreInitialise() - Failed to initialise Audio System");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
-	return EXIT_SUCCESS;
+	return FLUX_SUCCESS;
 }
 
 int EngineRuntime::Initialise()
@@ -62,10 +62,10 @@ int EngineRuntime::Initialise()
 	if (!scene)
 	{
 		Debug::LogError("EngineRuntime::Initialise() - Failed to create Scene");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
-	return EXIT_SUCCESS;
+	return FLUX_SUCCESS;
 }
 
 void EngineRuntime::Start()

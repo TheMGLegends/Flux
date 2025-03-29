@@ -34,10 +34,10 @@ namespace Flux
 		/// @brief Loads assets from the specified directory
 		static HRESULT LoadAssets(const std::filesystem::path& assetDirectory);
 
-		static bool LoadFont(const std::filesystem::path& fontPath); // INFO: SpriteFont for UI text rendering (ImGui Fonts are not stored/loaded here)
+		static int LoadFont(const std::filesystem::path& fontPath); // INFO: SpriteFont for UI text rendering (ImGui Fonts are not stored/loaded here)
 		static HRESULT LoadTexture(const std::filesystem::path& texturePath);
-		static bool LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer);
-		static bool LoadAudio(const std::filesystem::path& audioPath);
+		static int LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer);
+		static int LoadAudio(const std::filesystem::path& audioPath);
 
 
 		// INFO: Getters
@@ -59,7 +59,7 @@ namespace Flux
 		static HRESULT LoadDepthWriteState(DirectXConfig::DepthWriteType depthWriteType);
 		static HRESULT LoadCullingModeState(DirectXConfig::CullingModeType cullingModeType);
 		static HRESULT LoadSamplerState();
-		static bool LoadMaterial(DirectXConfig::ShaderType shaderType);
+		static int LoadMaterial(DirectXConfig::ShaderType shaderType);
 
 		static HRESULT VerifyDeviceAndContext(bool verifyContext = false);
 

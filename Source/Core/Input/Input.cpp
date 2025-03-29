@@ -9,6 +9,7 @@
 #include "Core/EventSystem/EventDispatcher.h"
 
 using namespace Flux;
+using namespace Flux::GlobalDefines;
 using namespace DirectX::SimpleMath;
 
 SDL_Window* Input::window = nullptr;
@@ -38,7 +39,7 @@ int Input::Initialise(SDL_Window* _window)
 	if (!window)
 	{
 		Debug::LogError("Input::Initialise() - Window is nullptr");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
 	currentKeyboardState = SDL_GetKeyboardState(&keyLength);
@@ -46,7 +47,7 @@ int Input::Initialise(SDL_Window* _window)
 	if (!currentKeyboardState)
 	{
 		Debug::LogError("Input::Initialise() - Failed to get Keyboard State");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
 	previousKeyboardState = new bool[keyLength];
@@ -55,7 +56,7 @@ int Input::Initialise(SDL_Window* _window)
 	if (!previousKeyboardState)
 	{
 		Debug::LogError("Input::Initialise() - Failed to allocate memory for previous Keyboard State");
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
 	currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
@@ -87,7 +88,7 @@ int Input::Initialise(SDL_Window* _window)
 		if (!currentGamepadButtonState)
 		{
 			Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Button State");
-			return EXIT_FAILURE;
+			return FLUX_FAILURE;
 		}
 
 		previousGamepadButtonState = new bool[SDL_GAMEPAD_BUTTON_COUNT];
@@ -96,7 +97,7 @@ int Input::Initialise(SDL_Window* _window)
 		if (!previousGamepadButtonState)
 		{
 			Debug::LogError("Input::Initialise() - Failed to allocate memory for previous Gamepad Button State");
-			return EXIT_FAILURE;
+			return FLUX_FAILURE;
 		}
 
 		currentGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
@@ -107,14 +108,14 @@ int Input::Initialise(SDL_Window* _window)
 		if (!currentGamepadAxisState)
 		{
 			Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Axis State");
-			return EXIT_FAILURE;
+			return FLUX_FAILURE;
 		}
 
 		previousGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
 		memcpy(previousGamepadAxisState, currentGamepadAxisState, gamepadAxisLength);
 	}
 
-	return EXIT_SUCCESS; // INFO: Initialisation Successful
+	return FLUX_SUCCESS; // INFO: Initialisation Successful
 }
 
 void Input::Update()
@@ -129,8 +130,10 @@ void Input::Update()
 
 		currentMouseState = SDL_GetRelativeMouseState(&mousePosition.x, &mousePosition.y);
 	}
-	else
-		currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
+	else 
+	{ 
+		currentMouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y); 
+	}
 
 	if (gamepad)
 	{
@@ -236,42 +239,30 @@ void Input::SetMouseMode(bool _isRelative)
 
 bool Input::GetTrigger(SDL_GamepadAxis trigger, float* axisState)
 {
-	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
-		return false;
+	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) { return false; }
 
 	// INFO: Normalize the axis (0 to 1)
-	if (axisState)
-	{
-		*axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX;
-	}
+	if (axisState) { *axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX; }
 
 	return currentGamepadAxisState[trigger] > 0;
 }
 
 bool Input::GetTriggerDown(SDL_GamepadAxis trigger, float* axisState)
 {
-	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
-		return false;
+	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) { return false; }
 
 	// INFO: Normalize the axis (0 to 1)
-	if (axisState)
-	{
-		*axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX;
-	}
+	if (axisState) { *axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX; }
 
 	return currentGamepadAxisState[trigger] > 0 && previousGamepadAxisState[trigger] == 0;
 }
 
 bool Input::GetTriggerUp(SDL_GamepadAxis trigger, float* axisState)
 {
-	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
-		return false;
+	if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) { return false; }
 
 	// INFO: Normalize the axis (0 to 1)
-	if (axisState) 
-	{
-		*axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX;
-	}
+	if (axisState) { *axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX; }
 
 	return currentGamepadAxisState[trigger] == 0 && previousGamepadAxisState[trigger] > 0;
 }
@@ -299,8 +290,7 @@ Vector2 Input::GetJoystickAxes(GamepadJoystick joystick, bool inverseY)
 	axes.x = axes.x < 0 ? axes.x / (float)(SDL_JOYSTICK_AXIS_MAX + 1) : axes.x / (float)SDL_JOYSTICK_AXIS_MAX;
 	axes.y = axes.y < 0 ? axes.y / (float)(SDL_JOYSTICK_AXIS_MAX + 1) : axes.y / (float)SDL_JOYSTICK_AXIS_MAX;
 
-	if (inverseY && axes.y != 0)
-		axes.y *= -1;
+	if (inverseY && axes.y != 0) { axes.y *= -1; }
 
 	return axes;
 }

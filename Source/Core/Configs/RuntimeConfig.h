@@ -19,8 +19,7 @@ namespace Flux::RuntimeConfig
 	{
 		using namespace Internal;
 
-		if (currentMode == Mode::Editor && newMode == Mode::Play)
-			enteredPlayMode = true;
+		if (currentMode == Mode::Editor && newMode == Mode::Play) { enteredPlayMode = true; }
 
 		currentMode = newMode;
 	}

@@ -152,7 +152,9 @@ void SceneView::Update(float deltaTime)
 			{
 				// INFO: Logic for entering Play Mode
 				if (RuntimeConfig::IsInEditorMode())
+				{
 					RuntimeConfig::SetMode(RuntimeConfig::Mode::Play);
+				}
 				// INFO: Logic for exiting Play Mode
 				else
 				{
@@ -177,13 +179,19 @@ void SceneView::Update(float deltaTime)
 		if (ImGui::BeginChild("PauseButton", { 0.0f, 0.0f }, true, windowFlags))
 		{
 			if (RuntimeConfig::IsInEditorMode())
+			{
 				buttonTexture = (ImTextureID)AssetHandler::GetTexture("PauseButtonUnavailable");
+			}
 			else
 			{
 				if (RuntimeConfig::IsPaused())
+				{
 					buttonTexture = (ImTextureID)AssetHandler::GetTexture("PauseButtonSelected");
+				}
 				else
+				{
 					buttonTexture = (ImTextureID)AssetHandler::GetTexture("PauseButtonAvailable");
+				}
 			}
 
 			if (ImGui::ImageButton("PauseButton", buttonTexture, { 50.0f, 50.0f }))
@@ -194,9 +202,13 @@ void SceneView::Update(float deltaTime)
 
 					// INFO: Pause/Unpause Audio
 					if (RuntimeConfig::IsPaused())
+					{
 						Audio::ControlSounds(true);
+					}
 					else
+					{
 						Audio::ControlSounds(false);
+					}
 				}
 			}
 
@@ -219,9 +231,13 @@ void SceneView::MaintainAspectRatio(ImVec2& sceneViewSize)
 	float adheringHeight = sceneViewSize.x * (1.0f / EngineConfig::ASPECT_RATIO);
 
 	if (sceneViewSize.x >= adheringWidth)
+	{
 		sceneViewSize.x = adheringWidth;
+	}
 	else
+	{
 		sceneViewSize.y = adheringHeight;
+	}
 
 	// INFO: Adjust for Top Bar and Scroll Bar
 	sceneViewSize.x -= 15.0f;

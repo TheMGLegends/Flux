@@ -8,6 +8,7 @@
 #include "Core/Renderer/AssetHandler.h"
 
 using namespace Flux;
+using namespace Flux::GlobalDefines;
 
 FMOD::System* Audio::system = nullptr;
 std::vector<AudioData> Audio::audios;
@@ -17,20 +18,22 @@ int Audio::Initialise()
 	FMOD_RESULT result = FMOD_OK;
 
 	result = FMOD::System_Create(&system);
+
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::Initialise() - Failed to create FMOD system. FMOD Error: " + std::string(FMOD_ErrorString(result)));
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
 	result = system->init(512, FMOD_INIT_NORMAL, nullptr);
+
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::Initialise() - Failed to initialise FMOD system. FMOD Error: " + std::string(FMOD_ErrorString(result)));
-		return EXIT_FAILURE;
+		return FLUX_FAILURE;
 	}
 
-	return EXIT_SUCCESS;
+	return FLUX_SUCCESS;
 }
 
 void Audio::Update()
@@ -39,18 +42,18 @@ void Audio::Update()
 
 	// INFO: Check channels for sounds that have finished playing
 	std::erase_if(audios, [](const AudioData& audio) 
-		{ 
-			bool isPlaying = audio.IsPlaying();
+	{ 
+		bool isPlaying = audio.IsPlaying();
 
-			if (!isPlaying)
-			{
-				audio.channel->stop();
-				audio.sound->release();
-				return true;
-			}
+		if (!isPlaying)
+		{
+			audio.channel->stop();
+			audio.sound->release();
+			return true;
+		}
 			
-			return false;
-		});
+		return false;
+	});
 }
 
 void Audio::Release()
@@ -63,7 +66,6 @@ void Audio::Release()
 	}
 
 	audios.clear();
-
 	system->release();
 }
 
@@ -71,6 +73,7 @@ void Audio::PlaySound2D(const std::string& audioName, float volume, bool isLoopi
 {
 	// INFO: Verify audio exists
 	const std::filesystem::path& audioPath = AssetHandler::GetAudioPath(audioName);
+
 	if (audioPath.empty())
 	{
 		Debug::LogError("Audio::PlaySound2D() - Failed to play 2D sound, see above errors. Audio Name: " + audioName);
@@ -82,6 +85,7 @@ void Audio::PlaySound2D(const std::string& audioName, float volume, bool isLoopi
 	// INFO: Load Sound
 	FMOD::Sound* sound = nullptr;
 	result = system->createSound(audioPath.string().c_str(), FMOD_CREATESAMPLE | FMOD_2D | (isLooping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF), nullptr, &sound);
+
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::PlaySound2D() - Failed to create sound. FMOD Error: " + std::string(FMOD_ErrorString(result)));
@@ -91,6 +95,7 @@ void Audio::PlaySound2D(const std::string& audioName, float volume, bool isLoopi
 	// INFO: Play Sound
 	FMOD::Channel* channel = nullptr;
 	result = system->playSound(sound, nullptr, false, &channel);
+
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::PlaySound2D() - Failed to play sound. FMOD Error: " + std::string(FMOD_ErrorString(result)));
@@ -106,6 +111,7 @@ void Audio::PlaySound3D(const std::string& audioName, const FMOD_VECTOR& positio
 {
 	// INFO: Verify audio exists
 	const std::filesystem::path& audioPath = AssetHandler::GetAudioPath(audioName);
+
 	if (audioPath.empty())
 	{
 		Debug::LogError("Audio::PlaySound3D() - Failed to play 3D sound, see above errors. Audio Name: " + audioName);
@@ -117,6 +123,7 @@ void Audio::PlaySound3D(const std::string& audioName, const FMOD_VECTOR& positio
 	// INFO: Load Sound
 	FMOD::Sound* sound = nullptr;
 	result = system->createSound(audioPath.string().c_str(), FMOD_CREATESAMPLE | FMOD_3D | (isLooping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF), nullptr, &sound);
+
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::PlaySound3D() - Failed to create sound. FMOD Error: " + std::string(FMOD_ErrorString(result)));
@@ -128,6 +135,7 @@ void Audio::PlaySound3D(const std::string& audioName, const FMOD_VECTOR& positio
 	// INFO: Play Sound
 	FMOD::Channel* channel = nullptr;
 	result = system->playSound(sound, nullptr, true, &channel);
+
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::PlaySound3D() - Failed to play sound. FMOD Error: " + std::string(FMOD_ErrorString(result)));
@@ -145,6 +153,7 @@ void Audio::PlayMusic(const std::string& audioName, float volume, bool isLooping
 {
 	// INFO: Verify audio exists
 	const std::filesystem::path& audioPath = AssetHandler::GetAudioPath(audioName);
+
 	if (audioPath.empty())
 	{
 		Debug::LogError("Audio::PlayMusic() - Failed to play music, see above errors. Audio Name: " + audioName);
@@ -156,6 +165,7 @@ void Audio::PlayMusic(const std::string& audioName, float volume, bool isLooping
 	// INFO: Load Music
 	FMOD::Sound* music = nullptr;
 	result = system->createStream(audioPath.string().c_str(), FMOD_CREATESTREAM | FMOD_2D | (isLooping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF), nullptr, &music);
+
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::PlayMusic() - Failed to create sound. FMOD Error: " + std::string(FMOD_ErrorString(result)));
@@ -165,6 +175,7 @@ void Audio::PlayMusic(const std::string& audioName, float volume, bool isLooping
 	// INFO: Play Music
 	FMOD::Channel* channel = nullptr;
 	result = system->playSound(music, nullptr, false, &channel);
+
 	if (result != FMOD_OK)
 	{
 		Debug::LogError("Audio::PlayMusic() - Failed to play sound. FMOD Error: " + std::string(FMOD_ErrorString(result)));
@@ -196,15 +207,13 @@ void Audio::StopAllSounds()
 		audio.channel->stop();
 		audio.sound->release();
 	}
+
 	audios.clear();
 }
 
 void Audio::ControlSounds(bool isPaused)
 {
-	for (auto& audio : audios)
-	{
-		audio.channel->setPaused(isPaused);
-	}
+	for (auto& audio : audios) { audio.channel->setPaused(isPaused); }
 }
 
 void Audio::SetListenerAttributes(const FMOD_VECTOR& position, const FMOD_VECTOR& velocity, const FMOD_VECTOR& forward, const FMOD_VECTOR& up)

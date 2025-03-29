@@ -101,8 +101,8 @@ namespace Flux
 		for (auto& component : components)
 		{
 			std::weak_ptr<T> castedComponent = std::dynamic_pointer_cast<T>(component);
-			if (!castedComponent.expired())
-				return true;
+
+			if (!castedComponent.expired()) { return true; }
 		}
 		return false;
 	}
@@ -117,8 +117,7 @@ namespace Flux
 		{
 			std::weak_ptr<T> castedComponent = std::dynamic_pointer_cast<T>(component);
 
-			if (!castedComponent.expired())
-				return castedComponent;
+			if (!castedComponent.expired()) { return castedComponent; }
 		}
 
 		return std::weak_ptr<T>();
@@ -132,16 +131,14 @@ namespace Flux
 		std::weak_ptr<T> existingComponent = GetComponent<T>();
 
 		// INFO: Do not add the component if it already exists and we can only have one
-		if (!existingComponent.expired() && !existingComponent.lock()->CanHaveMultiple())
-			return existingComponent;
+		if (!existingComponent.expired() && !existingComponent.lock()->CanHaveMultiple()) { return existingComponent; }
 
 		// INFO: Special Case for Collider Components
 		if (std::is_base_of<Collider, T>::value)
 		{
 			std::weak_ptr<Collider> existingCollider = GetComponent<Collider>();
 
-			if (!existingCollider.expired())
-				return std::dynamic_pointer_cast<T>(existingCollider.lock());
+			if (!existingCollider.expired()) { return std::dynamic_pointer_cast<T>(existingCollider.lock()); }
 		}
 
 		components.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
@@ -158,8 +155,7 @@ namespace Flux
 	{
 		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
 
-		if (component.expired() || !component.IsRemovable())
-			return;
+		if (component.expired() || !component.IsRemovable()) { return; }
 
 		for (auto it = components.begin(); it != components.end(); ++it)
 		{
@@ -169,8 +165,7 @@ namespace Flux
 			{
 				EventDispatcher::QueueEvent(EventType::ComponentRemoved, std::make_shared<ComponentRemovedEvent>(component));
 
-				if (!component.expired())
-					component.lock()->SetIsActive(false);
+				if (!component.expired()) { component.lock()->SetIsActive(false); }
 			}
 		}
 	}

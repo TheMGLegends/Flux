@@ -83,7 +83,9 @@ void SphereCollider::SetColliderShape()
 	if (rigidActor)
 	{
 		if (!rigidActor->attachShape(*colliderShape))
+		{
 			Debug::LogError("SphereCollider::SphereCollider() - Failed to attach shape to Rigid Actor");
+		}
 
 		SceneContext::GetScene().GetPhysicsScene().addActor(*rigidActor);
 	}

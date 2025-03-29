@@ -97,8 +97,7 @@ Application::~Application()
 
 void Application::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 {
-	if (eventType == EventType::Quit)
-		isRunning = false;
+	if (eventType == EventType::Quit) { isRunning = false; }
 }
 
 void Application::Run()

@@ -15,6 +15,7 @@
 #include "Material.h"
 #include "Model.h"
 #include "ReadData.h"
+#include "Core/GlobalDefines.h"
 #include "Core/Configs/FiletypeConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/Helpers/StringHelpers.h"
@@ -23,6 +24,7 @@ constexpr const char* const ASSET_DIRECTORY = "Assets";
 
 using namespace Flux;
 using namespace Flux::DirectXConfig;
+using namespace Flux::GlobalDefines;
 using namespace Microsoft::WRL;
 
 const std::filesystem::path AssetHandler::EMPTY_PATH = std::filesystem::path();
@@ -49,23 +51,23 @@ HRESULT AssetHandler::Initialise(ID3D11Device& _device, ID3D11DeviceContext& _de
 	deviceContext = _deviceContext;
 
 	// INFO: Load Default Assets
-	if (FAILED(LoadShaders(ShaderType::Unlit, "CompiledShaders/UnlitVertexShader.cso", "CompiledShaders/UnlitPixelShader.cso"))) return E_FAIL;
-	if (FAILED(LoadShaders(ShaderType::Skybox, "CompiledShaders/SkyboxVertexShader.cso", "CompiledShaders/SkyboxPixelShader.cso"))) return E_FAIL;
+	if (FAILED(LoadShaders(ShaderType::Unlit, "CompiledShaders/UnlitVertexShader.cso", "CompiledShaders/UnlitPixelShader.cso"))) { return E_FAIL; }
+	if (FAILED(LoadShaders(ShaderType::Skybox, "CompiledShaders/SkyboxVertexShader.cso", "CompiledShaders/SkyboxPixelShader.cso"))) { return E_FAIL; }
 
-	if (FAILED(LoadConstantBuffer(ConstantBufferType::Unlit))) return E_FAIL;
+	if (FAILED(LoadConstantBuffer(ConstantBufferType::Unlit))) { return E_FAIL; }
 
-	if (FAILED(LoadDepthWriteState(DepthWriteType::Enabled))) return E_FAIL;
-	if (FAILED(LoadDepthWriteState(DepthWriteType::Disabled))) return E_FAIL;
+	if (FAILED(LoadDepthWriteState(DepthWriteType::Enabled))) { return E_FAIL; }
+	if (FAILED(LoadDepthWriteState(DepthWriteType::Disabled))) { return E_FAIL; }
 
-	if (FAILED(LoadCullingModeState(CullingModeType::FrontSolid))) return E_FAIL;
-	if (FAILED(LoadCullingModeState(CullingModeType::BackSolid))) return E_FAIL;
+	if (FAILED(LoadCullingModeState(CullingModeType::FrontSolid))) { return E_FAIL; }
+	if (FAILED(LoadCullingModeState(CullingModeType::BackSolid))) { return E_FAIL; }
 
-	if (FAILED(LoadSamplerState())) return E_FAIL;
+	if (FAILED(LoadSamplerState())) { return E_FAIL; }
 
 	LoadAssets(ASSET_DIRECTORY);
 
-	if (!LoadMaterial(ShaderType::Unlit)) return E_FAIL;
-	if (!LoadMaterial(ShaderType::Skybox)) return E_FAIL;
+	if (IS_FAILURE(LoadMaterial(ShaderType::Unlit))) { return E_FAIL; }
+	if (IS_FAILURE(LoadMaterial(ShaderType::Skybox))) { return E_FAIL; }
 
 	return S_OK;
 }
@@ -85,28 +87,28 @@ HRESULT AssetHandler::LoadAssets(const std::filesystem::path& assetDirectory)
 			// INFO: Font Loading
 			if (extensionType == FiletypeConfig::SPRITEFONT)
 			{
-				if (!LoadFont(entry.path())) return E_FAIL;
+				if (IS_FAILURE(LoadFont(entry.path()))) { return E_FAIL; }
 				continue;
 			}
 
 			// INFO: Texture Loading
 			if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
 			{
-				if (FAILED(LoadTexture(entry.path()))) return E_FAIL;
+				if (FAILED(LoadTexture(entry.path()))) { return E_FAIL; }
 				continue;
 			}
 
 			// INFO: Model Loading
 			if (FiletypeConfig::IsSupportedModelFormat(extensionType))
 			{
-				if (!LoadModel(entry.path(), importer)) return E_FAIL;
+				if (IS_FAILURE(LoadModel(entry.path(), importer))) { return E_FAIL; }
 				continue;
 			}
 
 			// INFO: Audio Loading
 			if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
 			{
-				if (!LoadAudio(entry.path())) return E_FAIL;
+				if (IS_FAILURE(LoadAudio(entry.path()))) { return E_FAIL; }
 				continue;
 			}
 		}
@@ -115,12 +117,12 @@ HRESULT AssetHandler::LoadAssets(const std::filesystem::path& assetDirectory)
 	return S_OK;
 }
 
-bool AssetHandler::LoadFont(const std::filesystem::path& fontPath)
+int AssetHandler::LoadFont(const std::filesystem::path& fontPath)
 {
 	if (FAILED(VerifyDeviceAndContext()))
 	{
 		Debug::LogError("AssetHandler::LoadFont() - Unable to load font, see above error codes");
-		return false;
+		return FLUX_FAILURE;
 	}
 
 	auto& deviceRef = device->get();
@@ -130,16 +132,16 @@ bool AssetHandler::LoadFont(const std::filesystem::path& fontPath)
 	if (!font)
 	{
 		Debug::LogError("AssetHandler::LoadFont() - Failed to create font. Filepath: " + fontPath.string());
-		return false;
+		return FLUX_FAILURE;
 	}
 
 	if (!fonts.insert({ fontPath.stem().string(), std::move(font) }).second)
 	{
 		Debug::LogError("AssetHandler::LoadFont() - Failed to insert font into map. Filepath: " + fontPath.string());
-		return false;
+		return FLUX_FAILURE;
 	}
 
-	return true;
+	return FLUX_SUCCESS;
 }
 
 HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
@@ -161,9 +163,13 @@ HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
 
 	// INFO: DDS Mainly used for Skybox Textures
 	if (extensionType == FiletypeConfig::DDS)
+	{
 		hResult = DirectX::CreateDDSTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
+	}
 	else
+	{
 		hResult = DirectX::CreateWICTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
+	}
 
 	if (FAILED(hResult))
 	{
@@ -180,12 +186,12 @@ HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
 	return S_OK;
 }
 
-bool AssetHandler::LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer)
+int AssetHandler::LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer)
 {
 	if (FAILED(VerifyDeviceAndContext(true)))
 	{
 		Debug::LogError("AssetHandler::LoadModel() - Unable to load model, see above error codes");
-		return false;
+		return FLUX_FAILURE;
 	}
 
 	auto& deviceRef = device->get();
@@ -196,7 +202,7 @@ bool AssetHandler::LoadModel(const std::filesystem::path& modelPath, Assimp::Imp
 	if (!scene)
 	{
 		Debug::LogError("AssetHandler::LoadModel() - Failed to load model. Filepath: " + modelPath.string());
-		return false;
+		return FLUX_FAILURE;
 	}
 
 	std::unique_ptr<Model> model = std::make_unique<Model>(deviceRef, deviceContextRef, scene, modelPath.stem().string());
@@ -204,27 +210,27 @@ bool AssetHandler::LoadModel(const std::filesystem::path& modelPath, Assimp::Imp
 	if (!model)
 	{
 		Debug::LogError("AssetHandler::LoadModel() - Failed to create model. Filepath: " + modelPath.string());
-		return false;
+		return FLUX_FAILURE;
 	}
 
 	if (!models.insert({ modelPath.stem().string(), std::move(model) }).second)
 	{
 		Debug::LogError("AssetHandler::LoadModel() - Failed to insert model into map. Filepath: " + modelPath.string());
-		return false;
+		return FLUX_FAILURE;
 	}
 
-	return true;
+	return FLUX_SUCCESS;
 }
 
-bool AssetHandler::LoadAudio(const std::filesystem::path& audioPath)
+int AssetHandler::LoadAudio(const std::filesystem::path& audioPath)
 {
 	if (!audioPaths.insert({ audioPath.stem().string(), audioPath }).second)
 	{
 		Debug::LogError("AssetHandler::LoadAudio() - Failed to insert audio path into map. Filepath: " + audioPath.string());
-		return false;
+		return FLUX_FAILURE;
 	}
 
-	return true;
+	return FLUX_SUCCESS;
 }
 
 Model* AssetHandler::GetModel(const std::string& modelName)
@@ -240,7 +246,9 @@ Material* AssetHandler::GetMaterial(DirectXConfig::ShaderType shaderType)
 const std::filesystem::path& Flux::AssetHandler::GetAudioPath(const std::string& audioName)
 {
 	if (auto audioPath = audioPaths.find(audioName); audioPath != audioPaths.end())
+	{
 		return audioPath->second;
+	}
 	else
 	{
 		Debug::LogError("AssetHandler::GetAudioPath() - Failed to find audio path. Audio Name: " + audioName);
@@ -569,7 +577,7 @@ HRESULT AssetHandler::LoadSamplerState()
 	return S_OK;
 }
 
-bool AssetHandler::LoadMaterial(ShaderType shaderType)
+int AssetHandler::LoadMaterial(ShaderType shaderType)
 {
 	// INFO: Create Material
 	std::unique_ptr<Material> material;
@@ -590,16 +598,16 @@ bool AssetHandler::LoadMaterial(ShaderType shaderType)
 	if (!material)
 	{
 		Debug::LogError("AssetHandler::LoadMaterial() - Failed to create material. Shader Type: " + std::string(magic_enum::enum_name(shaderType)));
-		return false;
+		return FLUX_FAILURE;
 	}
 
 	if (!materials.insert({ shaderType, std::move(material) }).second)
 	{
 		Debug::LogError("AssetHandler::LoadMaterial() - Failed to insert material into map. Shader Type: " + std::string(magic_enum::enum_name(shaderType)));
-		return false;
+		return FLUX_FAILURE;
 	}
 
-	return true;
+	return FLUX_SUCCESS;
 }
 
 HRESULT AssetHandler::VerifyDeviceAndContext(bool verifyContext)

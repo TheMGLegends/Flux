@@ -37,10 +37,8 @@ void Time::Tick()
 
 bool Time::PerformPhysicsUpdate()
 {
-	if (accumulator >= TimeConfig::FIXED_DELTA_TIME)
-	{
-		return true;
-	}
+	if (accumulator >= TimeConfig::FIXED_DELTA_TIME) { return true; }
+
 	return false;
 }
 
