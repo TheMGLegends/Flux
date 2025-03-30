@@ -106,16 +106,17 @@ void EditorRuntime::Update(float deltaTime)
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 
-	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID);
+	ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_NoUndocking;
+	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID, nullptr, dockspaceFlags);
 
 	// TODO: TESTING
-	ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Hierarchy");
 	ImGui::Text("Hello, World!");
 	ImGui::End();
-	ImGui::Begin("Details", nullptr, ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Details");
 	ImGui::Text("Hello, World!");
 	ImGui::End();
-	ImGui::Begin("Content Browser", nullptr, ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Content Browser");
 	ImGui::Text("Hello, World!");
 	ImGui::End();
 

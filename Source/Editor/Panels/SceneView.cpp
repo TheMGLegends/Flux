@@ -38,7 +38,7 @@ int SceneView::Initialise()
 
 void SceneView::Update(float deltaTime)
 {
-	if (ImGui::Begin("Scene View", nullptr, ImGuiWindowFlags_NoResize))
+	if (ImGui::Begin("Scene View"))
 	{
 		ImVec2 windowSize = ImGui::GetWindowSize();
 		ImVec2 sceneViewSize = ImGui::GetWindowSize();
