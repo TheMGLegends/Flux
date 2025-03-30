@@ -1,6 +1,7 @@
 #include "EditorRuntime.h"
 
 #include <imgui.h>
+#include <ImGuizmo.h>
 #include <backends/imgui_impl_dx11.h>
 #include <backends/imgui_impl_sdl3.h>
 
@@ -33,7 +34,7 @@ int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D1
 {
 	// INFO: ImGui Initialisation
 	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
+	ImGuiContext* context = ImGui::CreateContext();
 
 	// INFO: Set Flags for ImGui
 	ImGuiIO& io = ImGui::GetIO();
@@ -58,6 +59,14 @@ int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D1
 		Debug::LogError("EditorRuntime::PreInitialise() - Failed to initialise ImGui DirectX11 Implementation");
 		return FLUX_FAILURE;
 	}
+
+	if (!context)
+	{
+		Debug::LogError("EditorRuntime::PreInitialise() - Failed to create ImGui Context");
+		return FLUX_FAILURE;
+	}
+
+	ImGuizmo::SetImGuiContext(context);
 
 	return FLUX_SUCCESS;
 }
@@ -94,6 +103,8 @@ void EditorRuntime::Update(float deltaTime)
 	ImGui_ImplSDL3_NewFrame();
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
+
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID);
 
 	// TODO: TESTING

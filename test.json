@@ -39,7 +39,7 @@
                         1.0,
                         0.0
                     ],
-                    "SkyboxTexture": "DebugSkybox",
+                    "SkyboxTexture": "DefaultSkybox",
                     "UseSkybox": true
                 }
             ]

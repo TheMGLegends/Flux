@@ -31,7 +31,7 @@ Material::~Material()
 {
 }
 
-void Flux::Material::SetTexture(const std::string& textureName)
+void Material::SetTexture(const std::string& textureName)
 {
 	texture = AssetHandler::GetTexture(textureName);
 

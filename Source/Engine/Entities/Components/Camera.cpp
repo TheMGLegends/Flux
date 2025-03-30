@@ -31,9 +31,6 @@ Camera::Camera(GameObject* _gameObject) : Component(_gameObject), verticalFOV(90
 	SetSkyboxModel("Cube");
 	skyboxMaterial = AssetHandler::GetMaterial(ShaderType::Skybox);
 
-	// TODO: TESTING
-	SetMaterialTexture("DebugSkybox");
-
 	// INFO: Initialise Bounding Frustum
 	SetFrustum();
 }
