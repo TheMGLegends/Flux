@@ -1,5 +1,12 @@
 #include "Transform.h"
 
+#pragma warning (push, 0)
+#include <PxRigidDynamic.h>
+#pragma warning (pop)
+
+#include "PhysicsBody.h"
+#include "Engine/Entities/GameObjects/GameObject.h"
+
 using namespace Flux;
 using namespace DirectX::SimpleMath;
 
@@ -81,4 +88,21 @@ void Transform::Rotate(const Vector3& eulerRotation)
 
 	// INFO: Combine the current rotation with the new rotation
 	rotation *= rotationQuaternion;
+}
+
+void Transform::SetPositionEditor(const DirectX::SimpleMath::Vector3& _position)
+{
+	position = _position;
+
+	// INFO: If game object has a physics body we need to setGlobalPose
+	if (GetGameObject()->HasComponent<PhysicsBody>())
+	{
+		auto rigidDynamic = GetGameObject()->GetComponent<PhysicsBody>().lock()->VerifyRigidActor();
+
+		if (rigidDynamic)
+		{
+			rigidDynamic->setGlobalPose(physx::PxTransform(physx::PxVec3(position.x, position.y, position.z), 
+										physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
+		}
+	}
 }

@@ -34,6 +34,9 @@ namespace Flux
 		void Rotate(const DirectX::SimpleMath::Vector3& eulerAngles);
 		inline void Translate(const DirectX::SimpleMath::Vector3& translation) { position += translation; }
 
+		/// @brief Used internally by the Editor to set the position of the Transform and any associated rigidActors
+		void SetPositionEditor(const DirectX::SimpleMath::Vector3& _position);
+
 	private:
 		DirectX::SimpleMath::Vector3 position;
 		DirectX::SimpleMath::Quaternion rotation;

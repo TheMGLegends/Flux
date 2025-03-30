@@ -87,7 +87,7 @@ void SceneView::Update(float deltaTime)
 
 				if (ImGuizmo::IsUsing())
 				{
-					transform->SetPosition(Vector3(transformMatrix._41, transformMatrix._42, transformMatrix._43));
+					transform->SetPositionEditor(Vector3(transformMatrix._41, transformMatrix._42, transformMatrix._43));
 				}
 			}
 		}
