@@ -15,5 +15,16 @@ namespace Flux::EditorConfig
 	inline const float FONT_SIZE = 16.0f;
 
 	inline TransformMode currentTransformMode = TransformMode::Pan;
+	inline TransformMode previousTransformMode = TransformMode::Pan; // INFO: Used when RMB is released to revert to previous transform mode
+
+	inline void StorePreviousTransformMode()
+	{
+		previousTransformMode = currentTransformMode;
+	}
+
+	inline void RevertToPreviousTransformMode()
+	{
+		currentTransformMode = previousTransformMode;
+	}
 }
 

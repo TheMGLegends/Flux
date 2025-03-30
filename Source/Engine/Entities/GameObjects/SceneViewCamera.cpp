@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include "Core/Configs/EditorConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/Helpers/MathHelpers.h"
 #include "Core/Input/Input.h"
@@ -34,10 +35,15 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 	// INFO: Mouse Mode Switching Logic
 	if (Input::GetMouseButtonDown(SDL_BUTTON_RIGHT))
 	{
+		EditorConfig::StorePreviousTransformMode();
+		EditorConfig::currentTransformMode = EditorConfig::TransformMode::Pan;
+
 		Input::SetMouseMode(true);
 	}
 	else if (Input::GetMouseButtonUp(SDL_BUTTON_RIGHT))
 	{
+		EditorConfig::RevertToPreviousTransformMode();
+
 		Input::SetMouseMode(false);
 	}
 
@@ -58,36 +64,40 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 		transformRef->SetRotation(Quaternion::CreateFromYawPitchRoll(eulerRotation.y, eulerRotation.x, 0.0f));
 	}
 
-	// INFO: Movement Logic
-	if (Input::GetKey(SDL_SCANCODE_W))
+	// INFO: Movement Logic Can Only Happen if RMB is held
+	if (Input::GetMouseButton(SDL_BUTTON_RIGHT))
 	{
-		transformRef->Translate(transformRef->Forward() * movementSpeed * deltaTime);
-	}
+		// INFO: Movement Logic
+		if (Input::GetKey(SDL_SCANCODE_W))
+		{
+			transformRef->Translate(transformRef->Forward() * movementSpeed * deltaTime);
+		}
 
-	if (Input::GetKey(SDL_SCANCODE_S))
-	{
-		transformRef->Translate(-transformRef->Forward() * movementSpeed * deltaTime);
-	}
+		if (Input::GetKey(SDL_SCANCODE_S))
+		{
+			transformRef->Translate(-transformRef->Forward() * movementSpeed * deltaTime);
+		}
 
-	if (Input::GetKey(SDL_SCANCODE_A))
-	{
-		transformRef->Translate(transformRef->Right() * movementSpeed * deltaTime);
-	}
+		if (Input::GetKey(SDL_SCANCODE_A))
+		{
+			transformRef->Translate(transformRef->Right() * movementSpeed * deltaTime);
+		}
 
-	if (Input::GetKey(SDL_SCANCODE_D))
-	{
-		transformRef->Translate(-transformRef->Right() * movementSpeed * deltaTime);
-	}
+		if (Input::GetKey(SDL_SCANCODE_D))
+		{
+			transformRef->Translate(-transformRef->Right() * movementSpeed * deltaTime);
+		}
 
-	// INFO: Up & Down Movement Logic (World Space)
-	if (Input::GetKey(SDL_SCANCODE_E))
-	{
-		transformRef->Translate(Vector3::Up * movementSpeed * deltaTime);
-	}
+		// INFO: Up & Down Movement Logic (World Space)
+		if (Input::GetKey(SDL_SCANCODE_E))
+		{
+			transformRef->Translate(Vector3::Up * movementSpeed * deltaTime);
+		}
 
-	if (Input::GetKey(SDL_SCANCODE_Q))
-	{
-		transformRef->Translate(-Vector3::Up * movementSpeed * deltaTime);
+		if (Input::GetKey(SDL_SCANCODE_Q))
+		{
+			transformRef->Translate(-Vector3::Up * movementSpeed * deltaTime);
+		}
 	}
 
 	// INFO: Movement Speed Adjustment Logic

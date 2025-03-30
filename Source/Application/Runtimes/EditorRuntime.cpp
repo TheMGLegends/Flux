@@ -80,6 +80,14 @@ void EditorRuntime::Update(float deltaTime)
 {
 	if (Input::GetKeyDown(SDL_SCANCODE_F3)) { FrameRateMonitor::Toggle(); }
 
+	// INFO: Keys for Transform Modes
+	if (!Input::GetMouseButton(SDL_BUTTON_RIGHT) && !Input::GetMouseButtonDown(SDL_BUTTON_RIGHT))
+	{
+		if (Input::GetKeyDown(SDL_SCANCODE_W)) { EditorConfig::currentTransformMode = EditorConfig::TransformMode::Translate; }
+		if (Input::GetKeyDown(SDL_SCANCODE_E)) { EditorConfig::currentTransformMode = EditorConfig::TransformMode::Rotate; }
+		if (Input::GetKeyDown(SDL_SCANCODE_R)) { EditorConfig::currentTransformMode = EditorConfig::TransformMode::Scale; }
+	}
+
 	FrameRateMonitor::Update(deltaTime);
 
 	// INFO: ImGui New Frame
