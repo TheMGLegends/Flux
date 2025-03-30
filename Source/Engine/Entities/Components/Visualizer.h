@@ -5,9 +5,10 @@
 #include <d3d11.h>
 #include <string>
 
+#include "Core/Renderer/Material.h"
+
 namespace Flux
 {
-	class Material;
 	class Model;
 
 	class Visualizer : public Component
@@ -22,14 +23,14 @@ namespace Flux
 		void SetModel(const std::string& _modelName);
 
 		void SetMaterialTexture(const std::string& _textureName);
-		inline Material& GetMaterial() const { return *material; }
+		inline Material& GetMaterial() { return material; }
 
 		void Draw(ID3D11DeviceContext& deviceContext);
 
 	private:
 		Model* model;
 		std::string modelName;
-		Material* material;
+		Material material;
 		std::string textureName;
 	};
 }

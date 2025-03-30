@@ -7,10 +7,11 @@
 #include <memory>
 #include <SimpleMath.h>
 
+#include "Core/Renderer/Material.h"
+
 namespace Flux
 {
 	class Transform;
-	class Material;
 	class Model;
 
 	class Camera : public Component, public IDebugWireframe
@@ -68,7 +69,7 @@ namespace Flux
 		// INFO: Skybox Properties
 
 		Model* skyboxModel;
-		Material* skyboxMaterial;
+		Material skyboxMaterial;
 		std::string skyboxTextureName;
 		bool useSkybox;
 	};

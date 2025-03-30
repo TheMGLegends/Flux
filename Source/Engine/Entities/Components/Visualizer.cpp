@@ -9,7 +9,7 @@
 using namespace Flux;
 using namespace Flux::DirectXConfig;
 
-Visualizer::Visualizer(GameObject* _gameObject) : Component(_gameObject), model(nullptr), material(nullptr), textureName("DefaultTexture")
+Visualizer::Visualizer(GameObject* _gameObject) : Component(_gameObject), model(nullptr), textureName("DefaultTexture")
 {
 	name = "Visualizer";
 	componentType = ComponentType::Visualizer;
@@ -60,17 +60,17 @@ void Visualizer::SetMaterialTexture(const std::string& _textureName)
 {
 	textureName = _textureName;
 
-	material->SetTexture(textureName);
+	material.SetTexture(textureName);
 }
 
 void Visualizer::Draw(ID3D11DeviceContext& deviceContext)
 {
-	if (!model || !material)
+	if (!model)
 	{
-		Debug::LogError("Visualizer::Draw() - Model or Material is nullptr");
+		Debug::LogError("Visualizer::Draw() - Model is nullptr");
 		return;
 	}
 
-	material->Bind(deviceContext);
+	material.Bind(deviceContext);
 	model->Draw(deviceContext);
 }

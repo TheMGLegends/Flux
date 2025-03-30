@@ -1,8 +1,10 @@
 #include "AssetHandler.h"
 
+#pragma warning (push, 0)
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#pragma warning (pop)
 #include <DDSTextureLoader.h>
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
@@ -42,7 +44,7 @@ ComPtr<ID3D11SamplerState> AssetHandler::samplerState;
 std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>> AssetHandler::fonts;
 std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> AssetHandler::textures;
 std::unordered_map<std::string, std::unique_ptr<Model>> AssetHandler::models;
-std::unordered_map<DirectXConfig::ShaderType, std::unique_ptr<Material>> AssetHandler::materials;
+std::unordered_map<DirectXConfig::ShaderType, Material> AssetHandler::materials;
 std::unordered_map<std::string, std::filesystem::path> AssetHandler::audioPaths;
 
 HRESULT AssetHandler::Initialise(ID3D11Device& _device, ID3D11DeviceContext& _deviceContext)
@@ -238,9 +240,9 @@ Model* AssetHandler::GetModel(const std::string& modelName)
 	return models[modelName].get();
 }
 
-Material* AssetHandler::GetMaterial(DirectXConfig::ShaderType shaderType)
+Material AssetHandler::GetMaterial(DirectXConfig::ShaderType shaderType)
 {
-	return materials[shaderType].get();
+	return materials[shaderType];
 }
 
 const std::filesystem::path& Flux::AssetHandler::GetAudioPath(const std::string& audioName)
@@ -580,28 +582,22 @@ HRESULT AssetHandler::LoadSamplerState()
 int AssetHandler::LoadMaterial(ShaderType shaderType)
 {
 	// INFO: Create Material
-	std::unique_ptr<Material> material;
+	Material material;
 
 	switch (shaderType)
 	{
 	case ShaderType::Unlit:
-		material = std::make_unique<Material>(ShaderType::Unlit, ConstantBufferType::Unlit, DepthWriteType::Enabled, CullingModeType::BackSolid, "DefaultTexture");
+		material = Material(ShaderType::Unlit, ConstantBufferType::Unlit, DepthWriteType::Enabled, CullingModeType::BackSolid, "DefaultTexture");
 		break;
 	case ShaderType::Skybox:
-		material = std::make_unique<Material>(ShaderType::Skybox, ConstantBufferType::Unlit, DepthWriteType::Disabled, CullingModeType::FrontSolid, "DefaultSkybox");
+		material = Material(ShaderType::Skybox, ConstantBufferType::Unlit, DepthWriteType::Disabled, CullingModeType::FrontSolid, "DefaultSkybox");
 		break;
 	case ShaderType::None:
 	default:
 		break;
 	}
 
-	if (!material)
-	{
-		Debug::LogError("AssetHandler::LoadMaterial() - Failed to create material. Shader Type: " + std::string(magic_enum::enum_name(shaderType)));
-		return FLUX_FAILURE;
-	}
-
-	if (!materials.insert({ shaderType, std::move(material) }).second)
+	if (!materials.insert({ shaderType, material }).second)
 	{
 		Debug::LogError("AssetHandler::LoadMaterial() - Failed to insert material into map. Shader Type: " + std::string(magic_enum::enum_name(shaderType)));
 		return FLUX_FAILURE;

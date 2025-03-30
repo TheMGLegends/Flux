@@ -2,7 +2,9 @@
 
 #include "Engine/Interfaces/ISerializable.h"
 #include "Core/EventSystem/IEventListener.h"
+#pragma warning (push, 0)
 #include <PxSimulationEventCallback.h>
+#pragma warning (pop)
 
 #include <memory>
 #include <unordered_map>

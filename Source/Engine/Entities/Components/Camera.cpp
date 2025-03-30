@@ -138,28 +138,28 @@ void Camera::SetMaterialTexture(const std::string& _textureName)
 {
 	skyboxTextureName = _textureName;
 
-	skyboxMaterial->SetTexture(skyboxTextureName);
+	skyboxMaterial.SetTexture(skyboxTextureName);
 }
 
 void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection)
 {
 	if (!useSkybox) { return; }
 
-	if (!skyboxModel || !skyboxMaterial)
+	if (!skyboxModel)
 	{
-		Debug::LogError("Camera::DrawSkybox() - Skybox Model or Material is nullptr");
+		Debug::LogError("Camera::DrawSkybox() - Skybox Model is nullptr");
 		return;
 	}
 
 	UnlitVS skyboxVS{};
 	skyboxVS.wvp = translation * view * projection;
 
-	if (skyboxMaterial->GetConstantBufferType() == ConstantBufferType::Unlit)
+	if (skyboxMaterial.GetConstantBufferType() == ConstantBufferType::Unlit)
 	{
-		deviceContext.UpdateSubresource(skyboxMaterial->GetConstantBuffer(), 0, nullptr, &skyboxVS, 0, 0);
+		deviceContext.UpdateSubresource(skyboxMaterial.GetConstantBuffer(), 0, nullptr, &skyboxVS, 0, 0);
 	}
 
-	skyboxMaterial->Bind(deviceContext);
+	skyboxMaterial.Bind(deviceContext);
 	skyboxModel->Draw(deviceContext);
 }
 

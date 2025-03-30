@@ -3,7 +3,9 @@
 #include "Component.h"
 
 #include <array>
+#pragma warning (push, 0)
 #include <PxForceMode.h>
+#pragma warning (pop)
 
 namespace physx { class PxRigidDynamic; }
 namespace DirectX::SimpleMath { struct Vector3; }

@@ -12,12 +12,12 @@
 #include "ConstantBufferData.h"
 #include "ShaderData.h"
 #include "Core/Configs/DirectXConfig.h"
+#include "Core/Renderer/Material.h"
 
 namespace Assimp { class Importer; }
 
 namespace Flux
 {
-	class Material;
 	class Model;
 
 	class AssetHandler
@@ -50,7 +50,9 @@ namespace Flux
 		static inline DirectX::SpriteFont* GetFont(const std::string& fontName) { return fonts[fontName].get(); }
 		static inline ID3D11ShaderResourceView* GetTexture(const std::string& textureName) { return textures[textureName].Get(); }
 		static Model* GetModel(const std::string& modelName);
-		static Material* GetMaterial(DirectXConfig::ShaderType shaderType);
+
+		/// @brief Returns a copy of a default material that can then be modified
+		static Material GetMaterial(DirectXConfig::ShaderType shaderType);
 		static const std::filesystem::path& GetAudioPath(const std::string& audioName);
 
 	private:
@@ -80,7 +82,7 @@ namespace Flux
 		static std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>> fonts;
 		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textures;
 		static std::unordered_map<std::string, std::unique_ptr<Model>> models;
-		static std::unordered_map<DirectXConfig::ShaderType, std::unique_ptr<Material>> materials;
+		static std::unordered_map<DirectXConfig::ShaderType, Material> materials;
 		static std::unordered_map<std::string, std::filesystem::path> audioPaths;
 	};
 }
