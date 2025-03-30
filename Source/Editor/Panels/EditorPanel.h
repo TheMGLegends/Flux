@@ -9,7 +9,7 @@ namespace Flux
 		virtual ~EditorPanel() {}
 
 		virtual void Initialise() {}
-		virtual void Update(float deltaTime) {}
+		virtual void Update(float deltaTime) = 0;
 	};
 }
 
