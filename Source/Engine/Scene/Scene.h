@@ -66,6 +66,9 @@ namespace Flux
 
 		inline physx::PxScene& GetPhysicsScene() const { return *physicsScene; }
 
+		// TODO: TESTING - REMOVE
+		GameObject* GetSelectedGameObject() const;
+
 	private:
 		struct DebugWireframeData
 		{

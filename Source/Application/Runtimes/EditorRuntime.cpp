@@ -80,8 +80,9 @@ int EditorRuntime::Initialise(Renderer& renderer)
 	editorPanels.emplace_back(std::make_unique<SceneView>(renderer));
 	sceneView = static_cast<SceneView*>(editorPanels.back().get());
 
-	// TODO: Initialisation Logic
+	for (size_t i = 0; i < editorPanels.size(); i++) { editorPanels[i]->Initialise(); }
 
+	// TODO: Initialisation Logic
 	return FLUX_SUCCESS;
 }
 

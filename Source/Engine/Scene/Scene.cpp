@@ -419,3 +419,8 @@ std::weak_ptr<Camera> Scene::GetCamera() const
 		return sceneViewCamera->GetCamera();
 	}
 }
+
+GameObject* Flux::Scene::GetSelectedGameObject() const
+{
+	return gameObjects[1].get(); // TODO: TEMPORARY GETS GO WITH BoxCollider
+}

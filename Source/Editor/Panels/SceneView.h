@@ -15,7 +15,7 @@ namespace Flux
 		SceneView(Renderer& _renderer);
 		virtual ~SceneView() override;
 
-		virtual void Initialise() override;
+		virtual int Initialise() override;
 		virtual void Update(float deltaTime) override;
 
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;

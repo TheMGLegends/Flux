@@ -1,7 +1,8 @@
 #include "SceneView.h"
 
-#include <imgui_internal.h>
+#include <ImGuizmo.h>
 
+#include "Core/GlobalDefines.h"
 #include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/EngineConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
@@ -13,9 +14,14 @@
 
 // TODO: TESTING
 #include "Core/Debug/Debug.h"
+#include "Engine/Scene/SceneContext.h"
+#include "Engine/Entities/Components/Transform.h"
+#include "Engine/Entities/GameObjects/GameObject.h"
 
 using namespace Flux;
+using namespace DirectX::SimpleMath;
 using namespace Flux::EditorConfig;
+using namespace Flux::GlobalDefines;
 
 SceneView::SceneView(Renderer& _renderer) : renderer(_renderer)
 {
@@ -25,8 +31,9 @@ SceneView::~SceneView()
 {
 }
 
-void SceneView::Initialise()
+int SceneView::Initialise()
 {
+	return FLUX_SUCCESS;
 }
 
 void SceneView::Update(float deltaTime)
@@ -48,6 +55,41 @@ void SceneView::Update(float deltaTime)
 			EditorConfig::sceneViewWidth = sceneViewSize.x;
 			EditorConfig::sceneViewHeight = sceneViewSize.y;
 			EventDispatcher::QueueEvent(EventType::SceneViewResized, nullptr);
+		}
+
+		// INFO: Gizmos
+		if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused())
+		{
+			GameObject* selectedGameObject = SceneContext::GetScene().GetSelectedGameObject();
+
+			if (selectedGameObject)
+			{
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
+
+				ImVec2 windowPos = ImGui::GetWindowPos();
+				ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
+
+				// INFO: Retrieve active camera and camera matrices
+				auto camera = SceneContext::GetScene().GetCamera().lock();
+				DirectX::XMFLOAT4X4 cameraView{};
+				DirectX::XMFLOAT4X4 cameraProjection{};
+				DirectX::XMStoreFloat4x4(&cameraView, camera->GetViewMatrix());
+				DirectX::XMStoreFloat4x4(&cameraProjection, camera->GetProjectionMatrix());
+
+
+				// INFO: Retrieve selected game object's transform
+				auto transform = selectedGameObject->transform.lock();
+				DirectX::XMFLOAT4X4 transformMatrix{};
+				DirectX::XMStoreFloat4x4(&transformMatrix, transform->GetWorldMatrix());
+
+				ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0], ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, &transformMatrix.m[0][0]);
+
+				if (ImGuizmo::IsUsing())
+				{
+					transform->SetPosition(Vector3(transformMatrix._41, transformMatrix._42, transformMatrix._43));
+				}
+			}
 		}
 
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBackground;

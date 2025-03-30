@@ -8,7 +8,7 @@ namespace Flux
 		EditorPanel() = default;
 		virtual ~EditorPanel() {}
 
-		virtual void Initialise() {}
+		virtual int Initialise() = 0;
 		virtual void Update(float deltaTime) = 0;
 	};
 }
