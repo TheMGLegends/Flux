@@ -1,30 +1,27 @@
 #pragma once
 
+#include <ImGuizmo.h>
+
 namespace Flux::EditorConfig
 {
-	enum class TransformMode
-	{
-		Pan,
-		Translate,
-		Rotate,
-		Scale
-	};
-
 	inline float sceneViewWidth = 1920.0f;
 	inline float sceneViewHeight = 1080.0;
 	inline const float FONT_SIZE = 16.0f;
 
-	inline TransformMode currentTransformMode = TransformMode::Pan;
-	inline TransformMode previousTransformMode = TransformMode::Pan; // INFO: Used when RMB is released to revert to previous transform mode
+	inline ImGuizmo::OPERATION transformOperation = ImGuizmo::TRANSLATE;
+	inline ImGuizmo::MODE transformMode = ImGuizmo::LOCAL;
+	inline bool isPanning = false;
 
-	inline void StorePreviousTransformMode()
+	inline void SwitchTransformMode()
 	{
-		previousTransformMode = currentTransformMode;
-	}
-
-	inline void RevertToPreviousTransformMode()
-	{
-		currentTransformMode = previousTransformMode;
+		if (transformMode == ImGuizmo::LOCAL)
+		{
+			transformMode = ImGuizmo::WORLD;
+		}
+		else
+		{
+			transformMode = ImGuizmo::LOCAL;
+		}
 	}
 }
 

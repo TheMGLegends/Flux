@@ -83,7 +83,7 @@ void SceneView::Update(float deltaTime)
 				DirectX::XMFLOAT4X4 transformMatrix{};
 				DirectX::XMStoreFloat4x4(&transformMatrix, transform->GetWorldMatrix());
 
-				ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0], ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, &transformMatrix.m[0][0]);
+				ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0], EditorConfig::transformOperation, EditorConfig::transformMode, &transformMatrix.m[0][0]);
 
 				if (ImGuizmo::IsUsing())
 				{
@@ -120,22 +120,26 @@ void SceneView::Update(float deltaTime)
 				ImTextureID rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButton");
 				ImTextureID scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButton");
 
-				switch (EditorConfig::currentTransformMode)
+				if (EditorConfig::isPanning)
 				{
-				case TransformMode::Pan:
 					panTexture = (ImTextureID)AssetHandler::GetTexture("PanButtonSelected");
-					break;
-				case TransformMode::Translate:
-					translationTexture = (ImTextureID)AssetHandler::GetTexture("TranslationButtonSelected");
-					break;
-				case TransformMode::Rotate:
-					rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButtonSelected");
-					break;
-				case TransformMode::Scale:
-					scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButtonSelected");
-					break;
-				default:
-					break;
+				}
+				else
+				{
+					switch (EditorConfig::transformOperation)
+					{
+					case ImGuizmo::OPERATION::TRANSLATE:
+						translationTexture = (ImTextureID)AssetHandler::GetTexture("TranslationButtonSelected");
+						break;
+					case ImGuizmo::OPERATION::ROTATE:
+						rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButtonSelected");
+						break;
+					case ImGuizmo::OPERATION::SCALE:
+						scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButtonSelected");
+						break;
+					default:
+						break;
+					}
 				}
 
 				// INFO: Pan Button
@@ -143,7 +147,7 @@ void SceneView::Update(float deltaTime)
 				{
 					// TODO: Logic for Pan Button
 
-					EditorConfig::currentTransformMode = TransformMode::Pan;
+					EditorConfig::isPanning = true;
 				}
 
 				ImGui::SameLine();
@@ -153,7 +157,7 @@ void SceneView::Update(float deltaTime)
 				{
 					// TODO: Logic for Translation Button
 
-					EditorConfig::currentTransformMode = TransformMode::Translate;
+					EditorConfig::transformOperation = ImGuizmo::OPERATION::TRANSLATE;
 				}
 
 				ImGui::SameLine();
@@ -163,7 +167,7 @@ void SceneView::Update(float deltaTime)
 				{
 					// TODO: Logic for Rotation Button
 
-					EditorConfig::currentTransformMode = TransformMode::Rotate;
+					EditorConfig::transformOperation = ImGuizmo::OPERATION::ROTATE;
 				}
 
 				ImGui::SameLine();
@@ -173,7 +177,7 @@ void SceneView::Update(float deltaTime)
 				{
 					// TODO: Logic for Scale Button
 
-					EditorConfig::currentTransformMode = TransformMode::Scale;
+					EditorConfig::transformOperation = ImGuizmo::OPERATION::SCALE;
 				}
 
 				ImGui::PopStyleColor();
