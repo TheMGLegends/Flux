@@ -41,12 +41,13 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 	// INFO: Mouse Mode Switching Logic
 	if (Input::GetMouseButtonDown(SDL_BUTTON_RIGHT))
 	{
-		EditorConfig::isPanning = true;
+		EditorConfig::StorePreviousTransformOperation();
+		EditorConfig::currentTransformOperation = -1;
 		Input::SetMouseMode(true);
 	}
 	else if (Input::GetMouseButtonUp(SDL_BUTTON_RIGHT))
 	{
-		EditorConfig::isPanning = false;
+		EditorConfig::RevertToPreviousTransformOperation();
 		Input::SetMouseMode(false);
 	}
 

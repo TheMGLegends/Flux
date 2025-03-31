@@ -90,15 +90,6 @@ void EditorRuntime::Update(float deltaTime)
 {
 	if (Input::GetKeyDown(SDL_SCANCODE_F3)) { FrameRateMonitor::Toggle(); }
 
-	// INFO: Keys for Transform Modes
-	if (!Input::GetMouseButton(SDL_BUTTON_RIGHT) && !ImGuizmo::IsUsing())
-	{
-		if (Input::GetKeyDown(SDL_SCANCODE_W)) { EditorConfig::transformOperation = ImGuizmo::OPERATION::TRANSLATE; }
-		if (Input::GetKeyDown(SDL_SCANCODE_E)) { EditorConfig::transformOperation = ImGuizmo::OPERATION::ROTATE; }
-		if (Input::GetKeyDown(SDL_SCANCODE_R)) { EditorConfig::transformOperation = ImGuizmo::OPERATION::SCALE; }
-		if (Input::GetKeyDown(SDL_SCANCODE_Z)) { EditorConfig::SwitchTransformMode(); }
-	}
-
 	FrameRateMonitor::Update(deltaTime);
 
 	// INFO: ImGui New Frame

@@ -37,6 +37,9 @@ namespace Flux
 		/// @brief Used internally by the Editor to set the position of the Transform and any associated rigidActors
 		void SetPositionEditor(const DirectX::SimpleMath::Vector3& _position);
 
+		/// @brief Used internally by the Editor to set the rotation of the Transform and any associated rigidActors
+		void SetRotationEditor(const DirectX::SimpleMath::Quaternion& _rotation);
+
 	private:
 		DirectX::SimpleMath::Vector3 position;
 		DirectX::SimpleMath::Quaternion rotation;

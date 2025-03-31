@@ -106,3 +106,19 @@ void Transform::SetPositionEditor(const DirectX::SimpleMath::Vector3& _position)
 		}
 	}
 }
+
+void Transform::SetRotationEditor(const DirectX::SimpleMath::Quaternion& _rotation)
+{
+	rotation = _rotation;
+
+	// INFO: If game object has a physics body we need to setGlobalPose
+	if (GetGameObject()->HasComponent<PhysicsBody>())
+	{
+		auto rigidDynamic = GetGameObject()->GetComponent<PhysicsBody>().lock()->VerifyRigidActor();
+		if (rigidDynamic)
+		{
+			rigidDynamic->setGlobalPose(physx::PxTransform(physx::PxVec3(position.x, position.y, position.z),
+										physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
+		}
+	}
+}

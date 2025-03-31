@@ -8,6 +8,7 @@
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Helpers/MathHelpers.h"
+#include "Core/Input/Input.h"
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Renderer/Renderer.h"
 #include "Engine/Audio/Audio.h"
@@ -40,6 +41,20 @@ void SceneView::Update(float deltaTime)
 {
 	if (ImGui::Begin("Scene View"))
 	{
+		// INFO: Only allow Transform Mode Switching if Scene View is Focused
+		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
+		{
+			// INFO: Keys for Transform Modes
+			if (!Input::GetMouseButton(SDL_BUTTON_RIGHT) && !ImGuizmo::IsUsing())
+			{
+				if (Input::GetKeyDown(SDL_SCANCODE_Q)) { EditorConfig::currentTransformOperation = -1; }
+				if (Input::GetKeyDown(SDL_SCANCODE_W)) { EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE; }
+				if (Input::GetKeyDown(SDL_SCANCODE_E)) { EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::ROTATE; }
+				if (Input::GetKeyDown(SDL_SCANCODE_R)) { EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::SCALE; }
+				if (Input::GetKeyDown(SDL_SCANCODE_Z)) { EditorConfig::SwitchTransformMode(); }
+			}
+		}
+
 		ImVec2 windowSize = ImGui::GetWindowSize();
 		ImVec2 sceneViewSize = ImGui::GetWindowSize();
 		MaintainAspectRatio(sceneViewSize);
@@ -58,7 +73,7 @@ void SceneView::Update(float deltaTime)
 		}
 
 		// INFO: Gizmos
-		if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused())
+		if (RuntimeConfig::IsInEditorMode())
 		{
 			GameObject* selectedGameObject = SceneContext::GetScene().GetSelectedGameObject();
 
@@ -77,17 +92,71 @@ void SceneView::Update(float deltaTime)
 				DirectX::XMStoreFloat4x4(&cameraView, camera->GetViewMatrix());
 				DirectX::XMStoreFloat4x4(&cameraProjection, camera->GetProjectionMatrix());
 
+				// INFO: Snapping
+				bool isSnapEnabled = Input::GetKey(SDL_SCANCODE_LCTRL);
+				
+				// INFO: Populate Snap Values
+				float snapValues[3]{};
+
+				switch (EditorConfig::currentTransformOperation)
+				{
+				case ImGuizmo::OPERATION::TRANSLATE:
+				{
+					snapValues[0] = EditorConfig::translationSnapValue;
+					snapValues[1] = EditorConfig::translationSnapValue;
+					snapValues[2] = EditorConfig::translationSnapValue;
+					break;
+				}
+				case ImGuizmo::OPERATION::ROTATE:
+				{
+					snapValues[0] = EditorConfig::rotationSnapValue;
+					snapValues[1] = EditorConfig::rotationSnapValue;
+					snapValues[2] = EditorConfig::rotationSnapValue;
+					break;
+				}
+				case ImGuizmo::OPERATION::SCALE:
+				{
+					snapValues[0] = EditorConfig::scaleSnapValue;
+					snapValues[1] = EditorConfig::scaleSnapValue;
+					snapValues[2] = EditorConfig::scaleSnapValue;
+					break;
+				}
+				default:
+					break;
+				}
 
 				// INFO: Retrieve selected game object's transform
 				auto transform = selectedGameObject->transform.lock();
 				DirectX::XMFLOAT4X4 transformMatrix{};
 				DirectX::XMStoreFloat4x4(&transformMatrix, transform->GetWorldMatrix());
 
-				ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0], EditorConfig::transformOperation, EditorConfig::transformMode, &transformMatrix.m[0][0]);
+				if (EditorConfig::currentTransformOperation != -1)
+				{
+					ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0],
+										 (ImGuizmo::OPERATION)EditorConfig::currentTransformOperation,
+										 EditorConfig::transformMode, &transformMatrix.m[0][0], nullptr, isSnapEnabled ? snapValues : nullptr);
+				}
 
 				if (ImGuizmo::IsUsing())
 				{
-					transform->SetPositionEditor(Vector3(transformMatrix._41, transformMatrix._42, transformMatrix._43));
+					DirectX::XMVECTOR position{};
+					DirectX::XMVECTOR rotation{};
+					DirectX::XMVECTOR scale{};
+
+					DirectX::XMMATRIX matrix = DirectX::XMLoadFloat4x4(&transformMatrix);
+					DirectX::XMMatrixDecompose(&scale, &rotation, &position, matrix);
+
+					Vector3 positionVector;
+					DirectX::XMStoreFloat3(&positionVector, position);
+					transform->SetPositionEditor(positionVector);
+					
+					Vector3 scaleVector;
+					DirectX::XMStoreFloat3(&scaleVector, scale);
+					transform->SetScale(scaleVector);
+
+					Quaternion rotationQuaternion;
+					DirectX::XMStoreFloat4(&rotationQuaternion, rotation);
+					transform->SetRotationEditor(rotationQuaternion);
 				}
 			}
 		}
@@ -120,26 +189,22 @@ void SceneView::Update(float deltaTime)
 				ImTextureID rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButton");
 				ImTextureID scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButton");
 
-				if (EditorConfig::isPanning)
+				switch (EditorConfig::currentTransformOperation)
 				{
+				case -1: // INFO: Pan Operation (Not Supported by ImGuizmo)
 					panTexture = (ImTextureID)AssetHandler::GetTexture("PanButtonSelected");
-				}
-				else
-				{
-					switch (EditorConfig::transformOperation)
-					{
-					case ImGuizmo::OPERATION::TRANSLATE:
-						translationTexture = (ImTextureID)AssetHandler::GetTexture("TranslationButtonSelected");
-						break;
-					case ImGuizmo::OPERATION::ROTATE:
-						rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButtonSelected");
-						break;
-					case ImGuizmo::OPERATION::SCALE:
-						scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButtonSelected");
-						break;
-					default:
-						break;
-					}
+					break;
+				case ImGuizmo::OPERATION::TRANSLATE:
+					translationTexture = (ImTextureID)AssetHandler::GetTexture("TranslationButtonSelected");
+					break;
+				case ImGuizmo::OPERATION::ROTATE:
+					rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButtonSelected");
+					break;
+				case ImGuizmo::OPERATION::SCALE:
+					scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButtonSelected");
+					break;
+				default:
+					break;
 				}
 
 				// INFO: Pan Button
@@ -147,7 +212,7 @@ void SceneView::Update(float deltaTime)
 				{
 					// TODO: Logic for Pan Button
 
-					EditorConfig::isPanning = true;
+					EditorConfig::currentTransformOperation = -1;
 				}
 
 				ImGui::SameLine();
@@ -157,7 +222,7 @@ void SceneView::Update(float deltaTime)
 				{
 					// TODO: Logic for Translation Button
 
-					EditorConfig::transformOperation = ImGuizmo::OPERATION::TRANSLATE;
+					EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
 				}
 
 				ImGui::SameLine();
@@ -167,7 +232,7 @@ void SceneView::Update(float deltaTime)
 				{
 					// TODO: Logic for Rotation Button
 
-					EditorConfig::transformOperation = ImGuizmo::OPERATION::ROTATE;
+					EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::ROTATE;
 				}
 
 				ImGui::SameLine();
@@ -177,7 +242,7 @@ void SceneView::Update(float deltaTime)
 				{
 					// TODO: Logic for Scale Button
 
-					EditorConfig::transformOperation = ImGuizmo::OPERATION::SCALE;
+					EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::SCALE;
 				}
 
 				ImGui::PopStyleColor();
