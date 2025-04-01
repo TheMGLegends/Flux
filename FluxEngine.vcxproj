@@ -145,6 +145,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Editor\Panels\SceneHierarchy.cpp" />
     <ClCompile Include="Source\Editor\Panels\SceneView.cpp" />
     <ClCompile Include="Source\Engine\Physics\Physics.cpp" />
     <ClCompile Include="Source\Engine\Audio\Audio.cpp" />
@@ -190,6 +191,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Editor\Panels\SceneHierarchy.h" />
     <ClInclude Include="Source\Core\Configs\EditorConfig.h" />
     <ClInclude Include="Source\Core\Debug\FrameRateMonitor.h" />
     <ClInclude Include="Source\Core\GlobalDefines.h" />

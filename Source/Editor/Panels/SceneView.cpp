@@ -337,10 +337,6 @@ void SceneView::Update(float deltaTime)
 	}
 }
 
-void SceneView::OnNotify(EventType eventType, std::shared_ptr<Event> event)
-{
-}
-
 void SceneView::MaintainAspectRatio(ImVec2& sceneViewSize)
 {
 	// INFO: Maintain Aspect Ratio

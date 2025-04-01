@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EditorPanel.h"
-#include "Core/EventSystem/IEventListener.h"
 
 #include <imgui.h>
 
@@ -9,7 +8,7 @@ namespace Flux
 {
 	class Renderer;
 
-	class SceneView : public EditorPanel, public IEventListener
+	class SceneView : public EditorPanel
 	{
 	public:
 		SceneView(Renderer& _renderer);
@@ -17,10 +16,6 @@ namespace Flux
 
 		virtual int Initialise() override;
 		virtual void Update(float deltaTime) override;
-
-		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
-
-		// TODO: Load Scene Event
 
 	private:
 		void MaintainAspectRatio(ImVec2& sceneViewSize);

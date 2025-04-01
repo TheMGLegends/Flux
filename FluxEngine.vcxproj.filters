@@ -129,6 +129,9 @@
     <ClCompile Include="Source\Editor\Panels\SceneView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Panels\SceneHierarchy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -335,6 +338,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\GlobalDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Editor\Panels\SceneHierarchy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

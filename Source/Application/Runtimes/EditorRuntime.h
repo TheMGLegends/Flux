@@ -13,6 +13,7 @@ namespace Flux
 {
 	class EditorPanel;
 	class Renderer;
+	class SceneHierarchy;
 	class SceneView;
 
 	class EditorRuntime : public Runtime
@@ -39,6 +40,7 @@ namespace Flux
 	private:
 		std::vector<std::unique_ptr<EditorPanel>> editorPanels;
 		SceneView* sceneView;
+		SceneHierarchy* sceneHierarchy;
 	};
 }
 

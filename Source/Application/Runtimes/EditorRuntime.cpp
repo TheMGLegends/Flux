@@ -10,12 +10,13 @@
 #include "Core/Debug/Debug.h"
 #include "Core/Debug/FrameRateMonitor.h"
 #include "Core/Input/Input.h"
+#include "Editor/Panels/SceneHierarchy.h"
 #include "Editor/Panels/SceneView.h"
 
 using namespace Flux;
 using namespace Flux::GlobalDefines;
 
-EditorRuntime::EditorRuntime() : sceneView(nullptr)
+EditorRuntime::EditorRuntime() : sceneView(nullptr), sceneHierarchy(nullptr)
 {
 }
 
@@ -80,9 +81,15 @@ int EditorRuntime::Initialise(Renderer& renderer)
 	editorPanels.emplace_back(std::make_unique<SceneView>(renderer));
 	sceneView = static_cast<SceneView*>(editorPanels.back().get());
 
-	for (size_t i = 0; i < editorPanels.size(); i++) { editorPanels[i]->Initialise(); }
+	editorPanels.emplace_back(std::make_unique<SceneHierarchy>());
+	sceneHierarchy = static_cast<SceneHierarchy*>(editorPanels.back().get());
 
-	// TODO: Initialisation Logic
+	for (size_t i = 0; i < editorPanels.size(); i++) 
+	{ 
+		std::unique_ptr<EditorPanel>& editorPanel = editorPanels[i];
+		editorPanel->Initialise();
+	}
+
 	return FLUX_SUCCESS;
 }
 
@@ -102,9 +109,6 @@ void EditorRuntime::Update(float deltaTime)
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID, nullptr, dockspaceFlags);
 
 	// TODO: TESTING
-	ImGui::Begin("Hierarchy");
-	ImGui::Text("Hello, World!");
-	ImGui::End();
 	ImGui::Begin("Details");
 	ImGui::Text("Hello, World!");
 	ImGui::End();
