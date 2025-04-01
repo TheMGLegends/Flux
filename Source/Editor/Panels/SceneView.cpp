@@ -11,6 +11,7 @@
 #include "Core/Input/Input.h"
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Renderer/Renderer.h"
+#include "Editor/Panels/SceneHierarchy.h"
 #include "Engine/Audio/Audio.h"
 
 // TODO: TESTING
@@ -24,7 +25,7 @@ using namespace DirectX::SimpleMath;
 using namespace Flux::EditorConfig;
 using namespace Flux::GlobalDefines;
 
-SceneView::SceneView(Renderer& _renderer) : renderer(_renderer)
+SceneView::SceneView(Renderer& _renderer, SceneHierarchy* _sceneHierarchy) : renderer(_renderer), sceneHierarchy(_sceneHierarchy)
 {
 }
 
@@ -54,6 +55,14 @@ void SceneView::Update(float deltaTime)
 				if (Input::GetKeyDown(SDL_SCANCODE_Z)) { EditorConfig::SwitchTransformMode(); }
 			}
 		}
+		// INFO: Add Window Focus if panning with right mouse button whilst hovering over Scene View
+		else
+		{
+			if (Input::GetMouseButtonDown(SDL_BUTTON_RIGHT) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
+			{
+				ImGui::SetWindowFocus();
+			}
+		}
 
 		ImVec2 windowSize = ImGui::GetWindowSize();
 		ImVec2 sceneViewSize = ImGui::GetWindowSize();
@@ -75,7 +84,8 @@ void SceneView::Update(float deltaTime)
 		// INFO: Gizmos
 		if (RuntimeConfig::IsInEditorMode())
 		{
-			GameObject* selectedGameObject = SceneContext::GetScene().GetSelectedGameObject();
+			//GameObject* selectedGameObject = SceneContext::GetScene().GetSelectedGameObject();
+			GameObject* selectedGameObject = sceneHierarchy != nullptr ? sceneHierarchy->GetSelectedGameObject() : nullptr;
 
 			if (selectedGameObject)
 			{

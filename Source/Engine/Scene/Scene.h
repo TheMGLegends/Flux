@@ -27,6 +27,7 @@ namespace Flux
 	class Scene : public ISerializable, public IEventListener, public physx::PxSimulationEventCallback
 	{
 		friend class SceneContext;
+		friend class SceneHierarchy;
 
 	public:
 		Scene();
@@ -64,10 +65,9 @@ namespace Flux
 		/// @brief Returns the scene view camera if in editor mode otherwise returns play mode camera
 		std::weak_ptr<Camera> GetCamera() const;
 
-		inline physx::PxScene& GetPhysicsScene() const { return *physicsScene; }
+		inline const std::string& GetSceneName() const { return sceneName; }
 
-		// TODO: TESTING - REMOVE
-		GameObject* GetSelectedGameObject() const;
+		inline physx::PxScene& GetPhysicsScene() const { return *physicsScene; }
 
 	private:
 		struct DebugWireframeData

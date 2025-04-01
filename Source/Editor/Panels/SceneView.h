@@ -7,11 +7,12 @@
 namespace Flux
 {
 	class Renderer;
+	class SceneHierarchy;
 
 	class SceneView : public EditorPanel
 	{
 	public:
-		SceneView(Renderer& _renderer);
+		SceneView(Renderer& _renderer, SceneHierarchy* _sceneHierarchy);
 		virtual ~SceneView() override;
 
 		virtual int Initialise() override;
@@ -22,6 +23,7 @@ namespace Flux
 
 	private:
 		Renderer& renderer;
+		SceneHierarchy* sceneHierarchy;
 
 		// TODO: SceneView Data
 	};

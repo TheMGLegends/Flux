@@ -27,7 +27,7 @@ using namespace Flux::GlobalDefines;
 
 Application::Application() : window(nullptr), isRunning(false)
 {
-	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
+	if (!SDL_Init(SDL_INIT_VIDEO /*| SDL_INIT_GAMEPAD*/))
 	{
 		Debug::LogError("Application::Application() - Failed to initialise SDL Systems");
 	}
@@ -58,24 +58,24 @@ Application::Application() : window(nullptr), isRunning(false)
 		Debug::LogError("Application::Application() - Failed to initialise Asset Handler");
 	}
 
-	if (IS_FAILURE(editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext())))
-	{
-		Debug::LogError("Application::Application() - Failed to pre-initialise Editor Runtime");
-	}
-	
 	if (IS_FAILURE(engineRuntime.PreInitialise()))
 	{
 		Debug::LogError("Application::Application() - Failed to pre-initialise Engine Runtime");
 	}
 
-	if (IS_FAILURE(editorRuntime.Initialise(renderer)))
-	{
-		Debug::LogError("Application::Application() - Failed to initialise Editor Runtime");
-	}
-
 	if (IS_FAILURE(engineRuntime.Initialise()))
 	{
 		Debug::LogError("Application::Application() - Failed to initialise Engine Runtime");
+	}
+
+	if (IS_FAILURE(editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext())))
+	{
+		Debug::LogError("Application::Application() - Failed to pre-initialise Editor Runtime");
+	}
+	
+	if (IS_FAILURE(editorRuntime.Initialise(renderer)))
+	{
+		Debug::LogError("Application::Application() - Failed to initialise Editor Runtime");
 	}
 
 	// INFO: Setup Events to Listen For

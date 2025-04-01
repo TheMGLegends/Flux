@@ -59,6 +59,8 @@ namespace Flux
 		virtual void OnEnable() {}
 		virtual void OnDestroy() {}
 
+		inline const std::string& GetName() const { return name; }
+
 	private:
 		inline void SetName(const std::string& _name) { name = _name; } // INFO: Used by Editor GUI to set the display name of the GameObject
 		inline void SetType(const std::string& _type) { type = _type; } // INFO: Used during Deserialization to note down GO type for future Serialization
@@ -76,6 +78,8 @@ namespace Flux
 	// INFO: GameObject Factory (Reflection)
 	public:
 		static std::unique_ptr<GameObject> CreateGameObject(const std::string& typeName);
+		static const std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>>& GetGameObjectTypes();
+		static inline void ClearGameObjectTypeCounters() { gameObjectCounter = -1; gameObjectTypeCounters.clear(); }
 
 	protected:
 		static void RegisterGameObjectType(const std::string& typeName, std::function<std::unique_ptr<GameObject>()> creator);
@@ -90,6 +94,8 @@ namespace Flux
 
 	private:
 		inline static std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>> gameObjectTypes;
+		inline static std::unordered_map<std::string, int> gameObjectTypeCounters;
+		static int gameObjectCounter; // INFO: Only for Game Objects since they don't get reflected
 	};
 
 	template<class T>

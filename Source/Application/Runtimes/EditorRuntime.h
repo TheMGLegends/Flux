@@ -39,8 +39,8 @@ namespace Flux
 
 	private:
 		std::vector<std::unique_ptr<EditorPanel>> editorPanels;
-		SceneView* sceneView;
 		SceneHierarchy* sceneHierarchy;
+		SceneView* sceneView;
 	};
 }
 

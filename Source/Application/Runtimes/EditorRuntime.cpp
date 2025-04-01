@@ -7,8 +7,10 @@
 
 #include "Core/GlobalDefines.h"
 #include "Core/Configs/EditorConfig.h"
+#include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/Debug/FrameRateMonitor.h"
+#include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Input/Input.h"
 #include "Editor/Panels/SceneHierarchy.h"
 #include "Editor/Panels/SceneView.h"
@@ -16,7 +18,7 @@
 using namespace Flux;
 using namespace Flux::GlobalDefines;
 
-EditorRuntime::EditorRuntime() : sceneView(nullptr), sceneHierarchy(nullptr)
+EditorRuntime::EditorRuntime() : sceneHierarchy(nullptr), sceneView(nullptr)
 {
 }
 
@@ -78,11 +80,11 @@ int EditorRuntime::Initialise(Renderer& renderer)
 	FrameRateMonitor::Initialise();
 
 	// INFO: Editor Panel Initialisation
-	editorPanels.emplace_back(std::make_unique<SceneView>(renderer));
-	sceneView = static_cast<SceneView*>(editorPanels.back().get());
-
 	editorPanels.emplace_back(std::make_unique<SceneHierarchy>());
 	sceneHierarchy = static_cast<SceneHierarchy*>(editorPanels.back().get());
+
+	editorPanels.emplace_back(std::make_unique<SceneView>(renderer, sceneHierarchy));
+	sceneView = static_cast<SceneView*>(editorPanels.back().get());
 
 	for (size_t i = 0; i < editorPanels.size(); i++) 
 	{ 
@@ -95,7 +97,17 @@ int EditorRuntime::Initialise(Renderer& renderer)
 
 void EditorRuntime::Update(float deltaTime)
 {
+	// INFO: Toggle FPS Counter Visibility
 	if (Input::GetKeyDown(SDL_SCANCODE_F3)) { FrameRateMonitor::Toggle(); }
+
+	// INFO: Save Scene if CTRL + S is Pressed and we are in editor mode
+	if (RuntimeConfig::IsInEditorMode())
+	{
+		if (Input::GetKey(SDL_SCANCODE_LCTRL) && Input::GetKeyDown(SDL_SCANCODE_S)) 
+		{ 
+			EventDispatcher::Notify(EventType::SceneSaved, nullptr); 
+		}
+	}
 
 	FrameRateMonitor::Update(deltaTime);
 

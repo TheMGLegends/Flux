@@ -6,6 +6,8 @@
 
 using namespace Flux;
 
+int GameObject::gameObjectCounter = -1;
+
 GameObject::GameObject() : isActive(true), name("GameObject"), type("GameObject")
 {
 	transform = AddComponent<Transform>(this);
@@ -119,8 +121,9 @@ std::unique_ptr<GameObject> GameObject::CreateGameObject(const std::string& type
 	// INFO: Default GameObject type creation
 	if (typeName == "GameObject")
 	{ 
+		gameObjectCounter++;
 		gameObject = std::make_unique<GameObject>();
-		gameObject.get()->SetName("GameObject");
+		gameObject.get()->SetName("GameObject" + std::to_string(gameObjectCounter));
 		gameObject.get()->SetType("GameObject");
 
 		return gameObject;
@@ -129,13 +132,20 @@ std::unique_ptr<GameObject> GameObject::CreateGameObject(const std::string& type
 	auto it = gameObjectTypes.find(typeName);
 	if (it != gameObjectTypes.end())
 	{
+		int count = gameObjectTypeCounters[typeName]++;
 		gameObject = it->second();
-		gameObject.get()->SetName(typeName);
+		gameObject.get()->SetName(typeName + std::to_string(count));
 		gameObject.get()->SetType(typeName);
+
 		return gameObject;
 	}
 
 	return nullptr;
+}
+
+const std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>>& GameObject::GetGameObjectTypes()
+{
+	return gameObjectTypes;
 }
 
 void GameObject::RegisterGameObjectType(const std::string& typeName, std::function<std::unique_ptr<GameObject>()> creator)
@@ -145,5 +155,8 @@ void GameObject::RegisterGameObjectType(const std::string& typeName, std::functi
 	if (!result.second)
 	{
 		Debug::LogError("GameObject::RegisterGameObjectType - GameObject type already registered: " + typeName);
+		return;
 	}
+
+	gameObjectTypeCounters[typeName] = 0;
 }

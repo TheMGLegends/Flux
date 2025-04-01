@@ -5,6 +5,9 @@
 
 namespace Flux
 {
+	class GameObject;
+	class Scene;
+
 	class SceneHierarchy : public EditorPanel, public IEventListener
 	{
 	public:
@@ -16,7 +19,12 @@ namespace Flux
 
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
+		GameObject* GetSelectedGameObject() const;
+
 	private:
+		Scene& scene;
+		GameObject* selectedGameObject;
+
 		// TODO: Scene Hierarchy Data
 	};
 }

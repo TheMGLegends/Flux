@@ -25,9 +25,6 @@ SceneViewCamera::SceneViewCamera() : rotationSpeed(0.001f), movementSpeed(10.0f)
 		camera.lock()->SetDrawFrustum(false);
 	}
 
-	// INFO: Initial Rotation Setup
-	transform.lock()->SetRotation(Quaternion::CreateFromYawPitchRoll(DirectX::XM_PI, 0.0f, 0.0f));
-
 	// INFO: Overwrite default skybox with debug skybox
 	camera.lock()->SetMaterialTexture("DebugSkybox");
 }

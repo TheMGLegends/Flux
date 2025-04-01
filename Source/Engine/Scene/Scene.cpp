@@ -24,13 +24,14 @@ using namespace DirectX::SimpleMath;
 
 using namespace Flux;
 
-Scene::Scene() : sceneName("Default")
+Scene::Scene() : sceneName("DefaultScene")
 {
 	SceneContext::SetScene(this);
 
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::GameObjectRemoved, this);
 	EventDispatcher::AddListener(EventType::PlayModeExited, this);
+	EventDispatcher::AddListener(EventType::SceneSaved, this);
 
 	// INFO: Create a scene view camera
 	sceneViewCamera = std::make_unique<SceneViewCamera>();
@@ -123,6 +124,7 @@ void Scene::Deserialize(const nlohmann::ordered_json& json)
 {
 	// INFO: Clear existing scene contents before loading 'new' scene
 	gameObjects.clear();
+	GameObject::ClearGameObjectTypeCounters();
 	components.clear();
 	debugWireframes.clear();
 	rigidActorsToColliders.clear();
@@ -158,7 +160,7 @@ void Scene::Deserialize(const nlohmann::ordered_json& json)
 	}
 }
 
-void Flux::Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
+void Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 {
 	if (eventType == EventType::GameObjectRemoved)
 	{
@@ -208,6 +210,14 @@ void Flux::Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 		std::ifstream jsonTest("test.json");
 		nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonTest);
 		Deserialize(json);
+	}
+	else if (eventType == EventType::SceneSaved)
+	{
+		// TODO: TESTING CODE
+		nlohmann::ordered_json json;
+		Serialize(json);
+		std::ofstream jsonFile("test.json");
+		jsonFile << json.dump(4);
 	}
 }
 
@@ -418,9 +428,4 @@ std::weak_ptr<Camera> Scene::GetCamera() const
 	{
 		return sceneViewCamera->GetCamera();
 	}
-}
-
-GameObject* Flux::Scene::GetSelectedGameObject() const
-{
-	return gameObjects[1].get(); // TODO: TEMPORARY GETS GO WITH BoxCollider
 }
