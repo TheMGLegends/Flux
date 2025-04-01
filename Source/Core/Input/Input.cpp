@@ -126,10 +126,18 @@ void Input::Update()
 	previousMouseState = currentMouseState;
 	if (isRelative)
 	{
-		// INFO: Keep the mouse at the same position to prevent ImGui interactions
-		SDL_WarpMouseInWindow(window, latestAbsoluteMousePosition.x, latestAbsoluteMousePosition.y);
+		Vector2 newMousePosition;
+		SDL_MouseButtonFlags newMouseState = SDL_GetRelativeMouseState(&newMousePosition.x, &newMousePosition.y);
 
-		currentMouseState = SDL_GetRelativeMouseState(&mousePosition.x, &mousePosition.y);
+		// INFO: Keep the mouse at the same position to prevent ImGui interactions granted the mouse has moved
+		if (newMousePosition != mousePosition)
+		{
+			// INFO: Only warps if the mouse has moved
+			SDL_WarpMouseInWindow(window, latestAbsoluteMousePosition.x, latestAbsoluteMousePosition.y);
+			mousePosition = newMousePosition;
+		}
+
+		currentMouseState = newMouseState;
 	}
 	else 
 	{ 

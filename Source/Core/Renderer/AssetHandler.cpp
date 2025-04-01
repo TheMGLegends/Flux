@@ -150,10 +150,12 @@ HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
 {
 	HRESULT hResult = S_OK;
 
-	if (FAILED(VerifyDeviceAndContext(true)))
+	hResult = VerifyDeviceAndContext(true);
+
+	if (FAILED(hResult))
 	{
 		Debug::LogError("AssetHandler::LoadTexture() - Unable to load texture, see above error codes");
-		return E_FAIL;
+		return hResult;
 	}
 
 	auto& deviceRef = device->get();
@@ -235,27 +237,85 @@ int AssetHandler::LoadAudio(const std::filesystem::path& audioPath)
 	return FLUX_SUCCESS;
 }
 
+ShaderData& AssetHandler::GetShaderData(DirectXConfig::ShaderType shaderType)
+{
+	auto it = shaders.find(shaderType);
+	if (it != shaders.end()) { return it->second; }
+
+	Debug::LogError("AssetHandler::GetShaderData() - Failed to find shader data. Shader Type: " + std::to_string(magic_enum::enum_integer(shaderType)));
+	return ShaderData::EMPTY;
+}
+
+ConstantBufferData& AssetHandler::GetConstantBufferData(DirectXConfig::ConstantBufferType constantBufferType)
+{
+	auto it = constantBuffers.find(constantBufferType);
+	if (it != constantBuffers.end()) { return it->second; }
+
+	Debug::LogError("AssetHandler::GetConstantBufferData() - Failed to find constant buffer data. Constant Buffer Type: " + std::to_string(magic_enum::enum_integer(constantBufferType)));
+	return ConstantBufferData::EMPTY;
+}
+
+ID3D11DepthStencilState* AssetHandler::GetDepthWriteState(DirectXConfig::DepthWriteType depthWriteType)
+{
+	auto it = depthWriteStates.find(depthWriteType);
+	if (it != depthWriteStates.end()) { return it->second.Get(); }
+
+	Debug::LogError("AssetHandler::GetDepthWriteState() - Failed to find depth write state. Depth Write Type: " + std::to_string(magic_enum::enum_integer(depthWriteType)));
+	return nullptr;
+}
+
+ID3D11RasterizerState* AssetHandler::GetCullingModeState(DirectXConfig::CullingModeType cullingModeType)
+{
+	auto it = cullingModeStates.find(cullingModeType);
+	if (it != cullingModeStates.end()) { return it->second.Get(); }
+
+	Debug::LogError("AssetHandler::GetCullingModeState() - Failed to find culling mode state. Culling Mode Type: " + std::to_string(magic_enum::enum_integer(cullingModeType)));
+	return nullptr;
+}
+
+DirectX::SpriteFont* AssetHandler::GetFont(const std::string& fontName)
+{
+	auto it = fonts.find(fontName);
+	if (it != fonts.end()) { return it->second.get(); }
+
+	Debug::LogError("AssetHandler::GetFont() - Failed to find font. Font Name: " + fontName);
+	return nullptr;
+}
+
+ID3D11ShaderResourceView* AssetHandler::GetTexture(const std::string& textureName)
+{
+	auto it = textures.find(textureName);
+	if (it != textures.end()) { return it->second.Get(); }
+
+	Debug::LogError("AssetHandler::GetTexture() - Failed to find texture. Texture Name: " + textureName);
+	return nullptr;
+}
+
 Model* AssetHandler::GetModel(const std::string& modelName)
 {
-	return models[modelName].get();
+	auto it = models.find(modelName);
+	if (it != models.end()) { return it->second.get(); }
+
+	Debug::LogError("AssetHandler::GetModel() - Failed to find model. Model Name: " + modelName);
+	return nullptr;
 }
 
 Material AssetHandler::GetMaterial(DirectXConfig::ShaderType shaderType)
 {
-	return materials[shaderType];
+	auto it = materials.find(shaderType);
+	if (it != materials.end()) { return it->second; }
+
+	Debug::LogError("AssetHandler::GetMaterial() - Failed to find material. Shader Type: " + std::string(magic_enum::enum_name(shaderType)));
+	return Material();
 }
 
 const std::filesystem::path& Flux::AssetHandler::GetAudioPath(const std::string& audioName)
 {
-	if (auto audioPath = audioPaths.find(audioName); audioPath != audioPaths.end())
-	{
-		return audioPath->second;
-	}
-	else
-	{
-		Debug::LogError("AssetHandler::GetAudioPath() - Failed to find audio path. Audio Name: " + audioName);
-		return EMPTY_PATH;
-	}
+	auto it = audioPaths.find(audioName);
+	if (it != audioPaths.end()) { return it->second; }
+
+	Debug::LogError("AssetHandler::GetAudioPath() - Failed to find audio path. Audio Name: " + audioName);
+	return EMPTY_PATH;
 }
 
 HRESULT AssetHandler::LoadShaders(ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath)

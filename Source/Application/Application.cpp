@@ -105,8 +105,9 @@ void Application::Run()
 	{
 		Time::Tick();
 		Input::Update();
+		float deltaTime = Time::DeltaTime();
 
-		editorRuntime.Update(Time::DeltaTime());
+		editorRuntime.Update(deltaTime);
 
 		if (RuntimeConfig::HasEnteredPlayMode() && !RuntimeConfig::IsPaused())
 		{
@@ -137,12 +138,12 @@ void Application::Run()
 				}
 			}
 
-			engineRuntime.Update(Time::DeltaTime());
+			engineRuntime.Update(deltaTime);
 			engineRuntime.FixedUpate(TimeConfig::FIXED_DELTA_TIME);
 		}
 
 		// INFO: Internal Runtime Config Checks to accompany editor VS play mode cameras
-		engineRuntime.LateUpdate(Time::DeltaTime());
+		engineRuntime.LateUpdate(deltaTime);
 
 		// INFO: Renders the scene and ImGui
 		renderer.RenderFrame(engineRuntime.GetScene());

@@ -21,13 +21,13 @@ namespace Flux
 		inline ID3D11Buffer* GetConstantBuffer() { return buffer.Get(); }
 
 	public:
-		static const ConstantBufferData EMPTY;
+		static ConstantBufferData EMPTY;
 
 	private:
 		DirectXConfig::ConstantBufferType constantBufferType;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
 	};
 
-	inline const ConstantBufferData ConstantBufferData::EMPTY = {};
+	inline ConstantBufferData ConstantBufferData::EMPTY{};
 }
 

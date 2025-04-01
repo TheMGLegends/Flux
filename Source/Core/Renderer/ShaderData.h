@@ -24,7 +24,7 @@ namespace Flux
 		inline ID3D11InputLayout* GetInputLayout() { return inputLayout.Get(); }
 
 	public:
-		static const ShaderData EMPTY;
+		static ShaderData EMPTY;
 
 	private:
 		DirectXConfig::ShaderType shaderType;
@@ -33,6 +33,6 @@ namespace Flux
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 	};
 
-	inline const ShaderData ShaderData::EMPTY = {};
+	inline ShaderData ShaderData::EMPTY{};
 }
 

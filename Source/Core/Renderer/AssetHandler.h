@@ -42,13 +42,13 @@ namespace Flux
 
 		// INFO: Getters
 
-		static inline ShaderData& GetShaderData(DirectXConfig::ShaderType shaderType) { return shaders[shaderType]; }
-		static inline ConstantBufferData& GetConstantBufferData(DirectXConfig::ConstantBufferType constantBufferType) { return constantBuffers[constantBufferType]; }
-		static inline ID3D11DepthStencilState* GetDepthWriteState(DirectXConfig::DepthWriteType depthWriteType) { return depthWriteStates[depthWriteType].Get(); }
-		static inline ID3D11RasterizerState* GetCullingModeState(DirectXConfig::CullingModeType cullingModeType) { return cullingModeStates[cullingModeType].Get(); }
+		static ShaderData& GetShaderData(DirectXConfig::ShaderType shaderType);
+		static ConstantBufferData& GetConstantBufferData(DirectXConfig::ConstantBufferType constantBufferType);
+		static ID3D11DepthStencilState* GetDepthWriteState(DirectXConfig::DepthWriteType depthWriteType);
+		static ID3D11RasterizerState* GetCullingModeState(DirectXConfig::CullingModeType cullingModeType);
 		static inline ID3D11SamplerState* GetSamplerState() { return samplerState.Get(); }
-		static inline DirectX::SpriteFont* GetFont(const std::string& fontName) { return fonts[fontName].get(); }
-		static inline ID3D11ShaderResourceView* GetTexture(const std::string& textureName) { return textures[textureName].Get(); }
+		static DirectX::SpriteFont* GetFont(const std::string& fontName);
+		static ID3D11ShaderResourceView* GetTexture(const std::string& textureName);
 		static Model* GetModel(const std::string& modelName);
 
 		/// @brief Returns a copy of a default material that can then be modified
