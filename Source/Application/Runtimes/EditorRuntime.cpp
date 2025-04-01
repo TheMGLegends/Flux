@@ -113,7 +113,11 @@ void EditorRuntime::Update(float deltaTime)
 	ImGui::End();
 
 	// INFO: Update Editor Panels
-	for (auto& editorPanel : editorPanels) { editorPanel->Update(deltaTime); }
+	for (size_t i = 0; i < editorPanels.size(); i++)
+	{
+		std::unique_ptr<EditorPanel>& editorPanel = editorPanels[i];
+		editorPanel->Update(deltaTime);
+	}
 }
 
 void EditorRuntime::SetCustomStyle()

@@ -54,11 +54,12 @@ void EventDispatcher::QueueEvent(EventType eventType, std::shared_ptr<Event> eve
 
 void EventDispatcher::ProcessEvents()
 {
+	if (eventQueue.empty()) { return; }
+
 	while (!eventQueue.empty())
 	{
-		auto event = std::move(eventQueue.front());
-		eventQueue.pop();
-
+		auto& event = eventQueue.front();
 		Notify(event.first, event.second);
+		eventQueue.pop();
 	}
 }
