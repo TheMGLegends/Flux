@@ -142,9 +142,18 @@ void SceneView::Update(float deltaTime)
 
 				if (EditorConfig::currentTransformOperation != -1)
 				{
+					bool overrideMode = false;
+
+					if (EditorConfig::currentTransformOperation == ImGuizmo::OPERATION::SCALE && EditorConfig::transformMode == ImGuizmo::MODE::WORLD)
+					{
+						// INFO: ImGuizmo does not support scaling in world mode
+						overrideMode = true;
+					}
+
 					ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0],
 										 (ImGuizmo::OPERATION)EditorConfig::currentTransformOperation,
-										 EditorConfig::transformMode, &transformMatrix.m[0][0], nullptr, isSnapEnabled ? snapValues : nullptr);
+										 overrideMode ? ImGuizmo::MODE::LOCAL : EditorConfig::transformMode, 
+										 &transformMatrix.m[0][0], nullptr, isSnapEnabled ? snapValues : nullptr);
 				}
 
 				if (ImGuizmo::IsUsing())
