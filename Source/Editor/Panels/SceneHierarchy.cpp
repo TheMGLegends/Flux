@@ -1,6 +1,7 @@
 #include "SceneHierarchy.h"
 
 #include <imgui.h>
+#include <string/imgui_stdlib.h>
 #include <ImGuizmo.h>
 #include <memory>
 
@@ -16,7 +17,7 @@
 using namespace Flux;
 using namespace Flux::GlobalDefines;
 
-SceneHierarchy::SceneHierarchy() : scene(SceneContext::GetScene()), selectedGameObject(nullptr)
+SceneHierarchy::SceneHierarchy() : scene(SceneContext::GetScene()), selectedGameObject(nullptr), isRenaming(false)
 {
 	EventDispatcher::AddListener(EventType::PlayModeExited, this);
 }
@@ -39,11 +40,18 @@ void SceneHierarchy::Update(float deltaTime)
 		selectedGameObject = nullptr;
 	}
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 5.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
 	if (ImGui::Begin("Scene Hierarchy"))
 	{
+		ImVec2 windowPos = ImGui::GetWindowPos();
 		ImVec2 windowSize = ImGui::GetWindowSize();
+
+		// INFO: Play Mode Overlay
+		if (RuntimeConfig::IsInPlayMode() || RuntimeConfig::IsPaused())
+		{
+			ImGui::GetForegroundDrawList()->AddRectFilled(windowPos, ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), IM_COL32(0, 116, 188, 50));
+		}
 
 		ImGui::SetCursorPosX((windowSize.x - ImGui::CalcTextSize(scene.GetSceneName().c_str()).x) * 0.5f);
 		ImGui::Text(scene.GetSceneName().c_str());
@@ -58,10 +66,37 @@ void SceneHierarchy::Update(float deltaTime)
 
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(0);
-				if (ImGui::Selectable(("  " + gameObject->GetName()).c_str(), selectedGameObject == gameObject.get()))
+
+				// INFO: Unique ID for each GameObject
+				if (ImGui::Selectable(("##" + gameObject->GetID()).c_str(), selectedGameObject == gameObject.get(), 0, ImVec2(0, 22)))
 				{
 					selectedGameObject = gameObject.get();
-					EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
+					
+					// INFO: Default to Translate Operation if we are currently in pan mode
+					if (EditorConfig::currentTransformOperation == -1)
+					{
+						EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
+					}
+				}
+
+				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObject)
+				{
+					isRenaming = true;
+				}
+
+				ImGui::SameLine();
+
+				if (isRenaming && selectedGameObject == gameObject.get())
+				{
+					ImGui::SetKeyboardFocusHere();
+					if (ImGui::InputText("##CustomNameInput", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue))
+					{
+						isRenaming = false;
+					}
+				}
+				else
+				{
+					ImGui::Text(gameObject->GetName().c_str());
 				}
 			}
 

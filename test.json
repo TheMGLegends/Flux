@@ -2,7 +2,8 @@
     "SceneName": "DefaultScene",
     "GameObjects": [
         {
-            "Name": "GameObject0",
+            "Name": "Camera",
+            "ID": "GameObject0",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -18,7 +19,7 @@
                     "Rotation": [
                         -0.0,
                         0.0,
-                        -0.0
+                        0.0
                     ],
                     "Scale": [
                         0.9999970197677612,
@@ -45,7 +46,8 @@
             ]
         },
         {
-            "Name": "GameObject1",
+            "Name": "PhysicsCube",
+            "ID": "GameObject1",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -59,8 +61,8 @@
                         -8.711907386779785
                     ],
                     "Rotation": [
-                        49.99996566772461,
-                        44.99992370605469,
+                        49.99992752075195,
+                        44.99986267089844,
                         -179.9999542236328
                     ],
                     "Scale": [
@@ -114,7 +116,8 @@
             ]
         },
         {
-            "Name": "GameObject2",
+            "Name": "TriggerBox",
+            "ID": "GameObject2",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -176,7 +179,8 @@
             ]
         },
         {
-            "Name": "GameObject3",
+            "Name": "ColliderSphere",
+            "ID": "GameObject3",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -222,7 +226,8 @@
             ]
         },
         {
-            "Name": "GameObject4",
+            "Name": "Platform",
+            "ID": "GameObject4",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -272,7 +277,8 @@
             ]
         },
         {
-            "Name": "Sphere0",
+            "Name": "VisualSphere",
+            "ID": "Sphere0",
             "Type": "Sphere",
             "IsActive": true,
             "Components": [
@@ -306,7 +312,8 @@
             ]
         },
         {
-            "Name": "Cube0",
+            "Name": "VisualCube",
+            "ID": "Cube0",
             "Type": "Cube",
             "IsActive": true,
             "Components": [

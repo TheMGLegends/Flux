@@ -59,11 +59,14 @@ namespace Flux
 		virtual void OnEnable() {}
 		virtual void OnDestroy() {}
 
-		inline const std::string& GetName() const { return name; }
+
+		inline std::string& GetName() { return name; }
+		inline const std::string& GetID() const { return id; }
 
 	private:
-		inline void SetName(const std::string& _name) { name = _name; } // INFO: Used by Editor GUI to set the display name of the GameObject
-		inline void SetType(const std::string& _type) { type = _type; } // INFO: Used during Deserialization to note down GO type for future Serialization
+		inline void SetName(const std::string& _name) { name = _name; }
+		inline void SetID(const std::string& _id) { id = _id; }
+		inline void SetType(const std::string& _type) { type = _type; }
 
 	public:
 		std::weak_ptr<Transform> transform;
@@ -73,6 +76,7 @@ namespace Flux
 		std::vector<std::shared_ptr<Component>> components;
 
 		std::string name; // INFO: Used by Editor GUI to display the name of the GameObject
+		std::string id; // INFO: Used by ImGui to ensure a unique ID for each GameObject
 		std::string type; // INFO: Used by Deserialization to determine the type of the GameObject to instantiate
 
 	// INFO: GameObject Factory (Reflection)
