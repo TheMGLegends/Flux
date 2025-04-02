@@ -1,10 +1,15 @@
 #include "SceneHierarchy.h"
 
 #include <imgui.h>
+#include <ImGuizmo.h>
 #include <memory>
 
 #include "Core/GlobalDefines.h"
+#include "Core/Configs/EditorConfig.h"
+#include "Core/Configs/RuntimeConfig.h"
 #include "Core/EventSystem/EventDispatcher.h"
+#include "Core/Input/Input.h"
+#include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
 #include "Engine/Scene/SceneContext.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
 
@@ -27,6 +32,13 @@ int SceneHierarchy::Initialise()
 
 void SceneHierarchy::Update(float deltaTime)
 {
+	// INFO: Object Deletion Logic
+	if (Input::GetKeyDown(SDL_SCANCODE_DELETE) && RuntimeConfig::IsInEditorMode() && selectedGameObject)
+	{
+		EventDispatcher::Notify(EventType::GameObjectRemoved, std::make_shared<GameObjectRemovedEvent>(selectedGameObject));
+		selectedGameObject = nullptr;
+	}
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 5.0f));
 
 	if (ImGui::Begin("Scene Hierarchy"))
@@ -49,6 +61,7 @@ void SceneHierarchy::Update(float deltaTime)
 				if (ImGui::Selectable(("  " + gameObject->GetName()).c_str(), selectedGameObject == gameObject.get()))
 				{
 					selectedGameObject = gameObject.get();
+					EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
 				}
 			}
 
