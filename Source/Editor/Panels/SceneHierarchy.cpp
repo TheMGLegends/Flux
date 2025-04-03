@@ -60,6 +60,8 @@ void SceneHierarchy::Update(float deltaTime)
 		ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuterH;
 		if (ImGui::BeginTable("##SceneObjects", 1, tableFlags, ImVec2(windowSize.x, windowSize.y * 0.8f), windowSize.x))
 		{
+			bool selectedGameObjectHovered = false;
+
 			for (size_t i = 0; i < scene.gameObjects.size(); i++)
 			{
 				std::unique_ptr<GameObject>& gameObject = scene.gameObjects[i];
@@ -79,7 +81,12 @@ void SceneHierarchy::Update(float deltaTime)
 					}
 				}
 
-				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObject)
+				if (ImGui::IsItemHovered() && gameObject.get() == selectedGameObject)
+				{
+					selectedGameObjectHovered = true;
+				}
+
+				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObjectHovered)
 				{
 					isRenaming = true;
 				}

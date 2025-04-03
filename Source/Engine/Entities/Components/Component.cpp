@@ -27,3 +27,8 @@ void Component::Deserialize(const nlohmann::ordered_json& json)
 	name = json["Name"].get<std::string>();
 	isActive = json["IsActive"].get<bool>();
 }
+
+void Component::SetIsActive(bool _isActive)
+{
+	isActive = _isActive;
+}

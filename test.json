@@ -61,8 +61,8 @@
                         -8.711907386779785
                     ],
                     "Rotation": [
-                        49.99992752075195,
-                        44.99986267089844,
+                        49.99991226196289,
+                        44.99983215332031,
                         -179.9999542236328
                     ],
                     "Scale": [
@@ -155,25 +155,6 @@
                         1.0,
                         1.0,
                         1.0
-                    ]
-                },
-                {
-                    "Name": "PhysicsBody",
-                    "IsActive": true,
-                    "ComponentType": 3,
-                    "Mass": 1.0,
-                    "Drag": 0.0,
-                    "AngularDrag": 0.05000000074505806,
-                    "UseGravity": true,
-                    "PositionConstraints": [
-                        false,
-                        false,
-                        false
-                    ],
-                    "RotationConstraints": [
-                        false,
-                        false,
-                        false
                     ]
                 }
             ]

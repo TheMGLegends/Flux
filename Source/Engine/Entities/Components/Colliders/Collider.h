@@ -38,6 +38,8 @@ namespace Flux
 	public:
 		Collider(GameObject* _gameObject);
 
+		virtual void SetIsActive(bool _isActive) override;
+
 		void Update(float alpha);
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;

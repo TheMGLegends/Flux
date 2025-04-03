@@ -94,6 +94,17 @@ void GameObject::SetIsActive(bool _isActive)
 	// INFO: Immediate change in active state
 	isActive = _isActive;
 
+	// INFO: Make the active state affect all components on the GameObject
+	for (size_t i = 0; i < components.size(); i++)
+	{
+		std::shared_ptr<Component>& component = components[i];
+
+		if (component)
+		{
+			component->SetIsActive(isActive);
+		}
+	}
+
 	// INFO: Handle any OnEnable/OnDisable logic here
 	if (isActive)
 	{

@@ -31,12 +31,35 @@ Collider::Collider(GameObject* _gameObject) : Component(_gameObject), rigidActor
 	SetRigidActor();
 }
 
+void Collider::SetIsActive(bool _isActive)
+{
+	Component::SetIsActive(_isActive);
+
+	if (colliderShape && rigidActor)
+	{
+		if (isActive)
+		{
+			rigidActor->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+
+			if (rigidActorType == RigidActorType::Dynamic)
+			{
+				physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+				rigidDynamic->wakeUp();
+			}
+		}
+		else
+		{
+			rigidActor->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+		}
+	}
+}
+
 void Collider::Update(float alpha)
 {
 	GameObject* gameObject = GetGameObject();
 	auto transform = gameObject->transform.lock();
 
-	if (gameObject && transform && rigidActor)
+	if (gameObject && transform && rigidActor && isActive)
 	{
 		switch (rigidActorType)
 		{

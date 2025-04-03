@@ -298,7 +298,7 @@ void Renderer::RenderFrame(Scene& scene)
 		GameObject* owningGameObject = visualizer->GetGameObject();
 		std::shared_ptr<Transform> transform = owningGameObject->transform.lock();
 
-		if (!visualizer->IsActive() || !owningGameObject->IsActive()) { continue; }
+		if (!visualizer->IsActive()) { continue; }
 
 		DirectX::XMMATRIX world = transform->GetWorldMatrix();
 

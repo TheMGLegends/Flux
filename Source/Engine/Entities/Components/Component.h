@@ -24,7 +24,7 @@ namespace Flux
 
 		inline GameObject* GetGameObject() const { return gameObject; }
 
-		inline void SetIsActive(bool _isActive) { isActive = _isActive; }
+		virtual void SetIsActive(bool _isActive);
 		inline bool IsActive() const { return isActive; }
 
 		inline bool CanHaveMultiple() const { return canHaveMultiple; }
