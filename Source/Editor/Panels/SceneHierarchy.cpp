@@ -68,7 +68,7 @@ void SceneHierarchy::Update(float deltaTime)
 				ImGui::TableSetColumnIndex(0);
 
 				// INFO: Unique ID for each GameObject
-				if (ImGui::Selectable(("##" + gameObject->GetID()).c_str(), selectedGameObject == gameObject.get(), 0, ImVec2(0, 22)))
+				if (ImGui::Selectable(("##" + gameObject->GetID()).c_str(), selectedGameObject == gameObject.get()))
 				{
 					selectedGameObject = gameObject.get();
 					
@@ -96,7 +96,7 @@ void SceneHierarchy::Update(float deltaTime)
 				}
 				else
 				{
-					ImGui::Text(gameObject->GetName().c_str());
+					ImGui::TextUnformatted(gameObject->GetName().c_str());
 				}
 			}
 
