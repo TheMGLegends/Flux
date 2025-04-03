@@ -2,8 +2,11 @@
 
 #include "EditorPanel.h"
 
+#include <memory>
+
 namespace Flux
 {
+	class Component;
 	class SceneHierarchy;
 
 	class DetailsPanel : public EditorPanel
@@ -14,6 +17,9 @@ namespace Flux
 
 		virtual int Initialise() override;
 		virtual void Update(float deltaTime) override;
+
+	private:
+		void ComponentAlreadyExists(int oldComponentCount, int newComponentCount, std::weak_ptr<Component> component);
 
 	private:
 		SceneHierarchy* sceneHierarchy;

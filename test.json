@@ -61,8 +61,8 @@
                         -8.711907386779785
                     ],
                     "Rotation": [
-                        49.99991226196289,
-                        44.99983215332031,
+                        49.99985885620117,
+                        44.99976348876953,
                         -179.9999542236328
                     ],
                     "Scale": [
@@ -324,6 +324,50 @@
                     "ComponentType": 4,
                     "ModelName": "Cube",
                     "TextureName": "DefaultTexture"
+                }
+            ]
+        },
+        {
+            "Name": "Camera2",
+            "ID": "GameObject5",
+            "Type": "GameObject",
+            "IsActive": true,
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        0.0,
+                        -30.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        -179.9720458984375,
+                        0.0
+                    ],
+                    "Scale": [
+                        1.0000115633010864,
+                        1.0,
+                        1.0000115633010864
+                    ]
+                },
+                {
+                    "Name": "Camera",
+                    "IsActive": true,
+                    "ComponentType": 2,
+                    "FOV": 90.0,
+                    "NearClippingPlane": 0.10000000149011612,
+                    "FarClippingPlane": 100.0,
+                    "BackgroundColour": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1.0
+                    ],
+                    "SkyboxTexture": "DefaultSkybox",
+                    "UseSkybox": true
                 }
             ]
         }

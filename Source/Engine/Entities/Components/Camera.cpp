@@ -15,7 +15,7 @@ using namespace DirectX::SimpleMath;
 
 Camera::Camera(GameObject* _gameObject) : Component(_gameObject), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f), 
 										  aspectRatio(EngineConfig::ASPECT_RATIO), backgroundColour({ 0.5f, 0.5f, 0.5f, 1.0f }),
-										  shouldDrawFrustum(true), useSkybox(true)
+										  shouldDrawFrustum(true), skyboxTextureName("DefaultSkybox"), useSkybox(true)
 {
 	name = "Camera";
 	componentType = ComponentType::Camera;

@@ -62,14 +62,16 @@ namespace Flux
 		template<class T>
 		std::vector<std::weak_ptr<T>> GetComponents();
 
-		/// @brief Returns the scene view camera if in editor mode otherwise returns play mode camera
-		std::weak_ptr<Camera> GetCamera() const;
+		/// @brief Returns the scene view camera if in editor mode otherwise returns first active camera in the scene
+		std::weak_ptr<Camera> GetCamera();
 
 		inline const std::string& GetSceneName() const { return sceneName; }
 
 		inline physx::PxScene& GetPhysicsScene() const { return *physicsScene; }
 
 	private:
+		std::weak_ptr<Camera> FindFirstActiveCamera();
+
 		struct DebugWireframeData
 		{
 			std::weak_ptr<Component> component;

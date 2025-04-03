@@ -96,7 +96,7 @@ void SceneView::Update(float deltaTime)
 				ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
 
 				// INFO: Retrieve active camera and camera matrices
-				auto camera = SceneContext::GetScene().GetCamera().lock();
+				std::shared_ptr<Camera> camera = SceneContext::GetScene().GetCamera().lock();
 				DirectX::XMFLOAT4X4 cameraView{};
 				DirectX::XMFLOAT4X4 cameraProjection{};
 				DirectX::XMStoreFloat4x4(&cameraView, camera->GetViewMatrix());

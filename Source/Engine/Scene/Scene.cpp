@@ -148,16 +148,6 @@ void Scene::Deserialize(const nlohmann::ordered_json& json)
 		// INFO: Deserialize the newly created GameObject with the gameObjects data
 		gameObjects.back()->Deserialize(gameObjectData);
 	}
-
-	// INFO: Find the first camera in the scene and set it as the play mode camera
-	for (size_t i = 0; i < gameObjects.size(); i++)
-	{
-		if (gameObjects[i]->HasComponent<Camera>())
-		{
-			playModeCamera = gameObjects[i]->GetComponent<Camera>().lock();
-			break;
-		}
-	}
 }
 
 void Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
@@ -418,14 +408,42 @@ std::weak_ptr<Collider> Scene::GetCollider(physx::PxRigidActor* rigidActor)
 	return std::weak_ptr<Collider>();
 }
 
-std::weak_ptr<Camera> Scene::GetCamera() const
+std::weak_ptr<Camera> Scene::GetCamera()
 {
 	if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 	{
+		// INFO: Return the first active camera in the scene
+		if (playModeCamera.expired() || !playModeCamera.expired() && !playModeCamera.lock()->IsActive())
+		{
+			playModeCamera = FindFirstActiveCamera();
+		}
+
 		return playModeCamera;
 	}
 	else
 	{
 		return sceneViewCamera->GetCamera();
 	}
+}
+
+std::weak_ptr<Camera> Scene::FindFirstActiveCamera()
+{
+	for (size_t i = 0; i < gameObjects.size(); i++)
+	{
+		std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
+		if (gameObject->HasComponent<Camera>())
+		{
+			std::shared_ptr<Camera> camera = gameObject->GetComponent<Camera>().lock();
+
+			if (!camera->IsActive()) { continue; }
+
+			return camera;
+		}
+	}
+
+	Debug::LogError("Scene::FindFirstActiveCamera() - No active camera found in the scene, constructing a default one");
+	gameObjects.emplace_back(GameObject::CreateGameObject("GameObject"));
+
+	return gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
 }

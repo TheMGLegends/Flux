@@ -42,6 +42,8 @@ namespace Flux
 		void SetIsActive(bool _isActive);
 		inline bool IsActive() const { return isActive; }
 
+		inline std::vector<std::shared_ptr<Component>>& GetComponents() { return components; }
+
 		void Destroy();
 
 		virtual void Start() {}
@@ -58,7 +60,6 @@ namespace Flux
 		virtual void OnDisable() {}
 		virtual void OnEnable() {}
 		virtual void OnDestroy() {}
-
 
 		inline std::string& GetName() { return name; }
 		inline const std::string& GetID() const { return id; }
@@ -152,12 +153,12 @@ namespace Flux
 		}
 
 		components.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
-		components.back()->PostConstruction();
 		std::weak_ptr<T> newComponent = std::dynamic_pointer_cast<T>(components.back());
+		components.back()->PostConstruction();
 
 		SceneContext::GetScene().RegisterComponent(newComponent);
 
-		return std::dynamic_pointer_cast<T>(components.back());
+		return newComponent;
 	}
 
 	template<class T>
