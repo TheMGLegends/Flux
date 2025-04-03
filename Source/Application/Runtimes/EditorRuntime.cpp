@@ -12,6 +12,7 @@
 #include "Core/Debug/FrameRateMonitor.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Input/Input.h"
+#include "Editor/Panels/DetailsPanel.h"
 #include "Editor/Panels/SceneHierarchy.h"
 #include "Editor/Panels/SceneView.h"
 
@@ -86,6 +87,9 @@ int EditorRuntime::Initialise(Renderer& renderer)
 	editorPanels.emplace_back(std::make_unique<SceneView>(renderer, sceneHierarchy));
 	sceneView = static_cast<SceneView*>(editorPanels.back().get());
 
+	editorPanels.emplace_back(std::make_unique<DetailsPanel>(sceneHierarchy));
+	detailsPanel = static_cast<DetailsPanel*>(editorPanels.back().get());
+
 	for (size_t i = 0; i < editorPanels.size(); i++) 
 	{ 
 		std::unique_ptr<EditorPanel>& editorPanel = editorPanels[i];
@@ -121,9 +125,6 @@ void EditorRuntime::Update(float deltaTime)
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID, nullptr, dockspaceFlags);
 
 	// TODO: TESTING
-	ImGui::Begin("Details");
-	ImGui::Text("Hello, World!");
-	ImGui::End();
 	ImGui::Begin("Content Browser");
 	ImGui::Text("Hello, World!");
 	ImGui::End();

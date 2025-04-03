@@ -11,6 +11,7 @@ struct SDL_Window;
 
 namespace Flux
 {
+	class DetailsPanel;
 	class EditorPanel;
 	class Renderer;
 	class SceneHierarchy;
@@ -41,6 +42,7 @@ namespace Flux
 		std::vector<std::unique_ptr<EditorPanel>> editorPanels;
 		SceneHierarchy* sceneHierarchy;
 		SceneView* sceneView;
+		DetailsPanel* detailsPanel;
 	};
 }
 
