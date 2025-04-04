@@ -160,8 +160,17 @@ void DetailsPanel::ComponentAlreadyExists(int oldComponentCount, int newComponen
 {
 	if (oldComponentCount == newComponentCount)
 	{
-		std::string componentType = std::string(magic_enum::enum_name(component.lock()->GetComponentType()));
-		std::string gameObjectName = component.lock()->GetGameObject()->GetName();
-		Debug::LogWarning("DetailsPanel::ComponentAlreadyExists() - " + componentType + " component already exists on " + gameObjectName);
+		std::shared_ptr<Component> existingComponent = component.lock();
+
+		if (existingComponent)
+		{
+			std::string componentType = std::string(magic_enum::enum_name(component.lock()->GetComponentType()));
+			std::string gameObjectName = component.lock()->GetGameObject()->GetName();
+			Debug::LogWarning("DetailsPanel::ComponentAlreadyExists() - " + componentType + " component already exists on " + gameObjectName);
+		}
+		else
+		{
+			Debug::LogWarning("DetailsPanel::ComponentAlreadyExists() - Collider component already exists on the game object");
+		}
 	}
 }

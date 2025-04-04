@@ -147,9 +147,21 @@ namespace Flux
 		// INFO: Special Case for Collider Components
 		if (std::is_base_of<Collider, T>::value)
 		{
-			std::weak_ptr<Collider> existingCollider = GetComponent<Collider>();
+			std::shared_ptr<Collider> existingCollider = GetComponent<Collider>().lock();
 
-			if (!existingCollider.expired()) { return std::dynamic_pointer_cast<T>(existingCollider.lock()); }
+			if (existingCollider)
+			{
+				std::shared_ptr<T> castedCollider = std::dynamic_pointer_cast<T>(existingCollider);
+
+				if (castedCollider)
+				{
+					return castedCollider;
+				}
+				else
+				{
+					return std::weak_ptr<T>{}; // INFO: Workaround when contains box but sphere collider is added and vice versa
+				}
+			}
 		}
 
 		components.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
