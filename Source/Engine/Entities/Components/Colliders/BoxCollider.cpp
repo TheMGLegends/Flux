@@ -29,6 +29,14 @@ BoxCollider::~BoxCollider()
 	}
 }
 
+void BoxCollider::DrawDetails()
+{
+	// TODO: ImGui UI Details Panel Here
+	Component::DrawDetails(); // TODO: TEMP
+
+	// TODO: Maybe have common logic in Collider class
+}
+
 void BoxCollider::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class

@@ -68,6 +68,12 @@ void PhysicsBody::PostConstruction()
 	}
 }
 
+void PhysicsBody::DrawDetails()
+{
+	// TODO: ImGui UI Details Panel Here
+	Component::DrawDetails(); // TODO: TEMP
+}
+
 void PhysicsBody::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class

@@ -2,6 +2,8 @@
 
 #include "Engine/Interfaces/ISerializable.h"
 
+#include <imgui.h>
+
 #include "ComponentTypes.h"
 
 namespace Flux
@@ -18,6 +20,9 @@ namespace Flux
 
 		/// @brief Called after the Component is constructed and added to the GameObject
 		virtual void PostConstruction() {}
+
+		/// @brief Called by details panel, should implement logic to draw the component details using ImGui
+		virtual void DrawDetails() { ImGui::Text(name.c_str()); } // TODO: Temporary Code Here
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;

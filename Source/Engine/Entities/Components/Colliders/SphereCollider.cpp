@@ -29,6 +29,14 @@ SphereCollider::~SphereCollider()
 	}
 }
 
+void SphereCollider::DrawDetails()
+{
+	// TODO: ImGui UI Details Panel Here
+	Component::DrawDetails(); // TODO: TEMP
+
+	// TODO: Maybe have common logic in Collider class
+}
+
 void SphereCollider::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class

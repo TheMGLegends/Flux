@@ -67,7 +67,7 @@ void DetailsPanel::Update(float deltaTime)
 			ImGui::SetNextItemWidth(inputWidth);
 			ImGui::InputText("##GameObjectName", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue);
 
-			// INFO: Display Game Object Components
+			// INFO: Display Game Object Component Details
 			auto& components = selectedGameObject->GetComponents();
 			int componentCount = static_cast<int>(components.size());
 
@@ -75,31 +75,7 @@ void DetailsPanel::Update(float deltaTime)
 			{
 				std::shared_ptr<Component>& component = components[i];
 
-				// TODO: Display Component Editor UI Counterparts here
-				switch (component->GetComponentType())
-				{
-				case ComponentType::Transform:
-					ImGui::Text("Transform");
-					break;
-				case ComponentType::Camera:
-					ImGui::Text("Camera");
-					break;
-				case ComponentType::PhysicsBody:
-					ImGui::Text("Physics Body");
-					break;
-				case ComponentType::Visualizer:
-					ImGui::Text("Visualizer");
-					break;
-				case ComponentType::BoxCollider:
-					ImGui::Text("Box Collider");
-					break;
-				case ComponentType::SphereCollider:
-					ImGui::Text("Sphere Collider");
-					break;
-				case ComponentType::None:
-				default:
-					break;
-				}
+				component->DrawDetails();
 			}
 
 			// INFO: Add Component Button

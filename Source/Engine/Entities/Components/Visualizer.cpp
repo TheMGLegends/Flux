@@ -23,6 +23,12 @@ Visualizer::~Visualizer()
 {
 }
 
+void Visualizer::DrawDetails()
+{
+	// TODO: ImGui UI Details Panel Here
+	Component::DrawDetails(); // TODO: TEMP
+}
+
 void Visualizer::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class

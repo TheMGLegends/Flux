@@ -22,6 +22,12 @@ Transform::~Transform()
 {
 }
 
+void Transform::DrawDetails()
+{
+	// TODO: ImGui UI Details Panel Here
+	Component::DrawDetails(); // TODO: TEMP
+}
+
 void Transform::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class

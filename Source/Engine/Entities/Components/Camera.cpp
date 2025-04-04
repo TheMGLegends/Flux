@@ -39,6 +39,12 @@ Camera::~Camera()
 {
 }
 
+void Camera::DrawDetails()
+{
+	// TODO: ImGui UI Details Panel Here
+	Component::DrawDetails(); // TODO: TEMP
+}
+
 void Camera::Serialize(nlohmann::ordered_json& json) const
 {
 	// INFO: Serialize Parent Class
