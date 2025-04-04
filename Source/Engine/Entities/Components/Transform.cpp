@@ -1,6 +1,7 @@
 #include "Transform.h"
 
-#pragma warning (push, 0)
+#pragma warning (push)
+#pragma warning (disable : 26495) // INFO: Disable warning for uninitialised variables
 #include <PxRigidDynamic.h>
 #pragma warning (pop)
 

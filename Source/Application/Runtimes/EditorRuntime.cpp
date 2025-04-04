@@ -19,7 +19,7 @@
 using namespace Flux;
 using namespace Flux::GlobalDefines;
 
-EditorRuntime::EditorRuntime() : sceneHierarchy(nullptr), sceneView(nullptr)
+EditorRuntime::EditorRuntime() : sceneHierarchy(nullptr), sceneView(nullptr), detailsPanel(nullptr)
 {
 }
 
@@ -168,4 +168,7 @@ void EditorRuntime::SetCustomStyle()
 	colours[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 	colours[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 	colours[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+	// INFO: Checkbox
+	colours[ImGuiCol_CheckMark] = ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f };
 }
