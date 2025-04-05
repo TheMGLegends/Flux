@@ -1,5 +1,7 @@
 #include "Transform.h"
 
+#include <imgui_internal.h>
+
 #pragma warning (push)
 #pragma warning (disable : 26495) // INFO: Disable warning for uninitialised variables
 #include <PxRigidDynamic.h>
@@ -24,8 +26,33 @@ Transform::~Transform()
 
 void Transform::DrawDetails()
 {
-	// TODO: ImGui UI Details Panel Here
-	Component::DrawDetails(); // TODO: TEMP
+	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
+
+	if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		// INFO: Translation Row
+		DisplayVector3Field("Position", position);
+
+		// INFO: Rotation Row
+		Vector3 eulerRotation = rotation.ToEuler();
+		eulerRotation.x = DirectX::XMConvertToDegrees(eulerRotation.x);
+		eulerRotation.y = DirectX::XMConvertToDegrees(eulerRotation.y);
+		eulerRotation.z = DirectX::XMConvertToDegrees(eulerRotation.z);
+
+		DisplayVector3Field("Rotation", eulerRotation, 1.0f);
+
+		eulerRotation.x = DirectX::XMConvertToRadians(eulerRotation.x);
+		eulerRotation.y = DirectX::XMConvertToRadians(eulerRotation.y);
+		eulerRotation.z = DirectX::XMConvertToRadians(eulerRotation.z);
+		rotation = Quaternion::CreateFromYawPitchRoll(eulerRotation.y, eulerRotation.x, eulerRotation.z);
+
+		// INFO: Scale Row
+		DisplayVector3Field("Scale", scale);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 }
 
 void Transform::Serialize(nlohmann::ordered_json& json) const
@@ -127,5 +154,43 @@ void Transform::SetRotationEditor(const DirectX::SimpleMath::Quaternion& _rotati
 			rigidDynamic->setGlobalPose(physx::PxTransform(physx::PxVec3(position.x, position.y, position.z),
 										physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
 		}
+	}
+}
+
+void Transform::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed)
+{
+	if (ImGui::BeginTable(label, 2))
+	{
+		ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 100.0f); // INFO: Label Column
+		ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 300.0f); // INFO: Value Column
+
+		ImGui::TableNextColumn();
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text(label);
+
+		ImGui::TableNextColumn();
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+
+		// INFO: X Value
+		ImGui::Text("X");
+		ImGui::SameLine();
+		ImGui::DragFloat("##X", &value.x, speed, 0.0f, 0.0f, "%.1f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		// INFO: Y Value
+		ImGui::Text("Y");
+		ImGui::SameLine();
+		ImGui::DragFloat("##Y", &value.y, speed, 0.0f, 0.0f, "%.1f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		// INFO: Z Value
+		ImGui::Text("Z");
+		ImGui::SameLine();
+		ImGui::DragFloat("##Z", &value.z, speed, 0.0f, 0.0f, "%.1f");
+		ImGui::PopItemWidth();
+
+		ImGui::EndTable();
 	}
 }

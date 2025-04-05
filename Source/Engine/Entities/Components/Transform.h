@@ -43,6 +43,9 @@ namespace Flux
 		void SetRotationEditor(const DirectX::SimpleMath::Quaternion& _rotation);
 
 	private:
+		void DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed = 0.1f);
+
+	private:
 		DirectX::SimpleMath::Vector3 position;
 		DirectX::SimpleMath::Quaternion rotation;
 		DirectX::SimpleMath::Vector3 scale;
