@@ -9,6 +9,7 @@
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
+#include <imgui_internal.h>
 
 using namespace Flux;
 using namespace Flux::GlobalDefines;
@@ -32,6 +33,11 @@ void DetailsPanel::Update(float deltaTime)
 	{
 		Debug::LogError("DetailsPanel::Update() - Scene Hierarchy is null");
 		return;
+	}
+
+	if (RuntimeConfig::IsInPlayMode())
+	{
+		ImGui::BeginDisabled();
 	}
 
 	GameObject* selectedGameObject = sceneHierarchy->GetSelectedGameObject();
@@ -70,6 +76,8 @@ void DetailsPanel::Update(float deltaTime)
 			// INFO: Display Game Object Component Details
 			auto& components = selectedGameObject->GetComponents();
 			int componentCount = static_cast<int>(components.size());
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 
 			for (size_t i = 0; i < components.size(); i++)
 			{
@@ -129,6 +137,11 @@ void DetailsPanel::Update(float deltaTime)
 		}
 
 		ImGui::End();
+	}
+
+	if (RuntimeConfig::IsInPlayMode())
+	{
+		ImGui::EndDisabled();
 	}
 }
 

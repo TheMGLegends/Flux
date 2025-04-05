@@ -58,6 +58,7 @@ void SceneHierarchy::Update(float deltaTime)
 		ImGui::PopStyleVar();
 
 		ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuterH;
+
 		if (ImGui::BeginTable("##SceneObjects", 1, tableFlags, ImVec2(windowSize.x, windowSize.y * 0.8f), windowSize.x))
 		{
 			bool selectedGameObjectHovered = false;
@@ -112,6 +113,11 @@ void SceneHierarchy::Update(float deltaTime)
 
 		ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
+		if (RuntimeConfig::IsInPlayMode())
+		{
+			ImGui::BeginDisabled();
+		}
+
 		ImVec2 buttonSize = ImVec2(150.0f, 50.0f);
 		ImGui::SetCursorPosX((windowSize.x - buttonSize.x) * 0.5f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
@@ -138,6 +144,11 @@ void SceneHierarchy::Update(float deltaTime)
 			}
 
 			ImGui::EndPopup();
+		}
+
+		if (RuntimeConfig::IsInPlayMode())
+		{
+			ImGui::EndDisabled();
 		}
 
 		ImGui::End();

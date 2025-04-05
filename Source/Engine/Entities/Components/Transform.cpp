@@ -26,8 +26,6 @@ Transform::~Transform()
 
 void Transform::DrawDetails()
 {
-	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
-
 	if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		// INFO: Translation Row
@@ -172,23 +170,53 @@ void Transform::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vect
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
 
 		// INFO: X Value
-		ImGui::Text("X");
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+		ImGui::Button("X");
+		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		ImGui::DragFloat("##X", &value.x, speed, 0.0f, 0.0f, "%.1f");
+		if (ImGui::DragFloat("##X", &value.x, speed, 0.0f, 0.0f, "%.1f"))
+		{
+
+		}
+		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
 		// INFO: Y Value
-		ImGui::Text("Y");
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+		ImGui::Button("Y");
+		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		ImGui::DragFloat("##Y", &value.y, speed, 0.0f, 0.0f, "%.1f");
+		if (ImGui::DragFloat("##Y", &value.y, speed, 0.0f, 0.0f, "%.1f"))
+		{
+
+		}
+		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
 		// INFO: Z Value
-		ImGui::Text("Z");
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+		ImGui::Button("Z");
+		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		ImGui::DragFloat("##Z", &value.z, speed, 0.0f, 0.0f, "%.1f");
+		if (ImGui::DragFloat("##Z", &value.z, speed, 0.0f, 0.0f, "%.1f"))
+		{
+
+		}
+		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
 
 		ImGui::EndTable();
