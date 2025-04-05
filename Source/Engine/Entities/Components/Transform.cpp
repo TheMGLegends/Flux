@@ -29,7 +29,10 @@ void Transform::DrawDetails()
 	if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		// INFO: Translation Row
-		DisplayVector3Field("Position", position);
+		if (DisplayVector3Field("Position", position))
+		{
+			SetPositionEditor(position);
+		}
 
 		// INFO: Rotation Row
 		Vector3 eulerRotation = rotation.ToEuler();
@@ -37,12 +40,12 @@ void Transform::DrawDetails()
 		eulerRotation.y = DirectX::XMConvertToDegrees(eulerRotation.y);
 		eulerRotation.z = DirectX::XMConvertToDegrees(eulerRotation.z);
 
-		DisplayVector3Field("Rotation", eulerRotation, 1.0f);
-
-		eulerRotation.x = DirectX::XMConvertToRadians(eulerRotation.x);
-		eulerRotation.y = DirectX::XMConvertToRadians(eulerRotation.y);
-		eulerRotation.z = DirectX::XMConvertToRadians(eulerRotation.z);
-		rotation = Quaternion::CreateFromYawPitchRoll(eulerRotation.y, eulerRotation.x, eulerRotation.z);
+		if (DisplayVector3Field("Rotation", eulerRotation, 1.0f))
+		{
+			SetRotationEditor(Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(eulerRotation.y),
+																 DirectX::XMConvertToRadians(eulerRotation.x),
+																 DirectX::XMConvertToRadians(eulerRotation.z)));
+		}
 
 		// INFO: Scale Row
 		DisplayVector3Field("Scale", scale);
@@ -155,8 +158,10 @@ void Transform::SetRotationEditor(const DirectX::SimpleMath::Quaternion& _rotati
 	}
 }
 
-void Transform::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed)
+bool Transform::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed)
 {
+	bool changed = false;
+
 	if (ImGui::BeginTable(label, 2))
 	{
 		ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 100.0f); // INFO: Label Column
@@ -180,7 +185,7 @@ void Transform::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vect
 		ImGui::SameLine();
 		if (ImGui::DragFloat("##X", &value.x, speed, 0.0f, 0.0f, "%.1f"))
 		{
-
+			changed = true;
 		}
 		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
@@ -197,7 +202,7 @@ void Transform::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vect
 		ImGui::SameLine();
 		if (ImGui::DragFloat("##Y", &value.y, speed, 0.0f, 0.0f, "%.1f"))
 		{
-
+			changed = true;
 		}
 		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
@@ -214,11 +219,13 @@ void Transform::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vect
 		ImGui::SameLine();
 		if (ImGui::DragFloat("##Z", &value.z, speed, 0.0f, 0.0f, "%.1f"))
 		{
-
+			changed = true;
 		}
 		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
 
 		ImGui::EndTable();
 	}
+
+	return changed;
 }
