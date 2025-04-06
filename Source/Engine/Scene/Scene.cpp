@@ -426,12 +426,23 @@ std::weak_ptr<Collider> Scene::GetCollider(physx::PxRigidActor* rigidActor)
 	return std::weak_ptr<Collider>();
 }
 
-std::weak_ptr<Camera> Scene::GetCamera()
+std::weak_ptr<Camera> Scene::GetCamera(bool primary)
 {
+	if (primary)
+	{
+		// INFO: Return the first active camera in the scene
+		if (playModeCamera.expired() || !playModeCamera.lock()->IsActive())
+		{
+			playModeCamera = FindFirstActiveCamera();
+		}
+
+		return playModeCamera;
+	}
+
 	if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 	{
 		// INFO: Return the first active camera in the scene
-		if (playModeCamera.expired() || !playModeCamera.expired() && !playModeCamera.lock()->IsActive())
+		if (playModeCamera.expired() || !playModeCamera.lock()->IsActive())
 		{
 			playModeCamera = FindFirstActiveCamera();
 		}

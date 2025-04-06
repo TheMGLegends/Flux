@@ -24,9 +24,6 @@ SceneViewCamera::SceneViewCamera() : rotationSpeed(0.001f), movementSpeed(10.0f)
 	{
 		camera.lock()->SetDrawFrustum(false);
 	}
-
-	// INFO: Overwrite default skybox with debug skybox
-	camera.lock()->SetMaterialTexture("DebugSkybox");
 }
 
 SceneViewCamera::~SceneViewCamera()

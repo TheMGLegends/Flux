@@ -270,6 +270,16 @@ void Renderer::RenderFrame(Scene& scene)
 		return;
 	}
 
+	// INFO: Overload cameras visual changes (Texture & Colour) with first active play mode camera
+	if (RuntimeConfig::IsInEditorMode())
+	{
+		std::shared_ptr<Camera> playModeCamera = scene.GetCamera(true).lock();
+
+		camera->SetUseSkybox(playModeCamera->UseSkybox());
+		if (camera->UseSkybox()) { camera->SetMaterialTexture(playModeCamera->GetSkyboxTextureName()); }
+		camera->SetBackgroundColour(playModeCamera->GetBackgroundColour());
+	}
+
 	// INFO: Set the render target to be the texture
 	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
 
