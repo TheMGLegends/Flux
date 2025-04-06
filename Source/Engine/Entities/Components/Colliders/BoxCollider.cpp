@@ -57,7 +57,7 @@ void BoxCollider::DrawDetails()
 		// INFO: Is Trigger Checkbox
 		ImGui::Text("Is Trigger");
 		ImGui::SameLine();
-		ImGui::SetCursorPosX(117.0f);
+		ImGui::SetCursorPosX(136.0f);
 		if (ImGui::Checkbox("##IsTrigger", &isTrigger))
 		{
 			SetIsTrigger(isTrigger);

@@ -68,13 +68,13 @@ void Camera::DrawDetails()
 		// INFO: Use Skybox Checkbox
 		ImGui::Text("Use Skybox");
 		ImGui::SameLine();
-		ImGui::SetCursorPosX(117.0f);
+		ImGui::SetCursorPosX(136.0f);
 		ImGui::Checkbox("##UseSkybox", &useSkybox);
 
 		// INFO: Skybox Texture Selector // TODO: NOT FINAL, NEED DRAG & DROG
 		ImGui::Text("Texture");
 		ImGui::SameLine();
-		ImGui::SetCursorPosX(117.0f);
+		ImGui::SetCursorPosX(136.0f);
 		ImGui::SetNextItemWidth(200.0f);
 		if (ImGui::BeginCombo("##SkyboxTexture", skyboxTextureName.c_str(), ImGuiComboFlags_HeightLarge))
 		{
@@ -92,11 +92,14 @@ void Camera::DrawDetails()
 		ImGuiColorEditFlags colourEditFlags = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreviewHalf;
 		ImGui::Text("Background");
 		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
 		ImGui::ColorEdit4("##BackgroundColour", &backgroundColour[0], colourEditFlags);
 
 		// INFO: FOV Slider
 		ImGui::Text("Vertical FOV");
 		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
+		ImGui::SetNextItemWidth(200.0f);
 		ImGui::SliderFloat("##VerticalFOV", &verticalFOV, 1.0f, 150.0f, "%.1f", ImGuiSliderFlags_ClampOnInput);
 
 		// INFO: Clipping Planes
@@ -111,6 +114,7 @@ void Camera::DrawDetails()
 			ImGui::TableNextColumn();
 			ImGui::Text("Near");
 			ImGui::TableNextColumn();
+			ImGui::SetCursorPosX(136.0f);
 			ImGui::InputFloat("##NearClippingPlane", &nearClippingPlane, 0.0f, 0.0f, "%.1f");
 
 			ImGui::TableNextRow();
@@ -118,6 +122,7 @@ void Camera::DrawDetails()
 			ImGui::TableNextColumn();
 			ImGui::Text("Far");
 			ImGui::TableNextColumn();
+			ImGui::SetCursorPosX(136.0f);
 			ImGui::InputFloat("##FarClippingPlane", &farClippingPlane, 0.0f, 0.0f, "%.1f");
 
 			ImGui::EndTable();
