@@ -63,7 +63,7 @@ void BoxCollider::DrawDetails()
 			SetIsTrigger(isTrigger);
 		}
 
-		if (DisplayVector3Field("Size", size))
+		if (DisplayVector3Field("Size", size, 0.1f, "%.1f"))
 		{
 			UpdateScale();
 		}

@@ -4,7 +4,7 @@
 
 namespace Flux
 {
-	class SphereCollider : public Collider
+	class SphereCollider : public Collider, public std::enable_shared_from_this<SphereCollider>
 	{
 	public:
 		SphereCollider(GameObject* _gameObject);

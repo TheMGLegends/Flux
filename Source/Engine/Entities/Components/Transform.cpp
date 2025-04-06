@@ -41,7 +41,7 @@ void Transform::DrawDetails()
 		eulerRotation.y = DirectX::XMConvertToDegrees(eulerRotation.y);
 		eulerRotation.z = DirectX::XMConvertToDegrees(eulerRotation.z);
 
-		if (DisplayVector3Field("Rotation", eulerRotation, 1.0f))
+		if (DisplayVector3Field("Rotation", eulerRotation, 1.0f, "%.1f"))
 		{
 			SetRotationEditor(Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(eulerRotation.y),
 																 DirectX::XMConvertToRadians(eulerRotation.x),

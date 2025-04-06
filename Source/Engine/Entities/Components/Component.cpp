@@ -37,7 +37,7 @@ void Component::SetIsActive(bool _isActive)
 	isActive = _isActive;
 }
 
-bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed)
+bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed, const char* format)
 {
 	bool changed = false;
 
@@ -62,7 +62,7 @@ bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vect
 		ImGui::Button("X");
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		if (ImGui::DragFloat("##X", &value.x, speed, 0.0f, 0.0f, "%.1f"))
+		if (ImGui::DragFloat("##X", &value.x, speed, 0.0f, 0.0f, format))
 		{
 			changed = true;
 		}
@@ -79,7 +79,7 @@ bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vect
 		ImGui::Button("Y");
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		if (ImGui::DragFloat("##Y", &value.y, speed, 0.0f, 0.0f, "%.1f"))
+		if (ImGui::DragFloat("##Y", &value.y, speed, 0.0f, 0.0f, format))
 		{
 			changed = true;
 		}
@@ -96,7 +96,7 @@ bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vect
 		ImGui::Button("Z");
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		if (ImGui::DragFloat("##Z", &value.z, speed, 0.0f, 0.0f, "%.1f"))
+		if (ImGui::DragFloat("##Z", &value.z, speed, 0.0f, 0.0f, format))
 		{
 			changed = true;
 		}

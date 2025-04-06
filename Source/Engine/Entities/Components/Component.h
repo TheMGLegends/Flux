@@ -41,7 +41,7 @@ namespace Flux
 
 	protected:
 		/// @return true if the field was changed
-		bool DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed = 0.1f);
+		bool DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed = 0.1f, const char* format = "%.2f");
 
 	private:
 		inline void SetGameObject(GameObject* _gameObject) { gameObject = _gameObject; }

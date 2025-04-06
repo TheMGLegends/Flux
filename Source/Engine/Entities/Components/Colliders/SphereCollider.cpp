@@ -1,6 +1,7 @@
 #include "SphereCollider.h"
 
 #include <DirectXColors.h>
+#include <imgui_internal.h>
 
 #include "Core/Helpers/MathHelpers.h"
 #include "Engine/Physics/Physics.h"
@@ -32,10 +33,52 @@ SphereCollider::~SphereCollider()
 
 void SphereCollider::DrawDetails()
 {
-	// TODO: ImGui UI Details Panel Here
-	Component::DrawDetails(); // TODO: TEMP
+	ImGui::PushID(this);
 
-	// TODO: Maybe have common logic in Collider class
+	bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+
+	// INFO: Active Checkbox
+	ImGui::SameLine();
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+	ImGui::Checkbox("##ComponentActive", &isActive);
+	ImGui::PopStyleVar();
+
+	// INFO: Remove Component Button
+	ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+	ImGui::SameLine();
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
+	if (ImGui::Button("Remove", buttonSize))
+	{
+		GameObject* gameObject = GetGameObject();
+		if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
+	}
+
+	if (treeOpened)
+	{
+		// INFO: Is Trigger Checkbox
+		ImGui::Text("Is Trigger");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
+		if (ImGui::Checkbox("##IsTrigger", &isTrigger))
+		{
+			SetIsTrigger(isTrigger);
+		}
+
+		// INFO: Radius InputField
+		ImGui::Text("Radius");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
+		ImGui::SetNextItemWidth(200.0f);
+		if (ImGui::InputFloat("##Radius", &radius, 0.0f, 0.0f, "%.1f"))
+		{
+			UpdateScale();
+		}
+
+		ImGui::TreePop();
+	}
+	ImGui::PopID();
+
+	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 }
 
 void SphereCollider::Serialize(nlohmann::ordered_json& json) const
