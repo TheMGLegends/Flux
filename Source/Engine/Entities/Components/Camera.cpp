@@ -43,11 +43,18 @@ Camera::~Camera()
 
 void Camera::DrawDetails()
 {
+	// INFO: Active Checkbox
+	ImGui::PushID(this);
+	ImGui::Checkbox("##ComponentActive", &isActive);
+	ImGui::SameLine();
+
 	bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
 
 	// INFO: Remove Component Button
+	ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
 	ImGui::SameLine();
-	if (ImGui::Button("Remove Component"))
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
+	if (ImGui::Button("Remove", buttonSize))
 	{
 		GameObject* gameObject = GetGameObject();
 
@@ -56,6 +63,7 @@ void Camera::DrawDetails()
 			gameObject->RemoveComponent(weak_from_this());
 		}
 	}
+	ImGui::PopID();
 
 	if (treeOpened)
 	{
