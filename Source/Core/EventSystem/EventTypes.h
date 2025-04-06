@@ -7,7 +7,6 @@ namespace Flux
 		None = 0,
 
 		Quit,
-		ComponentRemoved,
 		GameObjectRemoved,
 		WindowResized,
 		SceneViewResized,

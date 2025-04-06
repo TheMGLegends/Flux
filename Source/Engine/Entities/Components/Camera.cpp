@@ -43,7 +43,21 @@ Camera::~Camera()
 
 void Camera::DrawDetails()
 {
-	if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+	bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+
+	// INFO: Remove Component Button
+	ImGui::SameLine();
+	if (ImGui::Button("Remove Component"))
+	{
+		GameObject* gameObject = GetGameObject();
+
+		if (gameObject)
+		{
+			gameObject->RemoveComponent(weak_from_this());
+		}
+	}
+
+	if (treeOpened)
 	{
 
 		ImGui::TreePop();

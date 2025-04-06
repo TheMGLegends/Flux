@@ -8,8 +8,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Core/EventSystem/EventDispatcher.h"
-#include "Core/EventSystem/Events/ComponentRemovedEvent.h"
 #include "Engine/Entities/Components/Colliders/Collider.h"
 #include "Engine/Entities/Components/Transform.h"
 #include "Engine/Scene/SceneContext.h"
@@ -178,17 +176,22 @@ namespace Flux
 	{
 		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
 
-		if (component.expired() || !component.IsRemovable()) { return; }
+		std::shared_ptr<T> validComponent = component.lock();
 
-		for (auto it = components.begin(); it != components.end(); ++it)
+		if (!validComponent || !validComponent->IsRemoveable()) { return; }
+
+		for (auto it = components.begin(); it != components.end();)
 		{
-			T* castedComponent = dynamic_cast<T*>(it->get());
+			std::shared_ptr<T> castedComponent = std::dynamic_pointer_cast<T>(*it);
 
-			if (castedComponent && component.get() == castedComponent)
+			if (castedComponent && castedComponent == validComponent)
 			{
-				EventDispatcher::QueueEvent(EventType::ComponentRemoved, std::make_shared<ComponentRemovedEvent>(component));
-
-				if (!component.expired()) { component.lock()->SetIsActive(false); }
+				components.erase(it);
+				break;
+			}
+			else
+			{
+				++it;
 			}
 		}
 	}

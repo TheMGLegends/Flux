@@ -14,7 +14,7 @@ namespace Flux
 	class Transform;
 	class Model;
 
-	class Camera : public Component, public IDebugWireframe
+	class Camera : public Component, public IDebugWireframe, public std::enable_shared_from_this<Camera>
 	{
 	public:
 		Camera(GameObject* _gameObject);

@@ -34,7 +34,9 @@ void GameObject::Serialize(nlohmann::ordered_json& json) const
 	// INFO: Serialize each Component on the GameObject
 	for (size_t i = 0; i < components.size(); i++)
 	{
-		components[i]->Serialize(gameObjectJson);
+		const std::shared_ptr<Component>& component = components[i];
+
+		component->Serialize(gameObjectJson);
 	}
 }
 

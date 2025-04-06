@@ -116,7 +116,9 @@ void Scene::Serialize(nlohmann::ordered_json& json) const
 	// INFO: Serialize each GameObject in the Scene
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
-		gameObjects[i]->Serialize(json);
+		const std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
+		gameObject->Serialize(json);
 	}
 }
 

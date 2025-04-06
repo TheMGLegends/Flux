@@ -114,9 +114,6 @@
     <ClCompile Include="Source\Engine\Entities\GameObjects\SceneViewCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Entities\GameObjects\Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\Audio\Audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -268,9 +265,6 @@
     <ClInclude Include="Source\Core\Renderer\ConstantBuffers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\EventSystem\Events\ComponentRemovedEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\Scene\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -323,9 +317,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Helpers\MathHelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Entities\GameObjects\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Audio\Audio.h">
