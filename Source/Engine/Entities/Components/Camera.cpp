@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include <imgui_internal.h>
+
 #include "Core/Configs/EngineConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/Renderer/AssetHandler.h"
@@ -41,8 +43,13 @@ Camera::~Camera()
 
 void Camera::DrawDetails()
 {
-	// TODO: ImGui UI Details Panel Here
-	Component::DrawDetails(); // TODO: TEMP
+	if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+	{
+
+		ImGui::TreePop();
+	}
+
+	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 }
 
 void Camera::Serialize(nlohmann::ordered_json& json) const

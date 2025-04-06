@@ -36,6 +36,8 @@ namespace Flux
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
+		virtual void SetIsActive(bool _isActive) override;
+
 		void AddForce(const DirectX::SimpleMath::Vector3& force, physx::PxForceMode::Enum forceMode = physx::PxForceMode::eFORCE);
 
 		void SetMass(float _mass);

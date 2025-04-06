@@ -291,14 +291,14 @@ void Renderer::RenderFrame(Scene& scene)
 
 	for (auto& weakVisualizer : scene.GetComponents<Visualizer>())
 	{
-		if (weakVisualizer.expired()) { continue; }
-
 		std::shared_ptr<Visualizer> visualizer = weakVisualizer.lock();
-		Material& material = visualizer->GetMaterial();
-		GameObject* owningGameObject = visualizer->GetGameObject();
-		std::shared_ptr<Transform> transform = owningGameObject->transform.lock();
+		if (!visualizer) { continue; }
+		
+		GameObject* owningGameObject = visualizer->GetGameObject();	
+		if (!owningGameObject->IsActive() || !visualizer->IsActive()) { continue; }
 
-		if (!visualizer->IsActive()) { continue; }
+		Material& material = visualizer->GetMaterial();
+		std::shared_ptr<Transform> transform = owningGameObject->transform.lock();
 
 		DirectX::XMMATRIX world = transform->GetWorldMatrix();
 

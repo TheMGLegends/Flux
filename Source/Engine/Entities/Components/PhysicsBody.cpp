@@ -112,6 +112,18 @@ void PhysicsBody::Deserialize(const nlohmann::ordered_json& json)
 	}
 }
 
+void PhysicsBody::SetIsActive(bool _isActive)
+{
+	Component::SetIsActive(_isActive);
+
+	// INFO: Reset the Rigid Actor of the attached collider to be the new type based on active state
+	if (std::shared_ptr<Collider> collider = attachedCollider.lock())
+	{
+		collider->SetRigidActor();
+		collider->SetColliderShape(); // INFO: Reset the Collider Shape to be attached to the new Rigid Actor
+	}
+}
+
 void PhysicsBody::AddForce(const Vector3& force, physx::PxForceMode::Enum forceMode)
 {
 	auto rigidDynamic = VerifyRigidActor();

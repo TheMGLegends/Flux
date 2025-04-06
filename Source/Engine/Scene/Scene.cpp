@@ -159,7 +159,9 @@ void Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 		// INFO: Remove the GameObject from the Scene
 		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
-			if (gameObjects[i].get() == gameObjectRemovedEvent->gameObject)
+			GameObject* gameObject = gameObjects[i].get();
+
+			if (gameObject == gameObjectRemovedEvent->gameObject)
 			{
 				gameObjects.erase(gameObjects.begin() + i);
 				break;
@@ -275,7 +277,11 @@ void Scene::Start()
 {
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
-		if (gameObjects[i]->IsActive()) { gameObjects[i]->Start(); }
+		std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
+		if (!gameObject->IsActive()) { continue; }
+
+		gameObject->Start();
 	}
 }
 
@@ -284,7 +290,11 @@ void Scene::Update(float deltaTime)
 	// INFO: Update all custom user scripts
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
-		if (gameObjects[i]->IsActive()) { gameObjects[i]->Update(deltaTime); }
+		std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
+		if (!gameObject->IsActive()) { continue; }
+
+		gameObject->Update(deltaTime);
 	}
 
 	// INFO: Update Colliders (Physics Simulation if PhysicsBody, otherwise updated using Transform)
@@ -298,12 +308,11 @@ void Scene::Update(float deltaTime)
 
 	for (size_t i = 0; i < colliders.size(); i++)
 	{
-		if (colliders[i].expired()) { continue; }
+		std::shared_ptr<Collider> collider = colliders[i].lock();
 
-		auto collider = colliders[i].lock();
-		if (!collider->GetGameObject()->IsActive()) { continue; }
+		if (!collider || !collider->GetGameObject()->IsActive() || !collider->IsActive()) { continue; }
 
-		if (collider->IsActive()) { collider->Update(Time::Alpha()); } 
+		collider->Update(Time::Alpha());
 	}
 }
 
@@ -313,7 +322,11 @@ void Scene::LateUpdate(float deltaTime)
 	{
 		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
-			if (gameObjects[i]->IsActive()) { gameObjects[i]->LateUpdate(deltaTime); }
+			std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
+			if (!gameObject->IsActive()) { continue; }
+
+			gameObject->LateUpdate(deltaTime);
 		}
 	}
 
@@ -324,7 +337,11 @@ void Scene::FixedUpdate(float fixedDeltaTime)
 {
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
-		if (gameObjects[i]->IsActive()) { gameObjects[i]->FixedUpdate(fixedDeltaTime); }
+		std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
+		if (!gameObject->IsActive()) { continue; }
+
+		gameObject->FixedUpdate(fixedDeltaTime);
 	}
 }
 
@@ -332,13 +349,12 @@ void Scene::DrawWireframes(ID3D11DeviceContext& deviceContext, DirectX::Primitiv
 {
 	for (size_t i = 0; i < debugWireframes.size(); i++)
 	{
-		if (debugWireframes[i].component.expired()) { continue; }
+		DebugWireframeData& debugWireframeData = debugWireframes[i];
+		std::shared_ptr<Component> component = debugWireframeData.component.lock();
 
-		auto underlyingComponent = debugWireframes[i].component.lock();
+		if (!component || !component->GetGameObject()->IsActive() || !component->IsActive()) { continue; }
 
-		if (!underlyingComponent->IsActive() || !underlyingComponent->GetGameObject()->IsActive()) { continue; }
-
-		debugWireframes[i].debugWireframe->DrawWireframe(deviceContext, primitiveBatch);
+		debugWireframeData.debugWireframe->DrawWireframe(deviceContext, primitiveBatch);
 	}
 }
 
@@ -350,7 +366,7 @@ void Scene::RegisterComponent(std::weak_ptr<Component> component)
 		return;
 	}
 
-	auto validComponent = component.lock();
+	std::shared_ptr<Component> validComponent = component.lock();
 
 	switch (validComponent->GetComponentType())
 	{
@@ -436,7 +452,7 @@ std::weak_ptr<Camera> Scene::FindFirstActiveCamera()
 		{
 			std::shared_ptr<Camera> camera = gameObject->GetComponent<Camera>().lock();
 
-			if (!camera->IsActive()) { continue; }
+			if (!gameObject->IsActive() || !camera->IsActive()) { continue; }
 
 			return camera;
 		}

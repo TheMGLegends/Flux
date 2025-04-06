@@ -59,7 +59,9 @@ void Collider::Update(float alpha)
 	GameObject* gameObject = GetGameObject();
 	auto transform = gameObject->transform.lock();
 
-	if (gameObject && transform && rigidActor && isActive)
+	if (!gameObject || !gameObject->IsActive() || !isActive) { return; }
+
+	if (transform && rigidActor)
 	{
 		switch (rigidActorType)
 		{
@@ -198,14 +200,16 @@ void Collider::SetRigidActor()
 	{
 		const Vector3& position = gameObject->transform.lock()->GetPosition();
 		const Quaternion& rotation = gameObject->transform.lock()->GetRotation();
+		std::shared_ptr<PhysicsBody> physicsBody = gameObject->GetComponent<PhysicsBody>().lock();
 
 		// INFO: Setup as rigid static actor
-		if (!gameObject->HasComponent<PhysicsBody>())
+		if (!physicsBody || !physicsBody->IsActive())
 		{
 			rigidActor = physics.createRigidStatic(physx::PxTransform(position.x, position.y, position.z,
 												   physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
 			rigidActorType = RigidActorType::Static;
 		}
+		// INFO: Setup as rigid dynamic actor
 		else
 		{
 			rigidActor = physics.createRigidDynamic(physx::PxTransform(position.x, position.y, position.z,
