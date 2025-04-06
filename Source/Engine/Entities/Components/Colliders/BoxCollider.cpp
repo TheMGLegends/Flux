@@ -203,6 +203,5 @@ void BoxCollider::UpdateScale()
 void BoxCollider::SetSize(const DirectX::SimpleMath::Vector3& _size)
 {
 	size = _size;
-
 	UpdateScale();
 }

@@ -68,7 +68,7 @@ void SphereCollider::DrawDetails()
 		ImGui::Text("Radius");
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(136.0f);
-		ImGui::SetNextItemWidth(200.0f);
+		ImGui::SetNextItemWidth(50.0f);
 		if (ImGui::InputFloat("##Radius", &radius, 0.0f, 0.0f, "%.1f"))
 		{
 			UpdateScale();
@@ -145,12 +145,6 @@ void SphereCollider::SetColliderShape()
 
 void SphereCollider::UpdateScale()
 {
-}
-
-void SphereCollider::SetRadius(float _radius)
-{
-	radius = _radius;
-
 	if (colliderShape)
 	{
 		// INFO: Get reference to actor that the shape is attached to
@@ -170,6 +164,12 @@ void SphereCollider::SetRadius(float _radius)
 		// INFO: Re-attach the shape to the actor
 		rigidActor->attachShape(*colliderShape);
 	}
+}
+
+void SphereCollider::SetRadius(float _radius)
+{
+	radius = _radius;
+	UpdateScale();
 }
 
 void SphereCollider::DrawRing(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch, 
