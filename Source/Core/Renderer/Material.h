@@ -12,13 +12,13 @@ namespace Flux
 	public:
 		Material() = default;
 		Material(DirectXConfig::ShaderType shaderType, DirectXConfig::ConstantBufferType _constantBufferType, DirectXConfig::DepthWriteType depthWriteType,
-			     DirectXConfig::CullingModeType cullingModeType, const std::string& textureName);
+			     DirectXConfig::CullingModeType cullingModeType, const std::string& textureName, bool isSkyboxTexture = false);
 		~Material();
 
 		inline DirectXConfig::ConstantBufferType GetConstantBufferType() const { return constantBufferType; }
 		inline ID3D11Buffer* GetConstantBuffer() const { return constantBuffer; }
 
-		void SetTexture(const std::string& textureName);
+		void SetTexture(const std::string& textureName, bool isSkyboxTexture = false);
 
 		void Bind(ID3D11DeviceContext& deviceContext);
 

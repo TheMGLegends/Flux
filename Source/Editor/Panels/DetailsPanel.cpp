@@ -101,34 +101,40 @@ void DetailsPanel::Update(float deltaTime)
 			if (ImGui::BeginPopup("AddComponentPopup"))
 			{
 				std::weak_ptr<Component> component;
+				bool menuItemClicked = false;
 
 				if (ImGui::MenuItem("Camera"))
 				{
 					component = selectedGameObject->AddComponent<Camera>(selectedGameObject);
-					ComponentAlreadyExists(componentCount, static_cast<int>(selectedGameObject->GetComponents().size()), component);
+					menuItemClicked = true;
 				}
 
 				if (ImGui::MenuItem("Physics Body"))
 				{
 					component = selectedGameObject->AddComponent<PhysicsBody>(selectedGameObject);
-					ComponentAlreadyExists(componentCount, static_cast<int>(selectedGameObject->GetComponents().size()), component);
+					menuItemClicked = true;
 				}
 
 				if (ImGui::MenuItem("Visualizer"))
 				{
 					component = selectedGameObject->AddComponent<Visualizer>(selectedGameObject);
-					ComponentAlreadyExists(componentCount, static_cast<int>(selectedGameObject->GetComponents().size()), component);
+					menuItemClicked = true;
 				}
 
 				if (ImGui::MenuItem("Box Collider"))
 				{
 					component = selectedGameObject->AddComponent<BoxCollider>(selectedGameObject);
-					ComponentAlreadyExists(componentCount, static_cast<int>(selectedGameObject->GetComponents().size()), component);
+					menuItemClicked = true;
 				}
 
 				if (ImGui::MenuItem("Sphere Collider"))
 				{
 					component = selectedGameObject->AddComponent<SphereCollider>(selectedGameObject);
+					menuItemClicked = true;
+				}
+
+				if (menuItemClicked)
+				{
 					ComponentAlreadyExists(componentCount, static_cast<int>(selectedGameObject->GetComponents().size()), component);
 				}
 

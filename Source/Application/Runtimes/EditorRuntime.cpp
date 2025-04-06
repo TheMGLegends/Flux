@@ -171,4 +171,8 @@ void EditorRuntime::SetCustomStyle()
 
 	// INFO: Checkbox
 	colours[ImGuiCol_CheckMark] = ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f };
+
+	// INFO: Sliders
+	colours[ImGuiCol_SliderGrab] = ImVec4{ 0.4f, 0.405f, 0.41f, 1.0f };
+	colours[ImGuiCol_SliderGrabActive] = ImVec4{ 0.5f, 0.505f, 0.51f, 1.0f };
 }

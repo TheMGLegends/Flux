@@ -9,7 +9,8 @@
 using namespace Flux;
 using namespace Flux::DirectXConfig;
 
-Material::Material(ShaderType shaderType, ConstantBufferType _constantBufferType, DepthWriteType depthWriteType, CullingModeType cullingModeType, const std::string& textureName)
+Material::Material(ShaderType shaderType, ConstantBufferType _constantBufferType, DepthWriteType depthWriteType, 
+				   CullingModeType cullingModeType, const std::string& textureName, bool isSkyboxTexture)
 {
 	ShaderData& shaderData = AssetHandler::GetShaderData(shaderType);
 	vertexShader = shaderData.GetVertexShader();
@@ -23,7 +24,7 @@ Material::Material(ShaderType shaderType, ConstantBufferType _constantBufferType
 	depthWrite = AssetHandler::GetDepthWriteState(depthWriteType);
 	cullingMode = AssetHandler::GetCullingModeState(cullingModeType);
 
-	texture = AssetHandler::GetTexture(textureName);
+	texture = AssetHandler::GetTexture(textureName, isSkyboxTexture);
 	sampler = AssetHandler::GetSamplerState();
 }
 
@@ -31,9 +32,9 @@ Material::~Material()
 {
 }
 
-void Material::SetTexture(const std::string& textureName)
+void Material::SetTexture(const std::string& textureName, bool isSkyboxTexture)
 {
-	texture = AssetHandler::GetTexture(textureName);
+	texture = AssetHandler::GetTexture(textureName, isSkyboxTexture);
 
 	if (!texture) { Debug::LogError("Material::SetTexture() - Failed to load Texture: " + textureName); }
 }

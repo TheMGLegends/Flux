@@ -48,12 +48,15 @@ namespace Flux
 		static ID3D11RasterizerState* GetCullingModeState(DirectXConfig::CullingModeType cullingModeType);
 		static inline ID3D11SamplerState* GetSamplerState() { return samplerState.Get(); }
 		static DirectX::SpriteFont* GetFont(const std::string& fontName);
-		static ID3D11ShaderResourceView* GetTexture(const std::string& textureName);
+		static ID3D11ShaderResourceView* GetTexture(const std::string& textureName, bool isSkyboxTexture = false);
 		static Model* GetModel(const std::string& modelName);
 
 		/// @brief Returns a copy of a default material that can then be modified
 		static Material GetMaterial(DirectXConfig::ShaderType shaderType);
 		static const std::filesystem::path& GetAudioPath(const std::string& audioName);
+
+		static inline std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetTextures() { return textures; }
+		static inline std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetSkyboxTextures() { return skyboxTextures; }
 
 	private:
 		static HRESULT LoadShaders(DirectXConfig::ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath);
@@ -81,6 +84,7 @@ namespace Flux
 
 		static std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>> fonts;
 		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textures;
+		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> skyboxTextures;
 		static std::unordered_map<std::string, std::unique_ptr<Model>> models;
 		static std::unordered_map<DirectXConfig::ShaderType, Material> materials;
 		static std::unordered_map<std::string, std::filesystem::path> audioPaths;

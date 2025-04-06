@@ -43,6 +43,7 @@ ComPtr<ID3D11SamplerState> AssetHandler::samplerState;
 
 std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>> AssetHandler::fonts;
 std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> AssetHandler::textures;
+std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> AssetHandler::skyboxTextures;
 std::unordered_map<std::string, std::unique_ptr<Model>> AssetHandler::models;
 std::unordered_map<DirectXConfig::ShaderType, Material> AssetHandler::materials;
 std::unordered_map<std::string, std::filesystem::path> AssetHandler::audioPaths;
@@ -181,10 +182,21 @@ HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
 		return hResult;
 	}
 
-	if (!textures.insert({ texturePath.stem().string(), std::move(texture) }).second)
+	if (extensionType == FiletypeConfig::DDS)
 	{
-		Debug::LogError("AssetHandler::LoadTexture() - Failed to insert texture into map. Filepath: " + texturePath.string());
-		return E_FAIL;
+		if (!skyboxTextures.insert({ texturePath.stem().string(), texture }).second)
+		{
+			Debug::LogError("AssetHandler::LoadTexture() - Failed to insert skybox texture into map. Filepath: " + texturePath.string());
+			return E_FAIL;
+		}
+	}
+	else
+	{
+		if (!textures.insert({ texturePath.stem().string(), std::move(texture) }).second)
+		{
+			Debug::LogError("AssetHandler::LoadTexture() - Failed to insert texture into map. Filepath: " + texturePath.string());
+			return E_FAIL;
+		}
 	}
 
 	return S_OK;
@@ -282,10 +294,18 @@ DirectX::SpriteFont* AssetHandler::GetFont(const std::string& fontName)
 	return nullptr;
 }
 
-ID3D11ShaderResourceView* AssetHandler::GetTexture(const std::string& textureName)
+ID3D11ShaderResourceView* AssetHandler::GetTexture(const std::string& textureName, bool isSkyboxTexture)
 {
-	auto it = textures.find(textureName);
-	if (it != textures.end()) { return it->second.Get(); }
+	if (isSkyboxTexture)
+	{
+		auto it = skyboxTextures.find(textureName);
+		if (it != skyboxTextures.end()) { return it->second.Get(); }
+	}
+	else
+	{
+		auto it = textures.find(textureName);
+		if (it != textures.end()) { return it->second.Get(); }
+	}
 
 	Debug::LogError("AssetHandler::GetTexture() - Failed to find texture. Texture Name: " + textureName);
 	return nullptr;
@@ -650,7 +670,7 @@ int AssetHandler::LoadMaterial(ShaderType shaderType)
 		material = Material(ShaderType::Unlit, ConstantBufferType::Unlit, DepthWriteType::Enabled, CullingModeType::BackSolid, "DefaultTexture");
 		break;
 	case ShaderType::Skybox:
-		material = Material(ShaderType::Skybox, ConstantBufferType::Unlit, DepthWriteType::Disabled, CullingModeType::FrontSolid, "DefaultSkybox");
+		material = Material(ShaderType::Skybox, ConstantBufferType::Unlit, DepthWriteType::Disabled, CullingModeType::FrontSolid, "DefaultSkybox", true);
 		break;
 	case ShaderType::None:
 	default:
