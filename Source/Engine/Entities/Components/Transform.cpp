@@ -8,6 +8,7 @@
 #pragma warning (pop)
 
 #include "PhysicsBody.h"
+#include "Colliders/Collider.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
 
 using namespace Flux;
@@ -48,7 +49,10 @@ void Transform::DrawDetails()
 		}
 
 		// INFO: Scale Row
-		DisplayVector3Field("Scale", scale);
+		if (DisplayVector3Field("Scale", scale))
+		{
+			SetScale(scale);
+		}
 
 		ImGui::TreePop();
 	}
@@ -93,10 +97,12 @@ DirectX::XMMATRIX Transform::GetWorldMatrix() const
 	return scaleMatrix * rotationMatrix * translationMatrix;
 }
 
-DirectX::XMMATRIX Transform::GetWorldMatrix(const Vector3& otherScale) const
+DirectX::XMMATRIX Transform::GetWorldMatrix(const Vector3& offsetScale) const
 {
 	DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslationFromVector(position);
-	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScalingFromVector(otherScale);
+
+	Vector3 adjustedScale = scale * offsetScale;
+	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScalingFromVector(adjustedScale);
 	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationQuaternion(rotation);
 
 	return scaleMatrix * rotationMatrix * translationMatrix;
@@ -115,6 +121,20 @@ Vector3 Transform::Right() const
 Vector3 Transform::Up() const
 {
 	return Vector3::Transform(Vector3::Up, rotation);
+}
+
+void Transform::SetScale(const DirectX::SimpleMath::Vector3& _scale)
+{
+	scale = _scale;
+
+	// INFO: Make collider bounds match the transform scale + offset scale of the collider
+	if (GetGameObject()->HasComponent<Collider>())
+	{
+		if (std::shared_ptr<Collider> collider = GetGameObject()->GetComponent<Collider>().lock())
+		{
+			collider->UpdateScale();
+		}
+	}
 }
 
 void Transform::Rotate(const Vector3& eulerRotation)
@@ -156,76 +176,4 @@ void Transform::SetRotationEditor(const DirectX::SimpleMath::Quaternion& _rotati
 										physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
 		}
 	}
-}
-
-bool Transform::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed)
-{
-	bool changed = false;
-
-	if (ImGui::BeginTable(label, 2))
-	{
-		ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 100.0f); // INFO: Label Column
-		ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 300.0f); // INFO: Value Column
-
-		ImGui::TableNextColumn();
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text(label);
-
-		ImGui::TableNextColumn();
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-
-		// INFO: X Value
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.75f, 0.0f, 0.0f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.75f, 0.0f, 0.0f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.75f, 0.0f, 0.0f, 1.0f));
-
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
-		ImGui::Button("X");
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		if (ImGui::DragFloat("##X", &value.x, speed, 0.0f, 0.0f, "%.1f"))
-		{
-			changed = true;
-		}
-		ImGui::PopStyleVar();
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		// INFO: Y Value
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.75f, 0.0f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.75f, 0.0f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.75f, 0.0f, 1.0f));
-
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
-		ImGui::Button("Y");
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		if (ImGui::DragFloat("##Y", &value.y, speed, 0.0f, 0.0f, "%.1f"))
-		{
-			changed = true;
-		}
-		ImGui::PopStyleVar();
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		// INFO: Z Value
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.75f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.75f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.75f, 1.0f));
-
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
-		ImGui::Button("Z");
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		if (ImGui::DragFloat("##Z", &value.z, speed, 0.0f, 0.0f, "%.1f"))
-		{
-			changed = true;
-		}
-		ImGui::PopStyleVar();
-		ImGui::PopItemWidth();
-
-		ImGui::EndTable();
-	}
-
-	return changed;
 }

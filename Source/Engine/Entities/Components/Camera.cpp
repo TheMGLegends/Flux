@@ -60,11 +60,7 @@ void Camera::DrawDetails()
 	if (ImGui::Button("Remove", buttonSize))
 	{
 		GameObject* gameObject = GetGameObject();
-
-		if (gameObject)
-		{
-			gameObject->RemoveComponent(weak_from_this());
-		}
+		if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
 	}
 
 	if (treeOpened)

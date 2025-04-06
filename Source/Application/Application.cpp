@@ -58,6 +58,11 @@ Application::Application() : window(nullptr), isRunning(false)
 		Debug::LogError("Application::Application() - Failed to initialise Asset Handler");
 	}
 
+	if (IS_FAILURE(renderer.PostInitialise()))
+	{
+		Debug::LogError("Application::Application() - Failed to post-initialise Renderer");
+	}
+
 	if (IS_FAILURE(engineRuntime.PreInitialise()))
 	{
 		Debug::LogError("Application::Application() - Failed to pre-initialise Engine Runtime");

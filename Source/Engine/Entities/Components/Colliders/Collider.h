@@ -57,6 +57,7 @@ namespace Flux
 		void SetRigidActor();
 
 		virtual void SetColliderShape() = 0;
+		virtual void UpdateScale() = 0;
 
 		inline physx::PxRigidActor* GetRigidActor() const { return rigidActor; }
 		inline physx::PxShape& GetColliderShape() const { return *colliderShape; }
@@ -66,9 +67,10 @@ namespace Flux
 		physx::PxRigidActor* rigidActor;
 		physx::PxShape* colliderShape;
 
-	private:
 		bool isTrigger;
-		DirectX::SimpleMath::Vector3 centre;
+
+	private:
+		DirectX::SimpleMath::Vector3 centre; // TODO: DOESNT WORK WITH CURRENT IMPLEMENTATION, EITHER DELETE OR FIX
 
 		std::unordered_map<CollisionType, std::function<void(std::shared_ptr<Collider>)>> collisionCallbacks;
 		RigidActorType rigidActorType;

@@ -2,6 +2,7 @@
 
 #include <DirectXColors.h>
 
+#include "Core/Helpers/MathHelpers.h"
 #include "Engine/Physics/Physics.h"
 #include "Engine/Scene/SceneContext.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
@@ -99,6 +100,10 @@ void SphereCollider::SetColliderShape()
 	}
 }
 
+void SphereCollider::UpdateScale()
+{
+}
+
 void SphereCollider::SetRadius(float _radius)
 {
 	radius = _radius;
@@ -114,7 +119,8 @@ void SphereCollider::SetRadius(float _radius)
 		physx::PxSphereGeometry sphereGeometry{};
 		if (colliderShape->getSphereGeometry(sphereGeometry))
 		{
-			sphereGeometry.radius = radius;
+			Vector3 scale = GetGameObject()->transform.lock()->GetScale();
+			sphereGeometry.radius = radius * MathHelpers::Max(scale.x, scale.y, scale.z);
 			colliderShape->setGeometry(sphereGeometry);
 		}
 

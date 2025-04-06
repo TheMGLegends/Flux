@@ -1,6 +1,7 @@
 #include "BoxCollider.h"
 
 #include <DirectXColors.h>
+#include <imgui_internal.h>
 
 #include "Engine/Physics/Physics.h"
 #include "Engine/Scene/SceneContext.h"
@@ -31,10 +32,47 @@ BoxCollider::~BoxCollider()
 
 void BoxCollider::DrawDetails()
 {
-	// TODO: ImGui UI Details Panel Here
-	Component::DrawDetails(); // TODO: TEMP
+	ImGui::PushID(this);
 
-	// TODO: Maybe have common logic in Collider class
+	bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+
+	// INFO: Active Checkbox
+	ImGui::SameLine();
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+	ImGui::Checkbox("##ComponentActive", &isActive);
+	ImGui::PopStyleVar();
+
+	// INFO: Remove Component Button
+	ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+	ImGui::SameLine();
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
+	if (ImGui::Button("Remove", buttonSize))
+	{
+		GameObject* gameObject = GetGameObject();
+		if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
+	}
+
+	if (treeOpened)
+	{
+		// INFO: Is Trigger Checkbox
+		ImGui::Text("Is Trigger");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(117.0f);
+		if (ImGui::Checkbox("##IsTrigger", &isTrigger))
+		{
+			SetIsTrigger(isTrigger);
+		}
+
+		if (DisplayVector3Field("Size", size))
+		{
+			UpdateScale();
+		}
+
+		ImGui::TreePop();
+	}
+	ImGui::PopID();
+
+	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 }
 
 void BoxCollider::Serialize(nlohmann::ordered_json& json) const
@@ -88,13 +126,7 @@ void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::Pri
 
 	if (owningTransform)
 	{
-		// INFO: Add a small offset to prevent Z-Fighting
-		Vector3 offsetSize = size;
-		offsetSize.x += 0.01f;
-		offsetSize.y += 0.01f;
-		offsetSize.z += 0.01f;
-
-		DirectX::XMMATRIX world = owningTransform->GetWorldMatrix(offsetSize);
+		DirectX::XMMATRIX world = owningTransform->GetWorldMatrix(size);
 
 		// INFO: Translate the vertices to world space
 		DirectX::VertexPositionColor worldVertices[8]{};
@@ -120,8 +152,9 @@ void BoxCollider::SetColliderShape()
 		colliderShape = nullptr;
 	}
 
-	// INFO: Create Box Collider Shape
-	colliderShape = Physics::GetPhysics().createShape(physx::PxBoxGeometry(size.x, size.y, size.z), Physics::GetDefaultPhysicsMaterial(), true);
+	// INFO: Create Box Collider Shape (Scale Size with Transform Scale)
+	Vector3 adjustedSize = GetGameObject()->transform.lock()->GetScale() * size;
+	colliderShape = Physics::GetPhysics().createShape(physx::PxBoxGeometry(adjustedSize.x, adjustedSize.y, adjustedSize.z), Physics::GetDefaultPhysicsMaterial(), true);
 
 	// INFO: Default Collisions with everything
 	physx::PxFilterData filterData{};
@@ -144,10 +177,8 @@ void BoxCollider::SetColliderShape()
 	}
 }
 
-void BoxCollider::SetSize(const DirectX::SimpleMath::Vector3& _size)
+void BoxCollider::UpdateScale()
 {
-	size = _size;
-
 	if (colliderShape)
 	{
 		// INFO: Get reference to actor that the shape is attached to
@@ -159,11 +190,19 @@ void BoxCollider::SetSize(const DirectX::SimpleMath::Vector3& _size)
 		physx::PxBoxGeometry boxGeometry{};
 		if (colliderShape->getBoxGeometry(boxGeometry))
 		{
-			boxGeometry.halfExtents = { size.x, size.y, size.z };
+			Vector3 adjustedSize = size * GetGameObject()->transform.lock()->GetScale();
+			boxGeometry.halfExtents = { adjustedSize.x, adjustedSize.y, adjustedSize.z };
 			colliderShape->setGeometry(boxGeometry);
 		}
 
 		// INFO: Re-attach the shape to the actor
 		rigidActor->attachShape(*colliderShape);
 	}
+}
+
+void BoxCollider::SetSize(const DirectX::SimpleMath::Vector3& _size)
+{
+	size = _size;
+
+	UpdateScale();
 }

@@ -18,7 +18,7 @@ namespace Flux
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
 
 		DirectX::XMMATRIX GetWorldMatrix() const;
-		DirectX::XMMATRIX GetWorldMatrix(const DirectX::SimpleMath::Vector3& otherScale) const;
+		DirectX::XMMATRIX GetWorldMatrix(const DirectX::SimpleMath::Vector3& offsetScale) const;
 
 		DirectX::SimpleMath::Vector3 Forward() const;
 		DirectX::SimpleMath::Vector3 Right() const;
@@ -29,22 +29,18 @@ namespace Flux
 
 		inline void SetRotation(const DirectX::SimpleMath::Quaternion& _rotation) { rotation = _rotation; }
 		inline const DirectX::SimpleMath::Quaternion& GetRotation() const { return rotation; }
-
-		inline void SetScale(const DirectX::SimpleMath::Vector3& _scale) { scale = _scale; }
+		
+		void SetScale(const DirectX::SimpleMath::Vector3& _scale); // TODO: NEEDS REDOING IN COMPONENT START FUNCTION MAYBE
 		inline const DirectX::SimpleMath::Vector3& GetScale() const { return scale; }
 
 		void Rotate(const DirectX::SimpleMath::Vector3& eulerAngles);
 		inline void Translate(const DirectX::SimpleMath::Vector3& translation) { position += translation; }
 
-		/// @brief Used internally by the Editor to set the position of the Transform and any associated rigidActors
-		void SetPositionEditor(const DirectX::SimpleMath::Vector3& _position);
+		/// @brief Used internally by the Editor to set the position of the Transform and any associated rigidActors 
+		void SetPositionEditor(const DirectX::SimpleMath::Vector3& _position); // TODO: NEEDS REDOING IN COMPONENT START FUNCTION
 
 		/// @brief Used internally by the Editor to set the rotation of the Transform and any associated rigidActors
-		void SetRotationEditor(const DirectX::SimpleMath::Quaternion& _rotation);
-
-	private:
-		/// @return true if the field was changed
-		bool DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed = 0.1f);
+		void SetRotationEditor(const DirectX::SimpleMath::Quaternion& _rotation); // TODO: NEEDS REDOING IN COMPONENT START FUNCTION
 
 	private:
 		DirectX::SimpleMath::Vector3 position;

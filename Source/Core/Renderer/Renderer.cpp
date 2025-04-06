@@ -4,6 +4,7 @@
 #include <backends/imgui_impl_dx11.h>
 
 #include "ConstantBuffers.h"
+#include "Core/GlobalDefines.h"
 #include "Core/Configs/DirectXConfig.h"
 #include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/EngineConfig.h"
@@ -23,11 +24,13 @@ using namespace DirectX;
 using namespace Flux;
 using namespace Flux::ConstantBuffers;
 using namespace Flux::DirectXConfig;
+using namespace Flux::GlobalDefines;
 using namespace DirectX::SimpleMath;
 using namespace Microsoft::WRL;
 
 Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullptr), renderTargetView(nullptr), 
-					   depthStencilView(nullptr), spriteBatch(nullptr), backBufferViewport(), sceneViewViewport()
+					   depthStencilView(nullptr), spriteBatch(nullptr), backBufferViewport(), sceneViewViewport(),
+					   depthDisabled(nullptr)
 {
 }
 
@@ -260,6 +263,20 @@ HRESULT Renderer::Initialise(HWND hWnd)
 	return hResult; // INFO: S_OK so long as we've made it this far
 }
 
+int Renderer::PostInitialise()
+{
+	// INFO: Load Depth Disabled State
+	depthDisabled = AssetHandler::GetDepthWriteState(DepthWriteType::Disabled);
+
+	if (!depthDisabled)
+	{
+		Debug::LogError("Renderer::PostInitialise() - Failed to load Depth Stencil State");
+		return FLUX_FAILURE;
+	}
+
+	return FLUX_SUCCESS;
+}
+
 void Renderer::RenderFrame(Scene& scene)
 {
 	std::shared_ptr<Camera> camera = scene.GetCamera().lock();
@@ -333,9 +350,13 @@ void Renderer::RenderFrame(Scene& scene)
 	// INFO: Render the Debug Wireframes
 	if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused())
 	{
+
 		batchEffect->SetView(view);
 		batchEffect->SetProjection(projection);
 		batchEffect->Apply(deviceContext.Get());
+
+		// INFO: Disable Depth Testing
+		deviceContext->OMSetDepthStencilState(depthDisabled, 0);
 
 		deviceContext->IASetInputLayout(batchInputLayout.Get());
 

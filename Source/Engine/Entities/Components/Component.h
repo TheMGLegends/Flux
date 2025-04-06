@@ -6,6 +6,8 @@
 
 #include "ComponentTypes.h"
 
+namespace DirectX::SimpleMath { struct Vector3; }
+
 namespace Flux
 {
 	class GameObject;
@@ -22,7 +24,7 @@ namespace Flux
 		virtual void PostConstruction() {}
 
 		/// @brief Called by details panel, should implement logic to draw the component details using ImGui
-		virtual void DrawDetails() { ImGui::Text(name.c_str()); } // TODO: Temporary Code Here
+		virtual void DrawDetails() {}
 
 		virtual void Serialize(nlohmann::ordered_json& json) const override;
 		virtual void Deserialize(const nlohmann::ordered_json& json) override;
@@ -36,6 +38,10 @@ namespace Flux
 		inline bool IsRemoveable() const { return isRemoveable; }
 
 		inline ComponentType GetComponentType() const { return componentType; }
+
+	protected:
+		/// @return true if the field was changed
+		bool DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed = 0.1f);
 
 	private:
 		inline void SetGameObject(GameObject* _gameObject) { gameObject = _gameObject; }

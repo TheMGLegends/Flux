@@ -38,6 +38,10 @@ namespace Flux
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
 		HRESULT Initialise(HWND hWnd);
+
+		/// @return 0 if successful
+		int PostInitialise();
+
 		void RenderFrame(Scene& scene);
 
 		inline ID3D11Device& GetDevice() { return *device.Get(); }
@@ -71,6 +75,7 @@ namespace Flux
 
 		// INFO: Debug Wireframe Rendering
 
+		ID3D11DepthStencilState* depthDisabled;
 		std::unique_ptr<DirectX::BasicEffect> batchEffect;
 		std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> primitiveBatch;
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> batchInputLayout;
