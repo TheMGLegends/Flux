@@ -112,6 +112,7 @@ void Camera::DrawDetails()
 			ImGui::AlignTextToFramePadding();
 
 			ImGui::TableNextColumn();
+			ImGui::SetCursorPosX(50.0f);
 			ImGui::Text("Near");
 			ImGui::TableNextColumn();
 			ImGui::SetCursorPosX(136.0f);
@@ -120,6 +121,7 @@ void Camera::DrawDetails()
 			ImGui::TableNextRow();
 
 			ImGui::TableNextColumn();
+			ImGui::SetCursorPosX(50.0f);
 			ImGui::Text("Far");
 			ImGui::TableNextColumn();
 			ImGui::SetCursorPosX(136.0f);

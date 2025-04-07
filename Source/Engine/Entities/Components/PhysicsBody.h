@@ -3,6 +3,7 @@
 #include "Component.h"
 
 #include <array>
+#include <memory>
 #pragma warning (push)
 #pragma warning (disable : 26495) // INFO: Disable warning for uninitialised variables
 #include <PxForceMode.h>
@@ -24,7 +25,7 @@ namespace Flux
 
 	class Collider;
 
-	class PhysicsBody : public Component
+	class PhysicsBody : public Component, public std::enable_shared_from_this<PhysicsBody>
 	{
 	public:
 		PhysicsBody(GameObject* _gameObject);
@@ -59,6 +60,10 @@ namespace Flux
 		inline bool IsRotationConstrained(ConstraintAxis axis) const { return rotationConstraints[static_cast<size_t>(axis)]; }
 
 		physx::PxRigidDynamic* VerifyRigidActor();
+
+	private:
+		/// @return true if the field was changed
+		bool DisplayArray3Field(const char* label, bool* array);
 
 	private:
 		std::weak_ptr<Collider> attachedCollider;

@@ -1,5 +1,6 @@
 #include "PhysicsBody.h"
 
+#include <imgui_internal.h>
 #include <magic_enum.hpp>
 #pragma warning (push, 0)
 #include <extensions/PxRigidBodyExt.h>
@@ -70,8 +71,88 @@ void PhysicsBody::PostConstruction()
 
 void PhysicsBody::DrawDetails()
 {
-	// TODO: ImGui UI Details Panel Here
-	Component::DrawDetails(); // TODO: TEMP
+	ImGui::PushID(this);
+
+	bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+
+	// INFO: Active Checkbox
+	ImGui::SameLine();
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+	ImGui::Checkbox("##ComponentActive", &isActive);
+	ImGui::PopStyleVar();
+
+	// INFO: Remove Component Button
+	ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+	ImGui::SameLine();
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
+	if (ImGui::Button("Remove", buttonSize))
+	{
+		GameObject* gameObject = GetGameObject();
+		if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
+	}
+
+	if (treeOpened)
+	{
+		// INFO: Mass InputField
+		ImGui::Text("Mass");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
+		ImGui::SetNextItemWidth(50.0f);
+		if (ImGui::InputFloat("##Radius", &mass, 0.0f, 0.0f, "%.1f"))
+		{
+			SetMass(mass);
+		}
+
+		// INFO: Drag InputField
+		ImGui::Text("Drag");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
+		ImGui::SetNextItemWidth(50.0f);
+		if (ImGui::InputFloat("##Drag", &drag, 0.0f, 0.0f, "%.2f"))
+		{
+			SetDrag(drag);
+		}
+
+		// INFO: Angular Drag InputField
+		ImGui::Text("Angular Drag");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
+		ImGui::SetNextItemWidth(50.0f);
+		if (ImGui::InputFloat("##AngularDrag", &angularDrag, 0.0f, 0.0f, "%.2f"))
+		{
+			SetAngularDrag(angularDrag);
+		}
+
+		// INFO: Use Gravity Checkbox
+		ImGui::Text("Use Gravity");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
+		if (ImGui::Checkbox("##UseGravity", &useGravity))
+		{
+			SetUseGravity(useGravity);
+		}
+
+		// INFO: Constraints
+		ImGui::Text("Constraints");
+		if (DisplayArray3Field("Freeze Position", &positionConstraints[0]))
+		{
+			SetPositionConstraint(positionConstraints[0], ConstraintAxis::X);
+			SetPositionConstraint(positionConstraints[1], ConstraintAxis::Y);
+			SetPositionConstraint(positionConstraints[2], ConstraintAxis::Z);
+		}
+
+		if (DisplayArray3Field("Freeze Rotation", &rotationConstraints[0]))
+		{
+			SetRotationConstraint(rotationConstraints[0], ConstraintAxis::X);
+			SetRotationConstraint(rotationConstraints[1], ConstraintAxis::Y);
+			SetRotationConstraint(rotationConstraints[2], ConstraintAxis::Z);
+		}
+
+		ImGui::TreePop();
+	}
+	ImGui::PopID();
+
+	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 }
 
 void PhysicsBody::Serialize(nlohmann::flux_json& json) const
@@ -239,4 +320,77 @@ physx::PxRigidDynamic* PhysicsBody::VerifyRigidActor()
 
 	Debug::LogError("PhysicsBody::VerifyRigidActor() - No Collider found or Collider is not dynamic");
 	return nullptr;
+}
+
+bool PhysicsBody::DisplayArray3Field(const char* label, bool* array)
+{
+	bool changed = false;
+
+	ImGui::SetCursorPosX(50.0f);
+	if (ImGui::BeginTable(label, 2))
+	{
+		ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 125.0f); // INFO: Label Column
+		ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 300.0f); // INFO: Value Column
+
+		ImGui::TableNextColumn();
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text(label);
+
+		ImGui::TableNextColumn();
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+
+		// INFO: X Value
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.75f, 0.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.75f, 0.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.75f, 0.0f, 0.0f, 1.0f));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+		ImGui::Button("X");
+		ImGui::PopStyleColor(3);
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##X", &array[0]))
+		{
+			changed = true;
+		}
+		ImGui::PopStyleVar();
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		// INFO: Y Value
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.75f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.75f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.75f, 0.0f, 1.0f));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+		ImGui::Button("Y");
+		ImGui::PopStyleColor(3);
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##Y", &array[1]))
+		{
+			changed = true;
+		}
+		ImGui::PopStyleVar();
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		// INFO: Z Value
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.75f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.75f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.75f, 1.0f));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+		ImGui::Button("Z");
+		ImGui::PopStyleColor(3);
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##Z", &array[2]))
+		{
+			changed = true;
+		}
+		ImGui::PopStyleVar();
+		ImGui::PopItemWidth();
+
+		ImGui::EndTable();
+	}
+
+	return changed;
 }
