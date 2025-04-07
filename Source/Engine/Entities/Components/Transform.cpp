@@ -60,7 +60,7 @@ void Transform::DrawDetails()
 	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 }
 
-void Transform::Serialize(nlohmann::ordered_json& json) const
+void Transform::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
@@ -75,7 +75,7 @@ void Transform::Serialize(nlohmann::ordered_json& json) const
 	jsonBack["Scale"] = { scale.x, scale.y, scale.z };
 }
 
-void Transform::Deserialize(const nlohmann::ordered_json& json)
+void Transform::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);

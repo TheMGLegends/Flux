@@ -105,7 +105,7 @@ Scene::~Scene()
 	}
 }
 
-void Scene::Serialize(nlohmann::ordered_json& json) const
+void Scene::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Save the name of the Scene
 	json["SceneName"] = sceneName; // TODO: For now only one scene is supported
@@ -122,7 +122,7 @@ void Scene::Serialize(nlohmann::ordered_json& json) const
 	}
 }
 
-void Scene::Deserialize(const nlohmann::ordered_json& json)
+void Scene::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Clear existing scene contents before loading 'new' scene
 	gameObjects.clear();
@@ -208,7 +208,7 @@ void Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 	else if (eventType == EventType::SceneSaved)
 	{
 		// TODO: TESTING CODE
-		nlohmann::ordered_json json;
+		nlohmann::flux_json json;
 		Serialize(json);
 		std::ofstream jsonFile("test.json");
 		jsonFile << json.dump(4);

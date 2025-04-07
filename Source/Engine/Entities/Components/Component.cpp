@@ -15,7 +15,7 @@ Component::~Component()
 {
 }
 
-void Component::Serialize(nlohmann::ordered_json& json) const
+void Component::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Serialize Component Data
 	json["Components"].push_back({
@@ -25,7 +25,7 @@ void Component::Serialize(nlohmann::ordered_json& json) const
 		});
 }
 
-void Component::Deserialize(const nlohmann::ordered_json& json)
+void Component::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Deserialize Component Data
 	name = json["Name"].get<std::string>();

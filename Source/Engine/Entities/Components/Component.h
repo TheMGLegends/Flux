@@ -26,8 +26,8 @@ namespace Flux
 		/// @brief Called by details panel, should implement logic to draw the component details using ImGui
 		virtual void DrawDetails() {}
 
-		virtual void Serialize(nlohmann::ordered_json& json) const override;
-		virtual void Deserialize(const nlohmann::ordered_json& json) override;
+		virtual void Serialize(nlohmann::flux_json& json) const override;
+		virtual void Deserialize(const nlohmann::flux_json& json) override;
 
 		inline GameObject* GetGameObject() const { return gameObject; }
 

@@ -75,7 +75,7 @@ void BoxCollider::DrawDetails()
 	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 }
 
-void BoxCollider::Serialize(nlohmann::ordered_json& json) const
+void BoxCollider::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Collider::Serialize(json);
@@ -83,7 +83,7 @@ void BoxCollider::Serialize(nlohmann::ordered_json& json) const
 	json["Components"].back()["Size"] = { size.x, size.y, size.z };
 }
 
-void BoxCollider::Deserialize(const nlohmann::ordered_json& json)
+void BoxCollider::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Collider::Deserialize(json);

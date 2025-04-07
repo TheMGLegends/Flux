@@ -17,7 +17,7 @@ GameObject::~GameObject()
 {
 }
 
-void GameObject::Serialize(nlohmann::ordered_json& json) const
+void GameObject::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Serialize GameObject Data
 	json["GameObjects"].push_back({
@@ -29,7 +29,7 @@ void GameObject::Serialize(nlohmann::ordered_json& json) const
 		});
 
 	// INFO: Get the last Component JSON array
-	nlohmann::ordered_json& gameObjectJson = json["GameObjects"].back();
+	nlohmann::flux_json& gameObjectJson = json["GameObjects"].back();
 
 	// INFO: Serialize each Component on the GameObject
 	for (size_t i = 0; i < components.size(); i++)
@@ -40,7 +40,7 @@ void GameObject::Serialize(nlohmann::ordered_json& json) const
 	}
 }
 
-void GameObject::Deserialize(const nlohmann::ordered_json& json)
+void GameObject::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Deserialize GameObject Data
 	name = json["Name"].get<std::string>();

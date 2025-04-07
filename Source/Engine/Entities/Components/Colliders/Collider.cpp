@@ -109,7 +109,7 @@ void Collider::Update(float alpha)
 	}
 }
 
-void Collider::Serialize(nlohmann::ordered_json& json) const
+void Collider::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
@@ -119,7 +119,7 @@ void Collider::Serialize(nlohmann::ordered_json& json) const
 	jsonBack["Centre"] = { centre.x, centre.y, centre.z };
 }
 
-void Collider::Deserialize(const nlohmann::ordered_json& json)
+void Collider::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);

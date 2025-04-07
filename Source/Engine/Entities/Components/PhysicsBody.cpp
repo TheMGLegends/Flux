@@ -74,7 +74,7 @@ void PhysicsBody::DrawDetails()
 	Component::DrawDetails(); // TODO: TEMP
 }
 
-void PhysicsBody::Serialize(nlohmann::ordered_json& json) const
+void PhysicsBody::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
@@ -88,7 +88,7 @@ void PhysicsBody::Serialize(nlohmann::ordered_json& json) const
 	jsonBack["RotationConstraints"] = { rotationConstraints[0], rotationConstraints[1], rotationConstraints[2] };
 }
 
-void PhysicsBody::Deserialize(const nlohmann::ordered_json& json)
+void PhysicsBody::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);

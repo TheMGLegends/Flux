@@ -29,7 +29,7 @@ void Visualizer::DrawDetails()
 	Component::DrawDetails(); // TODO: TEMP
 }
 
-void Visualizer::Serialize(nlohmann::ordered_json& json) const
+void Visualizer::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
@@ -39,7 +39,7 @@ void Visualizer::Serialize(nlohmann::ordered_json& json) const
 	jsonBack["TextureName"] = textureName;
 }
 
-void Visualizer::Deserialize(const nlohmann::ordered_json& json)
+void Visualizer::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);

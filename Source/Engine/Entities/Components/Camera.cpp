@@ -135,7 +135,7 @@ void Camera::DrawDetails()
 	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 }
 
-void Camera::Serialize(nlohmann::ordered_json& json) const
+void Camera::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Component::Serialize(json);
@@ -149,7 +149,7 @@ void Camera::Serialize(nlohmann::ordered_json& json) const
 	jsonBack["UseSkybox"] = useSkybox;
 }
 
-void Camera::Deserialize(const nlohmann::ordered_json& json)
+void Camera::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Component::Deserialize(json);

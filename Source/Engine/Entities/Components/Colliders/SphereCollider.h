@@ -12,8 +12,8 @@ namespace Flux
 
 		virtual void DrawDetails() override;
 
-		virtual void Serialize(nlohmann::ordered_json& json) const override;
-		virtual void Deserialize(const nlohmann::ordered_json& json) override;
+		virtual void Serialize(nlohmann::flux_json& json) const override;
+		virtual void Deserialize(const nlohmann::flux_json& json) override;
 
 		virtual void DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch) override;
 		

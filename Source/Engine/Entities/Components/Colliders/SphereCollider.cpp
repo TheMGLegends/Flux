@@ -81,7 +81,7 @@ void SphereCollider::DrawDetails()
 	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 }
 
-void SphereCollider::Serialize(nlohmann::ordered_json& json) const
+void SphereCollider::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Serialize Parent Class
 	Collider::Serialize(json);
@@ -89,7 +89,7 @@ void SphereCollider::Serialize(nlohmann::ordered_json& json) const
 	json["Components"].back()["Radius"] = radius;
 }
 
-void SphereCollider::Deserialize(const nlohmann::ordered_json& json)
+void SphereCollider::Deserialize(const nlohmann::flux_json& json)
 {
 	// INFO: Deserialize Parent Class
 	Collider::Deserialize(json);
