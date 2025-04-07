@@ -57,6 +57,7 @@ namespace Flux
 
 		static inline std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetTextures() { return textures; }
 		static inline std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetSkyboxTextures() { return skyboxTextures; }
+		static inline std::unordered_map<std::string, std::unique_ptr<Model>>& GetModels() { return models; }
 
 	private:
 		static HRESULT LoadShaders(DirectXConfig::ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath);

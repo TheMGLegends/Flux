@@ -3,6 +3,7 @@
 #include "Component.h"
 
 #include <d3d11.h>
+#include <memory>
 #include <string>
 
 #include "Core/Renderer/Material.h"
@@ -11,7 +12,7 @@ namespace Flux
 {
 	class Model;
 
-	class Visualizer : public Component
+	class Visualizer : public Component, public std::enable_shared_from_this<Visualizer>
 	{
 	public:
 		Visualizer(GameObject* _gameObject);

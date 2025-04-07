@@ -61,9 +61,9 @@
                         -8.5
                     ],
                     "Rotation": [
-                        49.999996,
+                        49.999992,
                         44.99999,
-                        2.656472e-06
+                        2.6564717e-06
                     ],
                     "Scale": [
                         1.0,
@@ -76,7 +76,7 @@
                     "IsActive": true,
                     "ComponentType": 4,
                     "ModelName": "Cube",
-                    "TextureName": "DefaultTexture"
+                    "TextureName": "TranslationButton"
                 },
                 {
                     "Name": "BoxCollider",
@@ -132,7 +132,7 @@
                     ],
                     "Rotation": [
                         -0.0,
-                        44.999996,
+                        44.999992,
                         0.0
                     ],
                     "Scale": [
@@ -344,7 +344,7 @@
                     ],
                     "Rotation": [
                         -0.0,
-                        179.99998,
+                        179.99997,
                         0.0
                     ],
                     "Scale": [
