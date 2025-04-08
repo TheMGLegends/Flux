@@ -145,6 +145,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Editor\Panels\ContentsDrawer.cpp" />
     <ClCompile Include="Source\Editor\Panels\DetailsPanel.cpp" />
     <ClCompile Include="Source\Engine\Entities\GameObjects\Default\Cube.cpp" />
     <ClCompile Include="Source\Editor\Panels\SceneHierarchy.cpp" />
@@ -193,6 +194,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Editor\Panels\ContentsDrawer.h" />
     <ClInclude Include="Source\Editor\Panels\DetailsPanel.h" />
     <ClInclude Include="Source\Engine\Entities\GameObjects\Default\Cube.h" />
     <ClInclude Include="Source\Editor\Panels\SceneHierarchy.h" />

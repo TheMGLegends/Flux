@@ -12,6 +12,7 @@
 #include "Core/Debug/FrameRateMonitor.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Input/Input.h"
+#include "Editor/Panels/ContentsDrawer.h"
 #include "Editor/Panels/DetailsPanel.h"
 #include "Editor/Panels/SceneHierarchy.h"
 #include "Editor/Panels/SceneView.h"
@@ -84,11 +85,38 @@ int EditorRuntime::Initialise(Renderer& renderer)
 	editorPanels.emplace_back(std::make_unique<SceneHierarchy>());
 	sceneHierarchy = static_cast<SceneHierarchy*>(editorPanels.back().get());
 
+	if (!sceneHierarchy)
+	{
+		Debug::LogError("EditorRuntime::Initialise() - Failed to create SceneHierarchy");
+		return FLUX_FAILURE;
+	}
+
 	editorPanels.emplace_back(std::make_unique<SceneView>(renderer, sceneHierarchy));
 	sceneView = static_cast<SceneView*>(editorPanels.back().get());
 
+	if (!sceneView)
+	{
+		Debug::LogError("EditorRuntime::Initialise() - Failed to create SceneView");
+		return FLUX_FAILURE;
+	}
+
 	editorPanels.emplace_back(std::make_unique<DetailsPanel>(sceneHierarchy));
 	detailsPanel = static_cast<DetailsPanel*>(editorPanels.back().get());
+
+	if (!detailsPanel)
+	{
+		Debug::LogError("EditorRuntime::Initialise() - Failed to create DetailsPanel");
+		return FLUX_FAILURE;
+	}
+
+	editorPanels.emplace_back(std::make_unique<ContentsDrawer>());
+	contentsDrawer = static_cast<ContentsDrawer*>(editorPanels.back().get());
+
+	if (!contentsDrawer)
+	{
+		Debug::LogError("EditorRuntime::Initialise() - Failed to create ContentsDrawer");
+		return FLUX_FAILURE;
+	}
 
 	for (size_t i = 0; i < editorPanels.size(); i++) 
 	{ 
@@ -123,11 +151,6 @@ void EditorRuntime::Update(float deltaTime)
 
 	ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_NoUndocking;
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID, nullptr, dockspaceFlags);
-
-	// TODO: TESTING
-	ImGui::Begin("Content Browser");
-	ImGui::Text("Hello, World!");
-	ImGui::End();
 
 	// INFO: Update Editor Panels
 	for (size_t i = 0; i < editorPanels.size(); i++)

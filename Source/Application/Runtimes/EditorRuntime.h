@@ -11,6 +11,7 @@ struct SDL_Window;
 
 namespace Flux
 {
+	class ContentsDrawer;
 	class DetailsPanel;
 	class EditorPanel;
 	class Renderer;
@@ -43,6 +44,7 @@ namespace Flux
 		SceneHierarchy* sceneHierarchy;
 		SceneView* sceneView;
 		DetailsPanel* detailsPanel;
+		ContentsDrawer* contentsDrawer;
 	};
 }
 
