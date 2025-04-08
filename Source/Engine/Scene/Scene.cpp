@@ -442,7 +442,9 @@ std::weak_ptr<Camera> Scene::GetCamera(bool primary)
 	if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 	{
 		// INFO: Return the first active camera in the scene
-		if (playModeCamera.expired() || !playModeCamera.lock()->IsActive())
+		std::shared_ptr<Camera> camera = playModeCamera.lock();
+
+		if (!camera || !camera->GetGameObject()->IsActive() || !camera->IsActive())
 		{
 			playModeCamera = FindFirstActiveCamera();
 		}
