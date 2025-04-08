@@ -2,6 +2,9 @@
 
 #include "EditorPanel.h"
 
+#include <filesystem>
+#include <vector>
+
 namespace Flux
 {
 	class ContentsDrawer : public EditorPanel
@@ -13,7 +16,15 @@ namespace Flux
 		virtual int Initialise() override;
 		virtual void Update(float deltaTime) override;
 
+		void UpdateContents();
+		void DrawContents();
+
 	private:
+		std::filesystem::path currentDirectory;
+		std::vector<std::filesystem::directory_entry> contents;
+
+		float contentsRefreshTime;
+		float currentRefreshTime;
 		// TODO: Contents Drawer Data
 	};
 }

@@ -1,6 +1,7 @@
 #include "AssetHandler.h"
 
-#pragma warning (push, 0)
+#pragma warning (push)
+#pragma warning (disable : 26495) // INFO: Disable warning for uninitialised variables
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -21,8 +22,6 @@
 #include "Core/Configs/FiletypeConfig.h"
 #include "Core/Debug/Debug.h"
 #include "Core/Helpers/StringHelpers.h"
-
-constexpr const char* const ASSET_DIRECTORY = "Assets";
 
 using namespace Flux;
 using namespace Flux::DirectXConfig;
@@ -67,7 +66,7 @@ HRESULT AssetHandler::Initialise(ID3D11Device& _device, ID3D11DeviceContext& _de
 
 	if (FAILED(LoadSamplerState())) { return E_FAIL; }
 
-	LoadAssets(ASSET_DIRECTORY);
+	LoadAssets(FiletypeConfig::ASSET_DIRECTORY);
 
 	if (IS_FAILURE(LoadMaterial(ShaderType::Unlit))) { return E_FAIL; }
 	if (IS_FAILURE(LoadMaterial(ShaderType::Skybox))) { return E_FAIL; }
@@ -91,6 +90,13 @@ HRESULT AssetHandler::LoadAssets(const std::filesystem::path& assetDirectory)
 			if (extensionType == FiletypeConfig::SPRITEFONT)
 			{
 				if (IS_FAILURE(LoadFont(entry.path()))) { return E_FAIL; }
+				continue;
+			}
+
+			// INFO: Skybox Texture Loading
+			if (extensionType == FiletypeConfig::DDS)
+			{
+				if (FAILED(LoadTexture(entry.path(), true))) { return E_FAIL; }
 				continue;
 			}
 
@@ -147,7 +153,7 @@ int AssetHandler::LoadFont(const std::filesystem::path& fontPath)
 	return FLUX_SUCCESS;
 }
 
-HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
+HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath, bool isDDS)
 {
 	HRESULT hResult = S_OK;
 
@@ -164,10 +170,8 @@ HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
 
 	ComPtr<ID3D11ShaderResourceView> texture;
 
-	std::string extensionType = StringHelpers::ToLower(texturePath.extension().string());
-
 	// INFO: DDS Mainly used for Skybox Textures
-	if (extensionType == FiletypeConfig::DDS)
+	if (isDDS)
 	{
 		hResult = DirectX::CreateDDSTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
 	}
@@ -182,7 +186,7 @@ HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath)
 		return hResult;
 	}
 
-	if (extensionType == FiletypeConfig::DDS)
+	if (isDDS)
 	{
 		if (!skyboxTextures.insert({ texturePath.stem().string(), texture }).second)
 		{

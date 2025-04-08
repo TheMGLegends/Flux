@@ -20,7 +20,7 @@
 using namespace Flux;
 using namespace Flux::GlobalDefines;
 
-EditorRuntime::EditorRuntime() : sceneHierarchy(nullptr), sceneView(nullptr), detailsPanel(nullptr)
+EditorRuntime::EditorRuntime() : sceneHierarchy(nullptr), sceneView(nullptr), detailsPanel(nullptr), contentsDrawer(nullptr)
 {
 }
 

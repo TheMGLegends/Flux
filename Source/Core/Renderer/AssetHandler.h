@@ -35,7 +35,7 @@ namespace Flux
 		static HRESULT LoadAssets(const std::filesystem::path& assetDirectory);
 
 		static int LoadFont(const std::filesystem::path& fontPath); // INFO: SpriteFont for UI text rendering (ImGui Fonts are not stored/loaded here)
-		static HRESULT LoadTexture(const std::filesystem::path& texturePath);
+		static HRESULT LoadTexture(const std::filesystem::path& texturePath, bool isDDS = false);
 		static int LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer);
 		static int LoadAudio(const std::filesystem::path& audioPath);
 
