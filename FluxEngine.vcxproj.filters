@@ -358,6 +358,9 @@
     <ClInclude Include="Source\Editor\Panels\ContentsDrawer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\EventSystem\Events\LoadSceneEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Vendors\imgui\debuggers\imgui.natvis" />

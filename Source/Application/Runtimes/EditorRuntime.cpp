@@ -137,7 +137,7 @@ void EditorRuntime::Update(float deltaTime)
 	{
 		if (Input::GetKey(SDL_SCANCODE_LCTRL) && Input::GetKeyDown(SDL_SCANCODE_S)) 
 		{ 
-			EventDispatcher::Notify(EventType::SceneSaved, nullptr); 
+			EventDispatcher::Notify(EventType::SaveScene, nullptr); 
 		}
 	}
 

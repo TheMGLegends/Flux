@@ -42,8 +42,12 @@ void SceneView::Update(float deltaTime)
 {
 	if (ImGui::Begin("Scene View"))
 	{
+		EditorConfig::isMouseOverSceneView = ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
+
 		// INFO: Only allow Transform Mode Switching if Scene View is Focused
-		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
+		EditorConfig::isSceneViewFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+
+		if (EditorConfig::isSceneViewFocused)
 		{
 			// INFO: Keys for Transform Modes
 			if (!Input::GetMouseButton(SDL_BUTTON_RIGHT) && !ImGuizmo::IsUsing())
@@ -58,7 +62,7 @@ void SceneView::Update(float deltaTime)
 		// INFO: Add Window Focus if panning with right mouse button whilst hovering over Scene View
 		else
 		{
-			if (Input::GetMouseButtonDown(SDL_BUTTON_RIGHT) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
+			if (Input::GetMouseButtonDown(SDL_BUTTON_RIGHT) && ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows))
 			{
 				ImGui::SetWindowFocus();
 			}

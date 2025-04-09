@@ -1,5 +1,5 @@
 {
-    "SceneName": "DefaultScene",
+    "SceneName": "TestScene",
     "GameObjects": [
         {
             "Name": "Camera",
@@ -61,9 +61,9 @@
                         -8.5
                     ],
                     "Rotation": [
-                        49.999992,
-                        44.99999,
-                        2.6564717e-06
+                        49.99999,
+                        44.999985,
+                        7.969415e-06
                     ],
                     "Scale": [
                         1.0,
@@ -344,7 +344,7 @@
                     ],
                     "Rotation": [
                         -0.0,
-                        179.99997,
+                        179.99995,
                         0.0
                     ],
                     "Scale": [

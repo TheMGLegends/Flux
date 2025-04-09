@@ -37,6 +37,7 @@ namespace Flux
 		static inline const DirectX::SimpleMath::Vector2& GetMousePosition() { return mousePosition; }
 		/// @param isRelative: true = relative, false = absolute
 		static void SetMouseMode(bool _isRelative);
+		static inline bool IsMouseRelative() { return isRelative; }
 
 		/// @brief Get the vertical scroll of the mouse wheel
 		/// @param verticalScroll: The variable that will be populated with the vertical scroll value

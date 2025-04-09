@@ -194,6 +194,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\EventSystem\Events\LoadSceneEvent.h" />
     <ClInclude Include="Source\Editor\Panels\ContentsDrawer.h" />
     <ClInclude Include="Source\Editor\Panels\DetailsPanel.h" />
     <ClInclude Include="Source\Engine\Entities\GameObjects\Default\Cube.h" />

@@ -1,0 +1,49 @@
+{
+    "SceneName": "DefaultScene",
+    "GameObjects": [
+        {
+            "Name": "Main Camera",
+            "ID": "GameObject",
+            "Type": "GameObject",
+            "IsActive": true,
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "Name": "Camera",
+                    "IsActive": true,
+                    "ComponentType": 2,
+                    "FOV": 90.0,
+                    "NearClippingPlane": 0.1,
+                    "FarClippingPlane": 100.0,
+                    "BackgroundColour": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1.0
+                    ],
+                    "SkyboxTexture": "DefaultSkybox",
+                    "UseSkybox": true
+                }
+            ]
+        }
+    ]
+}

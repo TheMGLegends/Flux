@@ -9,6 +9,7 @@ namespace Flux::FiletypeConfig
 	inline const std::filesystem::path ASSET_DIRECTORY = "Assets";
 	inline const char* const SPRITEFONT = ".spritefont";
 	inline const char* const DDS = ".dds";
+	inline const char* const SCENE = ".json";
 
 	inline const std::unordered_set<std::string> SUPPORTED_TEXTURE_FORMATS = { ".png", ".jpg", ".jpeg", ".bmp" };
 	inline const std::unordered_set<std::string> SUPPORTED_MODEL_FORMATS = { ".fbx", ".obj", ".x" };

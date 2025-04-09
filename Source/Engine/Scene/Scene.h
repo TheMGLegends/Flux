@@ -7,6 +7,7 @@
 #include <PxSimulationEventCallback.h>
 #pragma warning (pop)
 
+#include <filesystem>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -71,6 +72,10 @@ namespace Flux
 
 		inline physx::PxScene& GetPhysicsScene() const { return *physicsScene; }
 
+		void CreateDefaultScene(const std::filesystem::path& path);
+		void SerializeScene(const std::filesystem::path& path);
+		void DeserializeScene(const std::filesystem::path& path);
+
 	private:
 		std::weak_ptr<Camera> FindFirstActiveCamera();
 
@@ -93,6 +98,7 @@ namespace Flux
 		std::unique_ptr<SceneViewCamera> sceneViewCamera;
 
 		std::string sceneName;
+		std::filesystem::path scenePath;
 
 		physx::PxScene* physicsScene;
 	};

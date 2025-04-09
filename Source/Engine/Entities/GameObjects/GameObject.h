@@ -59,11 +59,12 @@ namespace Flux
 		virtual void OnEnable() {}
 		virtual void OnDestroy() {}
 
+		/// @brief Used to set display name of GameObject
+		inline void SetName(const std::string& _name) { name = _name; }
 		inline std::string& GetName() { return name; }
 		inline const std::string& GetID() const { return id; }
 
 	private:
-		inline void SetName(const std::string& _name) { name = _name; }
 		inline void SetID(const std::string& _id) { id = _id; }
 		inline void SetType(const std::string& _type) { type = _type; }
 

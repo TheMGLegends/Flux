@@ -6,6 +6,8 @@
 #include "Core/Debug/Debug.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
+#include "Core/EventSystem/Events/LoadSceneEvent.h"
+#include "Core/Renderer/AssetHandler.h"
 #include "Core/Time/Time.h"
 #include "Engine/Entities/Components/Camera.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
@@ -24,14 +26,15 @@ using namespace DirectX::SimpleMath;
 
 using namespace Flux;
 
-Scene::Scene() : sceneName("DefaultScene")
+Scene::Scene() : sceneName("New Scene")
 {
 	SceneContext::SetScene(this);
 
 	// INFO: Setup Events to Listen For
 	EventDispatcher::AddListener(EventType::GameObjectRemoved, this);
 	EventDispatcher::AddListener(EventType::PlayModeExited, this);
-	EventDispatcher::AddListener(EventType::SceneSaved, this);
+	EventDispatcher::AddListener(EventType::SaveScene, this);
+	EventDispatcher::AddListener(EventType::LoadScene, this);
 
 	// INFO: Create a scene view camera
 	sceneViewCamera = std::make_unique<SceneViewCamera>();
@@ -53,47 +56,8 @@ Scene::Scene() : sceneName("DefaultScene")
 		Debug::LogError("Scene::Scene() - Failed to create PhysX Scene");
 	}
 
-	// INFO: Create a default play mode camera
-	//gameObjects.emplace_back(std::make_unique<GameObject>());
-	//playModeCamera = gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
-
-	// TODO: Testing
-	/*gameObjects.emplace_back(std::make_unique<GameObject>());
-	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
-	gameObjects.back().get()->AddComponent<BoxCollider>(gameObjects.back().get());
-	auto visualizer = gameObjects.back().get()->GetComponent<Visualizer>().lock();
-	auto transform = gameObjects.back().get()->GetComponent<Transform>().lock();
-	transform->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
-	transform->SetRotation(Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, DirectX::XMConvertToRadians(40.0f)));
-	gameObjects.back().get()->AddComponent<PhysicsBody>(gameObjects.back().get());
-
-	gameObjects.emplace_back(std::make_unique<GameObject>());
-	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
-	gameObjects.back().get()->GetComponent<Visualizer>().lock()->SetModel("Sphere");
-	gameObjects.back().get()->AddComponent<SphereCollider>(gameObjects.back().get());
-	gameObjects.back().get()->GetComponent<SphereCollider>().lock()->SetRadius(3.0f);
-	transform = gameObjects.back().get()->GetComponent<Transform>().lock();
-	transform->SetPosition(Vector3(-10.0f, 0.0f, 5.0f));
-
-	gameObjects.emplace_back(std::make_unique<GameObject>());
-	gameObjects.back().get()->AddComponent<Visualizer>(gameObjects.back().get());
-	gameObjects.back().get()->AddComponent<BoxCollider>(gameObjects.back().get());
-	transform = gameObjects.back().get()->GetComponent<Transform>().lock();
-	transform->SetPosition(Vector3(0.0f, -10.0f, 0.0f));
-	transform->SetScale(Vector3(10.0f, 1.0f, 10.0f));
-	auto boxCollider = gameObjects.back().get()->GetComponent<BoxCollider>().lock();
-	boxCollider->SetSize(10.0f, 1.0f, 10.0f);*/
-
-	// TODO: Serialization Testing
-	//nlohmann::ordered_json json;
-	//Serialize(json);
-	//std::ofstream jsonTest("test.json");
-	//jsonTest << json.dump(4);
-
-	// TODO: Deserialization Testing
-	std::ifstream jsonTest("test.json");
-	nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonTest);
-	Deserialize(json);
+	// INFO: Load the first scene found by the asset handler as the start scene
+	DeserializeScene(AssetHandler::GetFirstScenePath());
 }
 
 Scene::~Scene()
@@ -108,7 +72,7 @@ Scene::~Scene()
 void Scene::Serialize(nlohmann::flux_json& json) const
 {
 	// INFO: Save the name of the Scene
-	json["SceneName"] = sceneName; // TODO: For now only one scene is supported
+	json["SceneName"] = sceneName;
 
 	// INFO: Create a JSON array to store all GameObjects
 	json["GameObjects"] = nlohmann::json::array();
@@ -124,14 +88,6 @@ void Scene::Serialize(nlohmann::flux_json& json) const
 
 void Scene::Deserialize(const nlohmann::flux_json& json)
 {
-	// INFO: Clear existing scene contents before loading 'new' scene
-	gameObjects.clear();
-	GameObject::ClearGameObjectTypeCounters();
-	components.clear();
-	debugWireframes.clear();
-	rigidActorsToColliders.clear();
-	playModeCamera.reset();
-
 	// INFO: Load the name of the Scene
 	sceneName = json["SceneName"].get<std::string>();
 
@@ -200,18 +156,16 @@ void Scene::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 	}
 	else if (eventType == EventType::PlayModeExited)
 	{
-		// TODO: TESTING CODE
-		std::ifstream jsonTest("test.json");
-		nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonTest);
-		Deserialize(json);
+		DeserializeScene(scenePath);
 	}
-	else if (eventType == EventType::SceneSaved)
+	else if (eventType == EventType::SaveScene)
 	{
-		// TODO: TESTING CODE
-		nlohmann::flux_json json;
-		Serialize(json);
-		std::ofstream jsonFile("test.json");
-		jsonFile << json.dump(4);
+		SerializeScene(scenePath);
+	}
+	else if (eventType == EventType::LoadScene)
+	{
+		auto loadSceneEvent = std::static_pointer_cast<LoadSceneEvent>(event);
+		DeserializeScene(loadSceneEvent->scenePath);
 	}
 }
 
@@ -444,6 +398,60 @@ std::weak_ptr<Camera> Scene::GetCamera(bool isPrimary)
 	{
 		return sceneViewCamera->GetCamera();
 	}
+}
+
+void Scene::CreateDefaultScene(const std::filesystem::path& path)
+{
+	// INFO: Save the current scene
+	if (!scenePath.empty())
+	{
+		SerializeScene(scenePath);
+	}
+
+	// INFO: Clear existing scene contents before loading 'new' scene
+	gameObjects.clear();
+	GameObject::ClearGameObjectTypeCounters();
+	components.clear();
+	debugWireframes.clear();
+	rigidActorsToColliders.clear();
+	playModeCamera.reset();
+
+	// INFO: Create a default play mode camera
+	gameObjects.emplace_back(std::make_unique<GameObject>());
+	std::unique_ptr<GameObject>& gameObject = gameObjects.back();
+	gameObject->SetName("Main Camera");
+	playModeCamera = gameObject->AddComponent<Camera>(gameObject.get());
+
+	// INFO: Create the new scene json file
+	SerializeScene(path);
+}
+
+void Scene::SerializeScene(const std::filesystem::path& path)
+{
+	scenePath = path;
+	sceneName = scenePath.stem().string();
+
+	nlohmann::flux_json json;
+	Serialize(json);
+	std::ofstream jsonFile(scenePath);
+	jsonFile << json.dump(4);
+}
+
+void Scene::DeserializeScene(const std::filesystem::path& path)
+{
+	scenePath = path;
+
+	// INFO: Clear existing scene contents before loading 'new' scene
+	gameObjects.clear();
+	GameObject::ClearGameObjectTypeCounters();
+	components.clear();
+	debugWireframes.clear();
+	rigidActorsToColliders.clear();
+	playModeCamera.reset();
+
+	std::ifstream jsonFile(scenePath);
+	nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonFile);
+	Deserialize(json);
 }
 
 std::weak_ptr<Camera> Scene::FindFirstActiveCamera()

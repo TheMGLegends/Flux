@@ -32,6 +32,8 @@ SceneViewCamera::~SceneViewCamera()
 
 void SceneViewCamera::LateUpdate(float deltaTime)
 {
+	if (!EditorConfig::isMouseOverSceneView) { return; }
+
 	// INFO: Mouse Mode Switching Logic
 	if (Input::GetMouseButtonDown(SDL_BUTTON_RIGHT))
 	{
@@ -49,7 +51,7 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 	auto transformRef = transform.lock();
 
 	// INFO: Rotation Logic
-	if (Input::GetMouseButton(SDL_BUTTON_RIGHT) && !Input::GetMouseButtonDown(SDL_BUTTON_RIGHT))
+	if (Input::GetMouseButton(SDL_BUTTON_RIGHT) && !Input::GetMouseButtonDown(SDL_BUTTON_RIGHT) && Input::IsMouseRelative())
 	{
 		Vector2 mouseInput = Input::GetMousePosition();
 		Vector3 eulerRotation = transformRef->GetRotation().ToEuler();
@@ -99,21 +101,24 @@ void SceneViewCamera::LateUpdate(float deltaTime)
 	}
 
 	// INFO: Movement Speed Adjustment Logic
-	float scrollValue = 0.0f;
-	if (Input::GetMouseVerticalScroll(scrollValue))
+	if (EditorConfig::isSceneViewFocused)
 	{
-		float oldMovementSpeed = movementSpeed;
-
-		movementSpeed += scrollValue;
-		movementSpeed = MathHelpers::Clamp(movementSpeed, minMovementSpeed, maxMovementSpeed);
-
-		if (oldMovementSpeed != movementSpeed)
+		float scrollValue = 0.0f;
+		if (Input::GetMouseVerticalScroll(scrollValue))
 		{
-			std::stringstream ss;
-			ss << std::fixed << std::setprecision(0) << movementSpeed;
-			std::string movementSpeedStr = ss.str();
+			float oldMovementSpeed = movementSpeed;
 
-			Debug::Log("Movement Speed: " + movementSpeedStr);
+			movementSpeed += scrollValue;
+			movementSpeed = MathHelpers::Clamp(movementSpeed, minMovementSpeed, maxMovementSpeed);
+
+			if (oldMovementSpeed != movementSpeed)
+			{
+				std::stringstream ss;
+				ss << std::fixed << std::setprecision(0) << movementSpeed;
+				std::string movementSpeedStr = ss.str();
+
+				Debug::Log("Movement Speed: " + movementSpeedStr);
+			}
 		}
 	}
 }

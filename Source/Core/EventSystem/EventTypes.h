@@ -11,7 +11,8 @@ namespace Flux
 		WindowResized,
 		SceneViewResized,
 		PlayModeExited,
-		SceneSaved
+		SaveScene,
+		LoadScene
 	};
 }
 

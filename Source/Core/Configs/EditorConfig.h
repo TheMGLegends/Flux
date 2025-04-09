@@ -16,6 +16,9 @@ namespace Flux::EditorConfig
 	inline float rotationSnapValue = 45.0f;
 	inline float scaleSnapValue = 1.0f;
 
+	inline bool isMouseOverSceneView = false;
+	inline bool isSceneViewFocused = false;
+
 	inline void StorePreviousTransformOperation()
 	{
 		previousTransformOperation = currentTransformOperation;

@@ -6,8 +6,11 @@
 #include "Core/Configs/FiletypeConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 #include "Core/Debug/Debug.h"
+#include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Helpers/StringHelpers.h"
 #include "Core/Renderer/AssetHandler.h"
+#include <Core/EventSystem/Events/LoadSceneEvent.h>
+#include "Engine/Scene/SceneContext.h"
 
 using namespace Flux;
 using namespace Flux::GlobalDefines;
@@ -59,6 +62,22 @@ void ContentsDrawer::Update(float deltaTime)
 		if (RuntimeConfig::IsInPlayMode() || RuntimeConfig::IsPaused())
 		{
 			ImGui::GetForegroundDrawList()->AddRectFilled(windowPos, ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), IM_COL32(0, 116, 188, 50));
+		}
+
+		if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+		{
+			ImGui::OpenPopup("ContentsContextMenu");
+		}
+
+		if (ImGui::BeginPopup("ContentsContextMenu"))
+		{
+			if (ImGui::MenuItem("New Scene"))
+			{
+				std::filesystem::path newScenePath = currentDirectory / "NewScene.json";
+				SceneContext::GetScene().CreateDefaultScene(newScenePath);
+			}
+
+			ImGui::EndPopup();
 		}
 
 		DrawContents();
@@ -158,7 +177,7 @@ void ContentsDrawer::DrawContents()
 			}
 			else if (assetType == AssetType::Scene)
 			{
-				// TODO: Dispatch Event for Scene Loading
+				EventDispatcher::QueueEvent(EventType::LoadScene, std::make_shared<LoadSceneEvent>(path));
 			}
 		}
 

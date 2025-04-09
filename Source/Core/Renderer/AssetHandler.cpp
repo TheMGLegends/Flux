@@ -47,6 +47,8 @@ std::unordered_map<std::string, std::unique_ptr<Model>> AssetHandler::models;
 std::unordered_map<DirectXConfig::ShaderType, Material> AssetHandler::materials;
 std::unordered_map<std::string, std::filesystem::path> AssetHandler::audioPaths;
 
+std::filesystem::path AssetHandler::firstScenePath;
+
 HRESULT AssetHandler::Initialise(ID3D11Device& _device, ID3D11DeviceContext& _deviceContext)
 {
 	device = _device;
@@ -119,6 +121,13 @@ HRESULT AssetHandler::LoadAssets(const std::filesystem::path& assetDirectory)
 			{
 				if (IS_FAILURE(LoadAudio(entry.path()))) { return E_FAIL; }
 				continue;
+			}
+
+			// INFO: First Scene Loading
+			if (extensionType == FiletypeConfig::SCENE)
+			{
+				if (!firstScenePath.empty()) { continue; }
+				firstScenePath = entry.path();
 			}
 		}
 	}
