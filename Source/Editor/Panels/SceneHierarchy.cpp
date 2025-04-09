@@ -19,7 +19,6 @@ using namespace Flux::GlobalDefines;
 
 SceneHierarchy::SceneHierarchy() : scene(SceneContext::GetScene()), selectedGameObject(nullptr), isRenaming(false)
 {
-	EventDispatcher::AddListener(EventType::PlayModeExited, this);
 }
 
 SceneHierarchy::~SceneHierarchy()
@@ -28,6 +27,9 @@ SceneHierarchy::~SceneHierarchy()
 
 int SceneHierarchy::Initialise()
 {
+	EventDispatcher::AddListener(EventType::PlayModeExited, this);
+	EventDispatcher::AddListener(EventType::LoadScene, this);
+
 	return FLUX_SUCCESS;
 }
 
@@ -157,7 +159,7 @@ void SceneHierarchy::Update(float deltaTime)
 
 void SceneHierarchy::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 {
-	if (eventType == EventType::PlayModeExited) { selectedGameObject = nullptr; }
+	if (eventType == EventType::PlayModeExited || eventType == EventType::LoadScene) { selectedGameObject = nullptr; }
 }
 
 GameObject* SceneHierarchy::GetSelectedGameObject() const
