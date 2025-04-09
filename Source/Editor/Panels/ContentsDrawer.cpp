@@ -88,6 +88,7 @@ void ContentsDrawer::DrawContents()
 		}
 	}
 
+	AssetType assetType = AssetType::None;
 	ImTextureID textureID = 0;
 	ImVec2 iconSize = ImVec2(50.0f, 50.0f);
 	float panelWidth = ImGui::GetContentRegionAvail().x;
@@ -102,6 +103,7 @@ void ContentsDrawer::DrawContents()
 		std::filesystem::path relativePath = std::filesystem::relative(path, FiletypeConfig::ASSET_DIRECTORY);
 		std::string filenameString = relativePath.filename().string();
 		std::string extensionType = StringHelpers::ToLower(relativePath.extension().string());
+		std::string filenameStemString = relativePath.stem().string();
 
 		// INFO: Icon Choosing
 		if (entry.is_directory())
@@ -110,11 +112,13 @@ void ContentsDrawer::DrawContents()
 		}
 		else if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
 		{
-			textureID = (ImTextureID)AssetHandler::GetTexture(relativePath.stem().string()); // INFO: Textures
+			textureID = (ImTextureID)AssetHandler::GetTexture(filenameStemString); // INFO: Textures
+			assetType = AssetType::Texture;
 		}
 		else if (FiletypeConfig::IsSupportedModelFormat(extensionType))
 		{
 			textureID = (ImTextureID)AssetHandler::GetTexture("MeshIcon"); // INFO: Meshes
+			assetType = AssetType::Model;
 		}
 		else if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
 		{
@@ -123,10 +127,12 @@ void ContentsDrawer::DrawContents()
 		else if (extensionType == FiletypeConfig::DDS)
 		{
 			textureID = (ImTextureID)AssetHandler::GetTexture("DdsIcon"); // INFO: DDS Textures
+			assetType = AssetType::SkyboxTexture;
 		}
 		else if (extensionType == ".json")
 		{
 			textureID = (ImTextureID)AssetHandler::GetTexture("SceneIcon"); // INFO: Scenes
+			assetType = AssetType::Scene;
 		}
 		else
 		{
@@ -150,6 +156,36 @@ void ContentsDrawer::DrawContents()
 				currentDirectory /= path.filename();
 				UpdateContents();
 			}
+			else if (assetType == AssetType::Scene)
+			{
+				// TODO: Dispatch Event for Scene Loading
+			}
+		}
+
+		// INFO: Setup Drag & Drop Payload
+		if (ImGui::BeginDragDropSource())
+		{
+			std::string payloadType = "";
+
+			switch (assetType)
+			{
+			case AssetType::Model:
+				payloadType = "Model";
+				break;
+			case AssetType::Texture:
+				payloadType = "Texture";
+				break;
+			case AssetType::SkyboxTexture:
+				payloadType = "SkyboxTexture";
+				break;
+			default:
+				break;
+			}
+
+			ImGui::Image(textureID, iconSize);
+			ImGui::SetDragDropPayload(payloadType.c_str(), filenameStemString.c_str(), filenameStemString.size() + 1);
+
+			ImGui::EndDragDropSource();
 		}
 
 		// INFO: Centre Text if shorter than icon width

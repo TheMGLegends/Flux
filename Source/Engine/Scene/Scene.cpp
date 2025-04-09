@@ -426,30 +426,19 @@ std::weak_ptr<Collider> Scene::GetCollider(physx::PxRigidActor* rigidActor)
 	return std::weak_ptr<Collider>();
 }
 
-std::weak_ptr<Camera> Scene::GetCamera(bool primary)
+std::weak_ptr<Camera> Scene::GetCamera(bool isPrimary)
 {
-	if (primary)
-	{
-		// INFO: Return the first active camera in the scene
-		if (playModeCamera.expired() || !playModeCamera.lock()->IsActive())
-		{
-			playModeCamera = FindFirstActiveCamera();
-		}
+	std::shared_ptr<Camera> playCamera = playModeCamera.lock();
 
-		return playModeCamera;
+	// INFO: Return the first active camera in the scene
+	if (isPrimary)
+	{
+		return FindFirstActiveCamera();
 	}
 
 	if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 	{
-		// INFO: Return the first active camera in the scene
-		std::shared_ptr<Camera> camera = playModeCamera.lock();
-
-		if (!camera || !camera->GetGameObject()->IsActive() || !camera->IsActive())
-		{
-			playModeCamera = FindFirstActiveCamera();
-		}
-
-		return playModeCamera;
+		return FindFirstActiveCamera();
 	}
 	else
 	{
@@ -459,6 +448,13 @@ std::weak_ptr<Camera> Scene::GetCamera(bool primary)
 
 std::weak_ptr<Camera> Scene::FindFirstActiveCamera()
 {
+	// INFO: Return if we have a valid camera
+	std::shared_ptr<Camera> playCamera = playModeCamera.lock();
+	if (playCamera && playCamera->GetGameObject()->IsActive() && playCamera->IsActive())
+	{
+		return playModeCamera;
+	}
+
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
 		std::unique_ptr<GameObject>& gameObject = gameObjects[i];
@@ -469,12 +465,20 @@ std::weak_ptr<Camera> Scene::FindFirstActiveCamera()
 
 			if (!gameObject->IsActive() || !camera->IsActive()) { continue; }
 
-			return camera;
+			playModeCamera = camera;
+			return playModeCamera;
 		}
 	}
 
-	Debug::LogError("Scene::FindFirstActiveCamera() - No active camera found in the scene, constructing a default one");
-	gameObjects.emplace_back(GameObject::CreateGameObject("GameObject"));
-
-	return gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
+	if (RuntimeConfig::IsInPlayMode())
+	{
+		Debug::LogError("Scene::FindFirstActiveCamera() - No active camera found in the scene, constructing a default one");
+		gameObjects.emplace_back(GameObject::CreateGameObject("GameObject"));
+		playModeCamera = gameObjects.back().get()->AddComponent<Camera>(gameObjects.back().get());
+		return playModeCamera;
+	}
+	else
+	{
+		return sceneViewCamera->GetCamera();
+	}
 }

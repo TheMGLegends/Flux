@@ -50,11 +50,12 @@ void Visualizer::DrawDetails()
 
 	if (treeOpened)
 	{
-		// INFO: Model Selector // TODO: NOT FINAL, NEED DRAG & DROP
+		// INFO: Model Selector + Drag & Drop Field
 		ImGui::Text("Model");
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(136.0f);
-		ImGui::SetNextItemWidth(200.0f);
+		ImGui::SetNextItemWidth(150.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 		if (ImGui::BeginCombo("##Models", modelName.c_str(), ImGuiComboFlags_HeightLarge))
 		{
 			for (const auto& model : AssetHandler::GetModels())
@@ -67,11 +68,22 @@ void Visualizer::DrawDetails()
 			ImGui::EndCombo();
 		}
 
-		// INFO: Model Texture Selector // TODO: NOT FINAL, NEED DRAG & DROG
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Model"))
+			{
+				std::string modelName = static_cast<const char*>(payload->Data);
+				SetModel(modelName);
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		// INFO: Model Texture Selector + Drag & Drop Field
 		ImGui::Text("Texture");
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(136.0f);
-		ImGui::SetNextItemWidth(200.0f);
+		ImGui::SetNextItemWidth(150.0f);
 		if (ImGui::BeginCombo("##ModelTexture", textureName.c_str(), ImGuiComboFlags_HeightLarge))
 		{
 			for (const auto& texture : AssetHandler::GetTextures())
@@ -82,6 +94,18 @@ void Visualizer::DrawDetails()
 				}
 			}
 			ImGui::EndCombo();
+		}
+		ImGui::PopStyleVar();
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Texture"))
+			{
+				std::string textureName = static_cast<const char*>(payload->Data);
+				SetMaterialTexture(textureName);
+			}
+
+			ImGui::EndDragDropTarget();
 		}
 
 		ImGui::TreePop();

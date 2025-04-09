@@ -20,6 +20,17 @@ namespace Flux
 		void DrawContents();
 
 	private:
+		enum class AssetType
+		{
+			None = 0,
+
+			Scene,
+			Model,
+			Texture,
+			SkyboxTexture
+		};
+
+	private:
 		std::filesystem::path currentDirectory;
 		std::vector<std::filesystem::directory_entry> contents;
 

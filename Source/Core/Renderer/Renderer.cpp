@@ -292,9 +292,12 @@ void Renderer::RenderFrame(Scene& scene)
 	{
 		std::shared_ptr<Camera> playModeCamera = scene.GetCamera(true).lock();
 
-		camera->SetUseSkybox(playModeCamera->UseSkybox());
-		if (camera->UseSkybox()) { camera->SetMaterialTexture(playModeCamera->GetSkyboxTextureName()); }
-		camera->SetBackgroundColour(playModeCamera->GetBackgroundColour());
+		if (playModeCamera)
+		{
+			camera->SetUseSkybox(playModeCamera->UseSkybox());
+			if (camera->UseSkybox()) { camera->SetMaterialTexture(playModeCamera->GetSkyboxTextureName()); }
+			camera->SetBackgroundColour(playModeCamera->GetBackgroundColour());
+		}
 	}
 
 	// INFO: Set the render target to be the texture

@@ -84,7 +84,6 @@ void SceneView::Update(float deltaTime)
 		// INFO: Gizmos
 		if (RuntimeConfig::IsInEditorMode())
 		{
-			//GameObject* selectedGameObject = SceneContext::GetScene().GetSelectedGameObject();
 			GameObject* selectedGameObject = sceneHierarchy != nullptr ? sceneHierarchy->GetSelectedGameObject() : nullptr;
 
 			if (selectedGameObject)

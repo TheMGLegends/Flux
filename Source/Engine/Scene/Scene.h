@@ -64,8 +64,8 @@ namespace Flux
 		std::vector<std::weak_ptr<T>> GetComponents();
 
 		/// @brief Returns the scene view camera if in editor mode otherwise returns first active camera in the scene
-		/// @param primary If true, returns the first active play mode camera in the scene
-		std::weak_ptr<Camera> GetCamera(bool primary = false);
+		/// @param isPrimary If true, returns the first active play mode camera in the scene
+		std::weak_ptr<Camera> GetCamera(bool isPrimary = false);
 
 		inline const std::string& GetSceneName() const { return sceneName; }
 

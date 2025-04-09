@@ -71,11 +71,12 @@ void Camera::DrawDetails()
 		ImGui::SetCursorPosX(136.0f);
 		ImGui::Checkbox("##UseSkybox", &useSkybox);
 
-		// INFO: Skybox Texture Selector // TODO: NOT FINAL, NEED DRAG & DROG
+		// INFO: Skybox Texture Selector + Drag & Drop Field
 		ImGui::Text("Texture");
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(136.0f);
-		ImGui::SetNextItemWidth(200.0f);
+		ImGui::SetNextItemWidth(150.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 		if (ImGui::BeginCombo("##SkyboxTexture", skyboxTextureName.c_str(), ImGuiComboFlags_HeightLarge))
 		{
 			for (const auto& skyboxTexture : AssetHandler::GetSkyboxTextures())
@@ -86,6 +87,18 @@ void Camera::DrawDetails()
 				}
 			}
 			ImGui::EndCombo();
+		}
+		ImGui::PopStyleVar();
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SkyboxTexture"))
+			{
+				std::string textureName = static_cast<const char*>(payload->Data);
+				SetMaterialTexture(textureName);
+			}
+
+			ImGui::EndDragDropTarget();
 		}
 
 		// INFO: Background Colour Picker
