@@ -88,51 +88,90 @@ void ContentsDrawer::DrawContents()
 		}
 	}
 
+	ImTextureID textureID = 0;
+	ImVec2 iconSize = ImVec2(50.0f, 50.0f);
+	float panelWidth = ImGui::GetContentRegionAvail().x;
+
 	for (size_t i = 0; i < contents.size(); i++)
 	{
 		std::filesystem::directory_entry& entry = contents[i];
 
+		ImGui::PushID(static_cast<int>(i));
+
 		const std::filesystem::path& path = entry.path();
 		std::filesystem::path relativePath = std::filesystem::relative(path, FiletypeConfig::ASSET_DIRECTORY);
 		std::string filenameString = relativePath.filename().string();
+		std::string extensionType = StringHelpers::ToLower(relativePath.extension().string());
 
+		// INFO: Icon Choosing
 		if (entry.is_directory())
 		{
-			if (ImGui::Button(filenameString.c_str()))
+			textureID = (ImTextureID)AssetHandler::GetTexture("FolderIcon"); // INFO: Folders
+		}
+		else if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
+		{
+			textureID = (ImTextureID)AssetHandler::GetTexture(relativePath.stem().string()); // INFO: Textures
+		}
+		else if (FiletypeConfig::IsSupportedModelFormat(extensionType))
+		{
+			textureID = (ImTextureID)AssetHandler::GetTexture("MeshIcon"); // INFO: Meshes
+		}
+		else if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
+		{
+			textureID = (ImTextureID)AssetHandler::GetTexture("AudioIcon"); // INFO: Audio
+		}
+		else if (extensionType == FiletypeConfig::DDS)
+		{
+			textureID = (ImTextureID)AssetHandler::GetTexture("DdsIcon"); // INFO: DDS Textures
+		}
+		else if (extensionType == ".json")
+		{
+			textureID = (ImTextureID)AssetHandler::GetTexture("SceneIcon"); // INFO: Scenes
+		}
+		else
+		{
+			textureID = (ImTextureID)AssetHandler::GetTexture("DefaultFileIcon"); // INFO: Generic Files
+		}
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(16.0f, 4.0f));
+
+		// INFO: Group Icon & Label
+		ImGui::BeginGroup();
+
+		// INFO: Remove Background Colour for Buttons
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		ImGui::ImageButton("##Asset", textureID, iconSize);
+		ImGui::PopStyleColor();
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+		{
+			if (entry.is_directory())
 			{
 				currentDirectory /= path.filename();
 				UpdateContents();
 			}
 		}
-		else
+
+		// INFO: Centre Text if shorter than icon width
+		float textWidth = ImGui::CalcTextSize(filenameString.c_str()).x;
+		float paddingWidth = ImGui::GetStyle().ItemSpacing.x;
+
+		if (textWidth < iconSize.x + paddingWidth)
 		{
-			std::string extensionType = StringHelpers::ToLower(relativePath.extension().string());
-			ImTextureID textureID = 0;
-
-			if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
-			{
-				textureID = (ImTextureID)AssetHandler::GetTexture(relativePath.stem().string());
-			}
-			else if (extensionType == FiletypeConfig::DDS)
-			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("DdsIcon");
-			}
-			else if (extensionType == ".obj")
-			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("ObjIcon");
-			}
-			else if (extensionType == ".json")
-			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("JsonIcon");
-			}
-
-			if (textureID == 0)
-			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("DefaultFileIcon");
-			}
-
-			ImGui::Image(textureID, ImVec2(50.0f, 50.0f));
-			ImGui::Text(filenameString.c_str());
+			ImGui::SetCursorPos({ ImGui::GetCursorPos().x + (iconSize.x + (paddingWidth * 0.5f) - textWidth) * 0.5f, ImGui::GetCursorPos().y });
 		}
+
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + iconSize.x + ImGui::GetStyle().ItemSpacing.x);
+		ImGui::Text(filenameString.c_str());
+		ImGui::PopTextWrapPos();
+
+		ImGui::EndGroup();
+
+		float nextItemPosition = ImGui::GetItemRectMax().x + ImGui::GetStyle().ItemSpacing.x + iconSize.x;
+		if (nextItemPosition < panelWidth) { ImGui::SameLine(); }
+		
+		ImGui::PopStyleVar();
+
+		ImGui::PopID();
 	}
 }
