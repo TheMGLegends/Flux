@@ -108,6 +108,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Vendors\SDL3\include;$(ProjectDir)Vendors\json\single_include;$(ProjectDir)Vendors\fmod\core\inc;$(ProjectDir)Vendors\fmod\studio\inc;$(ProjectDir)Vendors\imgui;$(ProjectDir)Vendors\imguizmo;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
