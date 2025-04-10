@@ -21,39 +21,40 @@ namespace Flux
 
 		/// @return 0 if successful
 		static int Initialise(SDL_Window* _window);
-
 		static void Update();
-
 		static void Release();
 
-		static inline bool GetKey(SDL_Scancode key) { return currentKeyboardState[key]; }
-		static inline bool GetKeyDown(SDL_Scancode key) { return currentKeyboardState[key] && !previousKeyboardState[key]; }
-		static inline bool GetKeyUp(SDL_Scancode key) { return !currentKeyboardState[key] && previousKeyboardState[key]; }
+		static bool GetKey(SDL_Scancode key) { return currentKeyboardState[key]; }
+		static bool GetKeyDown(SDL_Scancode key) { return currentKeyboardState[key] && !previousKeyboardState[key]; }
+		static bool GetKeyUp(SDL_Scancode key) { return !currentKeyboardState[key] && previousKeyboardState[key]; }
 
-		static inline bool GetMouseButton(SDL_MouseButtonFlags button) { return currentMouseState & SDL_BUTTON_MASK(button); }
-		static inline bool GetMouseButtonDown(SDL_MouseButtonFlags button) { return (currentMouseState & SDL_BUTTON_MASK(button)) && !(previousMouseState & SDL_BUTTON_MASK(button)); }
-		static inline bool GetMouseButtonUp(SDL_MouseButtonFlags button) { return !(currentMouseState & SDL_BUTTON_MASK(button)) && (previousMouseState & SDL_BUTTON_MASK(button)); }
+		static bool GetMouseButton(SDL_MouseButtonFlags button) { return currentMouseState & SDL_BUTTON_MASK(button); }
+		static bool GetMouseButtonDown(SDL_MouseButtonFlags button) { return (currentMouseState & SDL_BUTTON_MASK(button)) && !(previousMouseState & SDL_BUTTON_MASK(button)); }
+		static bool GetMouseButtonUp(SDL_MouseButtonFlags button) { return !(currentMouseState & SDL_BUTTON_MASK(button)) && (previousMouseState & SDL_BUTTON_MASK(button)); }
 
-		static inline const DirectX::SimpleMath::Vector2& GetMousePosition() { return mousePosition; }
+		static const DirectX::SimpleMath::Vector2& GetMousePosition() { return mousePosition; }
+
 		/// @param isRelative: true = relative, false = absolute
 		static void SetMouseMode(bool _isRelative);
-		static inline bool IsMouseRelative() { return isRelative; }
+		static bool IsMouseRelative() { return isRelative; }
 
 		/// @brief Get the vertical scroll of the mouse wheel
 		/// @param verticalScroll: The variable that will be populated with the vertical scroll value
 		/// @return true if the scroll wheel is being scrolled (not 0)
 		static bool GetMouseVerticalScroll(float& verticalScroll);
 
-		static inline bool GetGamepadButton(SDL_GamepadButton button) { return currentGamepadButtonState[button]; }
-		static inline bool GetGamepadButtonDown(SDL_GamepadButton button) { return currentGamepadButtonState[button] && !previousGamepadButtonState[button]; }
-		static inline bool GetGamepadButtonUp(SDL_GamepadButton button) { return !currentGamepadButtonState[button] && previousGamepadButtonState[button]; }
+		static bool GetGamepadButton(SDL_GamepadButton button) { return currentGamepadButtonState[button]; }
+		static bool GetGamepadButtonDown(SDL_GamepadButton button) { return currentGamepadButtonState[button] && !previousGamepadButtonState[button]; }
+		static bool GetGamepadButtonUp(SDL_GamepadButton button) { return !currentGamepadButtonState[button] && previousGamepadButtonState[button]; }
 
 		/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
 		/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
 		static bool GetTrigger(SDL_GamepadAxis trigger, float* axisState = nullptr);
+
 		/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
 		/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
 		static bool GetTriggerDown(SDL_GamepadAxis trigger, float* axisState = nullptr);
+
 		/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
 		/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
 		static bool GetTriggerUp(SDL_GamepadAxis trigger, float* axisState = nullptr);
@@ -89,7 +90,7 @@ namespace Flux
 		static Sint16* currentGamepadAxisState;
 		static Sint16* previousGamepadAxisState;
 		static int gamepadAxisLength;
-		static inline const int DEADZONE = 8000;
+		static const int DEADZONE;
 	};
 }
 

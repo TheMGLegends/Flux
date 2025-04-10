@@ -9,7 +9,7 @@ namespace Flux::DirectXConfig
 		Unlit
 	};
 
-	/// @brief Represents both the vertex and pixel shader types
+	/// @brief Represents Vertex and Pixel Shader Types
 	enum class ShaderType
 	{
 		None = 0,

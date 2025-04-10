@@ -37,10 +37,12 @@ namespace Flux
 		void Update(float deltaTime);
 
 	private:
+		/// @brief Set the custom style for ImGui
 		void SetCustomStyle();
 
 	private:
 		std::vector<std::unique_ptr<EditorPanel>> editorPanels;
+
 		SceneHierarchy* sceneHierarchy;
 		SceneView* sceneView;
 		DetailsPanel* detailsPanel;

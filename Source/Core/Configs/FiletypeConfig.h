@@ -6,28 +6,17 @@
 
 namespace Flux::FiletypeConfig
 {
-	inline const std::filesystem::path ASSET_DIRECTORY = "Assets";
-	inline const char* const SPRITEFONT = ".spritefont";
-	inline const char* const DDS = ".dds";
-	inline const char* const SCENE = ".json";
+	extern const std::filesystem::path ASSET_DIRECTORY;
+	extern const char* const SPRITEFONT;
+	extern const char* const DDS;
+	extern const char* const SCENE;
 
-	inline const std::unordered_set<std::string> SUPPORTED_TEXTURE_FORMATS = { ".png", ".jpg", ".jpeg", ".bmp" };
-	inline const std::unordered_set<std::string> SUPPORTED_MODEL_FORMATS = { ".fbx", ".obj", ".x" };
-	inline const std::unordered_set<std::string> SUPPORTED_AUDIO_FORMATS = { ".wav", ".mp3", ".ogg", ".flac", ".aiff" };
+	extern const std::unordered_set<std::string> SUPPORTED_TEXTURE_FORMATS;
+	extern const std::unordered_set<std::string> SUPPORTED_MODEL_FORMATS;
+	extern const std::unordered_set<std::string> SUPPORTED_AUDIO_FORMATS;
 
-	inline bool IsSupportedTextureFormat(const std::string& extension)
-	{
-		return SUPPORTED_TEXTURE_FORMATS.find(extension) != SUPPORTED_TEXTURE_FORMATS.end();
-	}
-
-	inline bool IsSupportedModelFormat(const std::string& extension)
-	{
-		return SUPPORTED_MODEL_FORMATS.find(extension) != SUPPORTED_MODEL_FORMATS.end();
-	}
-
-	inline bool IsSupportedAudioFormat(const std::string& extension)
-	{
-		return SUPPORTED_AUDIO_FORMATS.find(extension) != SUPPORTED_AUDIO_FORMATS.end();
-	}
+	bool IsSupportedTextureFormat(const std::string& extension);
+	bool IsSupportedModelFormat(const std::string& extension);
+	bool IsSupportedAudioFormat(const std::string& extension);
 }
 

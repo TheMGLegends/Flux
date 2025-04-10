@@ -3,14 +3,15 @@
 #include <memory>
 
 #include "EventTypes.h"
-#include "Events/Event.h"
 
 namespace Flux
 {
+	class Event;
+
 	class IEventListener
 	{
 	public:
-		virtual ~IEventListener() {}
+		virtual ~IEventListener() = default;
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) = 0;
 	};
 }

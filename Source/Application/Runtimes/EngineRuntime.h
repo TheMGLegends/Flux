@@ -29,7 +29,7 @@ namespace Flux
 		void FixedUpate(float fixedDeltaTime);
 		void LateUpdate(float deltaTime);
 
-		inline Scene& GetScene() { return *scene.get(); }
+		Scene& GetScene() { return *scene.get(); }
 
 	private:
 		std::unique_ptr<Scene> scene;

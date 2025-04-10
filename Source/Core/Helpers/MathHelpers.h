@@ -2,34 +2,7 @@
 
 namespace Flux::MathHelpers
 {
-	inline float Clamp(float value, float min, float max)
-	{
-		if (value < min) 
-		{ 
-			return min; 
-		}
-		else if (value > max) 
-		{ 
-			return max; 
-		}
-
-		return value;
-	}
-
-	inline float Max(float x, float y, float z)
-	{
-		if (x > y && x > z)
-		{
-			return x;
-		}
-		else if (y > x && y > z)
-		{
-			return y;
-		}
-		else
-		{
-			return z;
-		}
-	}
+	float Clamp(float value, float min, float max);
+	float Max(float x, float y, float z);
 }
 

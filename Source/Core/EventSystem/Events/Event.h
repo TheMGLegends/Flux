@@ -5,7 +5,7 @@ namespace Flux
 	class Event
 	{
 	public:
-		virtual ~Event() {}
+		virtual ~Event() = default;
 	};
 }
 

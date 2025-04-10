@@ -145,6 +145,18 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Configs\EditorConfig.cpp" />
+    <ClCompile Include="Source\Core\Configs\EngineConfig.cpp" />
+    <ClCompile Include="Source\Core\Configs\FiletypeConfig.cpp" />
+    <ClCompile Include="Source\Core\Configs\RendererConfig.cpp" />
+    <ClCompile Include="Source\Core\Configs\RuntimeConfig.cpp" />
+    <ClCompile Include="Source\Core\Configs\TimeConfig.cpp" />
+    <ClCompile Include="Source\Core\Debug\Debug.cpp" />
+    <ClCompile Include="Source\Core\Debug\FrameRateMonitor.cpp" />
+    <ClCompile Include="Source\Core\EventSystem\Events\GameObjectRemovedEvent.cpp" />
+    <ClCompile Include="Source\Core\EventSystem\Events\LoadSceneEvent.cpp" />
+    <ClCompile Include="Source\Core\Helpers\MathHelpers.cpp" />
+    <ClCompile Include="Source\Core\Helpers\StringHelpers.cpp" />
     <ClCompile Include="Source\Editor\Panels\ContentsDrawer.cpp" />
     <ClCompile Include="Source\Editor\Panels\DetailsPanel.cpp" />
     <ClCompile Include="Source\Engine\Entities\GameObjects\Default\Cube.cpp" />

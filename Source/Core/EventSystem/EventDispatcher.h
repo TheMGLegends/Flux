@@ -9,8 +9,8 @@
 
 namespace Flux
 {
-	class IEventListener;
 	class Event;
+	class IEventListener;
 
 	class EventDispatcher
 	{

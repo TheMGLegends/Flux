@@ -2,6 +2,6 @@
 
 namespace Flux::RendererConfig
 {
-	inline bool vsyncEnabled = true;
+	extern bool vsyncEnabled;
 }
 

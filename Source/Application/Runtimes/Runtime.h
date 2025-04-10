@@ -6,7 +6,7 @@ namespace Flux
 	{
 	public:
 		Runtime() = default;
-		virtual ~Runtime() {}
+		virtual ~Runtime() = default;
 
 		virtual void Release() = 0;
 	};

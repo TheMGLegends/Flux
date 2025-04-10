@@ -13,6 +13,7 @@
 #include "Core/Debug/Debug.h"
 #include "Core/Debug/FrameRateMonitor.h"
 #include "Core/EventSystem/EventDispatcher.h"
+#include "Core/Renderer/AssetHandler.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
 #include "Engine/Entities/Components/Camera.h"

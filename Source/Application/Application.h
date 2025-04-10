@@ -2,9 +2,9 @@
 
 #include "Core/EventSystem/IEventListener.h"
 
+#include "Core/Renderer/Renderer.h"
 #include "Runtimes/EditorRuntime.h"
 #include "Runtimes/EngineRuntime.h"
-#include "Core/Renderer/Renderer.h"
 
 struct SDL_Window;
 
@@ -24,11 +24,11 @@ namespace Flux
 		HWND GetWindowHandle() const;
 
 	private:
-		EditorRuntime editorRuntime;
-		EngineRuntime engineRuntime;
-
 		SDL_Window* window;
 		Renderer renderer;
+
+		EditorRuntime editorRuntime;
+		EngineRuntime engineRuntime;
 
 		bool isRunning;
 	};

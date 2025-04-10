@@ -4,41 +4,24 @@
 
 namespace Flux::EditorConfig
 {
-	inline float sceneViewWidth = 1920.0f;
-	inline float sceneViewHeight = 1080.0;
-	inline const float FONT_SIZE = 18.0f;
+	extern float sceneViewWidth;
+	extern float sceneViewHeight;
 
-	inline int currentTransformOperation = -1;
-	inline int previousTransformOperation = -1;
-	inline ImGuizmo::MODE transformMode = ImGuizmo::LOCAL;
+	extern const float FONT_SIZE;
 
-	inline float translationSnapValue = 1.0f;
-	inline float rotationSnapValue = 45.0f;
-	inline float scaleSnapValue = 1.0f;
+	extern int currentTransformOperation;
+	extern int previousTransformOperation;
+	extern ImGuizmo::MODE transformMode;
 
-	inline bool isMouseOverSceneView = false;
-	inline bool isSceneViewFocused = false;
+	extern float translationSnapValue;
+	extern float rotationSnapValue;
+	extern float scaleSnapValue;
 
-	inline void StorePreviousTransformOperation()
-	{
-		previousTransformOperation = currentTransformOperation;
-	}
+	extern bool isMouseOverSceneView;
+	extern bool isSceneViewFocused;
 
-	inline void RevertToPreviousTransformOperation()
-	{
-		currentTransformOperation = previousTransformOperation;
-	}
-
-	inline void SwitchTransformMode()
-	{
-		if (transformMode == ImGuizmo::LOCAL)
-		{
-			transformMode = ImGuizmo::WORLD;
-		}
-		else
-		{
-			transformMode = ImGuizmo::LOCAL;
-		}
-	}
+	void StorePreviousTransformOperation();
+	void RevertToPreviousTransformOperation();
+	void SwitchTransformMode();
 }
 
