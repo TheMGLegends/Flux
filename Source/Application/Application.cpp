@@ -90,9 +90,10 @@ namespace Flux
 		}
 
 		// INFO: Event Listener Registration
-		if (!EventDispatcher::AddListener(EventType::Quit, this))
+		if (IS_FAILURE(EventDispatcher::AddListener(EventType::Quit, this)))
 		{
-			Debug::LogWarning("Application::Application() - Failed to register event listener, listener already exists or was failed to be added");
+			Debug::LogError("Application::Application() - Failed to add Quit event listener");
+			return;
 		}
 
 		isRunning = true;
