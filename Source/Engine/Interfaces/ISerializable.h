@@ -1,9 +1,6 @@
 #pragma once
 
-#pragma warning (push)
-#pragma warning (disable : 26495) // INFO: Disable warning for uninitialised variables
 #include <nlohmann/json.hpp>
-#pragma warning (pop)
 
 namespace nlohmann
 {

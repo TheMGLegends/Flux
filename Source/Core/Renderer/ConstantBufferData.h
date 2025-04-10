@@ -1,10 +1,10 @@
 #pragma once
 
-#include <d3d11.h>
-#include <memory>
 #include <wrl.h>
 
 #include "Core/Configs/DirectXConfig.h"
+
+struct ID3D11Buffer;
 
 namespace Flux
 {
@@ -12,22 +12,16 @@ namespace Flux
 	struct ConstantBufferData
 	{
 	public:
-		ConstantBufferData() : constantBufferType(DirectXConfig::ConstantBufferType::None), buffer(nullptr) {}
-		ConstantBufferData(DirectXConfig::ConstantBufferType _constantBufferType, Microsoft::WRL::ComPtr<ID3D11Buffer> _buffer) : constantBufferType(_constantBufferType), 
-																																  buffer(std::move(_buffer)) {}
-		~ConstantBufferData() = default;
+		ConstantBufferData();
+		ConstantBufferData(DirectXConfig::ConstantBufferType _constantBufferType, Microsoft::WRL::ComPtr<ID3D11Buffer> _buffer);
+		~ConstantBufferData();
 
-		inline DirectXConfig::ConstantBufferType GetConstantBufferType() const { return constantBufferType; }
-		inline ID3D11Buffer* GetConstantBuffer() { return buffer.Get(); }
-
-	public:
-		static ConstantBufferData EMPTY;
+		DirectXConfig::ConstantBufferType GetConstantBufferType() const { return constantBufferType; }
+		ID3D11Buffer* GetConstantBuffer() { return buffer.Get(); }
 
 	private:
 		DirectXConfig::ConstantBufferType constantBufferType;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
 	};
-
-	inline ConstantBufferData ConstantBufferData::EMPTY{};
 }
 

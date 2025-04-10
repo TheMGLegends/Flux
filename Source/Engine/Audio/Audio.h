@@ -9,7 +9,7 @@ namespace Flux
 	struct AudioData
 	{
 	public:
-		AudioData(std::string _name, FMOD::Sound* _sound, FMOD::Channel* _channel) : name(_name), sound(_sound), channel(_channel) { }
+		AudioData(std::string _name, FMOD::Sound* _sound, FMOD::Channel* _channel) : name(_name), sound(_sound), channel(_channel) {}
 		~AudioData() = default;
 
 		bool IsPlaying() const
@@ -33,9 +33,7 @@ namespace Flux
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;
 
-		/// return 0 if success
 		static int Initialise();
-
 		static void Update();
 		static void Release();
 

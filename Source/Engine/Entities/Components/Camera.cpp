@@ -1,316 +1,323 @@
 #include "Camera.h"
 
+#include <DirectXColors.h>
+#include <imgui.h>
 #include <imgui_internal.h>
 
 #include "Core/Configs/EngineConfig.h"
+
 #include "Core/Debug/Debug.h"
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Renderer/ConstantBuffers.h"
 #include "Core/Renderer/Material.h"
 #include "Core/Renderer/Model.h"
+
 #include "Engine/Entities/GameObjects/GameObject.h"
 
-using namespace Flux;
-using namespace Flux::ConstantBuffers;
-using namespace Flux::DirectXConfig;
 using namespace DirectX::SimpleMath;
 
-Camera::Camera(GameObject* _gameObject) : Component(_gameObject), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f), 
-										  aspectRatio(EngineConfig::ASPECT_RATIO), backgroundColour(0.5f, 0.5f, 0.5f, 1.0f),
-										  shouldDrawFrustum(true), skyboxTextureName("DefaultSkybox"), useSkybox(true)
+namespace Flux
 {
-	name = "Camera";
-	componentType = ComponentType::Camera;
+	using namespace ConstantBuffers;
+	using namespace DirectXConfig;
 
-	transform = GetGameObject()->GetComponent<Transform>();
-
-	if (transform.expired())
+	Camera::Camera(GameObject* _gameObject) : Component(_gameObject), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f),
+		aspectRatio(EngineConfig::ASPECT_RATIO), backgroundColour(0.5f, 0.5f, 0.5f, 1.0f),
+		shouldDrawFrustum(true), skyboxTextureName("DefaultSkybox"), useSkybox(true)
 	{
-		Debug::LogError("Camera::Camera() - Camera Component must be attached to a GameObject with a Transform Component");
-	}
+		name = "Camera";
+		componentType = ComponentType::Camera;
 
-	// INFO: Load Default Skybox Model & Material
-	SetSkyboxModel("Cube");
-	skyboxMaterial = AssetHandler::GetMaterial(ShaderType::Skybox);
+		transform = GetGameObject()->GetComponent<Transform>();
 
-	// INFO: Initialise Bounding Frustum
-	SetFrustum();
-}
-
-Camera::~Camera()
-{
-}
-
-void Camera::DrawDetails()
-{
-	ImGui::PushID(this);
-	
-	bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
-
-	// INFO: Active Checkbox
-	ImGui::SameLine();
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-	ImGui::Checkbox("##ComponentActive", &isActive);
-	ImGui::PopStyleVar();
-
-	// INFO: Remove Component Button
-	ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
-	ImGui::SameLine();
-	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
-	if (ImGui::Button("Remove", buttonSize))
-	{
-		GameObject* gameObject = GetGameObject();
-		if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
-	}
-
-	if (treeOpened)
-	{
-		// INFO: Use Skybox Checkbox
-		ImGui::Text("Use Skybox");
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(136.0f);
-		ImGui::Checkbox("##UseSkybox", &useSkybox);
-
-		// INFO: Skybox Texture Selector + Drag & Drop Field
-		ImGui::Text("Texture");
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(136.0f);
-		ImGui::SetNextItemWidth(150.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
-		if (ImGui::BeginCombo("##SkyboxTexture", skyboxTextureName.c_str(), ImGuiComboFlags_HeightLarge))
+		if (transform.expired())
 		{
-			for (const auto& skyboxTexture : AssetHandler::GetSkyboxTextures())
-			{
-				if (ImGui::Selectable(skyboxTexture.first.c_str(), skyboxTextureName == skyboxTexture.first))
-				{
-					SetMaterialTexture(skyboxTexture.first);
-				}
-			}
-			ImGui::EndCombo();
+			Debug::LogError("Camera::Camera() - Camera Component must be attached to a GameObject with a Transform Component");
 		}
+
+		// INFO: Load Default Skybox Model & Material
+		SetSkyboxModel("Cube");
+		skyboxMaterial = AssetHandler::GetMaterial(ShaderType::Skybox);
+
+		// INFO: Initialise Bounding Frustum
+		SetFrustum();
+	}
+
+	Camera::~Camera()
+	{
+	}
+
+	void Camera::DrawDetails()
+	{
+		ImGui::PushID(this);
+
+		bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+
+		// INFO: Active Checkbox
+		ImGui::SameLine();
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		ImGui::Checkbox("##ComponentActive", &isActive);
 		ImGui::PopStyleVar();
 
-		if (ImGui::BeginDragDropTarget())
+		// INFO: Remove Component Button
+		ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
+		if (ImGui::Button("Remove", buttonSize))
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SkyboxTexture"))
+			GameObject* gameObject = GetGameObject();
+			if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
+		}
+
+		if (treeOpened)
+		{
+			// INFO: Use Skybox Checkbox
+			ImGui::Text("Use Skybox");
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(136.0f);
+			ImGui::Checkbox("##UseSkybox", &useSkybox);
+
+			// INFO: Skybox Texture Selector + Drag & Drop Field
+			ImGui::Text("Texture");
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(136.0f);
+			ImGui::SetNextItemWidth(150.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
+			if (ImGui::BeginCombo("##SkyboxTexture", skyboxTextureName.c_str(), ImGuiComboFlags_HeightLarge))
 			{
-				std::string textureName = static_cast<const char*>(payload->Data);
-				SetMaterialTexture(textureName);
+				for (const auto& skyboxTexture : AssetHandler::GetSkyboxTextures())
+				{
+					if (ImGui::Selectable(skyboxTexture.first.c_str(), skyboxTextureName == skyboxTexture.first))
+					{
+						SetMaterialTexture(skyboxTexture.first);
+					}
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::PopStyleVar();
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SkyboxTexture"))
+				{
+					std::string textureName = static_cast<const char*>(payload->Data);
+					SetMaterialTexture(textureName);
+				}
+
+				ImGui::EndDragDropTarget();
 			}
 
-			ImGui::EndDragDropTarget();
-		}
-
-		// INFO: Background Colour Picker
-		ImGuiColorEditFlags colourEditFlags = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreviewHalf;
-		ImGui::Text("Background");
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(136.0f);
-		ImGui::ColorEdit4("##BackgroundColour", &backgroundColour[0], colourEditFlags);
-
-		// INFO: FOV Slider
-		ImGui::Text("Vertical FOV");
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(136.0f);
-		ImGui::SetNextItemWidth(200.0f);
-		ImGui::SliderFloat("##VerticalFOV", &verticalFOV, 1.0f, 150.0f, "%.1f", ImGuiSliderFlags_ClampOnInput);
-
-		// INFO: Clipping Planes
-		ImGui::Text("Clipping Planes");
-		if (ImGui::BeginTable("##ClippingPlanes", 2))
-		{
-			ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 81.0f); // INFO: Label Column
-			ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 75.0f); // INFO: Value Column
-
-			ImGui::AlignTextToFramePadding();
-
-			ImGui::TableNextColumn();
-			ImGui::SetCursorPosX(50.0f);
-			ImGui::Text("Near");
-			ImGui::TableNextColumn();
+			// INFO: Background Colour Picker
+			ImGuiColorEditFlags colourEditFlags = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreviewHalf;
+			ImGui::Text("Background");
+			ImGui::SameLine();
 			ImGui::SetCursorPosX(136.0f);
-			ImGui::InputFloat("##NearClippingPlane", &nearClippingPlane, 0.0f, 0.0f, "%.1f");
+			ImGui::ColorEdit4("##BackgroundColour", &backgroundColour[0], colourEditFlags);
 
-			ImGui::TableNextRow();
-
-			ImGui::TableNextColumn();
-			ImGui::SetCursorPosX(50.0f);
-			ImGui::Text("Far");
-			ImGui::TableNextColumn();
+			// INFO: FOV Slider
+			ImGui::Text("Vertical FOV");
+			ImGui::SameLine();
 			ImGui::SetCursorPosX(136.0f);
-			ImGui::InputFloat("##FarClippingPlane", &farClippingPlane, 0.0f, 0.0f, "%.1f");
+			ImGui::SetNextItemWidth(200.0f);
+			ImGui::SliderFloat("##VerticalFOV", &verticalFOV, 1.0f, 150.0f, "%.1f", ImGuiSliderFlags_ClampOnInput);
 
-			ImGui::EndTable();
+			// INFO: Clipping Planes
+			ImGui::Text("Clipping Planes");
+			if (ImGui::BeginTable("##ClippingPlanes", 2))
+			{
+				ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 81.0f); // INFO: Label Column
+				ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 75.0f); // INFO: Value Column
+
+				ImGui::AlignTextToFramePadding();
+
+				ImGui::TableNextColumn();
+				ImGui::SetCursorPosX(50.0f);
+				ImGui::Text("Near");
+				ImGui::TableNextColumn();
+				ImGui::SetCursorPosX(136.0f);
+				ImGui::InputFloat("##NearClippingPlane", &nearClippingPlane, 0.0f, 0.0f, "%.1f");
+
+				ImGui::TableNextRow();
+
+				ImGui::TableNextColumn();
+				ImGui::SetCursorPosX(50.0f);
+				ImGui::Text("Far");
+				ImGui::TableNextColumn();
+				ImGui::SetCursorPosX(136.0f);
+				ImGui::InputFloat("##FarClippingPlane", &farClippingPlane, 0.0f, 0.0f, "%.1f");
+
+				ImGui::EndTable();
+			}
+
+			ImGui::TreePop();
 		}
+		ImGui::PopID();
 
-		ImGui::TreePop();
-	}
-	ImGui::PopID();
-
-	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
-}
-
-void Camera::Serialize(nlohmann::flux_json& json) const
-{
-	// INFO: Serialize Parent Class
-	Component::Serialize(json);
-
-	auto& jsonBack = json["Components"].back();
-	jsonBack["FOV"] = verticalFOV;
-	jsonBack["NearClippingPlane"] = nearClippingPlane;
-	jsonBack["FarClippingPlane"] = farClippingPlane;
-	jsonBack["BackgroundColour"] = { backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3] };
-	jsonBack["SkyboxTexture"] = skyboxTextureName;
-	jsonBack["UseSkybox"] = useSkybox;
-}
-
-void Camera::Deserialize(const nlohmann::flux_json& json)
-{
-	// INFO: Deserialize Parent Class
-	Component::Deserialize(json);
-
-	// INFO: Deserialize Camera Data
-	verticalFOV = json["FOV"].get<float>();
-	nearClippingPlane = json["NearClippingPlane"].get<float>();
-	farClippingPlane = json["FarClippingPlane"].get<float>();
-
-	auto& backgroundColourJson = json["BackgroundColour"];
-	for (size_t i = 0; i < backgroundColourJson.size(); i++)
-	{
-		backgroundColour[i] = backgroundColourJson[i].get<float>();
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 	}
 
-	SetMaterialTexture(json["SkyboxTexture"].get<std::string>());
-	SetUseSkybox(json["UseSkybox"].get<bool>());
-
-	// INFO: Initialise Bounding Frustum
-	SetFrustum();
-}
-
-void Camera::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
-{
-	if (!shouldDrawFrustum) { return; }
-
-	std::shared_ptr<Transform> owningTransform = GetGameObject()->transform.lock();
-
-	if (owningTransform)
+	void Camera::Serialize(nlohmann::flux_json& json) const
 	{
-		DirectX::XMMATRIX world = owningTransform->GetWorldMatrix();
+		// INFO: Serialize Parent Class
+		Component::Serialize(json);
 
-		DirectX::VertexPositionColor worldFrustumVertices[24]{};
+		auto& jsonBack = json["Components"].back();
+		jsonBack["FOV"] = verticalFOV;
+		jsonBack["NearClippingPlane"] = nearClippingPlane;
+		jsonBack["FarClippingPlane"] = farClippingPlane;
+		jsonBack["BackgroundColour"] = { backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3] };
+		jsonBack["SkyboxTexture"] = skyboxTextureName;
+		jsonBack["UseSkybox"] = useSkybox;
+	}
 
-		for (size_t i = 0; i < 24; i++)
+	void Camera::Deserialize(const nlohmann::flux_json& json)
+	{
+		// INFO: Deserialize Parent Class
+		Component::Deserialize(json);
+
+		// INFO: Deserialize Camera Data
+		verticalFOV = json["FOV"].get<float>();
+		nearClippingPlane = json["NearClippingPlane"].get<float>();
+		farClippingPlane = json["FarClippingPlane"].get<float>();
+
+		auto& backgroundColourJson = json["BackgroundColour"];
+		for (size_t i = 0; i < backgroundColourJson.size(); i++)
 		{
-			DirectX::XMStoreFloat3(&worldFrustumVertices[i].position, DirectX::XMVector3Transform(frustumVertices[i], world));
-			DirectX::XMStoreFloat4(&worldFrustumVertices[i].color, DirectX::Colors::White);
+			backgroundColour[i] = backgroundColourJson[i].get<float>();
 		}
 
-		primitiveBatch.Draw(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, worldFrustumVertices, 24);
+		SetMaterialTexture(json["SkyboxTexture"].get<std::string>());
+		SetUseSkybox(json["UseSkybox"].get<bool>());
+
+		// INFO: Initialise Bounding Frustum
+		SetFrustum();
 	}
-}
 
-DirectX::XMMATRIX Camera::GetViewMatrix() const
-{
-	DirectX::XMFLOAT3 position(0.0, 0.0f, 0.0f);
-
-	if (transform.expired())
+	void Camera::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 	{
-		Debug::LogError("Camera::GetViewMatrix() - Transform Component has expired");
-		return DirectX::XMMatrixIdentity();
+		if (!shouldDrawFrustum) { return; }
+
+		std::shared_ptr<Transform> owningTransform = GetGameObject()->transform.lock();
+
+		if (owningTransform)
+		{
+			DirectX::XMMATRIX world = owningTransform->GetWorldMatrix();
+
+			DirectX::VertexPositionColor worldFrustumVertices[24]{};
+
+			for (size_t i = 0; i < 24; i++)
+			{
+				DirectX::XMStoreFloat3(&worldFrustumVertices[i].position, DirectX::XMVector3Transform(frustumVertices[i], world));
+				DirectX::XMStoreFloat4(&worldFrustumVertices[i].color, DirectX::Colors::White);
+			}
+
+			primitiveBatch.Draw(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, worldFrustumVertices, 24);
+		}
 	}
 
-	std::shared_ptr<Transform> sharedTransform = transform.lock();
-	DirectX::XMStoreFloat3(&position, sharedTransform->GetPosition());
-
-	DirectX::XMVECTOR eye = DirectX::XMLoadFloat3(&position);
-	DirectX::XMVECTOR lookTo = DirectX::XMVectorAdd(eye, sharedTransform->Forward());
-	DirectX::XMVECTOR up = sharedTransform->Up();
-
-	return DirectX::XMMatrixLookAtLH(eye, lookTo, up);
-}
-
-DirectX::XMMATRIX Camera::GetProjectionMatrix() const
-{
-	return DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(verticalFOV), 
-							                 aspectRatio, nearClippingPlane, farClippingPlane);
-}
-
-void Camera::SetSkyboxModel(const std::string& modelName)
-{
-	skyboxModel = AssetHandler::GetModel(modelName);
-
-	if (!skyboxModel)
+	DirectX::XMMATRIX Camera::GetViewMatrix() const
 	{
-		Debug::LogError("Camera::SetSkyboxModel() - Failed to load Skybox Model: " + modelName);
+		DirectX::XMFLOAT3 position(0.0, 0.0f, 0.0f);
+
+		if (transform.expired())
+		{
+			Debug::LogError("Camera::GetViewMatrix() - Transform Component has expired");
+			return DirectX::XMMatrixIdentity();
+		}
+
+		std::shared_ptr<Transform> sharedTransform = transform.lock();
+		DirectX::XMStoreFloat3(&position, sharedTransform->GetPosition());
+
+		DirectX::XMVECTOR eye = DirectX::XMLoadFloat3(&position);
+		DirectX::XMVECTOR lookTo = DirectX::XMVectorAdd(eye, sharedTransform->Forward());
+		DirectX::XMVECTOR up = sharedTransform->Up();
+
+		return DirectX::XMMatrixLookAtLH(eye, lookTo, up);
 	}
-}
 
-void Camera::SetMaterialTexture(const std::string& _textureName)
-{
-	skyboxTextureName = _textureName;
-
-	skyboxMaterial.SetTexture(skyboxTextureName, true);
-}
-
-void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection)
-{
-	if (!useSkybox) { return; }
-
-	if (!skyboxModel)
+	DirectX::XMMATRIX Camera::GetProjectionMatrix() const
 	{
-		Debug::LogError("Camera::DrawSkybox() - Skybox Model is nullptr");
-		return;
+		return DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(verticalFOV),
+			aspectRatio, nearClippingPlane, farClippingPlane);
 	}
 
-	UnlitVS skyboxVS{};
-	skyboxVS.wvp = translation * view * projection;
-
-	if (skyboxMaterial.GetConstantBufferType() == ConstantBufferType::Unlit)
+	void Camera::SetSkyboxModel(const std::string& modelName)
 	{
-		deviceContext.UpdateSubresource(skyboxMaterial.GetConstantBuffer(), 0, nullptr, &skyboxVS, 0, 0);
+		skyboxModel = AssetHandler::GetModel(modelName);
+
+		if (!skyboxModel)
+		{
+			Debug::LogError("Camera::SetSkyboxModel() - Failed to load Skybox Model: " + modelName);
+		}
 	}
 
-	skyboxMaterial.Bind(deviceContext);
-	skyboxModel->Draw(deviceContext);
-}
+	void Camera::SetMaterialTexture(const std::string& _textureName)
+	{
+		skyboxTextureName = _textureName;
 
-void Camera::SetFrustum()
-{
-	DirectX::BoundingFrustum::CreateFromMatrix(frustum, GetAdjustedProjectionMatrix(nearClippingPlane, farClippingPlane * 0.1f));
+		skyboxMaterial.SetTexture(skyboxTextureName, true);
+	}
 
-	DirectX::XMFLOAT3 corners[DirectX::BoundingFrustum::CORNER_COUNT]{};
-	frustum.GetCorners(corners);
+	void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection)
+	{
+		if (!useSkybox) { return; }
 
-	frustumVertices[0] = DirectX::XMLoadFloat3(&corners[0]);
-	frustumVertices[1] = DirectX::XMLoadFloat3(&corners[1]);
-	frustumVertices[2] = DirectX::XMLoadFloat3(&corners[1]);
-	frustumVertices[3] = DirectX::XMLoadFloat3(&corners[2]);
-	frustumVertices[4] = DirectX::XMLoadFloat3(&corners[2]);
-	frustumVertices[5] = DirectX::XMLoadFloat3(&corners[3]);
-	frustumVertices[6] = DirectX::XMLoadFloat3(&corners[3]);
-	frustumVertices[7] = DirectX::XMLoadFloat3(&corners[0]);
+		if (!skyboxModel)
+		{
+			Debug::LogError("Camera::DrawSkybox() - Skybox Model is nullptr");
+			return;
+		}
 
-	frustumVertices[8] = DirectX::XMLoadFloat3(&corners[0]);
-	frustumVertices[9] = DirectX::XMLoadFloat3(&corners[4]);
-	frustumVertices[10] = DirectX::XMLoadFloat3(&corners[1]);
-	frustumVertices[11] = DirectX::XMLoadFloat3(&corners[5]);
-	frustumVertices[12] = DirectX::XMLoadFloat3(&corners[2]);
-	frustumVertices[13] = DirectX::XMLoadFloat3(&corners[6]);
-	frustumVertices[14] = DirectX::XMLoadFloat3(&corners[3]);
-	frustumVertices[15] = DirectX::XMLoadFloat3(&corners[7]);
+		UnlitVS skyboxVS{};
+		skyboxVS.wvp = translation * view * projection;
 
-	frustumVertices[16] = DirectX::XMLoadFloat3(&corners[4]);
-	frustumVertices[17] = DirectX::XMLoadFloat3(&corners[5]);
-	frustumVertices[18] = DirectX::XMLoadFloat3(&corners[5]);
-	frustumVertices[19] = DirectX::XMLoadFloat3(&corners[6]);
-	frustumVertices[20] = DirectX::XMLoadFloat3(&corners[6]);
-	frustumVertices[21] = DirectX::XMLoadFloat3(&corners[7]);
-	frustumVertices[22] = DirectX::XMLoadFloat3(&corners[7]);
-	frustumVertices[23] = DirectX::XMLoadFloat3(&corners[4]);
-}
+		if (skyboxMaterial.GetConstantBufferType() == ConstantBufferType::Unlit)
+		{
+			deviceContext.UpdateSubresource(skyboxMaterial.GetConstantBuffer(), 0, nullptr, &skyboxVS, 0, 0);
+		}
 
-DirectX::XMMATRIX Camera::GetAdjustedProjectionMatrix(float _nearClippingPlane, float _farClippingPlane) const
-{
-	return DirectX::XMMatrixPerspectiveFovRH(DirectX::XMConvertToRadians(verticalFOV),
-											 aspectRatio, _nearClippingPlane, _farClippingPlane);
+		skyboxMaterial.Bind(deviceContext);
+		skyboxModel->Draw(deviceContext);
+	}
+
+	void Camera::SetFrustum()
+	{
+		DirectX::BoundingFrustum::CreateFromMatrix(frustum, GetAdjustedProjectionMatrix(nearClippingPlane, farClippingPlane * 0.1f));
+
+		DirectX::XMFLOAT3 corners[DirectX::BoundingFrustum::CORNER_COUNT]{};
+		frustum.GetCorners(corners);
+
+		frustumVertices[0] = DirectX::XMLoadFloat3(&corners[0]);
+		frustumVertices[1] = DirectX::XMLoadFloat3(&corners[1]);
+		frustumVertices[2] = DirectX::XMLoadFloat3(&corners[1]);
+		frustumVertices[3] = DirectX::XMLoadFloat3(&corners[2]);
+		frustumVertices[4] = DirectX::XMLoadFloat3(&corners[2]);
+		frustumVertices[5] = DirectX::XMLoadFloat3(&corners[3]);
+		frustumVertices[6] = DirectX::XMLoadFloat3(&corners[3]);
+		frustumVertices[7] = DirectX::XMLoadFloat3(&corners[0]);
+
+		frustumVertices[8] = DirectX::XMLoadFloat3(&corners[0]);
+		frustumVertices[9] = DirectX::XMLoadFloat3(&corners[4]);
+		frustumVertices[10] = DirectX::XMLoadFloat3(&corners[1]);
+		frustumVertices[11] = DirectX::XMLoadFloat3(&corners[5]);
+		frustumVertices[12] = DirectX::XMLoadFloat3(&corners[2]);
+		frustumVertices[13] = DirectX::XMLoadFloat3(&corners[6]);
+		frustumVertices[14] = DirectX::XMLoadFloat3(&corners[3]);
+		frustumVertices[15] = DirectX::XMLoadFloat3(&corners[7]);
+
+		frustumVertices[16] = DirectX::XMLoadFloat3(&corners[4]);
+		frustumVertices[17] = DirectX::XMLoadFloat3(&corners[5]);
+		frustumVertices[18] = DirectX::XMLoadFloat3(&corners[5]);
+		frustumVertices[19] = DirectX::XMLoadFloat3(&corners[6]);
+		frustumVertices[20] = DirectX::XMLoadFloat3(&corners[6]);
+		frustumVertices[21] = DirectX::XMLoadFloat3(&corners[7]);
+		frustumVertices[22] = DirectX::XMLoadFloat3(&corners[7]);
+		frustumVertices[23] = DirectX::XMLoadFloat3(&corners[4]);
+	}
+
+	DirectX::XMMATRIX Camera::GetAdjustedProjectionMatrix(float _nearClippingPlane, float _farClippingPlane) const
+	{
+		return DirectX::XMMatrixPerspectiveFovRH(DirectX::XMConvertToRadians(verticalFOV),
+			aspectRatio, _nearClippingPlane, _farClippingPlane);
+	}
 }

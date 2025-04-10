@@ -8,9 +8,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Engine/Entities/Components/Colliders/Collider.h"
-#include "Engine/Entities/Components/Transform.h"
 #include "Engine/Scene/SceneContext.h"
+#include "Engine/Entities/Components/Transform.h"
+#include "Engine/Entities/Components/Colliders/Collider.h"
 
 namespace Flux
 {
@@ -38,9 +38,9 @@ namespace Flux
 		void RemoveComponent(std::weak_ptr<T> component);
 
 		void SetIsActive(bool _isActive);
-		inline bool IsActive() const { return isActive; }
+		bool IsActive() const { return isActive; }
 
-		inline std::vector<std::shared_ptr<Component>>& GetComponents() { return components; }
+		std::vector<std::shared_ptr<Component>>& GetComponents() { return components; }
 
 		void Destroy();
 
@@ -60,13 +60,13 @@ namespace Flux
 		virtual void OnDestroy() {}
 
 		/// @brief Used to set display name of GameObject
-		inline void SetName(const std::string& _name) { name = _name; }
-		inline std::string& GetName() { return name; }
-		inline const std::string& GetID() const { return id; }
+		void SetName(const std::string& _name) { name = _name; }
+		std::string& GetName() { return name; }
+		const std::string& GetID() const { return id; }
 
 	private:
-		inline void SetID(const std::string& _id) { id = _id; }
-		inline void SetType(const std::string& _type) { type = _type; }
+		void SetID(const std::string& _id) { id = _id; }
+		void SetType(const std::string& _type) { type = _type; }
 
 	public:
 		std::weak_ptr<Transform> transform;
@@ -83,7 +83,7 @@ namespace Flux
 	public:
 		static std::unique_ptr<GameObject> CreateGameObject(const std::string& typeName);
 		static const std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>>& GetGameObjectTypes();
-		static inline void ClearGameObjectTypeCounters() { gameObjectCounter = -1; gameObjectTypeCounters.clear(); }
+		static void ClearGameObjectTypeCounters() { gameObjectCounter = -1; gameObjectTypeCounters.clear(); }
 
 	protected:
 		static void RegisterGameObjectType(const std::string& typeName, std::function<std::unique_ptr<GameObject>()> creator);
@@ -97,8 +97,8 @@ namespace Flux
 	inline static ObjectRegister objectRegister;
 
 	private:
-		inline static std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>> gameObjectTypes;
-		inline static std::unordered_map<std::string, int> gameObjectTypeCounters;
+		static inline std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>> gameObjectTypes;
+		static inline std::unordered_map<std::string, int> gameObjectTypeCounters;
 		static int gameObjectCounter; // INFO: Only for Game Objects since they don't get reflected
 	};
 

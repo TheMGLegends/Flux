@@ -2,14 +2,17 @@
 
 #include "Engine/Entities/Components/Visualizer.h"
 
-using namespace Flux;
-
-Cube::Cube()
+namespace Flux
 {
-	auto visualizer = AddComponent<Visualizer>(this).lock();
-	visualizer->SetModel("Cube");
-}
+	Cube::Cube()
+	{
+		if (std::shared_ptr<Visualizer> visualizer = AddComponent<Visualizer>(this).lock())
+		{
+			visualizer->SetModel("Cube");
+		}
+	}
 
-Cube::~Cube()
-{
+	Cube::~Cube()
+	{
+	}
 }

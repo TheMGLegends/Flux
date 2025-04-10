@@ -2,32 +2,27 @@
 
 #include "Core/EventSystem/IEventListener.h"
 
+#define NOMINMAX
+
 #include <d3d11.h>
-#include <Effects.h>
 #include <memory>
 #include <PrimitiveBatch.h>
-#include <SpriteBatch.h>
 #include <VertexTypes.h>
 #include <Windows.h>
 #include <wrl.h>
 
+namespace DirectX
+{
+	inline namespace DX11
+	{
+		class BasicEffect;
+		class SpriteBatch;
+	}
+}
+
 namespace Flux
 {
 	class Scene;
-
-	/// @brief Initializer for D3D11_VIEWPORT struct
-	struct Viewport : D3D11_VIEWPORT
-	{
-		Viewport(float topLeftX, float topLeftY, float width, float height, float minDepth, float maxDepth)
-		{
-			TopLeftX = topLeftX;
-			TopLeftY = topLeftY;
-			Width = width;
-			Height = height;
-			MinDepth = minDepth;
-			MaxDepth = maxDepth;
-		}
-	};
 
 	class Renderer : public IEventListener
 	{
@@ -38,15 +33,12 @@ namespace Flux
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
 		HRESULT Initialise(HWND hWnd);
-
-		/// @return 0 if successful
 		int PostInitialise();
-
 		void RenderFrame(Scene& scene);
 
-		inline ID3D11Device& GetDevice() { return *device.Get(); }
-		inline ID3D11DeviceContext& GetDeviceContext() { return *deviceContext.Get(); }
-		inline ID3D11ShaderResourceView* GetRenderTextureShaderResourceView() { return renderTextureShaderResourceView.Get(); }
+		ID3D11Device& GetDevice() { return *device.Get(); }
+		ID3D11DeviceContext& GetDeviceContext() { return *deviceContext.Get(); }
+		ID3D11ShaderResourceView* GetRenderTextureShaderResourceView() { return renderTextureShaderResourceView.Get(); }
 
 	private:
 		/// @brief Resizes the buffer responsible for ImGui rendering
@@ -67,6 +59,7 @@ namespace Flux
 
 		D3D11_VIEWPORT backBufferViewport;
 		D3D11_VIEWPORT sceneViewViewport;
+
 
 		// INFO: UI Rendering
 

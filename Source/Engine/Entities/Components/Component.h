@@ -2,8 +2,6 @@
 
 #include "Engine/Interfaces/ISerializable.h"
 
-#include <imgui.h>
-
 #include "ComponentTypes.h"
 
 namespace DirectX::SimpleMath { struct Vector3; }
@@ -29,22 +27,22 @@ namespace Flux
 		virtual void Serialize(nlohmann::flux_json& json) const override;
 		virtual void Deserialize(const nlohmann::flux_json& json) override;
 
-		inline GameObject* GetGameObject() const { return gameObject; }
+		GameObject* GetGameObject() const { return gameObject; }
 
 		virtual void SetIsActive(bool _isActive);
-		inline bool IsActive() const { return isActive; }
+		bool IsActive() const { return isActive; }
 
-		inline bool CanHaveMultiple() const { return canHaveMultiple; }
-		inline bool IsRemoveable() const { return isRemoveable; }
+		bool CanHaveMultiple() const { return canHaveMultiple; }
+		bool IsRemoveable() const { return isRemoveable; }
 
-		inline ComponentType GetComponentType() const { return componentType; }
+		ComponentType GetComponentType() const { return componentType; }
 
 	protected:
 		/// @return true if the field was changed
 		bool DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed = 0.1f, const char* format = "%.2f");
 
 	private:
-		inline void SetGameObject(GameObject* _gameObject) { gameObject = _gameObject; }
+		void SetGameObject(GameObject* _gameObject) { gameObject = _gameObject; }
 
 	protected:
 		bool isActive;

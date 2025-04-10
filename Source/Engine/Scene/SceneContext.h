@@ -3,7 +3,9 @@
 #include <SimpleMath.h>
 
 #include "Scene.h"
+
 #include "Core/Debug/Debug.h"
+
 #include "Engine/Entities/Components/Transform.h"
 
 namespace Flux
@@ -16,8 +18,8 @@ namespace Flux
 		SceneContext(const SceneContext&) = delete;
 		SceneContext& operator=(const SceneContext&) = delete;
 
-		static inline void SetScene(Scene* _scene) { scene = _scene; }
-		static inline Scene& GetScene() { return *scene; }
+		static void SetScene(Scene* _scene) { scene = _scene; }
+		static Scene& GetScene() { return *scene; }
 
 		template<class T, typename... Args>
 		static T* SpawnGameObject(const DirectX::SimpleMath::Vector3& spawnLocation, const DirectX::SimpleMath::Quaternion& spawnRotation, Args&&... args);

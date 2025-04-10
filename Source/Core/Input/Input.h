@@ -19,7 +19,6 @@ namespace Flux
 		Input(const Input&) = delete;
 		Input& operator=(const Input&) = delete;
 
-		/// @return 0 if successful
 		static int Initialise(SDL_Window* _window);
 		static void Update();
 		static void Release();

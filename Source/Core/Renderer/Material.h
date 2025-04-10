@@ -1,9 +1,18 @@
 #pragma once
 
-#include <d3d11.h>
 #include <string>
 
 #include "Core/Configs/DirectXConfig.h"
+
+struct ID3D11Buffer;
+struct ID3D11DepthStencilState;
+struct ID3D11DeviceContext;
+struct ID3D11InputLayout;
+struct ID3D11PixelShader;
+struct ID3D11RasterizerState;
+struct ID3D11SamplerState;
+struct ID3D11ShaderResourceView;
+struct ID3D11VertexShader;
 
 namespace Flux
 {
@@ -32,7 +41,6 @@ namespace Flux
 
 		ID3D11DepthStencilState* depthWrite;
 		ID3D11RasterizerState* cullingMode;
-
 		ID3D11ShaderResourceView* texture;
 		ID3D11SamplerState* sampler;
 	};

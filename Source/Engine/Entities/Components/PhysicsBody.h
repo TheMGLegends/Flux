@@ -4,10 +4,7 @@
 
 #include <array>
 #include <memory>
-#pragma warning (push)
-#pragma warning (disable : 26495) // INFO: Disable warning for uninitialised variables
 #include <PxForceMode.h>
-#pragma warning (pop)
 
 namespace physx { class PxRigidDynamic; }
 namespace DirectX::SimpleMath { struct Vector3; }

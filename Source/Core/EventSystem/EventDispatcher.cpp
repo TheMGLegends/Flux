@@ -2,25 +2,29 @@
 
 #include "IEventListener.h"
 
+#include "Core/GlobalDefines.h"
+
 namespace Flux
 {
+	using namespace GlobalDefines;
+
 	std::unordered_map<EventType, std::vector<IEventListener*>> EventDispatcher::listeners;
 	std::queue<std::pair<EventType, std::shared_ptr<Event>>> EventDispatcher::eventQueue;
 
-	bool EventDispatcher::AddListener(EventType eventType, IEventListener* listener)
+	int EventDispatcher::AddListener(EventType eventType, IEventListener* listener)
 	{
 		// INFO: Check if the listener is already listening to the event type
 		for (size_t i = 0; i < listeners[eventType].size(); i++)
 		{
-			if (listeners[eventType][i] == listener) { return false; }
+			if (listeners[eventType][i] == listener) { return FLUX_FAILURE; }
 		}
 
 		listeners[eventType].push_back(listener);
 
 		// INFO: Check if the listener was added successfully
-		if (listeners[eventType].back() == listener) { return true; }
+		if (listeners[eventType].back() == listener) { return FLUX_SUCCESS; }
 
-		return false;
+		return FLUX_FAILURE;
 	}
 
 	void EventDispatcher::RemoveListener(IEventListener* listener)

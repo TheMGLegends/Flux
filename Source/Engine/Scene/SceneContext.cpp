@@ -1,5 +1,6 @@
 #include "SceneContext.h"
 
-using namespace Flux;
-
-Scene* SceneContext::scene = nullptr;
+namespace Flux
+{
+	Scene* SceneContext::scene = nullptr;
+}

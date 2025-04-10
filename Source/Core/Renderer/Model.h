@@ -1,13 +1,16 @@
 #pragma once
 
 #define NOMINMAX
-#include <d3d11.h>
+
 #include <DirectXMath.h>
 #include <string>
 #include <vector>
 #include <wrl.h>
 
 struct aiScene;
+struct ID3D11Buffer;
+struct ID3D11Device;
+struct ID3D11DeviceContext;
 
 namespace Flux
 {

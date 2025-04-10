@@ -14,7 +14,7 @@ namespace Flux
 
 		virtual void LateUpdate(float deltaTime) override;
 
-		inline std::weak_ptr<Camera> GetCamera() const { return camera; }
+		std::weak_ptr<Camera> GetCamera() const { return camera; }
 
 	private:
 		std::weak_ptr<Camera> camera;

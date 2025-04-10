@@ -16,14 +16,8 @@ namespace Flux
 
 		virtual void Release() override;
 
-		/// @brief Used for initializing systems before the main initialisation
-		/// @return 0 if successful
 		int PreInitialise();
-
-		/// @brief Used for initializing data that uses the systems
-		/// @return 0 if successful
 		int Initialise();
-
 		void Start();
 		void Update(float deltaTime);
 		void FixedUpate(float fixedDeltaTime);

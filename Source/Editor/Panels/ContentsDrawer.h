@@ -36,7 +36,6 @@ namespace Flux
 
 		float contentsRefreshTime;
 		float currentRefreshTime;
-		// TODO: Contents Drawer Data
 	};
 }
 

@@ -4,9 +4,9 @@
 
 namespace Flux::GlobalDefines
 {
-	inline constexpr int FLUX_SUCCESS = 0; 
-	inline constexpr int FLUX_FAILURE = 1;
+	extern const int FLUX_SUCCESS; 
+	extern const int FLUX_FAILURE;
 
-	inline constexpr bool IS_FAILURE(int result) { return result != FLUX_SUCCESS;  }
+	bool IS_FAILURE(int result);
 }
 

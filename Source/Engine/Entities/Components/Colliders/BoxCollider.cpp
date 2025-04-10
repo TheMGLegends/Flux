@@ -1,6 +1,7 @@
 #include "BoxCollider.h"
 
 #include <DirectXColors.h>
+#include <imgui.h>
 #include <imgui_internal.h>
 
 #include "Engine/Physics/Physics.h"
@@ -9,199 +10,201 @@
 #include "Engine/Entities/Components/PhysicsBody.h"
 #include "Engine/Entities/Components/Transform.h"
 
-using namespace Flux;
 using namespace DirectX::SimpleMath;
 
-BoxCollider::BoxCollider(GameObject* _gameObject) : Collider(_gameObject), size(Vector3::One)
+namespace Flux
 {
-	name = "BoxCollider";
-	componentType = ComponentType::BoxCollider;
-
-	// INFO: Create Box Collider Shape
-	SetColliderShape();
-}
-
-BoxCollider::~BoxCollider()
-{
-	if (rigidActor)
+	BoxCollider::BoxCollider(GameObject* _gameObject) : Collider(_gameObject), size(Vector3::One)
 	{
-		rigidActor->release();
-		rigidActor = nullptr;
-	}
-}
+		name = "BoxCollider";
+		componentType = ComponentType::BoxCollider;
 
-void BoxCollider::DrawDetails()
-{
-	ImGui::PushID(this);
-
-	bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
-
-	// INFO: Active Checkbox
-	ImGui::SameLine();
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-	ImGui::Checkbox("##ComponentActive", &isActive);
-	ImGui::PopStyleVar();
-
-	// INFO: Remove Component Button
-	ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
-	ImGui::SameLine();
-	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
-	if (ImGui::Button("Remove", buttonSize))
-	{
-		GameObject* gameObject = GetGameObject();
-		if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
+		// INFO: Create Box Collider Shape
+		SetColliderShape();
 	}
 
-	if (treeOpened)
+	BoxCollider::~BoxCollider()
 	{
-		// INFO: Is Trigger Checkbox
-		ImGui::Text("Is Trigger");
+		if (rigidActor)
+		{
+			rigidActor->release();
+			rigidActor = nullptr;
+		}
+	}
+
+	void BoxCollider::DrawDetails()
+	{
+		ImGui::PushID(this);
+
+		bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+
+		// INFO: Active Checkbox
 		ImGui::SameLine();
-		ImGui::SetCursorPosX(136.0f);
-		if (ImGui::Checkbox("##IsTrigger", &isTrigger))
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		ImGui::Checkbox("##ComponentActive", &isActive);
+		ImGui::PopStyleVar();
+
+		// INFO: Remove Component Button
+		ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
+		if (ImGui::Button("Remove", buttonSize))
 		{
-			SetIsTrigger(isTrigger);
+			GameObject* gameObject = GetGameObject();
+			if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
 		}
 
-		if (DisplayVector3Field("Size", size, 0.1f, "%.1f"))
+		if (treeOpened)
 		{
-			UpdateScale();
+			// INFO: Is Trigger Checkbox
+			ImGui::Text("Is Trigger");
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(136.0f);
+			if (ImGui::Checkbox("##IsTrigger", &isTrigger))
+			{
+				SetIsTrigger(isTrigger);
+			}
+
+			if (DisplayVector3Field("Size", size, 0.1f, "%.1f"))
+			{
+				UpdateScale();
+			}
+
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
+	}
+
+	void BoxCollider::Serialize(nlohmann::flux_json& json) const
+	{
+		// INFO: Serialize Parent Class
+		Collider::Serialize(json);
+
+		json["Components"].back()["Size"] = { size.x, size.y, size.z };
+	}
+
+	void BoxCollider::Deserialize(const nlohmann::flux_json& json)
+	{
+		// INFO: Deserialize Parent Class
+		Collider::Deserialize(json);
+
+		// INFO: Deserialize BoxCollider Data
+		SetSize(Vector3(json["Size"][0].get<float>(), json["Size"][1].get<float>(), json["Size"][2].get<float>()));
+	}
+
+	void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
+	{
+		static const DirectX::XMVECTOR vertices[8] =
+		{
+			{ -1, -1, -1, 0 },
+			{ 1, -1, -1, 0 },
+			{ 1, -1, 1, 0 },
+			{ -1, -1, 1, 0 },
+			{ -1, 1, -1, 0 },
+			{ 1, 1, -1, 0 },
+			{ 1, 1, 1, 0 },
+			{ -1, 1, 1, 0 }
+		};
+
+		static const unsigned short indices[24] =
+		{
+			0, 1,
+			1, 2,
+			2, 3,
+			3, 0,
+			4, 5,
+			5, 6,
+			6, 7,
+			7, 4,
+			0, 4,
+			1, 5,
+			2, 6,
+			3, 7
+		};
+
+		std::shared_ptr<Transform> owningTransform = GetGameObject()->transform.lock();
+
+		if (owningTransform)
+		{
+			DirectX::XMMATRIX world = owningTransform->GetWorldMatrix(size);
+
+			// INFO: Translate the vertices to world space
+			DirectX::VertexPositionColor worldVertices[8]{};
+
+			bool isTrigger = IsTrigger();
+
+			for (size_t i = 0; i < 8; i++)
+			{
+				DirectX::XMStoreFloat3(&worldVertices[i].position, DirectX::XMVector3Transform(vertices[i], world));
+				DirectX::XMStoreFloat4(&worldVertices[i].color, isTrigger ? DirectX::Colors::Yellow : DirectX::Colors::LawnGreen);
+			}
+
+			primitiveBatch.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, indices, 24, worldVertices, 8);
+		}
+	}
+
+	void BoxCollider::SetColliderShape()
+	{
+		// INFO: Clear Collider Shape if it already exists
+		if (colliderShape)
+		{
+			colliderShape->release();
+			colliderShape = nullptr;
 		}
 
-		ImGui::TreePop();
-	}
-	ImGui::PopID();
+		// INFO: Create Box Collider Shape (Scale Size with Transform Scale)
+		Vector3 adjustedSize = GetGameObject()->transform.lock()->GetScale() * size;
+		colliderShape = Physics::GetPhysics().createShape(physx::PxBoxGeometry(adjustedSize.x, adjustedSize.y, adjustedSize.z), Physics::GetDefaultPhysicsMaterial(), true);
 
-	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
-}
+		// INFO: Default Collisions with everything
+		physx::PxFilterData filterData{};
+		filterData.word0 = 1;
+		filterData.word1 = 1;
+		colliderShape->setSimulationFilterData(filterData);
 
-void BoxCollider::Serialize(nlohmann::flux_json& json) const
-{
-	// INFO: Serialize Parent Class
-	Collider::Serialize(json);
+		// INFO: Reset trigger state
+		SetIsTrigger(IsTrigger());
 
-	json["Components"].back()["Size"] = { size.x, size.y, size.z };
-}
-
-void BoxCollider::Deserialize(const nlohmann::flux_json& json)
-{
-	// INFO: Deserialize Parent Class
-	Collider::Deserialize(json);
-
-	// INFO: Deserialize BoxCollider Data
-	SetSize(Vector3(json["Size"][0].get<float>(), json["Size"][1].get<float>(), json["Size"][2].get<float>()));
-}
-
-void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
-{
-	static const DirectX::XMVECTOR vertices[8] =
-	{
-		{ -1, -1, -1, 0 },
-		{ 1, -1, -1, 0 },
-		{ 1, -1, 1, 0 },
-		{ -1, -1, 1, 0 },
-		{ -1, 1, -1, 0 },
-		{ 1, 1, -1, 0 },
-		{ 1, 1, 1, 0 },
-		{ -1, 1, 1, 0 }
-	};
-
-	static const unsigned short indices[24] =
-	{
-		0, 1,
-		1, 2,
-		2, 3,
-		3, 0,
-		4, 5,
-		5, 6,
-		6, 7,
-		7, 4,
-		0, 4,
-		1, 5,
-		2, 6,
-		3, 7
-	};
-
-	std::shared_ptr<Transform> owningTransform = GetGameObject()->transform.lock();
-
-	if (owningTransform)
-	{
-		DirectX::XMMATRIX world = owningTransform->GetWorldMatrix(size);
-
-		// INFO: Translate the vertices to world space
-		DirectX::VertexPositionColor worldVertices[8]{};
-
-		bool isTrigger = IsTrigger();
-
-		for (size_t i = 0; i < 8; i++)
+		// INFO: Ensure Rigid Actor is valid
+		if (rigidActor)
 		{
-			DirectX::XMStoreFloat3(&worldVertices[i].position, DirectX::XMVector3Transform(vertices[i], world));
-			DirectX::XMStoreFloat4(&worldVertices[i].color, isTrigger ? DirectX::Colors::Yellow : DirectX::Colors::LawnGreen);
+			if (!rigidActor->attachShape(*colliderShape))
+			{
+				Debug::LogError("BoxCollider::BoxCollider() - Failed to attach shape to Rigid Actor");
+			}
+
+			SceneContext::GetScene().GetPhysicsScene().addActor(*rigidActor);
 		}
-
-		primitiveBatch.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, indices, 24, worldVertices, 8);
-	}
-}
-
-void BoxCollider::SetColliderShape()
-{
-	// INFO: Clear Collider Shape if it already exists
-	if (colliderShape)
-	{
-		colliderShape->release();
-		colliderShape = nullptr;
 	}
 
-	// INFO: Create Box Collider Shape (Scale Size with Transform Scale)
-	Vector3 adjustedSize = GetGameObject()->transform.lock()->GetScale() * size;
-	colliderShape = Physics::GetPhysics().createShape(physx::PxBoxGeometry(adjustedSize.x, adjustedSize.y, adjustedSize.z), Physics::GetDefaultPhysicsMaterial(), true);
-
-	// INFO: Default Collisions with everything
-	physx::PxFilterData filterData{};
-	filterData.word0 = 1;
-	filterData.word1 = 1;
-	colliderShape->setSimulationFilterData(filterData);
-
-	// INFO: Reset trigger state
-	SetIsTrigger(IsTrigger());
-
-	// INFO: Ensure Rigid Actor is valid
-	if (rigidActor)
+	void BoxCollider::UpdateScale()
 	{
-		if (!rigidActor->attachShape(*colliderShape))
+		if (colliderShape)
 		{
-			Debug::LogError("BoxCollider::BoxCollider() - Failed to attach shape to Rigid Actor");
+			// INFO: Get reference to actor that the shape is attached to
+			physx::PxRigidActor* rigidActor = colliderShape->getActor();
+
+			// INFO: Remove the shape from the actor to allow for geometry changes
+			rigidActor->detachShape(*colliderShape);
+
+			physx::PxBoxGeometry boxGeometry{};
+			if (colliderShape->getBoxGeometry(boxGeometry))
+			{
+				Vector3 adjustedSize = size * GetGameObject()->transform.lock()->GetScale();
+				boxGeometry.halfExtents = { adjustedSize.x, adjustedSize.y, adjustedSize.z };
+				colliderShape->setGeometry(boxGeometry);
+			}
+
+			// INFO: Re-attach the shape to the actor
+			rigidActor->attachShape(*colliderShape);
 		}
-
-		SceneContext::GetScene().GetPhysicsScene().addActor(*rigidActor);
 	}
-}
 
-void BoxCollider::UpdateScale()
-{
-	if (colliderShape)
+	void BoxCollider::SetSize(const DirectX::SimpleMath::Vector3& _size)
 	{
-		// INFO: Get reference to actor that the shape is attached to
-		physx::PxRigidActor* rigidActor = colliderShape->getActor();
-
-		// INFO: Remove the shape from the actor to allow for geometry changes
-		rigidActor->detachShape(*colliderShape);
-
-		physx::PxBoxGeometry boxGeometry{};
-		if (colliderShape->getBoxGeometry(boxGeometry))
-		{
-			Vector3 adjustedSize = size * GetGameObject()->transform.lock()->GetScale();
-			boxGeometry.halfExtents = { adjustedSize.x, adjustedSize.y, adjustedSize.z };
-			colliderShape->setGeometry(boxGeometry);
-		}
-
-		// INFO: Re-attach the shape to the actor
-		rigidActor->attachShape(*colliderShape);
+		size = _size;
+		UpdateScale();
 	}
-}
-
-void BoxCollider::SetSize(const DirectX::SimpleMath::Vector3& _size)
-{
-	size = _size;
-	UpdateScale();
 }

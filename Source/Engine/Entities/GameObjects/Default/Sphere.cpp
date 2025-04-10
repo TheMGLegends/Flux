@@ -2,14 +2,17 @@
 
 #include "Engine/Entities/Components/Visualizer.h"
 
-using namespace Flux;
-
-Sphere::Sphere()
+namespace Flux
 {
-	auto visualizer = AddComponent<Visualizer>(this).lock();
-	visualizer->SetModel("Sphere");
-}
+	Sphere::Sphere()
+	{
+		if (std::shared_ptr<Visualizer> visualizer = AddComponent<Visualizer>(this).lock())
+		{
+			visualizer->SetModel("Sphere");
+		}
+	}
 
-Sphere::~Sphere()
-{
+	Sphere::~Sphere()
+	{
+	}
 }

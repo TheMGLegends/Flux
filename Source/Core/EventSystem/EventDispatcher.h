@@ -21,7 +21,7 @@ namespace Flux
 		EventDispatcher& operator=(const EventDispatcher&) = delete;
 
 		/// @brief Prevents the same listener from being added to the same event type multiple times
-		static bool AddListener(EventType eventType, IEventListener* listener);
+		static int AddListener(EventType eventType, IEventListener* listener);
 		/// @brief Removes a listener from all event types it is listening to
 		static void RemoveListener(IEventListener* listener);
 

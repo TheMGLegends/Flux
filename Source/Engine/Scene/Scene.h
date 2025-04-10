@@ -2,10 +2,7 @@
 
 #include "Engine/Interfaces/ISerializable.h"
 #include "Core/EventSystem/IEventListener.h"
-#pragma warning (push)
-#pragma warning (disable : 26495) // INFO: Disable warning for uninitialised variables
 #include <PxSimulationEventCallback.h>
-#pragma warning (pop)
 
 #include <filesystem>
 #include <memory>
@@ -68,9 +65,8 @@ namespace Flux
 		/// @param isPrimary If true, returns the first active play mode camera in the scene
 		std::weak_ptr<Camera> GetCamera(bool isPrimary = false);
 
-		inline const std::string& GetSceneName() const { return sceneName; }
-
-		inline physx::PxScene& GetPhysicsScene() const { return *physicsScene; }
+		const std::string& GetSceneName() const { return sceneName; }
+		physx::PxScene& GetPhysicsScene() const { return *physicsScene; }
 
 		void CreateDefaultScene(const std::filesystem::path& path);
 		void SerializeScene(const std::filesystem::path& path);
@@ -112,17 +108,29 @@ namespace Flux
 		ComponentType componentType = ComponentType::None;
 
 		if constexpr (std::is_same<T, Transform>::value)
+		{
 			componentType = ComponentType::Transform;
+		}
 		else if constexpr (std::is_same<T, Camera>::value)
+		{
 			componentType = ComponentType::Camera;
+		}
 		else if constexpr (std::is_same<T, PhysicsBody>::value)
+		{
 			componentType = ComponentType::PhysicsBody;
+		}
 		else if constexpr (std::is_same<T, Visualizer>::value)
+		{
 			componentType = ComponentType::Visualizer;
+		}
 		else if constexpr (std::is_same<T, BoxCollider>::value)
+		{
 			componentType = ComponentType::BoxCollider;
+		}
 		else if constexpr (std::is_same<T, SphereCollider>::value)
+		{
 			componentType = ComponentType::SphereCollider;
+		}
 
 		for (size_t i = 0; i < components[componentType].size(); i++)
 		{

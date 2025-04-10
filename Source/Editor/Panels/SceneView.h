@@ -24,8 +24,6 @@ namespace Flux
 	private:
 		Renderer& renderer;
 		SceneHierarchy* sceneHierarchy;
-
-		// TODO: SceneView Data
 	};
 }
 

@@ -26,8 +26,6 @@ namespace Flux
 		GameObject* selectedGameObject;
 
 		bool isRenaming;
-
-		// TODO: Scene Hierarchy Data
 	};
 }
 

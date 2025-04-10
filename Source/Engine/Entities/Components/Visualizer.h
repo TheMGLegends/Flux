@@ -2,11 +2,12 @@
 
 #include "Component.h"
 
-#include <d3d11.h>
 #include <memory>
 #include <string>
 
 #include "Core/Renderer/Material.h"
+
+struct ID3D11DeviceContext;
 
 namespace Flux
 {
