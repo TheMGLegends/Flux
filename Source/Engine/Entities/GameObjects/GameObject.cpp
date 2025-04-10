@@ -101,7 +101,7 @@ namespace Flux
 		if (isActive)
 		{
 			OnEnable();
-			// TODO: Notify Event System of recent enabling of GO, so that it's start can be called at the start of the next frame
+			Start();
 		}
 		else
 		{
