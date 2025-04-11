@@ -14,6 +14,7 @@
 #include "Core/Renderer/AssetHandler.h"
 #include "Core/Time/Time.h"
 
+#include "Engine/Audio/Audio.h"
 #include "Engine/Entities/Components/Camera.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
 #include "Engine/Entities/GameObjects/SceneViewCamera.h"
@@ -181,6 +182,27 @@ namespace Flux
 		}
 		else if (eventType == EventType::LoadScene)
 		{
+			if (RuntimeConfig::IsInPlayMode())
+			{
+				RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
+
+				Audio::StopAllSounds();
+
+				// INFO: Unpause the game if it was paused
+				if (RuntimeConfig::IsPaused())
+				{
+					RuntimeConfig::TogglePause();
+				}
+
+				// INFO: Clear existing scene contents before loading 'new' scene
+				gameObjects.clear();
+				GameObject::ClearGameObjectTypeCounters();
+				components.clear();
+				debugWireframes.clear();
+				rigidActorsToColliders.clear();
+				playModeCamera.reset();
+			}
+
 			std::shared_ptr<LoadSceneEvent> loadSceneEvent = std::static_pointer_cast<LoadSceneEvent>(event);
 			DeserializeScene(loadSceneEvent->scenePath);
 		}
