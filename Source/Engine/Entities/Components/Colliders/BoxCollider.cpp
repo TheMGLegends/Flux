@@ -51,7 +51,17 @@ namespace Flux
 		if (ImGui::Button("Remove", buttonSize))
 		{
 			GameObject* gameObject = GetGameObject();
-			if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
+			if (gameObject) 
+			{
+				// INFO: Also remove any associated PhysicsBody
+				if (gameObject->HasComponent<PhysicsBody>())
+				{
+					gameObject->RemoveComponent(gameObject->GetComponent<PhysicsBody>());
+					Debug::LogWarning("BoxCollider::DrawDetails() - Removed associated PhysicsBody component");
+				}
+
+				gameObject->RemoveComponent(weak_from_this()); 
+			}
 		}
 
 		if (treeOpened)
