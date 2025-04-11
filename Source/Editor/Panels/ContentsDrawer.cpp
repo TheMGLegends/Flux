@@ -129,6 +129,7 @@ namespace Flux
 		ImTextureID textureID = 0;
 		ImVec2 iconSize = ImVec2(50.0f, 50.0f);
 		float panelWidth = ImGui::GetContentRegionAvail().x;
+		bool updateContents = false;
 
 		for (size_t i = 0; i < contents.size(); i++)
 		{
@@ -190,7 +191,7 @@ namespace Flux
 				if (entry.is_directory())
 				{
 					currentDirectory /= path.filename();
-					UpdateContents();
+					updateContents = true;
 				}
 				else if (assetType == AssetType::Scene)
 				{
@@ -246,5 +247,7 @@ namespace Flux
 
 			ImGui::PopID();
 		}
+
+		if (updateContents) { UpdateContents(); }
 	}
 }
