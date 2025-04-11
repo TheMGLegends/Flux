@@ -9,11 +9,12 @@ namespace Flux
 	class LoadSceneEvent : public Event
 	{
 	public:
-		LoadSceneEvent(const std::filesystem::path& _scenePath);
+		LoadSceneEvent(const std::filesystem::path& _scenePath, bool _stayInPlayMode = false);
 		virtual ~LoadSceneEvent() override;
 
 	public:
 		std::filesystem::path scenePath;
+		bool stayInPlayMode;
 	};
 }
 

@@ -182,16 +182,29 @@ namespace Flux
 		}
 		else if (eventType == EventType::LoadScene)
 		{
-			if (RuntimeConfig::IsInPlayMode())
+			std::shared_ptr<LoadSceneEvent> loadSceneEvent = std::static_pointer_cast<LoadSceneEvent>(event);
+
+			if (loadSceneEvent)
 			{
-				RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
-
-				Audio::StopAllSounds();
-
-				// INFO: Unpause the game if it was paused
-				if (RuntimeConfig::IsPaused())
+				if (RuntimeConfig::IsInPlayMode())
 				{
-					RuntimeConfig::TogglePause();
+					// INFO: Unpause the game if it was paused
+					if (RuntimeConfig::IsPaused())
+					{
+						RuntimeConfig::TogglePause();
+					}
+
+					Audio::StopAllSounds();
+
+					if (!loadSceneEvent->stayInPlayMode)
+					{
+						RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
+					}
+					else
+					{
+						// INFO: Need to run start again on new scene game objects
+						RuntimeConfig::SetPlayModeEntered(true);
+					}
 				}
 
 				// INFO: Clear existing scene contents before loading 'new' scene
@@ -201,10 +214,9 @@ namespace Flux
 				debugWireframes.clear();
 				rigidActorsToColliders.clear();
 				playModeCamera.reset();
-			}
 
-			std::shared_ptr<LoadSceneEvent> loadSceneEvent = std::static_pointer_cast<LoadSceneEvent>(event);
-			DeserializeScene(loadSceneEvent->scenePath);
+				DeserializeScene(loadSceneEvent->scenePath);
+			}
 		}
 	}
 

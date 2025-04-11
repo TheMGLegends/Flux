@@ -21,6 +21,7 @@ namespace Flux::RuntimeConfig
 
 	void PlayModeEntered();
 	bool HasEnteredPlayMode();
+	void SetPlayModeEntered(bool entered);
 
 	bool IsPaused();
 	void TogglePause();

@@ -49,6 +49,7 @@ namespace Flux
 	std::unordered_map<DirectXConfig::ShaderType, Material> AssetHandler::materials;
 	std::unordered_map<std::string, std::filesystem::path> AssetHandler::audioPaths;
 
+	std::unordered_map<std::string, std::filesystem::path> AssetHandler::scenePaths;
 	std::filesystem::path AssetHandler::firstScenePath;
 
 	ConstantBufferData AssetHandler::EMPTY_CONSTANT_BUFFER_DATA;
@@ -131,8 +132,11 @@ namespace Flux
 				// INFO: First Scene Loading
 				if (extensionType == FiletypeConfig::SCENE)
 				{
-					if (!firstScenePath.empty()) { continue; }
-					firstScenePath = entry.path();
+					if (!scenePaths.insert({ entry.path().stem().string(), entry.path() }).second)
+					{
+						Debug::LogError("AssetHandler::LoadAssets() - Failed to insert scene path into map. Filepath: " + entry.path().stem().string());
+						return FLUX_FAILURE;
+					}
 				}
 			}
 		}
@@ -353,6 +357,26 @@ namespace Flux
 		if (it != audioPaths.end()) { return it->second; }
 
 		Debug::LogError("AssetHandler::GetAudioPath() - Failed to find audio path. Audio Name: " + audioName);
+		return EMPTY_PATH;
+	}
+
+	const std::filesystem::path& AssetHandler::GetFirstScenePath()
+	{
+		if (scenePaths.empty())
+		{
+			Debug::LogError("AssetHandler::GetFirstScenePath() - No scene paths found");
+			return EMPTY_PATH;
+		}
+
+		return scenePaths.begin()->second;
+	}
+
+	const std::filesystem::path& AssetHandler::GetScenePath(const std::string& sceneName)
+	{
+		auto it = scenePaths.find(sceneName);
+		if (it != scenePaths.end()) { return it->second; }
+
+		Debug::LogError("AssetHandler::GetScenePath() - Failed to find scene path. Scene Name: " + sceneName);
 		return EMPTY_PATH;
 	}
 

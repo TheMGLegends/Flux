@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <SimpleMath.h>
 
 #include "Scene.h"
@@ -20,6 +21,8 @@ namespace Flux
 
 		static void SetScene(Scene* _scene) { scene = _scene; }
 		static Scene& GetScene() { return *scene; }
+
+		static void LoadScene(const std::string& sceneName);
 
 		template<class T, typename... Args>
 		static T* SpawnGameObject(const DirectX::SimpleMath::Vector3& spawnLocation, const DirectX::SimpleMath::Quaternion& spawnRotation, Args&&... args);

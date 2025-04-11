@@ -64,7 +64,8 @@ namespace Flux
 		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetSkyboxTextures() { return skyboxTextures; }
 		static std::unordered_map<std::string, std::unique_ptr<Model>>& GetModels() { return models; }
 
-		static const std::filesystem::path& GetFirstScenePath() { return firstScenePath; }
+		static const std::filesystem::path& GetFirstScenePath();
+		static const std::filesystem::path& GetScenePath(const std::string& sceneName);
 
 	private:
 		static HRESULT LoadShaders(DirectXConfig::ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath);
@@ -97,6 +98,7 @@ namespace Flux
 		static std::unordered_map<DirectXConfig::ShaderType, Material> materials;
 		static std::unordered_map<std::string, std::filesystem::path> audioPaths;
 
+		static std::unordered_map<std::string, std::filesystem::path> scenePaths;
 		static std::filesystem::path firstScenePath;
 
 		static ConstantBufferData EMPTY_CONSTANT_BUFFER_DATA;

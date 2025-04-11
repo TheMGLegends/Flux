@@ -41,6 +41,12 @@ namespace Flux::RuntimeConfig
 		return enteredPlayMode;
 	}
 
+	void SetPlayModeEntered(bool entered)
+	{
+		using namespace Internal;
+		enteredPlayMode = entered;
+	}
+
 	bool IsPaused()
 	{
 		using namespace Internal;
