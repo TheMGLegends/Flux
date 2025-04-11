@@ -34,6 +34,7 @@ namespace Flux
 		template<class T, typename... Args>
 		std::weak_ptr<T> AddComponent(Args&&... args);
 
+		/// @brief Used internally, do not call if you are a user
 		template<class T>
 		void RemoveComponent(std::weak_ptr<T> component);
 
