@@ -2,6 +2,7 @@
 
 #include "EditorPanel.h"
 
+#include <imgui.h>
 #include <filesystem>
 #include <vector>
 
@@ -20,6 +21,15 @@ namespace Flux
 		void DrawContents();
 
 	private:
+		struct ContentsData
+		{
+			std::filesystem::directory_entry entry;
+
+			std::string filenameString;
+			std::string filenameStemString;
+			std::string extensionType;
+		};
+
 		enum class AssetType
 		{
 			None = 0,
@@ -32,10 +42,17 @@ namespace Flux
 
 	private:
 		std::filesystem::path currentDirectory;
-		std::vector<std::filesystem::directory_entry> contents;
+		std::vector<ContentsData> contents;
 
 		float contentsRefreshTime;
 		float currentRefreshTime;
+
+		ImTextureID folderIcon;
+		ImTextureID meshIcon;
+		ImTextureID audioIcon;
+		ImTextureID ddsIcon;
+		ImTextureID sceneIcon;
+		ImTextureID defaultFileIcon;
 	};
 }
 

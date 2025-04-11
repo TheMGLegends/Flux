@@ -24,6 +24,25 @@ namespace Flux
 	private:
 		Renderer& renderer;
 		SceneHierarchy* sceneHierarchy;
+
+		ImTextureID panTexture;
+		ImTextureID panTextureSelected;
+
+		ImTextureID translationTexture;
+		ImTextureID translationTextureSelected;
+
+		ImTextureID rotationTexture;
+		ImTextureID rotationTextureSelected;
+
+		ImTextureID scaleTexture;
+		ImTextureID scaleTextureSelected;
+
+		ImTextureID playButtonEditorMode;
+		ImTextureID playButtonPlayMode;
+
+		ImTextureID pauseButtonUnavailable;
+		ImTextureID pauseButtonSelected;
+		ImTextureID pauseButtonAvailable;
 	};
 }
 

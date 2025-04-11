@@ -1,7 +1,5 @@
 #include "ContentsDrawer.h"
 
-#include <imgui.h>
-
 #include "Core/GlobalDefines.h"
 
 #include "Core/Configs/FiletypeConfig.h"
@@ -43,6 +41,14 @@ namespace Flux
 		{
 			Debug::LogWarning("ContentsDrawer::Initialise() - No contents found in the asset directory: " + currentDirectory.string());
 		}
+
+		// INFO: Cache Folder Icons
+		folderIcon = (ImTextureID)AssetHandler::GetTexture("FolderIcon");
+		meshIcon = (ImTextureID)AssetHandler::GetTexture("MeshIcon");
+		audioIcon = (ImTextureID)AssetHandler::GetTexture("AudioIcon");
+		ddsIcon = (ImTextureID)AssetHandler::GetTexture("DdsIcon");
+		sceneIcon = (ImTextureID)AssetHandler::GetTexture("SceneIcon");
+		defaultFileIcon = (ImTextureID)AssetHandler::GetTexture("DefaultFileIcon");
 
 		return FLUX_SUCCESS;
 	}
@@ -96,7 +102,15 @@ namespace Flux
 
 		for (const auto& entry : std::filesystem::directory_iterator(currentDirectory))
 		{
-			contents.push_back(entry);
+			std::filesystem::path relativePath = std::filesystem::relative(entry.path(), FiletypeConfig::ASSET_DIRECTORY);
+
+			ContentsData contentsData;
+			contentsData.entry = entry;
+			contentsData.filenameString = relativePath.filename().string();
+			contentsData.filenameStemString = relativePath.stem().string();
+			contentsData.extensionType = StringHelpers::ToLower(relativePath.extension().string());
+
+			contents.push_back(contentsData);
 		}
 	}
 
@@ -118,20 +132,19 @@ namespace Flux
 
 		for (size_t i = 0; i < contents.size(); i++)
 		{
-			std::filesystem::directory_entry& entry = contents[i];
-
 			ImGui::PushID(static_cast<int>(i));
 
+			ContentsData& contentsData = contents[i];
+			const std::filesystem::directory_entry& entry = contentsData.entry;
+			const std::string& filenameString = contentsData.filenameString;
+			const std::string& filenameStemString = contentsData.filenameStemString;
+			const std::string& extensionType = contentsData.extensionType;
 			const std::filesystem::path& path = entry.path();
-			std::filesystem::path relativePath = std::filesystem::relative(path, FiletypeConfig::ASSET_DIRECTORY);
-			std::string filenameString = relativePath.filename().string();
-			std::string extensionType = StringHelpers::ToLower(relativePath.extension().string());
-			std::string filenameStemString = relativePath.stem().string();
 
 			// INFO: Icon Choosing
 			if (entry.is_directory())
 			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("FolderIcon"); // INFO: Folders
+				textureID = folderIcon; // INFO: Folders
 			}
 			else if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
 			{
@@ -140,26 +153,26 @@ namespace Flux
 			}
 			else if (FiletypeConfig::IsSupportedModelFormat(extensionType))
 			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("MeshIcon"); // INFO: Meshes
+				textureID = meshIcon; // INFO: Meshes
 				assetType = AssetType::Model;
 			}
 			else if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
 			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("AudioIcon"); // INFO: Audio
+				textureID = audioIcon; // INFO: Audio
 			}
 			else if (extensionType == FiletypeConfig::DDS)
 			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("DdsIcon"); // INFO: DDS Textures
+				textureID = ddsIcon; // INFO: DDS Textures
 				assetType = AssetType::SkyboxTexture;
 			}
 			else if (extensionType == ".json")
 			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("SceneIcon"); // INFO: Scenes
+				textureID = sceneIcon; // INFO: Scenes
 				assetType = AssetType::Scene;
 			}
 			else
 			{
-				textureID = (ImTextureID)AssetHandler::GetTexture("DefaultFileIcon"); // INFO: Generic Files
+				textureID = defaultFileIcon; // INFO: Generic Files
 			}
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(16.0f, 4.0f));

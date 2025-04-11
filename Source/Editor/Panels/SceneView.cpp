@@ -45,6 +45,25 @@ namespace Flux
 			return FLUX_FAILURE;
 		}
 
+		// INFO: Cache Scene View Icons
+		panTexture = (ImTextureID)AssetHandler::GetTexture("PanButton");
+		panTextureSelected = (ImTextureID)AssetHandler::GetTexture("PanButtonSelected");
+		
+		translationTexture = (ImTextureID)AssetHandler::GetTexture("TranslationButton");
+		translationTextureSelected = (ImTextureID)AssetHandler::GetTexture("TranslationButtonSelected");
+		
+		rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButton");
+		rotationTextureSelected = (ImTextureID)AssetHandler::GetTexture("RotationButtonSelected");
+		
+		scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButton");
+		scaleTextureSelected = (ImTextureID)AssetHandler::GetTexture("ScaleButtonSelected");
+
+		playButtonEditorMode = (ImTextureID)AssetHandler::GetTexture("PlayButtonEditorMode");
+		playButtonPlayMode = (ImTextureID)AssetHandler::GetTexture("PlayButtonPlayMode");
+		pauseButtonUnavailable = (ImTextureID)AssetHandler::GetTexture("PauseButtonUnavailable");
+		pauseButtonSelected = (ImTextureID)AssetHandler::GetTexture("PauseButtonSelected");
+		pauseButtonAvailable = (ImTextureID)AssetHandler::GetTexture("PauseButtonAvailable");
+
 		return FLUX_SUCCESS;
 	}
 
@@ -216,64 +235,33 @@ namespace Flux
 				// INFO: Gizmo Selector Panel
 				if (ImGui::BeginChild("GizmoSelectors", { 196, 50 }, true, windowFlags))
 				{
-					ImTextureID panTexture = (ImTextureID)AssetHandler::GetTexture("PanButton");
-					ImTextureID translationTexture = (ImTextureID)AssetHandler::GetTexture("TranslationButton");
-					ImTextureID rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButton");
-					ImTextureID scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButton");
-
-					switch (EditorConfig::currentTransformOperation)
-					{
-					case -1: // INFO: Pan Operation (Not Supported by ImGuizmo)
-						panTexture = (ImTextureID)AssetHandler::GetTexture("PanButtonSelected");
-						break;
-					case ImGuizmo::OPERATION::TRANSLATE:
-						translationTexture = (ImTextureID)AssetHandler::GetTexture("TranslationButtonSelected");
-						break;
-					case ImGuizmo::OPERATION::ROTATE:
-						rotationTexture = (ImTextureID)AssetHandler::GetTexture("RotationButtonSelected");
-						break;
-					case ImGuizmo::OPERATION::SCALE:
-						scaleTexture = (ImTextureID)AssetHandler::GetTexture("ScaleButtonSelected");
-						break;
-					default:
-						break;
-					}
-
 					// INFO: Pan Button
-					if (ImGui::ImageButton("PanButton", panTexture, { 40.0f, 40.0f }))
+					if (ImGui::ImageButton("PanButton", EditorConfig::currentTransformOperation != -1 ? panTexture : panTextureSelected, { 40.0f, 40.0f }))
 					{
-						// TODO: Logic for Pan Button
-
 						EditorConfig::currentTransformOperation = -1;
 					}
 
 					ImGui::SameLine();
 
 					// INFO: Translation Button
-					if (ImGui::ImageButton("TranslationButton", translationTexture, { 40.0f, 40.0f }))
+					if (ImGui::ImageButton("TranslationButton", EditorConfig::currentTransformOperation != ImGuizmo::OPERATION::TRANSLATE ? translationTexture : translationTextureSelected, { 40.0f, 40.0f }))
 					{
-						// TODO: Logic for Translation Button
-
 						EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
 					}
 
 					ImGui::SameLine();
 
 					// INFO: Rotation Button
-					if (ImGui::ImageButton("RotationButton", rotationTexture, { 40.0f, 40.0f }))
+					if (ImGui::ImageButton("RotationButton", EditorConfig::currentTransformOperation != ImGuizmo::OPERATION::ROTATE ? rotationTexture : rotationTextureSelected, { 40.0f, 40.0f }))
 					{
-						// TODO: Logic for Rotation Button
-
 						EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::ROTATE;
 					}
 
 					ImGui::SameLine();
 
 					// INFO: Scale Button
-					if (ImGui::ImageButton("ScaleButton", scaleTexture, { 40.0f, 40.0f }))
+					if (ImGui::ImageButton("ScaleButton", EditorConfig::currentTransformOperation != ImGuizmo::OPERATION::SCALE ? scaleTexture : scaleTextureSelected, { 40.0f, 40.0f }))
 					{
-						// TODO: Logic for Scale Button
-
 						EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::SCALE;
 					}
 
@@ -294,7 +282,7 @@ namespace Flux
 			if (ImGui::BeginChild("PlayButton", { 0.0f, 0.0f }, true, windowFlags))
 			{
 				// INFO: Determine Play Button Texture
-				buttonTexture = (ImTextureID)(RuntimeConfig::IsInEditorMode() ? AssetHandler::GetTexture("PlayButtonEditorMode") : AssetHandler::GetTexture("PlayButtonPlayMode"));
+				buttonTexture = RuntimeConfig::IsInEditorMode() ? playButtonEditorMode : playButtonPlayMode;
 
 				// INFO: If the Play Button is Pressed
 				if (ImGui::ImageButton("PlayButton", buttonTexture, { 50.0f, 50.0f }))
@@ -312,9 +300,10 @@ namespace Flux
 
 						// INFO: Unpause the game if it was paused
 						if (RuntimeConfig::IsPaused())
+						{
 							RuntimeConfig::TogglePause();
+						}
 
-						// TODO: Event to Reset Scene
 						EventDispatcher::QueueEvent(EventType::PlayModeExited, nullptr);
 					}
 				}
@@ -329,17 +318,17 @@ namespace Flux
 			{
 				if (RuntimeConfig::IsInEditorMode())
 				{
-					buttonTexture = (ImTextureID)AssetHandler::GetTexture("PauseButtonUnavailable");
+					buttonTexture = pauseButtonUnavailable;
 				}
 				else
 				{
 					if (RuntimeConfig::IsPaused())
 					{
-						buttonTexture = (ImTextureID)AssetHandler::GetTexture("PauseButtonSelected");
+						buttonTexture = pauseButtonSelected;
 					}
 					else
 					{
-						buttonTexture = (ImTextureID)AssetHandler::GetTexture("PauseButtonAvailable");
+						buttonTexture = pauseButtonAvailable;
 					}
 				}
 
