@@ -17,7 +17,8 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
-	ContentsDrawer::ContentsDrawer() : contentsRefreshTime(1.0f), currentRefreshTime(0.0f), currentDirectory()
+	ContentsDrawer::ContentsDrawer() : contentsRefreshTime(1.0f), currentRefreshTime(0.0f), currentDirectory(), contents(), 
+									   folderIcon(0), meshIcon(0), audioIcon(0), ddsIcon(0), sceneIcon(0), defaultFileIcon(0)
 	{
 	}
 
