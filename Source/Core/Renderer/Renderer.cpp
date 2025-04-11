@@ -393,6 +393,15 @@ namespace Flux
 		ImGui::Render(); // INFO: Render Main Viewport
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
+		// INFO: Render Other Viewports
+#ifdef _DEBUG
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
+#endif
+
 		swapChain->Present((UINT)RendererConfig::vsyncEnabled, 0);
 	}
 
