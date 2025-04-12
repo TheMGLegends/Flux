@@ -11,8 +11,6 @@ namespace Flux
 	public:
 		Cube();
 		virtual ~Cube() override;
-
-		virtual void Update(float deltaTime) override;
 	};
 }
 
