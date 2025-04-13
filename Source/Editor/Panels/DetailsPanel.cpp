@@ -9,7 +9,9 @@
 
 #include "Core/GlobalDefines.h"
 
+#include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
+
 #include "Core/Debug/Debug.h"
 
 #include "Engine/Entities/GameObjects/GameObject.h"
@@ -65,6 +67,7 @@ namespace Flux
 				if (ImGui::Checkbox("##GameObjectActive", &isActive))
 				{
 					selectedGameObject->SetIsActive(isActive);
+					EditorConfig::sceneNeedsSaving = true;
 				}
 
 				ImGui::SameLine();
@@ -140,6 +143,7 @@ namespace Flux
 					if (menuItemClicked)
 					{
 						ComponentAlreadyExists(componentCount, static_cast<int>(selectedGameObject->GetComponents().size()), component);
+						EditorConfig::sceneNeedsSaving = true;
 					}
 
 					ImGui::EndPopup();

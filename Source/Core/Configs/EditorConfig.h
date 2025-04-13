@@ -20,6 +20,8 @@ namespace Flux::EditorConfig
 	extern bool isMouseOverSceneView;
 	extern bool isSceneViewFocused;
 
+	extern bool sceneNeedsSaving;
+
 	void StorePreviousTransformOperation();
 	void RevertToPreviousTransformOperation();
 	void SwitchTransformMode();

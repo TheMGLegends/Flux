@@ -4,6 +4,8 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include "Core/Configs/EditorConfig.h"
+
 #include "Engine/Physics/Physics.h"
 #include "Engine/Scene/SceneContext.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
@@ -41,7 +43,10 @@ namespace Flux
 		// INFO: Active Checkbox
 		ImGui::SameLine();
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-		ImGui::Checkbox("##ComponentActive", &isActive);
+		if (ImGui::Checkbox("##ComponentActive", &isActive))
+		{
+			EditorConfig::sceneNeedsSaving = true;
+		}
 		ImGui::PopStyleVar();
 
 		// INFO: Remove Component Button
@@ -61,6 +66,7 @@ namespace Flux
 				}
 
 				gameObject->RemoveComponent(weak_from_this()); 
+				EditorConfig::sceneNeedsSaving = true;
 			}
 		}
 
@@ -73,11 +79,13 @@ namespace Flux
 			if (ImGui::Checkbox("##IsTrigger", &isTrigger))
 			{
 				SetIsTrigger(isTrigger);
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			if (DisplayVector3Field("Size", size, 0.1f, "%.1f"))
 			{
 				UpdateScale();
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			ImGui::TreePop();

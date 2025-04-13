@@ -18,6 +18,8 @@ namespace Flux::EditorConfig
 	bool isMouseOverSceneView = false;
 	bool isSceneViewFocused = false;
 
+	bool sceneNeedsSaving = false;
+
 	void StorePreviousTransformOperation()
 	{
 		previousTransformOperation = currentTransformOperation;

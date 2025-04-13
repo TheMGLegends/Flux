@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/EngineConfig.h"
 
 #include "Core/Debug/Debug.h"
@@ -56,7 +57,10 @@ namespace Flux
 		// INFO: Active Checkbox
 		ImGui::SameLine();
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-		ImGui::Checkbox("##ComponentActive", &isActive);
+		if (ImGui::Checkbox("##ComponentActive", &isActive))
+		{
+			EditorConfig::sceneNeedsSaving = true;
+		}
 		ImGui::PopStyleVar();
 
 		// INFO: Remove Component Button
@@ -66,7 +70,11 @@ namespace Flux
 		if (ImGui::Button("Remove", buttonSize))
 		{
 			GameObject* gameObject = GetGameObject();
-			if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
+			if (gameObject) 
+			{ 
+				gameObject->RemoveComponent(weak_from_this()); 
+				EditorConfig::sceneNeedsSaving = true;
+			}
 		}
 
 		if (treeOpened)
@@ -75,7 +83,10 @@ namespace Flux
 			ImGui::Text("Use Skybox");
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(136.0f);
-			ImGui::Checkbox("##UseSkybox", &useSkybox);
+			if (ImGui::Checkbox("##UseSkybox", &useSkybox))
+			{
+				EditorConfig::sceneNeedsSaving = true;
+			}
 
 			// INFO: Skybox Texture Selector + Drag & Drop Field
 			ImGui::Text("Texture");
@@ -90,6 +101,7 @@ namespace Flux
 					if (ImGui::Selectable(skyboxTexture.first.c_str(), skyboxTextureName == skyboxTexture.first))
 					{
 						SetMaterialTexture(skyboxTexture.first);
+						EditorConfig::sceneNeedsSaving = true;
 					}
 				}
 				ImGui::EndCombo();
@@ -102,6 +114,7 @@ namespace Flux
 				{
 					std::string textureName = static_cast<const char*>(payload->Data);
 					SetMaterialTexture(textureName);
+					EditorConfig::sceneNeedsSaving = true;
 				}
 
 				ImGui::EndDragDropTarget();
@@ -112,14 +125,20 @@ namespace Flux
 			ImGui::Text("Background");
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(136.0f);
-			ImGui::ColorEdit4("##BackgroundColour", &backgroundColour[0], colourEditFlags);
+			if (ImGui::ColorEdit4("##BackgroundColour", &backgroundColour[0], colourEditFlags))
+			{
+				EditorConfig::sceneNeedsSaving = true;
+			}
 
 			// INFO: FOV Slider
 			ImGui::Text("Vertical FOV");
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(136.0f);
 			ImGui::SetNextItemWidth(200.0f);
-			ImGui::SliderFloat("##VerticalFOV", &verticalFOV, 1.0f, 150.0f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+			if (ImGui::SliderFloat("##VerticalFOV", &verticalFOV, 1.0f, 150.0f, "%.1f", ImGuiSliderFlags_ClampOnInput))
+			{
+				EditorConfig::sceneNeedsSaving = true;
+			}
 
 			// INFO: Clipping Planes
 			ImGui::Text("Clipping Planes");
@@ -135,7 +154,10 @@ namespace Flux
 				ImGui::Text("Near");
 				ImGui::TableNextColumn();
 				ImGui::SetCursorPosX(136.0f);
-				ImGui::InputFloat("##NearClippingPlane", &nearClippingPlane, 0.0f, 0.0f, "%.1f");
+				if (ImGui::InputFloat("##NearClippingPlane", &nearClippingPlane, 0.0f, 0.0f, "%.1f"))
+				{
+					EditorConfig::sceneNeedsSaving = true;
+				}
 
 				ImGui::TableNextRow();
 
@@ -144,7 +166,10 @@ namespace Flux
 				ImGui::Text("Far");
 				ImGui::TableNextColumn();
 				ImGui::SetCursorPosX(136.0f);
-				ImGui::InputFloat("##FarClippingPlane", &farClippingPlane, 0.0f, 0.0f, "%.1f");
+				if (ImGui::InputFloat("##FarClippingPlane", &farClippingPlane, 0.0f, 0.0f, "%.1f"))
+				{
+					EditorConfig::sceneNeedsSaving = true;
+				}
 
 				ImGui::EndTable();
 			}

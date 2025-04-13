@@ -5,6 +5,7 @@
 
 #include "Core/GlobalDefines.h"
 
+#include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 
 #include "Core/Debug/Debug.h"
@@ -25,7 +26,7 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
-	Scene::Scene() : sceneName("New Scene")
+	Scene::Scene() : sceneName("New Scene"), physicsScene(nullptr)
 	{
 		SceneContext::SetScene(this);
 
@@ -179,6 +180,11 @@ namespace Flux
 		else if (eventType == EventType::SaveScene)
 		{
 			SerializeScene(scenePath);
+
+			if (EditorConfig::sceneNeedsSaving)
+			{
+				EditorConfig::sceneNeedsSaving = false;
+			}
 		}
 		else if (eventType == EventType::LoadScene)
 		{
@@ -491,6 +497,7 @@ namespace Flux
 	void Scene::DeserializeScene(const std::filesystem::path& path)
 	{
 		scenePath = path;
+		EditorConfig::sceneNeedsSaving = false;
 
 		// INFO: Clear existing scene contents before loading 'new' scene
 		gameObjects.clear();

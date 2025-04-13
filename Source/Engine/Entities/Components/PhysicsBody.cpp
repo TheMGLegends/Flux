@@ -5,6 +5,8 @@
 #include <magic_enum.hpp>
 #include <extensions/PxRigidBodyExt.h>
 
+#include "Core/Configs/EditorConfig.h"
+
 #include "Core/Debug/Debug.h"
 
 #include "Engine/Physics/Physics.h"
@@ -79,7 +81,10 @@ namespace Flux
 		// INFO: Active Checkbox
 		ImGui::SameLine();
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-		ImGui::Checkbox("##ComponentActive", &isActive);
+		if (ImGui::Checkbox("##ComponentActive", &isActive))
+		{
+			EditorConfig::sceneNeedsSaving = true;
+		}
 		ImGui::PopStyleVar();
 
 		// INFO: Remove Component Button
@@ -89,7 +94,11 @@ namespace Flux
 		if (ImGui::Button("Remove", buttonSize))
 		{
 			GameObject* gameObject = GetGameObject();
-			if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
+			if (gameObject) 
+			{ 
+				gameObject->RemoveComponent(weak_from_this());
+				EditorConfig::sceneNeedsSaving = true;
+			}
 		}
 
 		if (treeOpened)
@@ -102,6 +111,7 @@ namespace Flux
 			if (ImGui::InputFloat("##Radius", &mass, 0.0f, 0.0f, "%.1f"))
 			{
 				SetMass(mass);
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			// INFO: Drag InputField
@@ -112,6 +122,7 @@ namespace Flux
 			if (ImGui::InputFloat("##Drag", &drag, 0.0f, 0.0f, "%.2f"))
 			{
 				SetDrag(drag);
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			// INFO: Angular Drag InputField
@@ -122,6 +133,7 @@ namespace Flux
 			if (ImGui::InputFloat("##AngularDrag", &angularDrag, 0.0f, 0.0f, "%.2f"))
 			{
 				SetAngularDrag(angularDrag);
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			// INFO: Use Gravity Checkbox
@@ -131,6 +143,7 @@ namespace Flux
 			if (ImGui::Checkbox("##UseGravity", &useGravity))
 			{
 				SetUseGravity(useGravity);
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			// INFO: Constraints
@@ -140,6 +153,7 @@ namespace Flux
 				SetPositionConstraint(positionConstraints[0], ConstraintAxis::X);
 				SetPositionConstraint(positionConstraints[1], ConstraintAxis::Y);
 				SetPositionConstraint(positionConstraints[2], ConstraintAxis::Z);
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			if (DisplayArray3Field("Freeze Rotation", &rotationConstraints[0]))
@@ -147,6 +161,7 @@ namespace Flux
 				SetRotationConstraint(rotationConstraints[0], ConstraintAxis::X);
 				SetRotationConstraint(rotationConstraints[1], ConstraintAxis::Y);
 				SetRotationConstraint(rotationConstraints[2], ConstraintAxis::Z);
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			ImGui::TreePop();

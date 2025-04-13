@@ -7,6 +7,8 @@
 #include "PhysicsBody.h"
 #include "Colliders/Collider.h"
 
+#include "Core/Configs/EditorConfig.h"
+
 #include "Engine/Entities/GameObjects/GameObject.h"
 
 using namespace DirectX::SimpleMath;
@@ -32,6 +34,7 @@ namespace Flux
 			if (DisplayVector3Field("Position", position))
 			{
 				SetPositionEditor(position);
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			// INFO: Rotation Row
@@ -45,12 +48,14 @@ namespace Flux
 				SetRotationEditor(Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(eulerRotation.y),
 					DirectX::XMConvertToRadians(eulerRotation.x),
 					DirectX::XMConvertToRadians(eulerRotation.z)));
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			// INFO: Scale Row
 			if (DisplayVector3Field("Scale", scale))
 			{
 				SetScale(scale);
+				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			ImGui::TreePop();

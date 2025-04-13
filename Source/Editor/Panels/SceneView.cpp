@@ -29,7 +29,13 @@ namespace Flux
 	using namespace EditorConfig;
 	using namespace GlobalDefines;
 
-	SceneView::SceneView(Renderer& _renderer, SceneHierarchy* _sceneHierarchy) : renderer(_renderer), sceneHierarchy(_sceneHierarchy)
+	SceneView::SceneView(Renderer& _renderer, SceneHierarchy* _sceneHierarchy) : renderer(_renderer), sceneHierarchy(_sceneHierarchy),
+																				 panTexture(0), panTextureSelected(0),
+																				 translationTexture(0), translationTextureSelected(0),
+																				 rotationTexture(0), rotationTextureSelected(0),
+																				 scaleTexture(0), scaleTextureSelected(0),
+																				 playButtonEditorMode(0), playButtonPlayMode(0),
+																				 pauseButtonUnavailable(0), pauseButtonSelected(0), pauseButtonAvailable(0)
 	{
 	}
 
@@ -208,6 +214,8 @@ namespace Flux
 						Quaternion rotationQuaternion;
 						DirectX::XMStoreFloat4(&rotationQuaternion, rotation);
 						transform->SetRotationEditor(rotationQuaternion);
+
+						EditorConfig::sceneNeedsSaving = true;
 					}
 				}
 			}

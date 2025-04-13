@@ -5,6 +5,7 @@
 #include <imgui_internal.h>
 
 #include "Core/Configs/DirectXConfig.h"
+#include "Core/Configs/EditorConfig.h"
 
 #include "Core/Debug/Debug.h"
 #include "Core/Renderer/AssetHandler.h"
@@ -39,7 +40,10 @@ namespace Flux
 		// INFO: Active Checkbox
 		ImGui::SameLine();
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-		ImGui::Checkbox("##ComponentActive", &isActive);
+		if (ImGui::Checkbox("##ComponentActive", &isActive))
+		{
+			EditorConfig::sceneNeedsSaving = true;
+		}
 		ImGui::PopStyleVar();
 
 		// INFO: Remove Component Button
@@ -49,7 +53,11 @@ namespace Flux
 		if (ImGui::Button("Remove", buttonSize))
 		{
 			GameObject* gameObject = GetGameObject();
-			if (gameObject) { gameObject->RemoveComponent(weak_from_this()); }
+			if (gameObject) 
+			{ 
+				gameObject->RemoveComponent(weak_from_this()); 
+				EditorConfig::sceneNeedsSaving = true;
+			}
 		}
 
 		if (treeOpened)
@@ -67,6 +75,7 @@ namespace Flux
 					if (ImGui::Selectable(model.first.c_str(), modelName == model.first))
 					{
 						SetModel(model.first);
+						EditorConfig::sceneNeedsSaving = true;
 					}
 				}
 				ImGui::EndCombo();
@@ -78,6 +87,7 @@ namespace Flux
 				{
 					std::string modelName = static_cast<const char*>(payload->Data);
 					SetModel(modelName);
+					EditorConfig::sceneNeedsSaving = true;
 				}
 
 				ImGui::EndDragDropTarget();
@@ -95,6 +105,7 @@ namespace Flux
 					if (ImGui::Selectable(texture.first.c_str(), textureName == texture.first))
 					{
 						SetMaterialTexture(texture.first);
+						EditorConfig::sceneNeedsSaving = true;
 					}
 				}
 				ImGui::EndCombo();
@@ -107,6 +118,7 @@ namespace Flux
 				{
 					std::string textureName = static_cast<const char*>(payload->Data);
 					SetMaterialTexture(textureName);
+					EditorConfig::sceneNeedsSaving = true;
 				}
 
 				ImGui::EndDragDropTarget();

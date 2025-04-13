@@ -66,8 +66,9 @@ namespace Flux
 				ImGui::GetForegroundDrawList()->AddRectFilled(windowPos, ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), IM_COL32(0, 116, 188, 50));
 			}
 
-			ImGui::SetCursorPosX((windowSize.x - ImGui::CalcTextSize(scene.GetSceneName().c_str()).x) * 0.5f);
-			ImGui::Text(scene.GetSceneName().c_str());
+			std::string sceneName = EditorConfig::sceneNeedsSaving ? scene.GetSceneName() + "*" : scene.GetSceneName();
+			ImGui::SetCursorPosX((windowSize.x - ImGui::CalcTextSize(sceneName.c_str()).x) * 0.5f);
+			ImGui::Text(sceneName.c_str());
 			ImGui::PopStyleVar();
 
 			ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuterH;
@@ -113,6 +114,7 @@ namespace Flux
 						if (ImGui::InputText("##CustomNameInput", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue))
 						{
 							isRenaming = false;
+							EditorConfig::sceneNeedsSaving = true;
 						}
 					}
 					else
@@ -145,6 +147,7 @@ namespace Flux
 				if (ImGui::MenuItem("Empty GameObject"))
 				{
 					scene.gameObjects.emplace_back(GameObject::CreateGameObject("GameObject"));
+					EditorConfig::sceneNeedsSaving = true;
 				}
 
 				// INFO: Go through each reflected game object type and add a menu item for each
@@ -153,6 +156,7 @@ namespace Flux
 					if (ImGui::MenuItem(it.first.c_str()))
 					{
 						scene.gameObjects.emplace_back(GameObject::CreateGameObject(it.first));
+						EditorConfig::sceneNeedsSaving = true;
 					}
 				}
 
