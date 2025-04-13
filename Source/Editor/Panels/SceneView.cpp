@@ -121,7 +121,7 @@ namespace Flux
 			}
 
 			// INFO: Gizmos
-			if (RuntimeConfig::IsInEditorMode())
+			if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused())
 			{
 				GameObject* selectedGameObject = sceneHierarchy != nullptr ? sceneHierarchy->GetSelectedGameObject() : nullptr;
 
@@ -194,7 +194,7 @@ namespace Flux
 							&transformMatrix.m[0][0], nullptr, isSnapEnabled ? snapValues : nullptr);
 					}
 
-					if (ImGuizmo::IsUsing())
+					if (ImGuizmo::IsUsing() && RuntimeConfig::IsInEditorMode())
 					{
 						DirectX::XMVECTOR position{};
 						DirectX::XMVECTOR rotation{};
