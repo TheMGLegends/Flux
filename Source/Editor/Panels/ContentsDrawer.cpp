@@ -84,8 +84,11 @@ namespace Flux
 			{
 				if (ImGui::MenuItem("New Scene"))
 				{
-					std::filesystem::path newScenePath = currentDirectory / "NewScene.json";
+					std::string newSceneName = "NewScene" + std::to_string(AssetHandler::GetSceneCount()) + ".json";
+					std::filesystem::path newScenePath = currentDirectory / newSceneName;
+
 					SceneContext::GetScene().CreateDefaultScene(newScenePath);
+					AssetHandler::StoreScenePath(newSceneName, newScenePath);
 				}
 
 				ImGui::EndPopup();

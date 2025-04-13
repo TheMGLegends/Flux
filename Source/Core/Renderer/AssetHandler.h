@@ -47,6 +47,8 @@ namespace Flux
 		static int LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer);
 		static int LoadAudio(const std::filesystem::path& audioPath);
 
+		static int StoreScenePath(const std::string& sceneName, const std::filesystem::path& scenePath);
+
 		static ShaderData& GetShaderData(DirectXConfig::ShaderType shaderType);
 		static ConstantBufferData& GetConstantBufferData(DirectXConfig::ConstantBufferType constantBufferType);
 		static ID3D11DepthStencilState* GetDepthWriteState(DirectXConfig::DepthWriteType depthWriteType);
@@ -66,6 +68,7 @@ namespace Flux
 
 		static const std::filesystem::path& GetFirstScenePath();
 		static const std::filesystem::path& GetScenePath(const std::string& sceneName);
+		static int GetSceneCount() { return static_cast<int>(scenePaths.size()); }
 
 	private:
 		static HRESULT LoadShaders(DirectXConfig::ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath);

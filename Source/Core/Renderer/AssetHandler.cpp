@@ -132,11 +132,7 @@ namespace Flux
 				// INFO: First Scene Loading
 				if (extensionType == FiletypeConfig::SCENE)
 				{
-					if (!scenePaths.insert({ entry.path().stem().string(), entry.path() }).second)
-					{
-						Debug::LogError("AssetHandler::LoadAssets() - Failed to insert scene path into map. Filepath: " + entry.path().stem().string());
-						return FLUX_FAILURE;
-					}
+					StoreScenePath(entry.path().stem().string(), entry.path());
 				}
 			}
 		}
@@ -265,6 +261,17 @@ namespace Flux
 		if (!audioPaths.insert({ audioPath.stem().string(), audioPath }).second)
 		{
 			Debug::LogError("AssetHandler::LoadAudio() - Failed to insert audio path into map. Filepath: " + audioPath.string());
+			return FLUX_FAILURE;
+		}
+
+		return FLUX_SUCCESS;
+	}
+
+	int AssetHandler::StoreScenePath(const std::string& sceneName, const std::filesystem::path& scenePath)
+	{
+		if (!scenePaths.insert({ sceneName, scenePath }).second)
+		{
+			Debug::LogError("AssetHandler::LoadAssets() - Failed to insert scene path into map. Filepath: " + sceneName);
 			return FLUX_FAILURE;
 		}
 
