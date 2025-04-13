@@ -77,7 +77,7 @@ namespace Flux
 			// INFO: Search Bar
 			ImGui::PushItemWidth(windowSize.x * 0.5f);
 			ImGui::SetCursorPosX((windowSize.x * 0.25f));
-			ImGui::InputText("##SearchBar", &searchString, ImGuiInputTextFlags_CallbackAlways | ImGuiInputTextFlags_AutoSelectAll);
+			ImGui::InputTextWithHint("##SearchBar", "Search...", &searchString, ImGuiInputTextFlags_CallbackAlways | ImGuiInputTextFlags_AutoSelectAll);
 
 			ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuterH;
 			if (ImGui::BeginTable("##SceneObjects", 1, tableFlags, ImVec2(windowSize.x, windowSize.y * 0.75f), windowSize.x))

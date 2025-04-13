@@ -4,6 +4,7 @@
 
 #include <imgui.h>
 #include <filesystem>
+#include <string>
 #include <vector>
 
 namespace Flux
@@ -53,6 +54,8 @@ namespace Flux
 		ImTextureID ddsIcon;
 		ImTextureID sceneIcon;
 		ImTextureID defaultFileIcon;
+
+		std::string searchString;
 	};
 }
 

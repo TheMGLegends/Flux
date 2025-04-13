@@ -1,5 +1,7 @@
 #include "ContentsDrawer.h"
 
+#include <string/imgui_stdlib.h>
+
 #include "Core/GlobalDefines.h"
 
 #include "Core/Configs/FiletypeConfig.h"
@@ -94,6 +96,22 @@ namespace Flux
 				ImGui::EndPopup();
 			}
 
+			// INFO: Back Button
+			ImGui::BeginDisabled(currentDirectory == FiletypeConfig::ASSET_DIRECTORY);
+			if (ImGui::Button("Back"))
+			{
+				currentDirectory = currentDirectory.parent_path();
+				UpdateContents();
+				searchString.clear();
+			}
+			ImGui::EndDisabled();
+			
+			ImGui::SameLine();
+
+			// INFO: Search Bar
+			ImGui::PushItemWidth(300.0f);
+			ImGui::InputTextWithHint("##SearchBar", "Search...", &searchString, ImGuiInputTextFlags_CallbackAlways | ImGuiInputTextFlags_AutoSelectAll);
+
 			DrawContents();
 
 			ImGui::End();
@@ -120,15 +138,6 @@ namespace Flux
 
 	void ContentsDrawer::DrawContents()
 	{
-		if (currentDirectory != FiletypeConfig::ASSET_DIRECTORY)
-		{
-			if (ImGui::Button("Back"))
-			{
-				currentDirectory = currentDirectory.parent_path();
-				UpdateContents();
-			}
-		}
-
 		AssetType assetType = AssetType::None;
 		ImTextureID textureID = 0;
 		ImVec2 iconSize = ImVec2(50.0f, 50.0f);
@@ -137,124 +146,129 @@ namespace Flux
 
 		for (size_t i = 0; i < contents.size(); i++)
 		{
-			ImGui::PushID(static_cast<int>(i));
-
 			ContentsData& contentsData = contents[i];
-			const std::filesystem::directory_entry& entry = contentsData.entry;
 			const std::string& filenameString = contentsData.filenameString;
-			const std::string& filenameStemString = contentsData.filenameStemString;
-			const std::string& extensionType = contentsData.extensionType;
-			const std::filesystem::path& path = entry.path();
 
-			// INFO: Icon Choosing
-			if (entry.is_directory())
+			if (searchString.empty() || filenameString.rfind(searchString, 0) != std::string::npos)
 			{
-				textureID = folderIcon; // INFO: Folders
-			}
-			else if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
-			{
-				textureID = (ImTextureID)AssetHandler::GetTexture(filenameStemString); // INFO: Textures
-				assetType = AssetType::Texture;
-			}
-			else if (FiletypeConfig::IsSupportedModelFormat(extensionType))
-			{
-				textureID = meshIcon; // INFO: Meshes
-				assetType = AssetType::Model;
-			}
-			else if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
-			{
-				textureID = audioIcon; // INFO: Audio
-			}
-			else if (extensionType == FiletypeConfig::DDS)
-			{
-				textureID = ddsIcon; // INFO: DDS Textures
-				assetType = AssetType::SkyboxTexture;
-			}
-			else if (extensionType == ".json")
-			{
-				textureID = sceneIcon; // INFO: Scenes
-				assetType = AssetType::Scene;
-			}
-			else
-			{
-				textureID = defaultFileIcon; // INFO: Generic Files
-			}
+				ImGui::PushID(static_cast<int>(i));
 
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(16.0f, 4.0f));
+				const std::filesystem::directory_entry& entry = contentsData.entry;
+				const std::string& filenameStemString = contentsData.filenameStemString;
+				const std::string& extensionType = contentsData.extensionType;
+				const std::filesystem::path& path = entry.path();
 
-			// INFO: Group Icon & Label
-			ImGui::BeginGroup();
-
-			// INFO: Remove Background Colour for Buttons
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-			ImGui::ImageButton("##Asset", textureID, iconSize);
-			ImGui::PopStyleColor();
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
+				// INFO: Icon Choosing
 				if (entry.is_directory())
 				{
-					currentDirectory /= path.filename();
-					updateContents = true;
+					textureID = folderIcon; // INFO: Folders
 				}
-				else if (assetType == AssetType::Scene)
+				else if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
 				{
-					EventDispatcher::QueueEvent(EventType::LoadScene, std::make_shared<LoadSceneEvent>(path));
+					textureID = (ImTextureID)AssetHandler::GetTexture(filenameStemString); // INFO: Textures
+					assetType = AssetType::Texture;
 				}
-			}
-
-			// INFO: Setup Drag & Drop Payload
-			if (RuntimeConfig::IsInEditorMode())
-			{
-				if (ImGui::BeginDragDropSource())
+				else if (FiletypeConfig::IsSupportedModelFormat(extensionType))
 				{
-					std::string payloadType = "";
+					textureID = meshIcon; // INFO: Meshes
+					assetType = AssetType::Model;
+				}
+				else if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
+				{
+					textureID = audioIcon; // INFO: Audio
+				}
+				else if (extensionType == FiletypeConfig::DDS)
+				{
+					textureID = ddsIcon; // INFO: DDS Textures
+					assetType = AssetType::SkyboxTexture;
+				}
+				else if (extensionType == ".json")
+				{
+					textureID = sceneIcon; // INFO: Scenes
+					assetType = AssetType::Scene;
+				}
+				else
+				{
+					textureID = defaultFileIcon; // INFO: Generic Files
+				}
 
-					switch (assetType)
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(16.0f, 4.0f));
+
+				// INFO: Group Icon & Label
+				ImGui::BeginGroup();
+
+				// INFO: Remove Background Colour for Buttons
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+				ImGui::ImageButton("##Asset", textureID, iconSize);
+				ImGui::PopStyleColor();
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					if (entry.is_directory())
 					{
-					case AssetType::Model:
-						payloadType = "Model";
-						break;
-					case AssetType::Texture:
-						payloadType = "Texture";
-						break;
-					case AssetType::SkyboxTexture:
-						payloadType = "SkyboxTexture";
-						break;
-					default:
-						break;
+						currentDirectory /= path.filename();
+						updateContents = true;
+						searchString.clear();
 					}
-
-					ImGui::Image(textureID, iconSize);
-					ImGui::SetDragDropPayload(payloadType.c_str(), filenameStemString.c_str(), filenameStemString.size() + 1);
-
-					ImGui::EndDragDropSource();
+					else if (assetType == AssetType::Scene)
+					{
+						EventDispatcher::QueueEvent(EventType::LoadScene, std::make_shared<LoadSceneEvent>(path));
+					}
 				}
+
+				// INFO: Setup Drag & Drop Payload
+				if (RuntimeConfig::IsInEditorMode())
+				{
+					if (ImGui::BeginDragDropSource())
+					{
+						std::string payloadType = "";
+
+						switch (assetType)
+						{
+						case AssetType::Model:
+							payloadType = "Model";
+							break;
+						case AssetType::Texture:
+							payloadType = "Texture";
+							break;
+						case AssetType::SkyboxTexture:
+							payloadType = "SkyboxTexture";
+							break;
+						default:
+							break;
+						}
+
+						ImGui::Image(textureID, iconSize);
+						ImGui::SetDragDropPayload(payloadType.c_str(), filenameStemString.c_str(), filenameStemString.size() + 1);
+
+						ImGui::EndDragDropSource();
+					}
+				}
+
+				// INFO: Centre Text if shorter than icon width
+				float textWidth = ImGui::CalcTextSize(filenameString.c_str()).x;
+				float paddingWidth = ImGui::GetStyle().ItemSpacing.x;
+
+				if (textWidth < iconSize.x + paddingWidth)
+				{
+					ImGui::SetCursorPos({ ImGui::GetCursorPos().x + (iconSize.x + (paddingWidth * 0.5f) - textWidth) * 0.5f, ImGui::GetCursorPos().y });
+				}
+
+				ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + iconSize.x + ImGui::GetStyle().ItemSpacing.x);
+				ImGui::Text(filenameString.c_str());
+				ImGui::PopTextWrapPos();
+
+				ImGui::EndGroup();
+
+				float nextItemPosition = ImGui::GetItemRectMax().x + ImGui::GetStyle().ItemSpacing.x + iconSize.x;
+				if (nextItemPosition < panelWidth) { ImGui::SameLine(); }
+
+				ImGui::PopStyleVar();
+
+				ImGui::PopID();
+
+				if (updateContents) { UpdateContents(); }
 			}
-
-			// INFO: Centre Text if shorter than icon width
-			float textWidth = ImGui::CalcTextSize(filenameString.c_str()).x;
-			float paddingWidth = ImGui::GetStyle().ItemSpacing.x;
-
-			if (textWidth < iconSize.x + paddingWidth)
-			{
-				ImGui::SetCursorPos({ ImGui::GetCursorPos().x + (iconSize.x + (paddingWidth * 0.5f) - textWidth) * 0.5f, ImGui::GetCursorPos().y });
-			}
-
-			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + iconSize.x + ImGui::GetStyle().ItemSpacing.x);
-			ImGui::Text(filenameString.c_str());
-			ImGui::PopTextWrapPos();
-
-			ImGui::EndGroup();
-
-			float nextItemPosition = ImGui::GetItemRectMax().x + ImGui::GetStyle().ItemSpacing.x + iconSize.x;
-			if (nextItemPosition < panelWidth) { ImGui::SameLine(); }
-
-			ImGui::PopStyleVar();
-
-			ImGui::PopID();
 		}
-
-		if (updateContents) { UpdateContents(); }
 	}
 }
