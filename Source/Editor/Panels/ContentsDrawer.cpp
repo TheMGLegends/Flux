@@ -201,29 +201,32 @@ namespace Flux
 			}
 
 			// INFO: Setup Drag & Drop Payload
-			if (ImGui::BeginDragDropSource())
+			if (RuntimeConfig::IsInEditorMode())
 			{
-				std::string payloadType = "";
-
-				switch (assetType)
+				if (ImGui::BeginDragDropSource())
 				{
-				case AssetType::Model:
-					payloadType = "Model";
-					break;
-				case AssetType::Texture:
-					payloadType = "Texture";
-					break;
-				case AssetType::SkyboxTexture:
-					payloadType = "SkyboxTexture";
-					break;
-				default:
-					break;
+					std::string payloadType = "";
+
+					switch (assetType)
+					{
+					case AssetType::Model:
+						payloadType = "Model";
+						break;
+					case AssetType::Texture:
+						payloadType = "Texture";
+						break;
+					case AssetType::SkyboxTexture:
+						payloadType = "SkyboxTexture";
+						break;
+					default:
+						break;
+					}
+
+					ImGui::Image(textureID, iconSize);
+					ImGui::SetDragDropPayload(payloadType.c_str(), filenameStemString.c_str(), filenameStemString.size() + 1);
+
+					ImGui::EndDragDropSource();
 				}
-
-				ImGui::Image(textureID, iconSize);
-				ImGui::SetDragDropPayload(payloadType.c_str(), filenameStemString.c_str(), filenameStemString.size() + 1);
-
-				ImGui::EndDragDropSource();
 			}
 
 			// INFO: Centre Text if shorter than icon width
