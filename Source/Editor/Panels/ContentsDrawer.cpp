@@ -97,6 +97,7 @@ namespace Flux
 			}
 
 			// INFO: Back Button
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 			ImGui::BeginDisabled(currentDirectory == FiletypeConfig::ASSET_DIRECTORY);
 			if (ImGui::Button("Back"))
 			{
@@ -111,6 +112,8 @@ namespace Flux
 			// INFO: Search Bar
 			ImGui::PushItemWidth(300.0f);
 			ImGui::InputTextWithHint("##SearchBar", "Search...", &searchString, ImGuiInputTextFlags_CallbackAlways | ImGuiInputTextFlags_AutoSelectAll);
+			ImGui::PopItemWidth();
+			ImGui::PopStyleVar();
 
 			DrawContents();
 

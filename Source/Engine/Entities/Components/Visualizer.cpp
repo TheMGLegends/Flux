@@ -39,6 +39,7 @@ namespace Flux
 
 		// INFO: Active Checkbox
 		ImGui::SameLine();
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 		if (ImGui::Checkbox("##ComponentActive", &isActive))
 		{
@@ -59,6 +60,7 @@ namespace Flux
 				EditorConfig::sceneNeedsSaving = true;
 			}
 		}
+		ImGui::PopStyleVar();
 
 		if (treeOpened)
 		{

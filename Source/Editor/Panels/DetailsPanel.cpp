@@ -64,6 +64,7 @@ namespace Flux
 				// INFO: Active Checkbox
 				bool isActive = selectedGameObject->IsActive();
 
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 				if (ImGui::Checkbox("##GameObjectActive", &isActive))
 				{
 					selectedGameObject->SetIsActive(isActive);
@@ -79,6 +80,9 @@ namespace Flux
 				ImGui::SetCursorPosX((windowSize.x - inputWidth) * 0.5f);
 				ImGui::SetNextItemWidth(inputWidth);
 				ImGui::InputText("##GameObjectName", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue);
+				ImGui::PopStyleVar();
+
+				ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
 				// INFO: Display Game Object Component Details
 				std::vector<std::shared_ptr<Component>>& components = selectedGameObject->GetComponents();
