@@ -32,6 +32,7 @@ namespace Flux
 		static bool GetMouseButtonUp(SDL_MouseButtonFlags button) { return !(currentMouseState & SDL_BUTTON_MASK(button)) && (previousMouseState & SDL_BUTTON_MASK(button)); }
 
 		static const DirectX::SimpleMath::Vector2& GetMousePosition() { return mousePosition; }
+		static void SetMousePosition(const DirectX::SimpleMath::Vector2& position) { SDL_WarpMouseInWindow(window, position.x, position.y); }
 
 		/// @param isRelative: true = relative, false = absolute
 		static void SetMouseMode(bool _isRelative);

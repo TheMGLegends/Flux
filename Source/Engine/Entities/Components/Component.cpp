@@ -4,12 +4,17 @@
 #include <imgui_internal.h>
 #include <SimpleMath.h>
 
+#include "Core/Configs/EngineConfig.h"
+
+#include "Core/Input/Input.h"
+#include "Core/Debug/Debug.h"
+
 using namespace DirectX::SimpleMath;
 
 namespace Flux
 {
 	Component::Component(GameObject* _gameObject) : isActive(true), canHaveMultiple(false), isRemoveable(true), gameObject(_gameObject),
-													name(""), componentType(ComponentType::None)
+													name(""), componentType(ComponentType::None), draggingBox(false)
 	{
 	}
 
@@ -41,8 +46,6 @@ namespace Flux
 
 	bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed, const char* format)
 	{
-		bool changed = false;
-
 		if (ImGui::BeginTable(label, 2))
 		{
 			ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 100.0f); // INFO: Label Column
@@ -66,7 +69,7 @@ namespace Flux
 			ImGui::SameLine();
 			if (ImGui::DragFloat("##X", &value.x, speed, 0.0f, 0.0f, format))
 			{
-				changed = true;
+				draggingBox = true;
 			}
 			ImGui::PopStyleVar();
 			ImGui::PopItemWidth();
@@ -83,7 +86,7 @@ namespace Flux
 			ImGui::SameLine();
 			if (ImGui::DragFloat("##Y", &value.y, speed, 0.0f, 0.0f, format))
 			{
-				changed = true;
+				draggingBox = true;
 			}
 			ImGui::PopStyleVar();
 			ImGui::PopItemWidth();
@@ -100,7 +103,7 @@ namespace Flux
 			ImGui::SameLine();
 			if (ImGui::DragFloat("##Z", &value.z, speed, 0.0f, 0.0f, format))
 			{
-				changed = true;
+				draggingBox = true;
 			}
 			ImGui::PopStyleVar();
 			ImGui::PopItemWidth();
@@ -108,6 +111,28 @@ namespace Flux
 			ImGui::EndTable();
 		}
 
-		return changed;
+		// INFO: Prepare mouse warping if the field was changed
+		if (draggingBox)
+		{
+			Vector2 mousePosition = Input::GetMousePosition();
+
+			if (mousePosition.x <= 1.0f)
+			{
+				mousePosition.x = EngineConfig::windowWidth - 2.0f;
+				Input::SetMousePosition(mousePosition);
+			}
+			else if (mousePosition.x >= EngineConfig::windowWidth - 1.0f)
+			{
+				mousePosition.x = 2.0f;
+				Input::SetMousePosition(mousePosition);
+			}
+
+			if (Input::GetMouseButtonUp(SDL_BUTTON_LEFT))
+			{
+				draggingBox = false;
+			}
+		}
+
+		return draggingBox;
 	}
 }

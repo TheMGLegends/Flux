@@ -54,6 +54,8 @@ namespace Flux
 
 	private:
 		GameObject* gameObject;
+
+		bool draggingBox;
 	};
 }
 
