@@ -21,7 +21,14 @@ namespace Flux
 	Application::Application() : window(nullptr), isRunning(false)
 	{
 		// INFO: Disable Support for DirectInput (Legacy API), now loads faster
-		SDL_SetHint(SDL_HINT_JOYSTICK_DIRECTINPUT, "0");
+		if (EngineConfig::disableDirectInput)
+		{
+			SDL_SetHint(SDL_HINT_JOYSTICK_DIRECTINPUT, "0");
+		}
+		else
+		{
+			Debug::LogWarning("Application::Application() - DirectInput support is enabled, as a result your application may take longer to start up");
+		}
 
 		// INFO: SDL Initialisation
 		if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
