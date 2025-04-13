@@ -3,6 +3,8 @@
 #include "EditorPanel.h"
 #include "Core/EventSystem/IEventListener.h"
 
+#include <string>
+
 namespace Flux
 {
 	class GameObject;
@@ -26,6 +28,7 @@ namespace Flux
 		GameObject* selectedGameObject;
 
 		bool isRenaming;
+		std::string searchString;
 	};
 }
 

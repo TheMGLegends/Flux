@@ -66,14 +66,21 @@ namespace Flux
 				ImGui::GetForegroundDrawList()->AddRectFilled(windowPos, ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), IM_COL32(0, 116, 188, 50));
 			}
 
+			// INFO: Scene Name
 			std::string sceneName = EditorConfig::sceneNeedsSaving ? scene.GetSceneName() + "*" : scene.GetSceneName();
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
 			ImGui::SetCursorPosX((windowSize.x - ImGui::CalcTextSize(sceneName.c_str()).x) * 0.5f);
 			ImGui::Text(sceneName.c_str());
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
 			ImGui::PopStyleVar();
 
-			ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuterH;
+			// INFO: Search Bar
+			ImGui::PushItemWidth(windowSize.x * 0.5f);
+			ImGui::SetCursorPosX((windowSize.x * 0.25f));
+			ImGui::InputText("##SearchBar", &searchString, ImGuiInputTextFlags_CallbackAlways | ImGuiInputTextFlags_AutoSelectAll);
 
-			if (ImGui::BeginTable("##SceneObjects", 1, tableFlags, ImVec2(windowSize.x, windowSize.y * 0.8f), windowSize.x))
+			ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuterH;
+			if (ImGui::BeginTable("##SceneObjects", 1, tableFlags, ImVec2(windowSize.x, windowSize.y * 0.75f), windowSize.x))
 			{
 				bool selectedGameObjectHovered = false;
 
@@ -81,45 +88,50 @@ namespace Flux
 				{
 					std::unique_ptr<GameObject>& gameObject = scene.gameObjects[i];
 
-					ImGui::TableNextRow();
-					ImGui::TableSetColumnIndex(0);
+					const std::string& gameObjectName = gameObject->GetName();
 
-					// INFO: Unique ID for each GameObject
-					if (ImGui::Selectable(("##" + gameObject->GetID()).c_str(), selectedGameObject == gameObject.get()))
+					if (searchString.empty() || gameObjectName.rfind(searchString, 0) != std::string::npos)
 					{
-						selectedGameObject = gameObject.get();
+						ImGui::TableNextRow();
+						ImGui::TableSetColumnIndex(0);
 
-						// INFO: Default to Translate Operation if we are currently in pan mode
-						if (EditorConfig::currentTransformOperation == -1)
+						// INFO: Unique ID for each GameObject
+						if (ImGui::Selectable(("##" + gameObject->GetID()).c_str(), selectedGameObject == gameObject.get()))
 						{
-							EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
+							selectedGameObject = gameObject.get();
+
+							// INFO: Default to Translate Operation if we are currently in pan mode
+							if (EditorConfig::currentTransformOperation == -1)
+							{
+								EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
+							}
 						}
-					}
 
-					if (ImGui::IsItemHovered() && gameObject.get() == selectedGameObject)
-					{
-						selectedGameObjectHovered = true;
-					}
-
-					if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObjectHovered)
-					{
-						isRenaming = true;
-					}
-
-					ImGui::SameLine();
-
-					if (isRenaming && selectedGameObject == gameObject.get())
-					{
-						ImGui::SetKeyboardFocusHere();
-						if (ImGui::InputText("##CustomNameInput", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue))
+						if (ImGui::IsItemHovered() && gameObject.get() == selectedGameObject)
 						{
-							isRenaming = false;
-							EditorConfig::sceneNeedsSaving = true;
+							selectedGameObjectHovered = true;
 						}
-					}
-					else
-					{
-						ImGui::TextUnformatted(gameObject->GetName().c_str());
+
+						if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObjectHovered)
+						{
+							isRenaming = true;
+						}
+
+						ImGui::SameLine();
+
+						if (isRenaming && selectedGameObject == gameObject.get())
+						{
+							ImGui::SetKeyboardFocusHere();
+							if (ImGui::InputText("##CustomNameInput", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue))
+							{
+								isRenaming = false;
+								EditorConfig::sceneNeedsSaving = true;
+							}
+						}
+						else
+						{
+							ImGui::TextUnformatted(gameObjectName.c_str());
+						}
 					}
 				}
 
