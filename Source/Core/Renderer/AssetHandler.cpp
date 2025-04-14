@@ -339,6 +339,18 @@ namespace Flux
 		return nullptr;
 	}
 
+	bool AssetHandler::HasTexture(const std::string& textureName, bool isSkyboxTexture)
+	{
+		if (isSkyboxTexture)
+		{
+			return skyboxTextures.find(textureName) != skyboxTextures.end();
+		}
+		else
+		{
+			return textures.find(textureName) != textures.end();
+		}
+	}
+
 	Model* AssetHandler::GetModel(const std::string& modelName)
 	{
 		auto it = models.find(modelName);
@@ -346,6 +358,11 @@ namespace Flux
 
 		Debug::LogError("AssetHandler::GetModel() - Failed to find model. Model Name: " + modelName);
 		return nullptr;
+	}
+
+	bool AssetHandler::HasModel(const std::string& modelName)
+	{
+		return models.find(modelName) != models.end();
 	}
 
 	Material AssetHandler::GetMaterial(DirectXConfig::ShaderType shaderType)
@@ -364,6 +381,11 @@ namespace Flux
 
 		Debug::LogError("AssetHandler::GetAudioPath() - Failed to find audio path. Audio Name: " + audioName);
 		return EMPTY_PATH;
+	}
+
+	bool AssetHandler::HasAudioFile(const std::string& audioName)
+	{
+		return audioPaths.find(audioName) != audioPaths.end();
 	}
 
 	const std::filesystem::path& AssetHandler::GetScenePath(const std::string& sceneName)

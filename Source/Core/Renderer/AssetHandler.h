@@ -56,11 +56,14 @@ namespace Flux
 		static ID3D11SamplerState* GetSamplerState() { return samplerState.Get(); }
 		static DirectX::SpriteFont* GetFont(const std::string& fontName);
 		static ID3D11ShaderResourceView* GetTexture(const std::string& textureName, bool isSkyboxTexture = false);
+		static bool HasTexture(const std::string& textureName, bool isSkyboxTexture = false);
 		static Model* GetModel(const std::string& modelName);
+		static bool HasModel(const std::string& modelName);
 
 		/// @brief Returns a copy of a default material that can then be modified
 		static Material GetMaterial(DirectXConfig::ShaderType shaderType);
 		static const std::filesystem::path& GetAudioPath(const std::string& audioName);
+		static bool HasAudioFile(const std::string& audioName);
 
 		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetTextures() { return textures; }
 		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetSkyboxTextures() { return skyboxTextures; }

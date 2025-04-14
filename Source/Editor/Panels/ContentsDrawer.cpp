@@ -1,5 +1,6 @@
 #include "ContentsDrawer.h"
 
+#include <assimp/Importer.hpp>
 #include <string/imgui_stdlib.h>
 
 #include "Core/GlobalDefines.h"
@@ -168,20 +169,45 @@ namespace Flux
 				}
 				else if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
 				{
+					// INFO: Load Texture if not already loaded
+					if (!AssetHandler::HasTexture(filenameStemString))
+					{
+						AssetHandler::LoadTexture(path);
+					}
+
 					textureID = (ImTextureID)AssetHandler::GetTexture(filenameStemString); // INFO: Textures
 					assetType = AssetType::Texture;
 				}
 				else if (FiletypeConfig::IsSupportedModelFormat(extensionType))
 				{
+					// INFO: Load Model if not already loaded
+					if (!AssetHandler::HasModel(filenameStemString))
+					{
+						Assimp::Importer importer;
+						AssetHandler::LoadModel(path, importer);
+					}
+
 					textureID = meshIcon; // INFO: Meshes
 					assetType = AssetType::Model;
 				}
 				else if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
 				{
+					// INFO: Load Audio if not already loaded
+					if (!AssetHandler::HasAudioFile(filenameStemString))
+					{
+						AssetHandler::LoadAudio(path);
+					}
+
 					textureID = audioIcon; // INFO: Audio
 				}
 				else if (extensionType == FiletypeConfig::DDS)
 				{
+					// INFO: Load DDS Texture if not already loaded
+					if (!AssetHandler::HasTexture(filenameStemString, true))
+					{
+						AssetHandler::LoadTexture(path, true);
+					}
+
 					textureID = ddsIcon; // INFO: DDS Textures
 					assetType = AssetType::SkyboxTexture;
 				}
