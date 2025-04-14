@@ -6,6 +6,7 @@
 #include "Core/GlobalDefines.h"
 
 #include "Core/Configs/EngineConfig.h"
+#include "Core/Configs/RuntimeConfig.h"
 
 #include "Core/Debug/Debug.h"
 #include "Core/EventSystem/EventDispatcher.h"
@@ -169,7 +170,7 @@ namespace Flux
 		while (SDL_PollEvent(&event))
 		{
 			// INFO: ImGui Event Handling
-			ImGui_ImplSDL3_ProcessEvent(&event);
+			if (!RuntimeConfig::IsStandalone()) { ImGui_ImplSDL3_ProcessEvent(&event); }
 
 			switch (event.type)
 			{

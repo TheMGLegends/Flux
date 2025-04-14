@@ -13,6 +13,7 @@ namespace Flux::RuntimeConfig
 		extern Mode currentMode;
 		extern bool enteredPlayMode;
 		extern bool isPaused;
+		extern bool isStandalone;
 	}
 
 	void SetMode(Mode newMode);
@@ -25,5 +26,8 @@ namespace Flux::RuntimeConfig
 
 	bool IsPaused();
 	void TogglePause();
+
+	bool IsStandalone();
+	void EnableStandalone();
 }
 

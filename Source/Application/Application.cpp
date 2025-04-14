@@ -18,8 +18,10 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
-	Application::Application() : window(nullptr), isRunning(false)
+	Application::Application(bool isStandalone) : window(nullptr), isRunning(false)
 	{
+		if (isStandalone) { RuntimeConfig::EnableStandalone(); }
+
 		// INFO: Disable Support for DirectInput (Legacy API), now loads faster
 		if (EngineConfig::disableDirectInput)
 		{
@@ -86,17 +88,20 @@ namespace Flux
 			return;
 		}
 
-		// INFO: Editor Runtime Initialisation
-		if (IS_FAILURE(editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext())))
+		if (!RuntimeConfig::IsStandalone())
 		{
-			Debug::LogError("Application::Application() - Failed to pre-initialise Editor Runtime");
-			return;
-		}
+			// INFO: Editor Runtime Initialisation
+			if (IS_FAILURE(editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext())))
+			{
+				Debug::LogError("Application::Application() - Failed to pre-initialise Editor Runtime");
+				return;
+			}
 
-		if (IS_FAILURE(editorRuntime.Initialise(renderer)))
-		{
-			Debug::LogError("Application::Application() - Failed to initialise Editor Runtime");
-			return;
+			if (IS_FAILURE(editorRuntime.Initialise(renderer)))
+			{
+				Debug::LogError("Application::Application() - Failed to initialise Editor Runtime");
+				return;
+			}
 		}
 
 		// INFO: Event Listener Registration
@@ -112,7 +117,7 @@ namespace Flux
 	Application::~Application()
 	{
 		engineRuntime.Release();
-		editorRuntime.Release();
+		if (!RuntimeConfig::IsStandalone()) { editorRuntime.Release(); }
 		Input::Release();
 
 		SDL_DestroyWindow(window);
@@ -132,7 +137,7 @@ namespace Flux
 			Input::Update();
 			float deltaTime = Time::DeltaTime();
 
-			editorRuntime.Update(deltaTime);
+			if (!RuntimeConfig::IsStandalone()) { editorRuntime.Update(deltaTime); }
 
 			if (RuntimeConfig::HasEnteredPlayMode() && !RuntimeConfig::IsPaused())
 			{

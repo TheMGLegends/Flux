@@ -234,41 +234,56 @@ namespace Flux
 			return E_FAIL;
 		}
 
-		// INFO: Create the resources needed for the debug wireframe rendering
-		batchEffect = std::make_unique<BasicEffect>(device.Get());
-
-		if (!batchEffect)
+		if (!RuntimeConfig::IsStandalone())
 		{
-			Debug::LogError("Renderer::Initialise() - Failed to create Basic Effect");
-			return E_FAIL;
-		}
+			// INFO: Create the resources needed for the debug wireframe rendering
+			batchEffect = std::make_unique<BasicEffect>(device.Get());
 
-		batchEffect->SetVertexColorEnabled(true);
+			if (!batchEffect)
+			{
+				Debug::LogError("Renderer::Initialise() - Failed to create Basic Effect");
+				return E_FAIL;
+			}
 
-		primitiveBatch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(deviceContext.Get());
+			batchEffect->SetVertexColorEnabled(true);
 
-		if (!primitiveBatch)
-		{
-			Debug::LogError("Renderer::Initialise() - Failed to create Primitive Batch");
-			return E_FAIL;
-		}
+			primitiveBatch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(deviceContext.Get());
 
-		const void* vertexShaderBytecode = nullptr;
-		size_t vertexShaderBytecodeLength = 0;
-		batchEffect->GetVertexShaderBytecode(&vertexShaderBytecode, &vertexShaderBytecodeLength);
+			if (!primitiveBatch)
+			{
+				Debug::LogError("Renderer::Initialise() - Failed to create Primitive Batch");
+				return E_FAIL;
+			}
 
-		hResult = device->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
-			vertexShaderBytecode, vertexShaderBytecodeLength, &batchInputLayout);
+			const void* vertexShaderBytecode = nullptr;
+			size_t vertexShaderBytecodeLength = 0;
+			batchEffect->GetVertexShaderBytecode(&vertexShaderBytecode, &vertexShaderBytecodeLength);
 
-		if (FAILED(hResult))
-		{
-			Debug::LogError("Renderer::Initialise() - Failed to create Batch Input Layout");
-			return hResult;
+			hResult = device->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
+				vertexShaderBytecode, vertexShaderBytecodeLength, &batchInputLayout);
+
+			if (FAILED(hResult))
+			{
+				Debug::LogError("Renderer::Initialise() - Failed to create Batch Input Layout");
+				return hResult;
+			}
 		}
 
 		// INFO: Setup Events to Listen For
-		EventDispatcher::AddListener(EventType::WindowResized, this);
-		EventDispatcher::AddListener(EventType::SceneViewResized, this);
+		if (IS_FAILURE(EventDispatcher::AddListener(EventType::WindowResized, this)))
+		{
+			Debug::LogError("Renderer::Initialise() - Failed to add Window Resized event listener");
+			return FLUX_FAILURE;
+		}
+
+		if (!RuntimeConfig::IsStandalone())
+		{
+			if (IS_FAILURE(EventDispatcher::AddListener(EventType::SceneViewResized, this)))
+			{
+				Debug::LogError("Renderer::Initialise() - Failed to add Scene View Resized event listener");
+				return FLUX_FAILURE;
+			}
+		}
 
 		return hResult; // INFO: S_OK so long as we've made it this far
 	}
@@ -290,6 +305,7 @@ namespace Flux
 	void Renderer::RenderFrame(Scene& scene)
 	{
 		std::shared_ptr<Camera> camera = scene.GetCamera().lock();
+		bool isStandalone = RuntimeConfig::IsStandalone();
 
 		if (!camera)
 		{
@@ -310,11 +326,22 @@ namespace Flux
 			}
 		}
 
-		// INFO: Set the render target to be the texture
-		deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+		if (!isStandalone)
+		{
+			// INFO: Set the render target to be the texture
+			deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
 
-		// INFO: Set the matching viewport
-		deviceContext->RSSetViewports(1, &sceneViewViewport);
+			// INFO: Set the matching viewport
+			deviceContext->RSSetViewports(1, &sceneViewViewport);
+		}
+		else
+		{
+			// INFO: Set the render target to be the back buffer
+			deviceContext->OMSetRenderTargets(1, backBufferRenderTargetView.GetAddressOf(), depthStencilView.Get());
+
+			// INFO: Set the matching viewport
+			deviceContext->RSSetViewports(1, &backBufferViewport);
+		}
 
 		deviceContext->ClearRenderTargetView(renderTargetView.Get(), camera->GetBackgroundColour().data());
 		deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -380,27 +407,30 @@ namespace Flux
 
 		// INFO: Render the UI
 		spriteBatch->Begin();
-		FrameRateMonitor::Render(spriteBatch.get());
+		if (!isStandalone) { FrameRateMonitor::Render(spriteBatch.get()); }
 		spriteBatch->End();
 
-		// INFO: Set the render target to be the back buffer
-		deviceContext->OMSetRenderTargets(1, backBufferRenderTargetView.GetAddressOf(), nullptr);
-
-		// INFO: Set the matching viewport
-		deviceContext->RSSetViewports(1, &backBufferViewport);
-
-		// INFO: Render ImGui
-		ImGui::Render(); // INFO: Render Main Viewport
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-		// INFO: Render Other Viewports
-#ifdef _DEBUG
-		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		if (!isStandalone)
 		{
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-		}
+			// INFO: Set the render target to be the back buffer
+			deviceContext->OMSetRenderTargets(1, backBufferRenderTargetView.GetAddressOf(), nullptr);
+
+			// INFO: Set the matching viewport
+			deviceContext->RSSetViewports(1, &backBufferViewport);
+
+			// INFO: Render ImGui
+			ImGui::Render(); // INFO: Render Main Viewport
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+			// INFO: Render Other Viewports
+#ifdef _DEBUG
+			if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+			}
 #endif
+		}
 
 		swapChain->Present((UINT)RendererConfig::vsyncEnabled, 0);
 	}

@@ -13,7 +13,8 @@ namespace Flux
 	class Application : public IEventListener
 	{
 	public:
-		Application();
+		/// @param isStandalone If true, the application will run in standalone mode (no editor runtime, just the game)
+		Application(bool isStandalone = false);
 		~Application();
 
 		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;

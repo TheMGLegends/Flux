@@ -7,6 +7,7 @@ namespace Flux::RuntimeConfig
 		Mode currentMode = Mode::Editor;
 		bool enteredPlayMode = false;
 		bool isPaused = false;
+		bool isStandalone = false;
 	}
 
 	void SetMode(Mode newMode)
@@ -57,5 +58,18 @@ namespace Flux::RuntimeConfig
 	{
 		using namespace Internal;
 		isPaused = !isPaused;
+	}
+
+	bool IsStandalone()
+	{
+		using namespace Internal;
+		return isStandalone;
+	}
+
+	void EnableStandalone()
+	{
+		using namespace Internal;
+		isStandalone = true;
+		SetMode(Mode::Play);
 	}
 }

@@ -2,7 +2,7 @@
 
 int main()
 {
-	Flux::Application app;
+	Flux::Application app{ false };
 	app.Run();
 
 	return 0;
