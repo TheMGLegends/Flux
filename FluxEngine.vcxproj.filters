@@ -186,6 +186,9 @@
     <ClCompile Include="Source\Core\GlobalDefines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Core\Configs\GameConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -404,6 +407,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\EventSystem\Events\LoadSceneEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Configs\GameConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

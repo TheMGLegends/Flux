@@ -6,6 +6,7 @@
 #include "Core/GlobalDefines.h"
 
 #include "Core/Configs/EditorConfig.h"
+#include "Core/Configs/GameConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 
 #include "Core/Debug/Debug.h"
@@ -75,8 +76,9 @@ namespace Flux
 			Debug::LogError("Scene::Scene() - Failed to create PhysX Scene");
 		}
 
-		// INFO: Load the first scene found by the asset handler as the start scene
-		DeserializeScene(AssetHandler::GetFirstScenePath());
+		// INFO: Load the starter scene found in the game settings
+		const std::filesystem::path& starterScenePath = AssetHandler::GetScenePath(GameConfig::GetStarterSceneName());
+		DeserializeScene(starterScenePath);
 	}
 
 	Scene::~Scene()
@@ -488,10 +490,18 @@ namespace Flux
 		scenePath = path;
 		sceneName = scenePath.stem().string();
 
-		nlohmann::flux_json json;
-		Serialize(json);
 		std::ofstream jsonFile(scenePath);
-		jsonFile << json.dump(4);
+
+		if (jsonFile.is_open())
+		{
+			nlohmann::flux_json json;
+			Serialize(json);
+			jsonFile << json.dump(4);
+		}
+		else
+		{
+			Debug::LogError("Scene::SerializeScene() - Failed to open scene file for writing. Filepath: " + scenePath.string());
+		}
 	}
 
 	void Scene::DeserializeScene(const std::filesystem::path& path)
@@ -508,8 +518,16 @@ namespace Flux
 		playModeCamera.reset();
 
 		std::ifstream jsonFile(scenePath);
-		nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonFile);
-		Deserialize(json);
+
+		if (jsonFile.is_open())
+		{
+			nlohmann::ordered_json json = nlohmann::ordered_json::parse(jsonFile);
+			Deserialize(json);
+		}
+		else
+		{
+			Debug::LogError("Scene::DeserializeScene() - Failed to open scene file for reading. Filepath: " + scenePath.string());
+		}
 	}
 
 	std::weak_ptr<Camera> Scene::FindFirstActiveCamera()

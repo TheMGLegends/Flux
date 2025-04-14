@@ -1,7 +1,10 @@
 #include "EngineRuntime.h"
 
 #include "Core/GlobalDefines.h"
+
+#include "Core/Configs/GameConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
+
 #include "Core/Debug/Debug.h"
 #include "Core/Time/Time.h"
 
@@ -54,6 +57,9 @@ namespace Flux
 
 	int EngineRuntime::Initialise()
 	{
+		// INFO: Deserialize Game Settings
+		GameConfig::DeserializeGameConfig();
+
 		scene = std::make_unique<Scene>();
 
 		if (!scene)

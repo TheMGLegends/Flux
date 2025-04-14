@@ -50,7 +50,6 @@ namespace Flux
 	std::unordered_map<std::string, std::filesystem::path> AssetHandler::audioPaths;
 
 	std::unordered_map<std::string, std::filesystem::path> AssetHandler::scenePaths;
-	std::filesystem::path AssetHandler::firstScenePath;
 
 	ConstantBufferData AssetHandler::EMPTY_CONSTANT_BUFFER_DATA;
 	ShaderData AssetHandler::EMPTY_SHADER_DATA;
@@ -365,17 +364,6 @@ namespace Flux
 
 		Debug::LogError("AssetHandler::GetAudioPath() - Failed to find audio path. Audio Name: " + audioName);
 		return EMPTY_PATH;
-	}
-
-	const std::filesystem::path& AssetHandler::GetFirstScenePath()
-	{
-		if (scenePaths.empty())
-		{
-			Debug::LogError("AssetHandler::GetFirstScenePath() - No scene paths found");
-			return EMPTY_PATH;
-		}
-
-		return scenePaths.begin()->second;
 	}
 
 	const std::filesystem::path& AssetHandler::GetScenePath(const std::string& sceneName)

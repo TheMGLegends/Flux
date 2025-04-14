@@ -7,6 +7,7 @@
 #include "Core/GlobalDefines.h"
 
 #include "Core/Configs/EditorConfig.h"
+#include "Core/Configs/GameConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 
 #include "Core/EventSystem/EventDispatcher.h"
@@ -71,6 +72,25 @@ namespace Flux
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
 			ImGui::SetCursorPosX((windowSize.x - ImGui::CalcTextSize(sceneName.c_str()).x) * 0.5f);
 			ImGui::Text(sceneName.c_str());
+
+			// INFO: Ability to Set as Starter Scene if right clicking scene name
+			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			{
+				ImGui::OpenPopup("GameSettings");
+			}
+
+			ImGui::SetNextWindowSize(ImVec2(127.0f, 22.0f));
+			if (ImGui::BeginPopup("GameSettings"))
+			{
+				if (ImGui::MenuItem("  Set Starter Scene"))
+				{
+					GameConfig::SetStarterSceneName(scene.GetSceneName());
+					GameConfig::SerializeGameConfig();
+				}
+
+				ImGui::EndPopup();
+			}
+
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
 			ImGui::PopStyleVar();
 
