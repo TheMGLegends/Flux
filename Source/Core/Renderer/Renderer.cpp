@@ -432,7 +432,7 @@ namespace Flux
 #endif
 		}
 
-		swapChain->Present((UINT)RendererConfig::vsyncEnabled, 0);
+		swapChain->Present((UINT)RendererConfig::VSYNC_ENABLED, 0);
 	}
 
 	void Renderer::OnWindowResized()
