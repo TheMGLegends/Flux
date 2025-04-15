@@ -4,26 +4,56 @@
 
 namespace Flux::EditorConfig
 {
-	extern float sceneViewWidth;
-	extern float sceneViewHeight;
+	namespace Internal
+	{
+		// INFO: Scene View Dimensions
+		extern float sceneViewWidth;
+		extern float sceneViewHeight;
+
+		// INFO: Transform Gizmo Properties
+		extern int currentTransformOperation;
+		extern int previousTransformOperation;
+		extern ImGuizmo::MODE transformMode;
+
+		extern float translationSnapValue;
+		extern float rotationSnapValue;
+		extern float scaleSnapValue;
+
+		// INFO: Scene View States
+		extern bool isMouseOverSceneView;
+		extern bool isSceneViewFocused;
+		extern bool sceneNeedsSaving;
+	}
 
 	extern const float FONT_SIZE;
+	extern const int PAN;
 
-	extern int currentTransformOperation;
-	extern int previousTransformOperation;
-	extern ImGuizmo::MODE transformMode;
+	void SetSceneViewWidth(float _sceneViewWidth);
+	float GetSceneViewWidth();
 
-	extern float translationSnapValue;
-	extern float rotationSnapValue;
-	extern float scaleSnapValue;
+	void SetSceneViewHeight(float _sceneViewHeight);
+	float GetSceneViewHeight();
 
-	extern bool isMouseOverSceneView;
-	extern bool isSceneViewFocused;
-
-	extern bool sceneNeedsSaving;
+	void SetCurretTransformOperation(int _currentTransformOperation);
+	int GetCurrentTransformOperation();
 
 	void StorePreviousTransformOperation();
 	void RevertToPreviousTransformOperation();
+
+	ImGuizmo::MODE GetTransformMode();
 	void SwitchTransformMode();
+
+	float GetTranslationSnapValue();
+	float GetRotationSnapValue();
+	float GetScaleSnapValue();
+
+	void SetIsMouseOverSceneView(bool _isMouseOverSceneView);
+	bool IsMouseOverSceneView();
+
+	void SetIsSceneViewFocused(bool _isSceneViewFocused);
+	bool IsSceneViewFocused();
+
+	void SetSceneNeedsSaving(bool _sceneNeedsSaving);
+	bool SceneNeedsSaving();
 }
 

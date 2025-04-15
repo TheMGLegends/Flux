@@ -77,20 +77,20 @@ namespace Flux
 	{
 		if (ImGui::Begin("Scene View"))
 		{
-			EditorConfig::isMouseOverSceneView = ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
+			EditorConfig::SetIsMouseOverSceneView(ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows));
 
 			// INFO: Only allow Transform Mode Switching if Scene View is Focused
-			EditorConfig::isSceneViewFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+			EditorConfig::SetIsSceneViewFocused(ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows));
 
-			if (EditorConfig::isSceneViewFocused)
+			if (EditorConfig::IsSceneViewFocused())
 			{
 				// INFO: Keys for Transform Modes
 				if (!Input::GetMouseButton(SDL_BUTTON_RIGHT) && !ImGuizmo::IsUsing())
 				{
-					if (Input::GetKeyDown(SDL_SCANCODE_Q)) { EditorConfig::currentTransformOperation = -1; }
-					if (Input::GetKeyDown(SDL_SCANCODE_W)) { EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE; }
-					if (Input::GetKeyDown(SDL_SCANCODE_E)) { EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::ROTATE; }
-					if (Input::GetKeyDown(SDL_SCANCODE_R)) { EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::SCALE; }
+					if (Input::GetKeyDown(SDL_SCANCODE_Q)) { EditorConfig::SetCurretTransformOperation(EditorConfig::PAN); }
+					if (Input::GetKeyDown(SDL_SCANCODE_W)) { EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::TRANSLATE); }
+					if (Input::GetKeyDown(SDL_SCANCODE_E)) { EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::ROTATE); }
+					if (Input::GetKeyDown(SDL_SCANCODE_R)) { EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::SCALE); }
 					if (Input::GetKeyDown(SDL_SCANCODE_Z)) { EditorConfig::SwitchTransformMode(); }
 				}
 			}
@@ -113,10 +113,10 @@ namespace Flux
 			ImGui::Image((ImTextureID)renderer.GetRenderTextureShaderResourceView(), sceneViewSize);
 
 			// INFO: Check and Update Scene View Size if Necessary
-			if (EditorConfig::sceneViewWidth != sceneViewSize.x || EditorConfig::sceneViewHeight != sceneViewSize.y)
+			if (EditorConfig::GetSceneViewWidth() != sceneViewSize.x || EditorConfig::GetSceneViewHeight() != sceneViewSize.y)
 			{
-				EditorConfig::sceneViewWidth = sceneViewSize.x;
-				EditorConfig::sceneViewHeight = sceneViewSize.y;
+				EditorConfig::SetSceneViewWidth(sceneViewSize.x);
+				EditorConfig::SetSceneViewHeight(sceneViewSize.y);
 				EventDispatcher::QueueEvent(EventType::SceneViewResized, nullptr);
 			}
 
@@ -146,27 +146,33 @@ namespace Flux
 					// INFO: Populate Snap Values
 					float snapValues[3]{};
 
-					switch (EditorConfig::currentTransformOperation)
+					switch (EditorConfig::GetCurrentTransformOperation())
 					{
 					case ImGuizmo::OPERATION::TRANSLATE:
 					{
-						snapValues[0] = EditorConfig::translationSnapValue;
-						snapValues[1] = EditorConfig::translationSnapValue;
-						snapValues[2] = EditorConfig::translationSnapValue;
+						float translationSnapValue = EditorConfig::GetTranslationSnapValue();
+
+						snapValues[0] = translationSnapValue;
+						snapValues[1] = translationSnapValue;
+						snapValues[2] = translationSnapValue;
 						break;
 					}
 					case ImGuizmo::OPERATION::ROTATE:
 					{
-						snapValues[0] = EditorConfig::rotationSnapValue;
-						snapValues[1] = EditorConfig::rotationSnapValue;
-						snapValues[2] = EditorConfig::rotationSnapValue;
+						float rotationSnapValue = EditorConfig::GetRotationSnapValue();
+
+						snapValues[0] = rotationSnapValue;
+						snapValues[1] = rotationSnapValue;
+						snapValues[2] = rotationSnapValue;
 						break;
 					}
 					case ImGuizmo::OPERATION::SCALE:
 					{
-						snapValues[0] = EditorConfig::scaleSnapValue;
-						snapValues[1] = EditorConfig::scaleSnapValue;
-						snapValues[2] = EditorConfig::scaleSnapValue;
+						float scaleSnapValue = EditorConfig::GetScaleSnapValue();
+
+						snapValues[0] = scaleSnapValue;
+						snapValues[1] = scaleSnapValue;
+						snapValues[2] = scaleSnapValue;
 						break;
 					}
 					default:
@@ -178,20 +184,22 @@ namespace Flux
 					DirectX::XMFLOAT4X4 transformMatrix{};
 					DirectX::XMStoreFloat4x4(&transformMatrix, transform->GetWorldMatrix());
 
-					if (EditorConfig::currentTransformOperation != -1)
+					int transformOperation = EditorConfig::GetCurrentTransformOperation();
+					ImGuizmo::MODE transformMode = EditorConfig::GetTransformMode();
+
+					if (transformOperation != EditorConfig::PAN)
 					{
 						bool overrideMode = false;
 
-						if (EditorConfig::currentTransformOperation == ImGuizmo::OPERATION::SCALE && EditorConfig::transformMode == ImGuizmo::MODE::WORLD)
+						if (transformOperation == ImGuizmo::OPERATION::SCALE && transformMode == ImGuizmo::MODE::WORLD)
 						{
 							// INFO: ImGuizmo does not support scaling in world mode
 							overrideMode = true;
 						}
 
-						ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0],
-							(ImGuizmo::OPERATION)EditorConfig::currentTransformOperation,
-							overrideMode ? ImGuizmo::MODE::LOCAL : EditorConfig::transformMode,
-							&transformMatrix.m[0][0], nullptr, isSnapEnabled ? snapValues : nullptr);
+						ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0],(ImGuizmo::OPERATION)transformOperation,
+											 overrideMode ? ImGuizmo::MODE::LOCAL : transformMode, &transformMatrix.m[0][0], nullptr, 
+											 isSnapEnabled ? snapValues : nullptr);
 					}
 
 					if (ImGuizmo::IsUsing() && RuntimeConfig::IsInEditorMode())
@@ -215,7 +223,7 @@ namespace Flux
 						DirectX::XMStoreFloat4(&rotationQuaternion, rotation);
 						transform->SetRotation(rotationQuaternion);
 
-						EditorConfig::sceneNeedsSaving = true;
+						EditorConfig::SetSceneNeedsSaving(true);
 					}
 				}
 			}
@@ -243,34 +251,36 @@ namespace Flux
 				// INFO: Gizmo Selector Panel
 				if (ImGui::BeginChild("GizmoSelectors", { 196, 50 }, true, windowFlags))
 				{
+					int transformOperation = EditorConfig::GetCurrentTransformOperation();
+
 					// INFO: Pan Button
-					if (ImGui::ImageButton("PanButton", EditorConfig::currentTransformOperation != -1 ? panTexture : panTextureSelected, { 40.0f, 40.0f }))
+					if (ImGui::ImageButton("PanButton", transformOperation != EditorConfig::PAN ? panTexture : panTextureSelected, { 40.0f, 40.0f }))
 					{
-						EditorConfig::currentTransformOperation = -1;
+						EditorConfig::SetCurretTransformOperation(EditorConfig::PAN);
 					}
 
 					ImGui::SameLine();
 
 					// INFO: Translation Button
-					if (ImGui::ImageButton("TranslationButton", EditorConfig::currentTransformOperation != ImGuizmo::OPERATION::TRANSLATE ? translationTexture : translationTextureSelected, { 40.0f, 40.0f }))
+					if (ImGui::ImageButton("TranslationButton", transformOperation != ImGuizmo::OPERATION::TRANSLATE ? translationTexture : translationTextureSelected, { 40.0f, 40.0f }))
 					{
-						EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
+						EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::TRANSLATE);
 					}
 
 					ImGui::SameLine();
 
 					// INFO: Rotation Button
-					if (ImGui::ImageButton("RotationButton", EditorConfig::currentTransformOperation != ImGuizmo::OPERATION::ROTATE ? rotationTexture : rotationTextureSelected, { 40.0f, 40.0f }))
+					if (ImGui::ImageButton("RotationButton", transformOperation != ImGuizmo::OPERATION::ROTATE ? rotationTexture : rotationTextureSelected, { 40.0f, 40.0f }))
 					{
-						EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::ROTATE;
+						EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::ROTATE);
 					}
 
 					ImGui::SameLine();
 
 					// INFO: Scale Button
-					if (ImGui::ImageButton("ScaleButton", EditorConfig::currentTransformOperation != ImGuizmo::OPERATION::SCALE ? scaleTexture : scaleTextureSelected, { 40.0f, 40.0f }))
+					if (ImGui::ImageButton("ScaleButton", transformOperation != ImGuizmo::OPERATION::SCALE ? scaleTexture : scaleTextureSelected, { 40.0f, 40.0f }))
 					{
-						EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::SCALE;
+						EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::SCALE);
 					}
 
 					ImGui::PopStyleColor();

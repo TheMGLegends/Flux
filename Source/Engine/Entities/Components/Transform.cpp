@@ -30,7 +30,7 @@ namespace Flux
 			// INFO: Translation Row
 			if (DisplayVector3Field("Position", position))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			// INFO: Rotation Row
@@ -44,13 +44,13 @@ namespace Flux
 				rotation = Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(eulerRotation.y),
 															  DirectX::XMConvertToRadians(eulerRotation.x),
 															  DirectX::XMConvertToRadians(eulerRotation.z));
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			// INFO: Scale Row
 			if (DisplayVector3Field("Scale", scale))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			ImGui::TreePop();

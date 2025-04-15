@@ -72,8 +72,8 @@ namespace Flux
 		backBufferViewport.TopLeftX = 0.0f;
 		backBufferViewport.TopLeftY = 0.0f;
 
-		sceneViewViewport.Width = static_cast<float>(EditorConfig::sceneViewWidth);
-		sceneViewViewport.Height = static_cast<float>(EditorConfig::sceneViewHeight);
+		sceneViewViewport.Width = static_cast<float>(EditorConfig::GetSceneViewWidth());
+		sceneViewViewport.Height = static_cast<float>(EditorConfig::GetSceneViewHeight());
 		sceneViewViewport.MinDepth = 0.0f;
 		sceneViewViewport.MaxDepth = 1.0f;
 		sceneViewViewport.TopLeftX = 0.0f;
@@ -123,8 +123,8 @@ namespace Flux
 
 		// INFO: Create the texture description for the render texture & depth stencil buffer
 		D3D11_TEXTURE2D_DESC td = { 0 };
-		td.Width = static_cast<UINT>(EditorConfig::sceneViewWidth);
-		td.Height = static_cast<UINT>(EditorConfig::sceneViewHeight);
+		td.Width = static_cast<UINT>(sceneViewViewport.Width);
+		td.Height = static_cast<UINT>(sceneViewViewport.Height);
 		td.MipLevels = 1;
 		td.ArraySize = 1;
 		td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -484,7 +484,10 @@ namespace Flux
 
 	void Renderer::OnSceneViewResized()
 	{
-		if (EditorConfig::sceneViewWidth < 1.0f || EditorConfig::sceneViewHeight < 1.0f) { return; }
+		float sceneViewWidth = EditorConfig::GetSceneViewWidth();
+		float sceneViewHeight = EditorConfig::GetSceneViewHeight();
+
+		if (sceneViewWidth < 1.0f || sceneViewHeight < 1.0f) { return; }
 
 		if (renderTargetView)
 		{
@@ -499,8 +502,8 @@ namespace Flux
 
 			// INFO: Create the texture description for the render texture & depth stencil buffer
 			D3D11_TEXTURE2D_DESC td = { 0 };
-			td.Width = static_cast<UINT>(EditorConfig::sceneViewWidth);
-			td.Height = static_cast<UINT>(EditorConfig::sceneViewHeight);
+			td.Width = static_cast<UINT>(sceneViewWidth);
+			td.Height = static_cast<UINT>(sceneViewHeight);
 			td.MipLevels = 1;
 			td.ArraySize = 1;
 			td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -573,8 +576,8 @@ namespace Flux
 				return;
 			}
 
-			sceneViewViewport.Width = static_cast<float>(EditorConfig::sceneViewWidth);
-			sceneViewViewport.Height = static_cast<float>(EditorConfig::sceneViewHeight);
+			sceneViewViewport.Width = sceneViewWidth;
+			sceneViewViewport.Height = sceneViewHeight;
 
 			deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
 			deviceContext->RSSetViewports(1, &sceneViewViewport);

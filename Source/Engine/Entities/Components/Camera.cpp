@@ -60,7 +60,7 @@ namespace Flux
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 		if (ImGui::Checkbox("##ComponentActive", &isActive))
 		{
-			EditorConfig::sceneNeedsSaving = true;
+			EditorConfig::SetSceneNeedsSaving(true);
 		}
 		ImGui::PopStyleVar();
 
@@ -74,7 +74,7 @@ namespace Flux
 			if (gameObject) 
 			{ 
 				gameObject->RemoveComponent(weak_from_this()); 
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 		}
 		ImGui::PopStyleVar();
@@ -87,7 +87,7 @@ namespace Flux
 			ImGui::SetCursorPosX(136.0f);
 			if (ImGui::Checkbox("##UseSkybox", &useSkybox))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			// INFO: Skybox Texture Selector + Drag & Drop Field
@@ -103,7 +103,7 @@ namespace Flux
 					if (ImGui::Selectable(skyboxTexture.first.c_str(), skyboxTextureName == skyboxTexture.first))
 					{
 						SetMaterialTexture(skyboxTexture.first);
-						EditorConfig::sceneNeedsSaving = true;
+						EditorConfig::SetSceneNeedsSaving(true);
 					}
 				}
 				ImGui::EndCombo();
@@ -116,7 +116,7 @@ namespace Flux
 				{
 					std::string textureName = static_cast<const char*>(payload->Data);
 					SetMaterialTexture(textureName);
-					EditorConfig::sceneNeedsSaving = true;
+					EditorConfig::SetSceneNeedsSaving(true);
 				}
 
 				ImGui::EndDragDropTarget();
@@ -129,7 +129,7 @@ namespace Flux
 			ImGui::SetCursorPosX(136.0f);
 			if (ImGui::ColorEdit4("##BackgroundColour", &backgroundColour[0], colourEditFlags))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			// INFO: FOV Slider
@@ -139,7 +139,7 @@ namespace Flux
 			ImGui::SetNextItemWidth(200.0f);
 			if (ImGui::SliderFloat("##VerticalFOV", &verticalFOV, 1.0f, 150.0f, "%.1f", ImGuiSliderFlags_ClampOnInput))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			// INFO: Clipping Planes
@@ -158,7 +158,7 @@ namespace Flux
 				ImGui::SetCursorPosX(136.0f);
 				if (ImGui::InputFloat("##NearClippingPlane", &nearClippingPlane, 0.0f, 0.0f, "%.1f"))
 				{
-					EditorConfig::sceneNeedsSaving = true;
+					EditorConfig::SetSceneNeedsSaving(true);
 				}
 
 				ImGui::TableNextRow();
@@ -170,7 +170,7 @@ namespace Flux
 				ImGui::SetCursorPosX(136.0f);
 				if (ImGui::InputFloat("##FarClippingPlane", &farClippingPlane, 0.0f, 0.0f, "%.1f"))
 				{
-					EditorConfig::sceneNeedsSaving = true;
+					EditorConfig::SetSceneNeedsSaving(true);
 				}
 
 				ImGui::EndTable();

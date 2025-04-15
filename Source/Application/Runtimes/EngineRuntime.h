@@ -9,8 +9,8 @@ namespace Flux
 	class EngineRuntime
 	{
 	public:
-		EngineRuntime() = default;
-		~EngineRuntime() = default;
+		EngineRuntime();
+		~EngineRuntime();
 
 		int PreInitialise();
 		int Initialise();
@@ -22,7 +22,7 @@ namespace Flux
 
 		void Release();
 
-		Scene& GetScene() { return *scene.get(); }
+		Scene& GetScene();
 
 	private:
 		void UpdateAudioSystem();

@@ -22,6 +22,14 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
+	EngineRuntime::EngineRuntime() : scene(nullptr)
+	{
+	}
+
+	EngineRuntime::~EngineRuntime()
+	{
+	}
+
 	int EngineRuntime::PreInitialise()
 	{
 		if (IS_FAILURE(Physics::Initialise()))
@@ -88,6 +96,11 @@ namespace Flux
 
 		Audio::Release();
 		Physics::Release();
+	}
+
+	Scene& EngineRuntime::GetScene()
+	{
+		return *scene.get();
 	}
 
 	void EngineRuntime::UpdateAudioSystem()

@@ -53,7 +53,7 @@ namespace Flux
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 		if (ImGui::Checkbox("##ComponentActive", &isActive))
 		{
-			EditorConfig::sceneNeedsSaving = true;
+			EditorConfig::SetSceneNeedsSaving(true);
 		}
 		ImGui::PopStyleVar();
 
@@ -74,7 +74,7 @@ namespace Flux
 				}
 
 				gameObject->RemoveComponent(weak_from_this()); 
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 		}
 		ImGui::PopStyleVar();
@@ -88,13 +88,13 @@ namespace Flux
 			if (ImGui::Checkbox("##IsTrigger", &isTrigger))
 			{
 				SetIsTrigger(isTrigger);
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			if (DisplayVector3Field("Size", size, 0.1f, "%.1f"))
 			{
 				UpdateScale();
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			ImGui::TreePop();

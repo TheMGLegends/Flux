@@ -35,13 +35,13 @@ namespace Flux
 
 	void SceneViewCamera::LateUpdate(float deltaTime)
 	{
-		if (!EditorConfig::isMouseOverSceneView) { return; }
+		if (!EditorConfig::IsMouseOverSceneView()) { return; }
 
 		// INFO: Mouse Mode Switching Logic
 		if (Input::GetMouseButtonDown(SDL_BUTTON_RIGHT))
 		{
 			EditorConfig::StorePreviousTransformOperation();
-			EditorConfig::currentTransformOperation = -1;
+			EditorConfig::SetCurretTransformOperation(EditorConfig::PAN);
 			Input::SetMouseMode(true);
 		}
 		else if (Input::GetMouseButtonUp(SDL_BUTTON_RIGHT))
@@ -104,7 +104,7 @@ namespace Flux
 		}
 
 		// INFO: Movement Speed Adjustment Logic
-		if (EditorConfig::isSceneViewFocused)
+		if (EditorConfig::IsSceneViewFocused())
 		{
 			float scrollValue = 0.0f;
 			if (Input::GetMouseVerticalScroll(scrollValue))

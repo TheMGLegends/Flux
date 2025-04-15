@@ -43,7 +43,7 @@ namespace Flux
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 		if (ImGui::Checkbox("##ComponentActive", &isActive))
 		{
-			EditorConfig::sceneNeedsSaving = true;
+			EditorConfig::SetSceneNeedsSaving(true);
 		}
 		ImGui::PopStyleVar();
 
@@ -57,7 +57,7 @@ namespace Flux
 			if (gameObject) 
 			{ 
 				gameObject->RemoveComponent(weak_from_this()); 
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 		}
 		ImGui::PopStyleVar();
@@ -77,7 +77,7 @@ namespace Flux
 					if (ImGui::Selectable(model.first.c_str(), modelName == model.first))
 					{
 						SetModel(model.first);
-						EditorConfig::sceneNeedsSaving = true;
+						EditorConfig::SetSceneNeedsSaving(true);
 					}
 				}
 				ImGui::EndCombo();
@@ -89,7 +89,7 @@ namespace Flux
 				{
 					std::string modelName = static_cast<const char*>(payload->Data);
 					SetModel(modelName);
-					EditorConfig::sceneNeedsSaving = true;
+					EditorConfig::SetSceneNeedsSaving(true);
 				}
 
 				ImGui::EndDragDropTarget();
@@ -107,7 +107,7 @@ namespace Flux
 					if (ImGui::Selectable(texture.first.c_str(), textureName == texture.first))
 					{
 						SetMaterialTexture(texture.first);
-						EditorConfig::sceneNeedsSaving = true;
+						EditorConfig::SetSceneNeedsSaving(true);
 					}
 				}
 				ImGui::EndCombo();
@@ -120,7 +120,7 @@ namespace Flux
 				{
 					std::string textureName = static_cast<const char*>(payload->Data);
 					SetMaterialTexture(textureName);
-					EditorConfig::sceneNeedsSaving = true;
+					EditorConfig::SetSceneNeedsSaving(true);
 				}
 
 				ImGui::EndDragDropTarget();

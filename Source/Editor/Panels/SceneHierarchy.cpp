@@ -68,7 +68,7 @@ namespace Flux
 			}
 
 			// INFO: Scene Name
-			std::string sceneName = EditorConfig::sceneNeedsSaving ? scene.GetSceneName() + "*" : scene.GetSceneName();
+			std::string sceneName = EditorConfig::SceneNeedsSaving() ? scene.GetSceneName() + "*" : scene.GetSceneName();
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
 			ImGui::SetCursorPosX((windowSize.x - ImGui::CalcTextSize(sceneName.c_str()).x) * 0.5f);
 			ImGui::Text(sceneName.c_str());
@@ -123,9 +123,9 @@ namespace Flux
 							selectedGameObject = gameObject.get();
 
 							// INFO: Default to Translate Operation if we are currently in pan mode
-							if (EditorConfig::currentTransformOperation == -1)
+							if (EditorConfig::GetCurrentTransformOperation() == -1)
 							{
-								EditorConfig::currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
+								EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::TRANSLATE);
 							}
 						}
 
@@ -147,7 +147,7 @@ namespace Flux
 							if (ImGui::InputText("##CustomNameInput", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue))
 							{
 								isRenaming = false;
-								EditorConfig::sceneNeedsSaving = true;
+								EditorConfig::SetSceneNeedsSaving(true);
 							}
 						}
 						else
@@ -181,7 +181,7 @@ namespace Flux
 				if (ImGui::MenuItem("Empty GameObject"))
 				{
 					scene.gameObjects.emplace_back(GameObject::CreateGameObject("GameObject"));
-					EditorConfig::sceneNeedsSaving = true;
+					EditorConfig::SetSceneNeedsSaving(true);
 				}
 
 				// INFO: Go through each reflected game object type and add a menu item for each
@@ -190,7 +190,7 @@ namespace Flux
 					if (ImGui::MenuItem(it.first.c_str()))
 					{
 						scene.gameObjects.emplace_back(GameObject::CreateGameObject(it.first));
-						EditorConfig::sceneNeedsSaving = true;
+						EditorConfig::SetSceneNeedsSaving(true);
 					}
 				}
 

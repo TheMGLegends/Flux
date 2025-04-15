@@ -15,8 +15,8 @@ namespace Flux
 	class EditorRuntime
 	{
 	public:
-		EditorRuntime() = default;
-		~EditorRuntime() = default;
+		EditorRuntime();
+		~EditorRuntime();
 
 		int PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext);
 		int Initialise(Renderer& renderer);

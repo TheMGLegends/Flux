@@ -183,10 +183,7 @@ namespace Flux
 		{
 			SerializeScene(scenePath);
 
-			if (EditorConfig::sceneNeedsSaving)
-			{
-				EditorConfig::sceneNeedsSaving = false;
-			}
+			if (EditorConfig::SceneNeedsSaving()) { EditorConfig::SetSceneNeedsSaving(false); }
 		}
 		else if (eventType == EventType::LoadScene)
 		{
@@ -518,8 +515,9 @@ namespace Flux
 
 	void Scene::DeserializeScene(const std::filesystem::path& path)
 	{
+		EditorConfig::SetSceneNeedsSaving(false);
+
 		scenePath = path;
-		EditorConfig::sceneNeedsSaving = false;
 
 		// INFO: Clear existing scene contents before loading 'new' scene
 		gameObjects.clear();

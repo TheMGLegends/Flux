@@ -95,7 +95,7 @@ namespace Flux
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 		if (ImGui::Checkbox("##ComponentActive", &isActive))
 		{
-			EditorConfig::sceneNeedsSaving = true;
+			EditorConfig::SetSceneNeedsSaving(true);
 		}
 		ImGui::PopStyleVar();
 
@@ -109,7 +109,7 @@ namespace Flux
 			if (gameObject) 
 			{ 
 				gameObject->RemoveComponent(weak_from_this());
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 		}
 		ImGui::PopStyleVar();
@@ -123,7 +123,7 @@ namespace Flux
 			ImGui::SetNextItemWidth(50.0f);
 			if (ImGui::InputFloat("##Radius", &mass, 0.0f, 0.0f, "%.1f"))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			// INFO: Drag InputField
@@ -133,7 +133,7 @@ namespace Flux
 			ImGui::SetNextItemWidth(50.0f);
 			if (ImGui::InputFloat("##Drag", &drag, 0.0f, 0.0f, "%.2f"))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			// INFO: Angular Drag InputField
@@ -143,7 +143,7 @@ namespace Flux
 			ImGui::SetNextItemWidth(50.0f);
 			if (ImGui::InputFloat("##AngularDrag", &angularDrag, 0.0f, 0.0f, "%.2f"))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			// INFO: Use Gravity Checkbox
@@ -152,19 +152,19 @@ namespace Flux
 			ImGui::SetCursorPosX(136.0f);
 			if (ImGui::Checkbox("##UseGravity", &useGravity))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			// INFO: Constraints
 			ImGui::Text("Constraints");
 			if (DisplayArray3Field("Freeze Position", &positionConstraints[0]))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			if (DisplayArray3Field("Freeze Rotation", &rotationConstraints[0]))
 			{
-				EditorConfig::sceneNeedsSaving = true;
+				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
 			ImGui::TreePop();

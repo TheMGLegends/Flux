@@ -68,7 +68,7 @@ namespace Flux
 				if (ImGui::Checkbox("##GameObjectActive", &isActive))
 				{
 					selectedGameObject->SetIsActive(isActive);
-					EditorConfig::sceneNeedsSaving = true;
+					EditorConfig::SetSceneNeedsSaving(true);
 				}
 
 				ImGui::SameLine();
@@ -147,7 +147,7 @@ namespace Flux
 					if (menuItemClicked)
 					{
 						ComponentAlreadyExists(componentCount, static_cast<int>(selectedGameObject->GetComponents().size()), component);
-						EditorConfig::sceneNeedsSaving = true;
+						EditorConfig::SetSceneNeedsSaving(true);
 					}
 
 					ImGui::EndPopup();

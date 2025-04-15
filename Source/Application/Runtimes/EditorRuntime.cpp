@@ -24,6 +24,14 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
+	EditorRuntime::EditorRuntime()
+	{
+	}
+
+	EditorRuntime::~EditorRuntime()
+	{
+	}
+
 	int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext)
 	{
 		// INFO: ImGui Initialisation
