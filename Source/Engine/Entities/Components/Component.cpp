@@ -119,12 +119,12 @@ namespace Flux
 
 			if (mousePosition.x <= 1.0f)
 			{
-				mousePosition.x = EngineConfig::windowWidth - 2.0f;
+				mousePosition.x = EngineConfig::GetWindowWidth() - 2.0f;
 				Input::SetMousePosition(mousePosition);
 				io.MousePos = ImVec2(mousePosition.x, mousePosition.y);
 				io.MouseDelta = ImVec2(0.0f, 0.0f);
 			}
-			else if (mousePosition.x >= EngineConfig::windowWidth - 1.0f)
+			else if (mousePosition.x >= EngineConfig::GetWindowWidth() - 1.0f)
 			{
 				mousePosition.x = 2.0f;
 				Input::SetMousePosition(mousePosition);

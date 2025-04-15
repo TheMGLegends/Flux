@@ -23,7 +23,7 @@ namespace Flux
 		if (isStandalone) { RuntimeConfig::EnableStandalone(); }
 
 		// INFO: Disable Support for DirectInput (Legacy API), now loads faster
-		if (EngineConfig::disableDirectInput)
+		if (EngineConfig::DIRECT_INPUT_DISABLED)
 		{
 			SDL_SetHint(SDL_HINT_JOYSTICK_DIRECTINPUT, "0");
 		}
@@ -39,7 +39,7 @@ namespace Flux
 			return;
 		}
 
-		window = SDL_CreateWindow("Flux Engine", EngineConfig::windowWidth, EngineConfig::windowHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
+		window = SDL_CreateWindow("Flux Engine", EngineConfig::GetWindowWidth(), EngineConfig::GetWindowHeight(), SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
 
 		if (!window)
 		{
@@ -47,7 +47,7 @@ namespace Flux
 			return;
 		}
 
-		SDL_GetWindowSize(window, &EngineConfig::windowWidth, &EngineConfig::windowHeight);
+		SDL_GetWindowSize(window, &EngineConfig::WindowWidthRef(), &EngineConfig::WindowHeightRef());
 
 		// INFO: Input System Initialisation
 		if (IS_FAILURE(Input::Initialise(window)))

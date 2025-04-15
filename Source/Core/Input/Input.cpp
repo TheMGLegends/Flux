@@ -182,8 +182,8 @@ namespace Flux
 			case SDL_EVENT_WINDOW_RESIZED:
 			{
 				// INFO: Update global window size variables
-				EngineConfig::windowWidth = event.window.data1;
-				EngineConfig::windowHeight = event.window.data2;
+				EngineConfig::SetWindowWidth(event.window.data1);
+				EngineConfig::SetWindowHeight(event.window.data2);
 
 				EventDispatcher::QueueEvent(EventType::WindowResized, nullptr);
 				break;

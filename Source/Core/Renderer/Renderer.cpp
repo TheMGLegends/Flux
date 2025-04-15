@@ -65,8 +65,8 @@ namespace Flux
 		HRESULT hResult = { S_OK };
 
 		// INFO: Set the viewports
-		backBufferViewport.Width = static_cast<float>(EngineConfig::windowWidth);
-		backBufferViewport.Height = static_cast<float>(EngineConfig::windowHeight);
+		backBufferViewport.Width = static_cast<float>(EngineConfig::GetWindowWidth());
+		backBufferViewport.Height = static_cast<float>(EngineConfig::GetWindowHeight());
 		backBufferViewport.MinDepth = 0.0f;
 		backBufferViewport.MaxDepth = 1.0f;
 		backBufferViewport.TopLeftX = 0.0f;
@@ -437,7 +437,10 @@ namespace Flux
 
 	void Renderer::OnWindowResized()
 	{
-		if (EngineConfig::windowWidth == 0.0f || EngineConfig::windowHeight == 0.0f) { return; }
+		int windowWidth = EngineConfig::GetWindowWidth();
+		int windowHeight = EngineConfig::GetWindowHeight();
+
+		if (windowWidth == 0.0f || windowHeight == 0.0f) { return; }
 
 		if (swapChain)
 		{
@@ -447,7 +450,7 @@ namespace Flux
 
 			HRESULT hResult = { S_OK };
 
-			hResult = swapChain->ResizeBuffers(0, EngineConfig::windowWidth, EngineConfig::windowHeight, DXGI_FORMAT_UNKNOWN, 0);
+			hResult = swapChain->ResizeBuffers(0, windowWidth, windowHeight, DXGI_FORMAT_UNKNOWN, 0);
 
 			if (FAILED(hResult))
 			{
@@ -474,8 +477,8 @@ namespace Flux
 				return;
 			}
 
-			backBufferViewport.Width = static_cast<float>(EngineConfig::windowWidth);
-			backBufferViewport.Height = static_cast<float>(EngineConfig::windowHeight);
+			backBufferViewport.Width = static_cast<float>(windowWidth);
+			backBufferViewport.Height = static_cast<float>(windowHeight);
 
 			deviceContext->OMSetRenderTargets(1, backBufferRenderTargetView.GetAddressOf(), nullptr);
 			deviceContext->RSSetViewports(1, &backBufferViewport);
