@@ -37,6 +37,18 @@ namespace Flux
 	{
 		SetIsActive(isActive);
 		SetIsTrigger(isTrigger);
+
+		// INFO: Set global pose for rigid actor
+		std::shared_ptr<Transform> transform = GetGameObject()->GetComponent<Transform>().lock();
+
+		if (transform)
+		{
+			Vector3 position = transform->GetPosition();
+			Quaternion rotation = transform->GetRotation();
+
+			physx::PxTransform physxTransform(physx::PxVec3(position.x, position.y, position.z),
+											  physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w));
+		}
 	}
 
 	void Collider::SetIsActive(bool _isActive)

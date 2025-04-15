@@ -4,9 +4,6 @@
 #include <imgui_internal.h>
 #include <PxRigidDynamic.h>
 
-#include "PhysicsBody.h"
-#include "Colliders/Collider.h"
-
 #include "Core/Configs/EditorConfig.h"
 
 #include "Engine/Entities/GameObjects/GameObject.h"
@@ -33,7 +30,6 @@ namespace Flux
 			// INFO: Translation Row
 			if (DisplayVector3Field("Position", position))
 			{
-				SetPositionEditor(position);
 				EditorConfig::sceneNeedsSaving = true;
 			}
 
@@ -43,18 +39,17 @@ namespace Flux
 			eulerRotation.y = DirectX::XMConvertToDegrees(eulerRotation.y);
 			eulerRotation.z = DirectX::XMConvertToDegrees(eulerRotation.z);
 
-			if (DisplayVector3Field("Rotation", eulerRotation, 1.0f, "%.1f"))
+			if (DisplayVector3Field("Rotation", eulerRotation, 1.0f, "%.1f", -89.0f, 89.0f))
 			{
-				SetRotationEditor(Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(eulerRotation.y),
-					DirectX::XMConvertToRadians(eulerRotation.x),
-					DirectX::XMConvertToRadians(eulerRotation.z)));
+				rotation = Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(eulerRotation.y),
+															  DirectX::XMConvertToRadians(eulerRotation.x),
+															  DirectX::XMConvertToRadians(eulerRotation.z));
 				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			// INFO: Scale Row
 			if (DisplayVector3Field("Scale", scale))
 			{
-				SetScale(scale);
 				EditorConfig::sceneNeedsSaving = true;
 			}
 
@@ -130,15 +125,6 @@ namespace Flux
 	void Transform::SetScale(const DirectX::SimpleMath::Vector3& _scale)
 	{
 		scale = _scale;
-
-		// INFO: Make collider bounds match the transform scale + offset scale of the collider
-		if (GetGameObject()->HasComponent<Collider>())
-		{
-			if (std::shared_ptr<Collider> collider = GetGameObject()->GetComponent<Collider>().lock())
-			{
-				collider->UpdateScale();
-			}
-		}
 	}
 
 	void Transform::Rotate(const Vector3& eulerRotation)
@@ -147,38 +133,5 @@ namespace Flux
 
 		// INFO: Combine the current rotation with the new rotation
 		rotation *= rotationQuaternion;
-	}
-
-	void Transform::SetPositionEditor(const DirectX::SimpleMath::Vector3& _position)
-	{
-		position = _position;
-
-		// INFO: If game object has a physics body we need to setGlobalPose
-		if (GetGameObject()->HasComponent<PhysicsBody>())
-		{
-			physx::PxRigidDynamic* rigidDynamic = GetGameObject()->GetComponent<PhysicsBody>().lock()->VerifyRigidActor();
-
-			if (rigidDynamic)
-			{
-				rigidDynamic->setGlobalPose(physx::PxTransform(physx::PxVec3(position.x, position.y, position.z),
-					physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
-			}
-		}
-	}
-
-	void Transform::SetRotationEditor(const DirectX::SimpleMath::Quaternion& _rotation)
-	{
-		rotation = _rotation;
-
-		// INFO: If game object has a physics body we need to setGlobalPose
-		if (GetGameObject()->HasComponent<PhysicsBody>())
-		{
-			physx::PxRigidDynamic* rigidDynamic = GetGameObject()->GetComponent<PhysicsBody>().lock()->VerifyRigidActor();
-			if (rigidDynamic)
-			{
-				rigidDynamic->setGlobalPose(physx::PxTransform(physx::PxVec3(position.x, position.y, position.z),
-					physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
-			}
-		}
 	}
 }

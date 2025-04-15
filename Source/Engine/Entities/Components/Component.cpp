@@ -44,7 +44,7 @@ namespace Flux
 		if (isActive != _isActive) { isActive = _isActive; }
 	}
 
-	bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed, const char* format)
+	bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed, const char* format, float min, float max)
 	{
 		if (ImGui::BeginTable(label, 2))
 		{
@@ -67,7 +67,7 @@ namespace Flux
 			ImGui::Button("X");
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
-			if (ImGui::DragFloat("##X", &value.x, speed, 0.0f, 0.0f, format))
+			if (ImGui::DragFloat("##X", &value.x, speed, min, max, format, ImGuiSliderFlags_ClampOnInput))
 			{
 				draggingBox = true;
 			}
@@ -115,16 +115,21 @@ namespace Flux
 		if (draggingBox)
 		{
 			Vector2 mousePosition = Input::GetMousePosition();
+			ImGuiIO& io = ImGui::GetIO();
 
 			if (mousePosition.x <= 1.0f)
 			{
 				mousePosition.x = EngineConfig::windowWidth - 2.0f;
 				Input::SetMousePosition(mousePosition);
+				io.MousePos = ImVec2(mousePosition.x, mousePosition.y);
+				io.MouseDelta = ImVec2(0.0f, 0.0f);
 			}
 			else if (mousePosition.x >= EngineConfig::windowWidth - 1.0f)
 			{
 				mousePosition.x = 2.0f;
 				Input::SetMousePosition(mousePosition);
+				io.MousePos = ImVec2(mousePosition.x, mousePosition.y);
+				io.MouseDelta = ImVec2(0.0f, 0.0f);
 			}
 
 			if (Input::GetMouseButtonUp(SDL_BUTTON_LEFT))

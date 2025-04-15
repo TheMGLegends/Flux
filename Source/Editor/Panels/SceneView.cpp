@@ -205,7 +205,7 @@ namespace Flux
 
 						Vector3 positionVector;
 						DirectX::XMStoreFloat3(&positionVector, position);
-						transform->SetPositionEditor(positionVector);
+						transform->SetPosition(positionVector);
 
 						Vector3 scaleVector;
 						DirectX::XMStoreFloat3(&scaleVector, scale);
@@ -213,7 +213,7 @@ namespace Flux
 
 						Quaternion rotationQuaternion;
 						DirectX::XMStoreFloat4(&rotationQuaternion, rotation);
-						transform->SetRotationEditor(rotationQuaternion);
+						transform->SetRotation(rotationQuaternion);
 
 						EditorConfig::sceneNeedsSaving = true;
 					}
