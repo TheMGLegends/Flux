@@ -36,6 +36,13 @@ namespace Flux
 		}
 	}
 
+	void SphereCollider::Start()
+	{
+		Collider::Start();
+
+		SetRadius(radius);
+	}
+
 	void SphereCollider::DrawDetails()
 	{
 		ImGui::PushID(this);
@@ -118,7 +125,7 @@ namespace Flux
 		Collider::Deserialize(json);
 
 		// INFO: Deserialize SphereCollider Data
-		SetRadius(json["Radius"].get<float>());
+		radius = json["Radius"].get<float>();
 	}
 
 	void SphereCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
@@ -191,7 +198,7 @@ namespace Flux
 
 	void SphereCollider::SetRadius(float _radius)
 	{
-		radius = _radius;
+		if (radius != _radius) { radius = _radius; }
 		UpdateScale();
 	}
 

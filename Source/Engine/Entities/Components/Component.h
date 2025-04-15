@@ -21,6 +21,9 @@ namespace Flux
 		/// @brief Called after the Component is constructed and added to the GameObject
 		virtual void PostConstruction() {}
 
+		/// @brief Called before GameObject start inside of Scene start
+		virtual void Start() {}
+
 		/// @brief Called by details panel, should implement logic to draw the component details using ImGui
 		virtual void DrawDetails() {}
 

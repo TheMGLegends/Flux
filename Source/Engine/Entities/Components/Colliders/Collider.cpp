@@ -33,6 +33,12 @@ namespace Flux
 		SetRigidActor();
 	}
 
+	void Collider::Start()
+	{
+		SetIsActive(isActive);
+		SetIsTrigger(isTrigger);
+	}
+
 	void Collider::SetIsActive(bool _isActive)
 	{
 		Component::SetIsActive(_isActive);
@@ -127,7 +133,7 @@ namespace Flux
 		Component::Deserialize(json);
 
 		// INFO: Deserialize Collider Data
-		SetIsTrigger(json["IsTrigger"].get<bool>());
+		isTrigger = json["IsTrigger"].get<bool>();
 		centre = Vector3(json["Centre"][0].get<float>(), json["Centre"][1].get<float>(), json["Centre"][2].get<float>());
 	}
 
@@ -160,7 +166,14 @@ namespace Flux
 				{
 					physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
 					rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-					rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
+
+					std::shared_ptr<PhysicsBody> physicsBody = GetGameObject()->GetComponent<PhysicsBody>().lock();
+
+					// INFO: Only enable gravity if theres an associated PhysicsBody that uses gravity
+					if (physicsBody && physicsBody->UsesGravity())
+					{
+						rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
+					}
 				}
 			}
 		}

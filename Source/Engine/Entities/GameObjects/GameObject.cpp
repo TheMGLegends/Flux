@@ -101,6 +101,17 @@ namespace Flux
 		if (isActive)
 		{
 			OnEnable();
+
+			// INFO: Components Start
+			for (size_t i = 0; i < components.size(); i++)
+			{
+				std::shared_ptr<Component>& component = components[i];
+
+				if (!component->IsActive()) { continue; }
+
+				component->Start();
+			}
+
 			Start();
 		}
 		else

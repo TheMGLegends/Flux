@@ -214,7 +214,7 @@ namespace Flux
 		}
 
 		SetMaterialTexture(json["SkyboxTexture"].get<std::string>());
-		SetUseSkybox(json["UseSkybox"].get<bool>());
+		useSkybox = json["UseSkybox"].get<bool>();
 
 		// INFO: Initialise Bounding Frustum
 		SetFrustum();

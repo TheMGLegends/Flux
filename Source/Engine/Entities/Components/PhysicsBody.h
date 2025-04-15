@@ -29,6 +29,7 @@ namespace Flux
 		virtual ~PhysicsBody() override;
 
 		virtual void PostConstruction() override;
+		virtual void Start() override;
 		virtual void DrawDetails() override;
 
 		virtual void Serialize(nlohmann::flux_json& json) const override;

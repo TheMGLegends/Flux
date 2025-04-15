@@ -290,6 +290,18 @@ namespace Flux
 
 	void Scene::Start()
 	{
+		// INFO: Components Start
+		for (size_t i = 0; i < components.size(); i++)
+		{
+			std::vector<std::weak_ptr<Component>>& componentList = components[static_cast<ComponentType>(i+1)];
+			for (size_t j = 0; j < componentList.size(); j++)
+			{
+				std::shared_ptr<Component> component = componentList[j].lock();
+				if (component) { component->Start(); }
+			}
+		}
+
+		// INFO: GameObject Start
 		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
 			std::unique_ptr<GameObject>& gameObject = gameObjects[i];

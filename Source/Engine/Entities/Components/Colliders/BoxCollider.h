@@ -10,6 +10,7 @@ namespace Flux
 		BoxCollider(GameObject* _gameObject);
 		virtual ~BoxCollider() override;
 
+		virtual void Start() override;
 		virtual void DrawDetails() override;
 
 		virtual void Serialize(nlohmann::flux_json& json) const override;

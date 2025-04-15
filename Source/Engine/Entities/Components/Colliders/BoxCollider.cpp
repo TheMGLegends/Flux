@@ -34,6 +34,13 @@ namespace Flux
 		}
 	}
 
+	void BoxCollider::Start()
+	{
+		Collider::Start();
+
+		SetSize(size);
+	}
+
 	void BoxCollider::DrawDetails()
 	{
 		ImGui::PushID(this);
@@ -111,7 +118,7 @@ namespace Flux
 		Collider::Deserialize(json);
 
 		// INFO: Deserialize BoxCollider Data
-		SetSize(Vector3(json["Size"][0].get<float>(), json["Size"][1].get<float>(), json["Size"][2].get<float>()));
+		size = Vector3(json["Size"][0].get<float>(), json["Size"][1].get<float>(), json["Size"][2].get<float>());
 	}
 
 	void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
@@ -185,7 +192,7 @@ namespace Flux
 		colliderShape->setSimulationFilterData(filterData);
 
 		// INFO: Reset trigger state
-		SetIsTrigger(IsTrigger());
+		SetIsTrigger(isTrigger);
 
 		// INFO: Ensure Rigid Actor is valid
 		if (rigidActor)
@@ -224,7 +231,7 @@ namespace Flux
 
 	void BoxCollider::SetSize(const DirectX::SimpleMath::Vector3& _size)
 	{
-		size = _size;
+		if (size != _size) { size = _size; }
 		UpdateScale();
 	}
 }

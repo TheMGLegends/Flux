@@ -41,7 +41,7 @@ namespace Flux
 
 	void Component::SetIsActive(bool _isActive)
 	{
-		isActive = _isActive;
+		if (isActive != _isActive) { isActive = _isActive; }
 	}
 
 	bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed, const char* format)

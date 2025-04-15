@@ -10,6 +10,7 @@ namespace Flux
 		SphereCollider(GameObject* _gameObject);
 		virtual ~SphereCollider() override;
 
+		virtual void Start() override;
 		virtual void DrawDetails() override;
 
 		virtual void Serialize(nlohmann::flux_json& json) const override;

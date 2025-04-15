@@ -37,7 +37,8 @@ namespace Flux
 	{
 	public:
 		Collider(GameObject* _gameObject);
-
+		
+		virtual void Start() override;
 		virtual void SetIsActive(bool _isActive) override;
 
 		void Update(float alpha);

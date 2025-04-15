@@ -64,11 +64,22 @@ namespace Flux
 					collider->SetColliderShape();
 				}
 			}
+		}
+	}
 
-			// INFO: Set RigidActor Properties
-			SetMass(mass);
-			SetDrag(drag);
-			SetAngularDrag(angularDrag);
+	void PhysicsBody::Start()
+	{
+		// INFO: Initialise rigid actor with values from the PhysicsBody ready for simulation
+		SetIsActive(isActive);
+		SetMass(mass);
+		SetDrag(drag);
+		SetAngularDrag(angularDrag);
+		SetUseGravity(useGravity);
+
+		for (size_t i = 0; i < static_cast<size_t>(ConstraintAxis::Count); ++i)
+		{
+			SetPositionConstraint(positionConstraints[i], static_cast<ConstraintAxis>(i));
+			SetRotationConstraint(rotationConstraints[i], static_cast<ConstraintAxis>(i));
 		}
 	}
 
@@ -112,7 +123,6 @@ namespace Flux
 			ImGui::SetNextItemWidth(50.0f);
 			if (ImGui::InputFloat("##Radius", &mass, 0.0f, 0.0f, "%.1f"))
 			{
-				SetMass(mass);
 				EditorConfig::sceneNeedsSaving = true;
 			}
 
@@ -123,7 +133,6 @@ namespace Flux
 			ImGui::SetNextItemWidth(50.0f);
 			if (ImGui::InputFloat("##Drag", &drag, 0.0f, 0.0f, "%.2f"))
 			{
-				SetDrag(drag);
 				EditorConfig::sceneNeedsSaving = true;
 			}
 
@@ -134,7 +143,6 @@ namespace Flux
 			ImGui::SetNextItemWidth(50.0f);
 			if (ImGui::InputFloat("##AngularDrag", &angularDrag, 0.0f, 0.0f, "%.2f"))
 			{
-				SetAngularDrag(angularDrag);
 				EditorConfig::sceneNeedsSaving = true;
 			}
 
@@ -144,7 +152,6 @@ namespace Flux
 			ImGui::SetCursorPosX(136.0f);
 			if (ImGui::Checkbox("##UseGravity", &useGravity))
 			{
-				SetUseGravity(useGravity);
 				EditorConfig::sceneNeedsSaving = true;
 			}
 
@@ -152,17 +159,11 @@ namespace Flux
 			ImGui::Text("Constraints");
 			if (DisplayArray3Field("Freeze Position", &positionConstraints[0]))
 			{
-				SetPositionConstraint(positionConstraints[0], ConstraintAxis::X);
-				SetPositionConstraint(positionConstraints[1], ConstraintAxis::Y);
-				SetPositionConstraint(positionConstraints[2], ConstraintAxis::Z);
 				EditorConfig::sceneNeedsSaving = true;
 			}
 
 			if (DisplayArray3Field("Freeze Rotation", &rotationConstraints[0]))
 			{
-				SetRotationConstraint(rotationConstraints[0], ConstraintAxis::X);
-				SetRotationConstraint(rotationConstraints[1], ConstraintAxis::Y);
-				SetRotationConstraint(rotationConstraints[2], ConstraintAxis::Z);
 				EditorConfig::sceneNeedsSaving = true;
 			}
 
@@ -193,21 +194,21 @@ namespace Flux
 		Component::Deserialize(json);
 
 		// INFO: Deserialize PhysicsBody Data
-		SetMass(json["Mass"].get<float>());
-		SetDrag(json["Drag"].get<float>());
-		SetAngularDrag(json["AngularDrag"].get<float>());
-		SetUseGravity(json["UseGravity"].get<bool>());
+		mass = json["Mass"].get<float>();
+		drag = json["Drag"].get<float>();
+		angularDrag = json["AngularDrag"].get<float>();
+		useGravity = json["UseGravity"].get<bool>();
 
 		auto& positionConstraintsJson = json["PositionConstraints"];
 		for (size_t i = 0; i < positionConstraintsJson.size(); ++i)
 		{
-			SetPositionConstraint(positionConstraintsJson[i].get<bool>(), static_cast<ConstraintAxis>(i));
+			positionConstraints[i] = positionConstraintsJson[i].get<bool>();
 		}
 
 		auto& rotationConstraintsJson = json["RotationConstraints"];
 		for (size_t i = 0; i < rotationConstraintsJson.size(); ++i)
 		{
-			SetRotationConstraint(rotationConstraintsJson[i].get<bool>(), static_cast<ConstraintAxis>(i));
+			rotationConstraints[i] = rotationConstraintsJson[i].get<bool>();
 		}
 	}
 
@@ -240,7 +241,7 @@ namespace Flux
 
 	void PhysicsBody::SetMass(float _mass)
 	{
-		mass = _mass;
+		if (mass != _mass) { mass = _mass; }
 
 		physx::PxRigidDynamic* rigidDynamic = VerifyRigidActor();
 
@@ -252,7 +253,7 @@ namespace Flux
 
 	void PhysicsBody::SetDrag(float _drag)
 	{
-		drag = _drag;
+		if (drag != _drag) { drag = _drag; }
 
 		physx::PxRigidDynamic* rigidDynamic = VerifyRigidActor();
 
@@ -264,7 +265,7 @@ namespace Flux
 
 	void PhysicsBody::SetAngularDrag(float _angularDrag)
 	{
-		angularDrag = _angularDrag;
+		if (angularDrag != _angularDrag) { angularDrag = _angularDrag; }
 
 		physx::PxRigidDynamic* rigidDynamic = VerifyRigidActor();
 
@@ -276,7 +277,7 @@ namespace Flux
 
 	void PhysicsBody::SetUseGravity(bool _useGravity)
 	{
-		useGravity = _useGravity;
+		if (useGravity != _useGravity) { useGravity = _useGravity; }
 
 		physx::PxRigidDynamic* rigidDynamic = VerifyRigidActor();
 
@@ -294,7 +295,10 @@ namespace Flux
 			return;
 		}
 
-		positionConstraints[static_cast<size_t>(axis)] = isConstrained;
+		if (positionConstraints[static_cast<size_t>(axis)] != isConstrained)
+		{
+			positionConstraints[static_cast<size_t>(axis)] = isConstrained;
+		}
 
 		physx::PxRigidDynamic* rigidDynamic = VerifyRigidActor();
 
@@ -314,7 +318,10 @@ namespace Flux
 			return;
 		}
 
-		rotationConstraints[static_cast<size_t>(axis)] = isConstrained;
+		if (rotationConstraints[static_cast<size_t>(axis)] != isConstrained)
+		{
+			rotationConstraints[static_cast<size_t>(axis)] = isConstrained;
+		}
 
 		physx::PxRigidDynamic* rigidDynamic = VerifyRigidActor();
 
@@ -330,13 +337,19 @@ namespace Flux
 	{
 		if (std::shared_ptr<Collider> collider = attachedCollider.lock())
 		{
-			if (collider->GetRigidActorType() == RigidActorType::Dynamic)
+			RigidActorType actorType = collider->GetRigidActorType();
+
+			if (actorType == RigidActorType::Dynamic)
 			{
 				return static_cast<physx::PxRigidDynamic*>(collider->GetRigidActor());
 			}
+			else if (actorType == RigidActorType::Static)
+			{
+				return nullptr;
+			}
 		}
 
-		Debug::LogError("PhysicsBody::VerifyRigidActor() - No Collider found or Collider is not dynamic");
+		Debug::LogError("PhysicsBody::VerifyRigidActor() - No collider found");
 		return nullptr;
 	}
 
