@@ -255,7 +255,6 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <ClInclude Include="Source\Application\Application.h" />
     <ClInclude Include="Source\Application\Runtimes\EditorRuntime.h" />
     <ClInclude Include="Source\Application\Runtimes\EngineRuntime.h" />
-    <ClInclude Include="Source\Application\Runtimes\Runtime.h" />
     <ClInclude Include="Source\Core\Configs\DirectXConfig.h" />
     <ClInclude Include="Source\Engine\Entities\Components\PhysicsBody.h" />
     <ClInclude Include="Source\Engine\Entities\Components\Colliders\BoxCollider.h" />

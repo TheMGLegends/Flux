@@ -24,21 +24,6 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
-	EditorRuntime::EditorRuntime() : sceneHierarchy(nullptr), sceneView(nullptr), detailsPanel(nullptr), contentsDrawer(nullptr)
-	{
-	}
-
-	EditorRuntime::~EditorRuntime()
-	{
-	}
-
-	void EditorRuntime::Release()
-	{
-		ImGui_ImplDX11_Shutdown();
-		ImGui_ImplSDL3_Shutdown();
-		ImGui::DestroyContext();
-	}
-
 	int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext)
 	{
 		// INFO: ImGui Initialisation
@@ -72,7 +57,7 @@ namespace Flux
 		}
 
 		ImGuizmo::SetImGuiContext(context);
-		ImGuizmo::AllowAxisFlip(false);
+		ImGuizmo::AllowAxisFlip(false); // INFO: Only draws transform gizmos in the positive direction
 
 		return FLUX_SUCCESS;
 	}
@@ -83,7 +68,7 @@ namespace Flux
 
 		// INFO: Editor Panel Initialisations
 		editorPanels.emplace_back(std::make_unique<SceneHierarchy>());
-		sceneHierarchy = static_cast<SceneHierarchy*>(editorPanels.back().get());
+		SceneHierarchy* sceneHierarchy = static_cast<SceneHierarchy*>(editorPanels.back().get());
 
 		if (!sceneHierarchy)
 		{
@@ -92,27 +77,24 @@ namespace Flux
 		}
 
 		editorPanels.emplace_back(std::make_unique<SceneView>(renderer, sceneHierarchy));
-		sceneView = static_cast<SceneView*>(editorPanels.back().get());
 
-		if (!sceneView)
+		if (!editorPanels.back())
 		{
 			Debug::LogError("EditorRuntime::Initialise() - Failed to create SceneView");
 			return FLUX_FAILURE;
 		}
 
 		editorPanels.emplace_back(std::make_unique<DetailsPanel>(sceneHierarchy));
-		detailsPanel = static_cast<DetailsPanel*>(editorPanels.back().get());
 
-		if (!detailsPanel)
+		if (!editorPanels.back())
 		{
 			Debug::LogError("EditorRuntime::Initialise() - Failed to create DetailsPanel");
 			return FLUX_FAILURE;
 		}
 
 		editorPanels.emplace_back(std::make_unique<ContentsDrawer>());
-		contentsDrawer = static_cast<ContentsDrawer*>(editorPanels.back().get());
 
-		if (!contentsDrawer)
+		if (!editorPanels.back())
 		{
 			Debug::LogError("EditorRuntime::Initialise() - Failed to create ContentsDrawer");
 			return FLUX_FAILURE;
@@ -121,6 +103,7 @@ namespace Flux
 		for (size_t i = 0; i < editorPanels.size(); i++)
 		{
 			std::unique_ptr<EditorPanel>& editorPanel = editorPanels[i];
+
 			if (IS_FAILURE(editorPanel->Initialise()))
 			{
 				Debug::LogError("EditorRuntime::Initialise() - Failed to initialise EditorPanel");
@@ -133,6 +116,8 @@ namespace Flux
 
 	void EditorRuntime::Update(float deltaTime)
 	{
+		FrameRateMonitor::Update(deltaTime);
+
 		// INFO: Toggle FPS Counter Visibility
 		if (Input::GetKeyDown(SDL_SCANCODE_F3)) { FrameRateMonitor::Toggle(); }
 
@@ -144,8 +129,6 @@ namespace Flux
 				EventDispatcher::Notify(EventType::SaveScene, nullptr);
 			}
 		}
-
-		FrameRateMonitor::Update(deltaTime);
 
 		ImGui_ImplSDL3_NewFrame();
 		ImGui_ImplDX11_NewFrame();
@@ -161,6 +144,13 @@ namespace Flux
 			std::unique_ptr<EditorPanel>& editorPanel = editorPanels[i];
 			editorPanel->Update(deltaTime);
 		}
+	}
+
+	void EditorRuntime::Release()
+	{
+		ImGui_ImplDX11_Shutdown();
+		ImGui_ImplSDL3_Shutdown();
+		ImGui::DestroyContext();
 	}
 
 	void EditorRuntime::SetCustomStyle()

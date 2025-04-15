@@ -88,7 +88,7 @@ namespace Flux
 			return;
 		}
 
-		if (!RuntimeConfig::IsStandalone())
+		if (!isStandalone)
 		{
 			// INFO: Editor Runtime Initialisation
 			if (IS_FAILURE(editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext())))

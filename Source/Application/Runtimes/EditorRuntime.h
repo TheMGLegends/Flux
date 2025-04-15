@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Runtime.h"
-
 #include <memory>
 #include <vector>
 
@@ -11,24 +9,20 @@ struct SDL_Window;
 
 namespace Flux
 {
-	class ContentsDrawer;
-	class DetailsPanel;
 	class EditorPanel;
 	class Renderer;
-	class SceneHierarchy;
-	class SceneView;
 
-	class EditorRuntime : public Runtime
+	class EditorRuntime
 	{
 	public:
-		EditorRuntime();
-		virtual ~EditorRuntime() override;
-
-		virtual void Release() override;
+		EditorRuntime() = default;
+		~EditorRuntime() = default;
 
 		int PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext);
 		int Initialise(Renderer& renderer);
 		void Update(float deltaTime);
+
+		void Release();
 
 	private:
 		/// @brief Set the custom style for ImGui
@@ -36,11 +30,6 @@ namespace Flux
 
 	private:
 		std::vector<std::unique_ptr<EditorPanel>> editorPanels;
-
-		SceneHierarchy* sceneHierarchy;
-		SceneView* sceneView;
-		DetailsPanel* detailsPanel;
-		ContentsDrawer* contentsDrawer;
 	};
 }
 

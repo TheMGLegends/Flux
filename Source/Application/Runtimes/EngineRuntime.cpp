@@ -22,22 +22,6 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
-	EngineRuntime::EngineRuntime()
-	{
-	}
-
-	EngineRuntime::~EngineRuntime()
-	{
-	}
-
-	void EngineRuntime::Release()
-	{
-		scene.reset();
-
-		Audio::Release();
-		Physics::Release();
-	}
-
 	int EngineRuntime::PreInitialise()
 	{
 		if (IS_FAILURE(Physics::Initialise()))
@@ -95,7 +79,19 @@ namespace Flux
 	void EngineRuntime::LateUpdate(float deltaTime)
 	{
 		scene->LateUpdate(deltaTime);
+		UpdateAudioSystem();
+	}
 
+	void EngineRuntime::Release()
+	{
+		scene.reset();
+
+		Audio::Release();
+		Physics::Release();
+	}
+
+	void EngineRuntime::UpdateAudioSystem()
+	{
 		// INFO: Update Audio System and Current Listener if in Play Mode
 		if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 		{
@@ -107,7 +103,7 @@ namespace Flux
 				Vector3 forward = cameraTransform->Forward();
 				Vector3 up = cameraTransform->Up();
 				Audio::SetListenerAttributes({ position.x, position.y, position.z }, { 0.0f, 0.0f, 0.0f },
-											 { forward.x, forward.y, forward.z }, { up.x, up.y, up.z });
+					{ forward.x, forward.y, forward.z }, { up.x, up.y, up.z });
 			}
 
 			Audio::Update();
