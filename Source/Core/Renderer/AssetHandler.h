@@ -73,7 +73,7 @@ namespace Flux
 		static std::unordered_map<std::string, std::unique_ptr<Model>>& GetModels();
 
 		static const std::filesystem::path& GetScenePath(const std::string& sceneName);
-		static int GetSceneCount() { return static_cast<int>(scenePaths.size()); }
+		static int GetSceneCount();
 
 	private:
 		static HRESULT LoadShaders(DirectXConfig::ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath);

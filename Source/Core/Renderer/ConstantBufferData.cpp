@@ -18,9 +18,7 @@ namespace Flux
 	{
 	}
 
-	ConstantBufferData::~ConstantBufferData()
-	{
-	}
+	ConstantBufferData::~ConstantBufferData() = default;
 
 	ConstantBufferType ConstantBufferData::GetConstantBufferType() const
 	{

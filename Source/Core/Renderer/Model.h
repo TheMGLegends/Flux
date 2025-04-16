@@ -20,19 +20,18 @@ namespace Flux
 		struct Vertex
 		{
 		public:
-			Vertex() : position(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)), color(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)),
-				       texCoord(DirectX::XMFLOAT2(0.0f, 0.0f)), normal(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)) {}
+			Vertex() = default;
 			~Vertex() = default;
 
 		public:
-			DirectX::XMFLOAT3 position;
-			DirectX::XMFLOAT4 color;
-			DirectX::XMFLOAT2 texCoord;
-			DirectX::XMFLOAT3 normal;
+			DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+			DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			DirectX::XMFLOAT2 texCoord = DirectX::XMFLOAT2(0.0f, 0.0f);
+			DirectX::XMFLOAT3 normal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
 		};
 
 	public:
-		Model(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, const std::string& _modelName);
+		Model(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, std::string_view _modelName);
 		~Model();
 
 		void Draw(ID3D11DeviceContext& deviceContext);

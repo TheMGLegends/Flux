@@ -12,7 +12,7 @@ namespace Flux
 		EngineRuntime();
 		~EngineRuntime();
 
-		int PreInitialise();
+		int PreInitialise() const;
 		int Initialise();
 
 		void Start();

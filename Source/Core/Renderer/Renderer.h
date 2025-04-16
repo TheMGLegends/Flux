@@ -28,9 +28,9 @@ namespace Flux
 	{
 	public:
 		Renderer();
-		~Renderer();
+		~Renderer() override;
 
-		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
+		void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
 		HRESULT Initialise(HWND hWnd);
 		int PostInitialise();

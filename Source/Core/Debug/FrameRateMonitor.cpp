@@ -1,5 +1,6 @@
 #include "FrameRateMonitor.h"
 
+#include <format>
 #include <SimpleMath.h>
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
@@ -42,7 +43,7 @@ namespace Flux::FrameRateMonitor
 
 		if (currentFrameTime >= 1.0f)
 		{
-			frameRate = "FPS: " + std::to_string(static_cast<int>(Time::GetFrameCount()));
+			frameRate = std::format("FPS: {}", static_cast<int>(Time::GetFrameCount()));
 			currentFrameTime = 0.0f;
 		}
 	}

@@ -9,8 +9,8 @@ namespace Flux
 	class GameObjectRemovedEvent : public Event
 	{
 	public:
-		GameObjectRemovedEvent(GameObject* _gameObject);
-		virtual ~GameObjectRemovedEvent() override;
+		explicit GameObjectRemovedEvent(GameObject* _gameObject);
+		~GameObjectRemovedEvent() override;
 
 	public:
 		GameObject* gameObject;

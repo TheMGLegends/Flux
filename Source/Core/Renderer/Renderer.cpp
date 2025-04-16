@@ -39,7 +39,7 @@ namespace Flux
 	using namespace GlobalDefines;
 
 	Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullptr), renderTargetView(nullptr), depthStencilView(nullptr), 
-						   spriteBatch(nullptr), backBufferViewport(), sceneViewViewport(), depthDisabled(nullptr)
+						   backBufferViewport(), sceneViewViewport(), spriteBatch(nullptr), depthDisabled(nullptr)
 	{
 	}
 
@@ -72,8 +72,8 @@ namespace Flux
 		backBufferViewport.TopLeftX = 0.0f;
 		backBufferViewport.TopLeftY = 0.0f;
 
-		sceneViewViewport.Width = static_cast<float>(EditorConfig::GetSceneViewWidth());
-		sceneViewViewport.Height = static_cast<float>(EditorConfig::GetSceneViewHeight());
+		sceneViewViewport.Width = EditorConfig::GetSceneViewWidth();
+		sceneViewViewport.Height = EditorConfig::GetSceneViewHeight();
 		sceneViewViewport.MinDepth = 0.0f;
 		sceneViewViewport.MaxDepth = 1.0f;
 		sceneViewViewport.TopLeftX = 0.0f;
@@ -276,13 +276,10 @@ namespace Flux
 			return FLUX_FAILURE;
 		}
 
-		if (!RuntimeConfig::IsStandalone())
+		if (!RuntimeConfig::IsStandalone() && FLUX_FAIL(EventDispatcher::AddListener(EventType::SceneViewResized, this)))
 		{
-			if (FLUX_FAIL(EventDispatcher::AddListener(EventType::SceneViewResized, this)))
-			{
-				Debug::LogError("Renderer::Initialise() - Failed to add Scene View Resized event listener");
-				return FLUX_FAILURE;
-			}
+			Debug::LogError("Renderer::Initialise() - Failed to add Scene View Resized event listener");
+			return FLUX_FAILURE;
 		}
 
 		return hResult; // INFO: S_OK so long as we've made it this far
@@ -356,32 +353,28 @@ namespace Flux
 
 		if (camera->UseSkybox()) { camera->DrawSkybox(*deviceContext.Get(), translation, view, projection); }
 
-		for (auto& weakVisualizer : scene.GetComponents<Visualizer>())
+		for (const auto& weakVisualizer : scene.GetComponents<Visualizer>())
 		{
 			std::shared_ptr<Visualizer> visualizer = weakVisualizer.lock();
 			if (!visualizer) { continue; }
 
-			GameObject* owningGameObject = visualizer->GetGameObject();
+			const GameObject* owningGameObject = visualizer->GetGameObject();
 			if (!owningGameObject->IsActive() || !visualizer->IsActive()) { continue; }
 
-			Material& material = visualizer->GetMaterial();
+			const Material& material = visualizer->GetMaterial();
 			std::shared_ptr<Transform> transform = owningGameObject->transform.lock();
 
 			DirectX::XMMATRIX world = transform->GetWorldMatrix();
 
-			switch (material.GetConstantBufferType())
-			{
-			case ConstantBufferType::Unlit:
+			if (material.GetConstantBufferType() == ConstantBufferType::Unlit)
 			{
 				UnlitVS unlitVS{};
 				unlitVS.wvp = world * view * projection;
 				deviceContext->UpdateSubresource(material.GetConstantBuffer(), 0, nullptr, &unlitVS, 0, 0);
-
-				break;
 			}
-			case ConstantBufferType::None:
-			default:
-				break;
+			else
+			{
+				Debug::LogError("Renderer::RenderFrame() - Unsupported Constant Buffer Type");
 			}
 
 			visualizer->Draw(*deviceContext.Get());
@@ -455,11 +448,11 @@ namespace Flux
 		int windowWidth = EngineConfig::GetWindowWidth();
 		int windowHeight = EngineConfig::GetWindowHeight();
 
-		if (windowWidth == 0.0f || windowHeight == 0.0f) { return; }
+		if (windowWidth == 0 || windowHeight == 0) { return; }
 
 		if (swapChain)
 		{
-			deviceContext->OMSetRenderTargets(0, 0, 0);
+			deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
 			backBufferRenderTargetView->Release();
 
@@ -509,7 +502,7 @@ namespace Flux
 
 		if (renderTargetView)
 		{
-			deviceContext->OMSetRenderTargets(0, 0, 0);
+			deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
 			renderTexture.Reset();
 			renderTextureShaderResourceView.Reset();

@@ -23,7 +23,7 @@ namespace Flux
 		/// @brief Prevents the same listener from being added to the same event type multiple times
 		static int AddListener(EventType eventType, IEventListener* listener);
 		/// @brief Removes a listener from all event types it is listening to
-		static void RemoveListener(IEventListener* listener);
+		static void RemoveListener(const IEventListener* listener);
 
 		/// @brief Immediate notification of all listeners listening to the event type
 		static void Notify(EventType eventType, std::shared_ptr<Event> event);

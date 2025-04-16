@@ -18,15 +18,15 @@ namespace Flux
 		EditorRuntime();
 		~EditorRuntime();
 
-		int PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext);
+		int PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext) const;
 		int Initialise(Renderer& renderer);
-		void Update(float deltaTime);
+		void Update(float deltaTime) const;
 
-		void Release();
+		void Release() const;
 
 	private:
 		/// @brief Set the custom style for ImGui
-		void SetCustomStyle();
+		void SetCustomStyle() const;
 
 	private:
 		std::vector<std::unique_ptr<EditorPanel>> editorPanels;

@@ -25,8 +25,8 @@ namespace Flux
 
 	SDL_MouseButtonFlags Input::currentMouseState = 0;
 	SDL_MouseButtonFlags Input::previousMouseState = 0;
-	Vector2 Input::mousePosition = Vector2::Zero;
-	Vector2 Input::latestAbsoluteMousePosition = Vector2::Zero;
+	Vector2 Input::mousePosition = { 0.0f, 0.0f };
+	Vector2 Input::latestAbsoluteMousePosition = { 0.0f, 0.0f };
 	bool Input::isRelative = false;
 	float Input::mouseVerticalScroll = 0.0f;
 
@@ -314,9 +314,8 @@ namespace Flux
 	int Input::InitialiseGamepad()
 	{
 		int count = 0;
-		SDL_JoystickID* joysticks = SDL_GetJoysticks(&count);
 
-		if (count > 0 && joysticks)
+		if (const SDL_JoystickID* joysticks = SDL_GetJoysticks(&count); count > 0 && joysticks)
 		{
 			for (size_t i = 0; i < count; i++)
 			{
@@ -422,9 +421,7 @@ namespace Flux
 		{
 			for (size_t i = 0; i < SDL_GAMEPAD_AXIS_COUNT; i++)
 			{
-				Sint16 value = SDL_GetGamepadAxis(gamepad, (SDL_GamepadAxis)i);
-
-				if (std::abs(value) > DEADZONE)
+				if (Sint16 value = SDL_GetGamepadAxis(gamepad, (SDL_GamepadAxis)i); std::abs(value) > DEADZONE)
 				{
 					currentGamepadAxisState[i] = value;
 				}
@@ -432,8 +429,6 @@ namespace Flux
 				{
 					currentGamepadAxisState[i] = 0;
 				}
-
-				currentGamepadAxisState[i];
 			}
 		}
 	}

@@ -25,15 +25,11 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
-	EditorRuntime::EditorRuntime()
-	{
-	}
+	EditorRuntime::EditorRuntime() = default;
 
-	EditorRuntime::~EditorRuntime()
-	{
-	}
+	EditorRuntime::~EditorRuntime() = default;
 
-	int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext)
+	int EditorRuntime::PreInitialise(SDL_Window* window, ID3D11Device& device, ID3D11DeviceContext& deviceContext) const
 	{
 		// INFO: ImGui Initialisation
 		IMGUI_CHECKVERSION();
@@ -85,7 +81,7 @@ namespace Flux
 
 		// INFO: Editor Panel Initialisations
 		editorPanels.emplace_back(std::make_unique<SceneHierarchy>());
-		SceneHierarchy* sceneHierarchy = static_cast<SceneHierarchy*>(editorPanels.back().get());
+		auto sceneHierarchy = static_cast<SceneHierarchy*>(editorPanels.back().get());
 
 		if (!sceneHierarchy)
 		{
@@ -117,13 +113,11 @@ namespace Flux
 			return FLUX_FAILURE;
 		}
 
-		for (size_t i = 0; i < editorPanels.size(); i++)
+		for (const auto& editorPanel : editorPanels)
 		{
-			std::unique_ptr<EditorPanel>& editorPanel = editorPanels[i];
-
 			if (FLUX_FAIL(editorPanel->Initialise()))
 			{
-				Debug::LogError("EditorRuntime::Initialise() - Failed to initialise EditorPanel");
+				Debug::LogError("EditorRuntime::Initialise() - Failed to pre-initialise EditorPanel");
 				return FLUX_FAILURE;
 			}
 		}
@@ -131,7 +125,7 @@ namespace Flux
 		return FLUX_SUCCESS;
 	}
 
-	void EditorRuntime::Update(float deltaTime)
+	void EditorRuntime::Update(float deltaTime) const
 	{
 		FrameRateMonitor::Update(deltaTime);
 
@@ -139,12 +133,9 @@ namespace Flux
 		if (Input::GetKeyDown(SDL_SCANCODE_F3)) { FrameRateMonitor::Toggle(); }
 
 		// INFO: Save Scene if CTRL+S is Pressed and in Editor Mode
-		if (RuntimeConfig::IsInEditorMode())
+		if (RuntimeConfig::IsInEditorMode() && Input::GetKey(SDL_SCANCODE_LCTRL) && Input::GetKeyDown(SDL_SCANCODE_S))
 		{
-			if (Input::GetKey(SDL_SCANCODE_LCTRL) && Input::GetKeyDown(SDL_SCANCODE_S))
-			{
-				EventDispatcher::Notify(EventType::SaveScene, nullptr);
-			}
+			EventDispatcher::Notify(EventType::SaveScene, nullptr);
 		}
 
 		ImGui_ImplSDL3_NewFrame();
@@ -156,21 +147,20 @@ namespace Flux
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID, nullptr, dockspaceFlags);
 
 		// INFO: Update Editor Panels
-		for (size_t i = 0; i < editorPanels.size(); i++)
+		for (auto& editorPanel : editorPanels)
 		{
-			std::unique_ptr<EditorPanel>& editorPanel = editorPanels[i];
 			editorPanel->Update(deltaTime);
 		}
 	}
 
-	void EditorRuntime::Release()
+	void EditorRuntime::Release() const
 	{
 		ImGui_ImplDX11_Shutdown();
 		ImGui_ImplSDL3_Shutdown();
 		ImGui::DestroyContext();
 	}
 
-	void EditorRuntime::SetCustomStyle()
+	void EditorRuntime::SetCustomStyle() const
 	{
 		auto& colours = ImGui::GetStyle().Colors;
 		colours[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };

@@ -7,7 +7,7 @@
 
 namespace Flux
 {
-	Model::Model(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, const std::string& _modelName)
+	Model::Model(ID3D11Device& device, ID3D11DeviceContext& deviceContext, const aiScene* modelData, std::string_view _modelName)
 	{
 		if (!modelData)
 		{
@@ -17,67 +17,68 @@ namespace Flux
 
 		modelName = _modelName;
 
-		if (modelData->HasMeshes())
+		if (!modelData->HasMeshes())
 		{
-			aiMesh* mesh = modelData->mMeshes[0];
+			Debug::LogError("Model::Initialise() - Model has no meshes");
+			return;
+		}
 
-			for (size_t i = 0; i < mesh->mNumVertices; i++)
+		const aiMesh* mesh = modelData->mMeshes[0];
+
+		for (size_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++)
+		{
+			Vertex vertex;
+
+			// INFO: Load Position Data
+			if (mesh->HasPositions())
 			{
-				Vertex vertex;
-
-				// INFO: Load Position Data
-				if (mesh->HasPositions())
-				{
-					vertex.position.x = mesh->mVertices[i].x;
-					vertex.position.y = mesh->mVertices[i].y;
-					vertex.position.z = mesh->mVertices[i].z;
-				}
-
-				// INFO: Load Color Data
-				if (mesh->HasVertexColors(0))
-				{
-					vertex.color.x = mesh->mColors[0][i].r;
-					vertex.color.y = mesh->mColors[0][i].g;
-					vertex.color.z = mesh->mColors[0][i].b;
-					vertex.color.w = mesh->mColors[0][i].a;
-				}
-
-				// INFO: Load Texture Coordinate Data
-				if (mesh->HasTextureCoords(0))
-				{
-					vertex.texCoord.x = mesh->mTextureCoords[0][i].x;
-					vertex.texCoord.y = mesh->mTextureCoords[0][i].y;
-				}
-
-				// INFO: Load Normal Data
-				if (mesh->HasNormals())
-				{
-					vertex.normal.x = mesh->mNormals[i].x;
-					vertex.normal.y = mesh->mNormals[i].y;
-					vertex.normal.z = mesh->mNormals[i].z;
-				}
-
-				vertices.push_back(vertex);
+				vertex.position.x = mesh->mVertices[vertexIndex].x;
+				vertex.position.y = mesh->mVertices[vertexIndex].y;
+				vertex.position.z = mesh->mVertices[vertexIndex].z;
 			}
+
+			// INFO: Load Color Data
+			if (mesh->HasVertexColors(0))
+			{
+				vertex.color.x = mesh->mColors[0][vertexIndex].r;
+				vertex.color.y = mesh->mColors[0][vertexIndex].g;
+				vertex.color.z = mesh->mColors[0][vertexIndex].b;
+				vertex.color.w = mesh->mColors[0][vertexIndex].a;
+			}
+
+			// INFO: Load Texture Coordinate Data
+			if (mesh->HasTextureCoords(0))
+			{
+				vertex.texCoord.x = mesh->mTextureCoords[0][vertexIndex].x;
+				vertex.texCoord.y = mesh->mTextureCoords[0][vertexIndex].y;
+			}
+
+			// INFO: Load Normal Data
+			if (mesh->HasNormals())
+			{
+				vertex.normal.x = mesh->mNormals[vertexIndex].x;
+				vertex.normal.y = mesh->mNormals[vertexIndex].y;
+				vertex.normal.z = mesh->mNormals[vertexIndex].z;
+			}
+
+			vertices.push_back(vertex);
 
 			// INFO: Load Index Data
-			if (mesh->HasFaces())
+			if (!mesh->HasFaces())
 			{
-				for (size_t i = 0; i < mesh->mNumFaces; i++)
-				{
-					aiFace face = mesh->mFaces[i];
+				Debug::LogError("Model::Initialise() - Model has no faces");
+				return;
+			}
 
-					for (size_t j = 0; j < face.mNumIndices; j++)
-					{
-						indices.push_back(face.mIndices[j]);
-					}
+			for (size_t faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++)
+			{
+				aiFace face = mesh->mFaces[faceIndex];
+
+				for (size_t indicesIndex = 0; indicesIndex < face.mNumIndices; indicesIndex++)
+				{
+					indices.push_back(face.mIndices[indicesIndex]);
 				}
 			}
-		}
-		else
-		{
-			Debug::LogWarning("Model::Initialise() - Model has no meshes");
-			return;
 		}
 
 		D3D11_BUFFER_DESC vbd = {};

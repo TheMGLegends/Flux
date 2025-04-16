@@ -14,9 +14,12 @@ namespace Flux
 	int EventDispatcher::AddListener(EventType eventType, IEventListener* listener)
 	{
 		// INFO: Check if the listener is already listening to the event type
-		for (size_t i = 0; i < listeners[eventType].size(); i++)
+		if (auto it = listeners.find(eventType); it != listeners.end())
 		{
-			if (listeners[eventType][i] == listener) { return FLUX_FAILURE; }
+			for (const IEventListener* existingListener : it->second)
+			{
+				if (existingListener == listener) { return FLUX_FAILURE; }
+			}
 		}
 
 		listeners[eventType].push_back(listener);
@@ -27,7 +30,7 @@ namespace Flux
 		return FLUX_FAILURE;
 	}
 
-	void EventDispatcher::RemoveListener(IEventListener* listener)
+	void EventDispatcher::RemoveListener(const IEventListener* listener)
 	{
 		for (auto it = listeners.begin(); it != listeners.end(); it++)
 		{
@@ -45,15 +48,20 @@ namespace Flux
 
 	void EventDispatcher::Notify(EventType eventType, std::shared_ptr<Event> event)
 	{
-		for (size_t i = 0; i < listeners[eventType].size(); i++)
+		if (auto it = listeners.find(eventType); it != listeners.end())
 		{
-			listeners[eventType][i]->OnNotify(eventType, event);
+			for (IEventListener* eventListener : it->second)
+			{
+				if (eventListener == nullptr) { continue; }
+
+				eventListener->OnNotify(eventType, event);
+			}
 		}
 	}
 
 	void EventDispatcher::QueueEvent(EventType eventType, std::shared_ptr<Event> event)
 	{
-		eventQueue.push(std::make_pair(eventType, std::move(event)));
+		eventQueue.emplace(eventType, std::move(event));
 	}
 
 	void EventDispatcher::ProcessEvents()
@@ -62,8 +70,8 @@ namespace Flux
 
 		while (!eventQueue.empty())
 		{
-			auto& event = eventQueue.front();
-			Notify(event.first, event.second);
+			const auto& [eventType, event] = eventQueue.front();
+			Notify(eventType, event);
 			eventQueue.pop();
 		}
 	}

@@ -6,7 +6,5 @@ namespace Flux
 	{
 	}
 
-	GameObjectRemovedEvent::~GameObjectRemovedEvent()
-	{
-	}
+	GameObjectRemovedEvent::~GameObjectRemovedEvent() = default;
 }

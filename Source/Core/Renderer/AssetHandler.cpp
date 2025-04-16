@@ -75,7 +75,7 @@ namespace Flux
 
 		if (FAILED(LoadSamplerState())) { return E_FAIL; }
 
-		LoadAssets(FiletypeConfig::ASSET_DIRECTORY);
+		if (FAILED(LoadAssets(FiletypeConfig::ASSET_DIRECTORY))) { return E_FAIL; }
 
 		if (FLUX_FAIL(LoadMaterial(ShaderType::Unlit))) { return E_FAIL; }
 		if (FLUX_FAIL(LoadMaterial(ShaderType::Skybox))) { return E_FAIL; }
@@ -91,51 +91,27 @@ namespace Flux
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(assetDirectory))
 		{
 			// INFO: Don't bother with checking directories (Folders)
-			if (entry.is_regular_file())
-			{
-				std::string extensionType = StringHelpers::ToLower(entry.path().extension().string());
+			if (!entry.is_regular_file()) { continue; }
 
-				// INFO: Font Loading
-				if (extensionType == FiletypeConfig::SPRITEFONT)
-				{
-					if (FLUX_FAIL(LoadFont(entry.path()))) { return E_FAIL; }
-					continue;
-				}
+			std::string extensionType = StringHelpers::ToLower(entry.path().extension().string());
 
-				// INFO: Skybox Texture Loading
-				if (extensionType == FiletypeConfig::DDS)
-				{
-					if (FAILED(LoadTexture(entry.path(), true))) { return E_FAIL; }
-					continue;
-				}
+			// INFO: Font Loading
+			if (extensionType == FiletypeConfig::SPRITEFONT && FLUX_FAIL(LoadFont(entry.path()))) { return E_FAIL; }
 
-				// INFO: Texture Loading
-				if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
-				{
-					if (FAILED(LoadTexture(entry.path()))) { return E_FAIL; }
-					continue;
-				}
+			// INFO: Skybox Texture Loading
+			else if (extensionType == FiletypeConfig::DDS && FAILED(LoadTexture(entry.path(), true))) { return E_FAIL; }
 
-				// INFO: Model Loading
-				if (FiletypeConfig::IsSupportedModelFormat(extensionType))
-				{
-					if (FLUX_FAIL(LoadModel(entry.path(), importer))) { return E_FAIL; }
-					continue;
-				}
+			// INFO: Texture Loading
+			else if (FiletypeConfig::IsSupportedTextureFormat(extensionType) && FAILED(LoadTexture(entry.path()))) { return E_FAIL; }
 
-				// INFO: Audio Loading
-				if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
-				{
-					if (FLUX_FAIL(StoreAudioPath(entry.path()))) { return E_FAIL; }
-					continue;
-				}
+			// INFO: Model Loading
+			else if (FiletypeConfig::IsSupportedModelFormat(extensionType) && FLUX_FAIL(LoadModel(entry.path(), importer))) { return E_FAIL; }
 
-				// INFO: Scene Loading
-				if (extensionType == FiletypeConfig::SCENE)
-				{
-					StoreScenePath(entry.path().stem().string(), entry.path());
-				}
-			}
+			// INFO: Audio Loading
+			else if (FiletypeConfig::IsSupportedAudioFormat(extensionType) && FLUX_FAIL(StoreAudioPath(entry.path()))) { return E_FAIL; }
+
+			// INFO: Scene Loading
+			else if (extensionType == FiletypeConfig::SCENE && FLUX_FAIL(StoreScenePath(entry.path().stem().string(), entry.path()))) { return E_FAIL; }
 		}
 
 		return S_OK;
@@ -151,7 +127,7 @@ namespace Flux
 
 		ID3D11Device& deviceRef = device->get();
 
-		std::unique_ptr<DirectX::SpriteFont> font = std::make_unique<DirectX::SpriteFont>(&deviceRef, fontPath.c_str());
+		auto font = std::make_unique<DirectX::SpriteFont>(&deviceRef, fontPath.c_str());
 
 		if (!font)
 		{
@@ -159,7 +135,7 @@ namespace Flux
 			return FLUX_FAILURE;
 		}
 
-		if (!fonts.insert({ fontPath.stem().string(), std::move(font) }).second)
+		if (!fonts.try_emplace(fontPath.stem().string(), std::move(font)).second)
 		{
 			Debug::LogError("AssetHandler::LoadFont() - Failed to insert font into map. Filepath: " + fontPath.string());
 			return FLUX_FAILURE;
@@ -178,7 +154,7 @@ namespace Flux
 			return FLUX_FAILURE;
 		}
 
-		if (!imGuiFonts.insert({ fontPath.stem().string(), font }).second)
+		if (!imGuiFonts.try_emplace(fontPath.stem().string(), font).second)
 		{
 			Debug::LogError("AssetHandler::LoadImGuiFont() - Failed to insert ImGui font into map. Filepath: " + fontPath.string());
 			return FLUX_FAILURE;
@@ -215,7 +191,7 @@ namespace Flux
 				return hResult;
 			}
 
-			if (!skyboxTextures.insert({ texturePath.stem().string(), texture }).second)
+			if (!skyboxTextures.try_emplace(texturePath.stem().string(), texture).second)
 			{
 				Debug::LogError("AssetHandler::LoadTexture() - Failed to insert skybox texture into map. Filepath: " + texturePath.string());
 				return E_FAIL;
@@ -231,7 +207,7 @@ namespace Flux
 				return hResult;
 			}
 
-			if (!textures.insert({ texturePath.stem().string(), std::move(texture) }).second)
+			if (!textures.try_emplace(texturePath.stem().string(), std::move(texture)).second)
 			{
 				Debug::LogError("AssetHandler::LoadTexture() - Failed to insert texture into map. Filepath: " + texturePath.string());
 				return E_FAIL;
@@ -260,7 +236,7 @@ namespace Flux
 			return FLUX_FAILURE;
 		}
 
-		std::unique_ptr<Model> model = std::make_unique<Model>(deviceRef, deviceContextRef, scene, modelPath.stem().string());
+		auto model = std::make_unique<Model>(deviceRef, deviceContextRef, scene, modelPath.stem().string());
 
 		if (!model)
 		{
@@ -268,7 +244,7 @@ namespace Flux
 			return FLUX_FAILURE;
 		}
 
-		if (!models.insert({ modelPath.stem().string(), std::move(model) }).second)
+		if (!models.try_emplace(modelPath.stem().string(), std::move(model)).second)
 		{
 			Debug::LogError("AssetHandler::LoadModel() - Failed to insert model into map. Filepath: " + modelPath.string());
 			return FLUX_FAILURE;
@@ -279,7 +255,7 @@ namespace Flux
 
 	int AssetHandler::StoreAudioPath(const std::filesystem::path& audioPath)
 	{
-		if (!audioPaths.insert({ audioPath.stem().string(), audioPath }).second)
+		if (!audioPaths.try_emplace(audioPath.stem().string(), audioPath).second)
 		{
 			Debug::LogError("AssetHandler::StoreAudioPath() - Failed to insert audio path into map. Filepath: " + audioPath.string());
 			return FLUX_FAILURE;
@@ -290,9 +266,9 @@ namespace Flux
 
 	int AssetHandler::StoreScenePath(const std::string& sceneName, const std::filesystem::path& scenePath)
 	{
-		if (!scenePaths.insert({ sceneName, scenePath }).second)
+		if (!scenePaths.try_emplace(sceneName, scenePath).second)
 		{
-			Debug::LogError("AssetHandler::LoadAssets() - Failed to insert scene path into map. Filepath: " + sceneName);
+			Debug::LogError("AssetHandler::LoadAssets() - Failed to insert scene path into map. Filepath: " + scenePath.stem().string());
 			return FLUX_FAILURE;
 		}
 
@@ -301,8 +277,7 @@ namespace Flux
 
 	ShaderData& AssetHandler::GetShaderData(ShaderType shaderType)
 	{
-		auto it = shaders.find(shaderType);
-		if (it != shaders.end()) { return it->second; }
+		if (auto it = shaders.find(shaderType); it != shaders.end()) { return it->second; }
 
 		Debug::LogError("AssetHandler::GetShaderData() - Failed to find shader data. Shader Type: " + std::to_string(magic_enum::enum_integer(shaderType)));
 		return EMPTY_SHADER_DATA;
@@ -310,8 +285,7 @@ namespace Flux
 
 	ConstantBufferData& AssetHandler::GetConstantBufferData(ConstantBufferType constantBufferType)
 	{
-		auto it = constantBuffers.find(constantBufferType);
-		if (it != constantBuffers.end()) { return it->second; }
+		if (auto it = constantBuffers.find(constantBufferType); it != constantBuffers.end()) { return it->second; }
 
 		Debug::LogError("AssetHandler::GetConstantBufferData() - Failed to find constant buffer data. Constant Buffer Type: " + std::to_string(magic_enum::enum_integer(constantBufferType)));
 		return EMPTY_CONSTANT_BUFFER_DATA;
@@ -319,8 +293,7 @@ namespace Flux
 
 	ID3D11DepthStencilState* AssetHandler::GetDepthWriteState(DepthWriteType depthWriteType)
 	{
-		auto it = depthWriteStates.find(depthWriteType);
-		if (it != depthWriteStates.end()) { return it->second.Get(); }
+		if (auto it = depthWriteStates.find(depthWriteType); it != depthWriteStates.end()) { return it->second.Get(); }
 
 		Debug::LogError("AssetHandler::GetDepthWriteState() - Failed to find depth write state. Depth Write Type: " + std::to_string(magic_enum::enum_integer(depthWriteType)));
 		return nullptr;
@@ -328,8 +301,7 @@ namespace Flux
 
 	ID3D11RasterizerState* AssetHandler::GetCullingModeState(CullingModeType cullingModeType)
 	{
-		auto it = cullingModeStates.find(cullingModeType);
-		if (it != cullingModeStates.end()) { return it->second.Get(); }
+		if (auto it = cullingModeStates.find(cullingModeType); it != cullingModeStates.end()) { return it->second.Get(); }
 
 		Debug::LogError("AssetHandler::GetCullingModeState() - Failed to find culling mode state. Culling Mode Type: " + std::to_string(magic_enum::enum_integer(cullingModeType)));
 		return nullptr;
@@ -342,8 +314,7 @@ namespace Flux
 
 	DirectX::SpriteFont* AssetHandler::GetFont(const std::string& fontName)
 	{
-		auto it = fonts.find(fontName);
-		if (it != fonts.end()) { return it->second.get(); }
+		if (auto it = fonts.find(fontName); it != fonts.end()) { return it->second.get(); }
 
 		Debug::LogError("AssetHandler::GetFont() - Failed to find font. Font Name: " + fontName);
 		return nullptr;
@@ -351,8 +322,7 @@ namespace Flux
 
 	ImFont* AssetHandler::GetImGuiFont(const std::string& fontName)
 	{
-		auto it = imGuiFonts.find(fontName);
-		if (it != imGuiFonts.end()) { return it->second; }
+		if (auto it = imGuiFonts.find(fontName); it != imGuiFonts.end()) { return it->second; }
 
 		Debug::LogError("AssetHandler::GetImGuiFont() - Failed to find ImGui font. Font Name: " + fontName);
 		return nullptr;
@@ -379,18 +349,17 @@ namespace Flux
 	{
 		if (isSkyboxTexture)
 		{
-			return skyboxTextures.find(textureName) != skyboxTextures.end();
+			return skyboxTextures.contains(textureName);
 		}
 		else
 		{
-			return textures.find(textureName) != textures.end();
+			return textures.contains(textureName);
 		}
 	}
 
 	Model* AssetHandler::GetModel(const std::string& modelName)
 	{
-		auto it = models.find(modelName);
-		if (it != models.end()) { return it->second.get(); }
+		if (auto it = models.find(modelName); it != models.end()) { return it->second.get(); }
 
 		Debug::LogError("AssetHandler::GetModel() - Failed to find model. Model Name: " + modelName);
 		return nullptr;
@@ -398,13 +367,12 @@ namespace Flux
 
 	bool AssetHandler::HasModel(const std::string& modelName)
 	{
-		return models.find(modelName) != models.end();
+		return models.contains(modelName);
 	}
 
 	Material AssetHandler::GetMaterial(ShaderType shaderType)
 	{
-		auto it = materials.find(shaderType);
-		if (it != materials.end()) { return it->second; }
+		if (auto it = materials.find(shaderType); it != materials.end()) { return it->second; }
 
 		Debug::LogError("AssetHandler::GetMaterial() - Failed to find material. Shader Type: " + std::string(magic_enum::enum_name(shaderType)));
 		return Material();
@@ -412,8 +380,7 @@ namespace Flux
 
 	const std::filesystem::path& Flux::AssetHandler::GetAudioPath(const std::string& audioName)
 	{
-		auto it = audioPaths.find(audioName);
-		if (it != audioPaths.end()) { return it->second; }
+		if (auto it = audioPaths.find(audioName); it != audioPaths.end()) { return it->second; }
 
 		Debug::LogError("AssetHandler::GetAudioPath() - Failed to find audio path. Audio Name: " + audioName);
 		return EMPTY_PATH;
@@ -421,7 +388,7 @@ namespace Flux
 
 	bool AssetHandler::HasAudioPath(const std::string& audioName)
 	{
-		return audioPaths.find(audioName) != audioPaths.end();
+		return audioPaths.contains(audioName);
 	}
 
 	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>>& AssetHandler::GetTextures(bool isSkyboxTextures)
@@ -443,11 +410,15 @@ namespace Flux
 
 	const std::filesystem::path& AssetHandler::GetScenePath(const std::string& sceneName)
 	{
-		auto it = scenePaths.find(sceneName);
-		if (it != scenePaths.end()) { return it->second; }
+		if (auto it = scenePaths.find(sceneName); it != scenePaths.end()) { return it->second; }
 
 		Debug::LogError("AssetHandler::GetScenePath() - Failed to find scene path. Scene Name: " + sceneName);
 		return EMPTY_PATH;
+	}
+
+	int AssetHandler::GetSceneCount()
+	{
+		return static_cast<int>(scenePaths.size());
 	}
 
 	HRESULT AssetHandler::LoadShaders(ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath)
@@ -493,14 +464,14 @@ namespace Flux
 			return hResult;
 		}
 
-		std::unique_ptr<D3D11_SIGNATURE_PARAMETER_DESC[]> signatureParameterDescriptions = std::make_unique<D3D11_SIGNATURE_PARAMETER_DESC[]>(vertexShaderDescription.InputParameters);
+		auto signatureParameterDescriptions = std::make_unique<D3D11_SIGNATURE_PARAMETER_DESC[]>(vertexShaderDescription.InputParameters);
 
 		for (UINT i = 0; i < vertexShaderDescription.InputParameters; ++i)
 		{
 			vertexShaderReflection->GetInputParameterDesc(i, &signatureParameterDescriptions[i]);
 		}
 
-		std::unique_ptr<D3D11_INPUT_ELEMENT_DESC[]> inputElementDescriptions = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(vertexShaderDescription.InputParameters);
+		auto inputElementDescriptions = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(vertexShaderDescription.InputParameters);
 
 		for (size_t i = 0; i < vertexShaderDescription.InputParameters; ++i)
 		{
@@ -547,9 +518,7 @@ namespace Flux
 		}
 
 		// INFO: Store Shader Data (Vertex Shader, Pixel Shader, Input Layout)
-		ShaderData shaderData(shaderType, vertexShader, pixelShader, inputLayout);
-
-		if (!shaders.insert({ shaderType, shaderData }).second)
+		if (!shaders.try_emplace(shaderType, shaderType, vertexShader, pixelShader, inputLayout).second)
 		{
 			Debug::LogError("AssetHandler::LoadShaders() - Failed to insert shader data into map. Shader Type: " + std::string(magic_enum::enum_name(shaderType)));
 			return E_FAIL;
@@ -573,14 +542,14 @@ namespace Flux
 		// INFO: Create Constant Buffer
 		D3D11_BUFFER_DESC constantBufferDescription = { 0 };
 
-		switch (constantBufferType)
+		if (constantBufferType == ConstantBufferType::Unlit)
 		{
-		case ConstantBufferType::Unlit:
 			constantBufferDescription.ByteWidth = sizeof(ConstantBuffers::UnlitVS);
-			break;
-		case ConstantBufferType::None:
-		default:
-			break;
+		}
+		else
+		{
+			Debug::LogError("AssetHandler::LoadConstantBuffer() - Invalid constant buffer type. Constant Buffer Type: " + std::string(magic_enum::enum_name(constantBufferType)));
+			return E_FAIL;
 		}
 
 		constantBufferDescription.Usage = D3D11_USAGE_DEFAULT;
@@ -598,9 +567,7 @@ namespace Flux
 			return hResult;
 		}
 
-		ConstantBufferData constantBufferData(constantBufferType, constantBuffer);
-
-		if (!constantBuffers.insert({ constantBufferType, constantBufferData }).second)
+		if (ConstantBufferData constantBufferData(constantBufferType, constantBuffer); !constantBuffers.try_emplace(constantBufferType, constantBufferData).second)
 		{
 			Debug::LogError("AssetHandler::LoadConstantBuffer() - Failed to insert constant buffer data into map. Constant Buffer Type: " + std::string(magic_enum::enum_name(constantBufferType)));
 			return E_FAIL;
@@ -627,13 +594,14 @@ namespace Flux
 
 		switch (depthWriteType)
 		{
-		case DepthWriteType::Enabled:
+		using enum Flux::DirectXConfig::DepthWriteType;
+		case Enabled:
 			depthStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 			break;
-		case DepthWriteType::Disabled:
+		case Disabled:
 			depthStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 			break;
-		case DepthWriteType::None:
+		case None:
 		default:
 			break;
 		}
@@ -689,15 +657,16 @@ namespace Flux
 
 		switch (cullingModeType)
 		{
-		case CullingModeType::FrontSolid:
+		using enum Flux::DirectXConfig::CullingModeType;
+		case FrontSolid:
 			rasterizerDescription.FillMode = D3D11_FILL_SOLID;
 			rasterizerDescription.CullMode = D3D11_CULL_FRONT;
 			break;
-		case CullingModeType::BackSolid:
+		case BackSolid:
 			rasterizerDescription.FillMode = D3D11_FILL_SOLID;
 			rasterizerDescription.CullMode = D3D11_CULL_BACK;
 			break;
-		case CullingModeType::None:
+		case None:
 		default:
 			break;
 		}
@@ -789,7 +758,7 @@ namespace Flux
 			break;
 		}
 
-		if (!materials.insert({ shaderType, material }).second)
+		if (!materials.try_emplace(shaderType, material).second)
 		{
 			Debug::LogError("AssetHandler::LoadMaterial() - Failed to insert material into map. Shader Type: " + std::string(magic_enum::enum_name(shaderType)));
 			return FLUX_FAILURE;
@@ -808,13 +777,10 @@ namespace Flux
 			hResult = E_FAIL;
 		}
 
-		if (verifyContext)
+		if (verifyContext && !deviceContext.has_value())
 		{
-			if (!deviceContext.has_value())
-			{
-				Debug::LogError("AssetHandler::VerifyDeviceAndContext() - Device Context is not initialised");
-				hResult = E_FAIL;
-			}
+			Debug::LogError("AssetHandler::VerifyDeviceAndContext() - Device Context is not initialised");
+			hResult = E_FAIL;
 		}
 
 		return hResult;

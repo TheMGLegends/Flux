@@ -26,11 +26,9 @@ namespace Flux
 	{
 	}
 
-	EngineRuntime::~EngineRuntime()
-	{
-	}
+	EngineRuntime::~EngineRuntime() = default;
 
-	int EngineRuntime::PreInitialise()
+	int EngineRuntime::PreInitialise() const
 	{
 		if (FLUX_FAIL(Physics::Initialise()))
 		{

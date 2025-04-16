@@ -9,7 +9,7 @@ namespace Flux::GameConfig
 		extern std::string starterSceneName;
 	}
 
-	void SetStarterSceneName(const std::string& _starterSceneName);
+	void SetStarterSceneName(std::string_view _starterSceneName);
 	const std::string& GetStarterSceneName();
 
 	void SerializeGameConfig();

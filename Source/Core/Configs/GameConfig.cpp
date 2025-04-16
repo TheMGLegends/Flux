@@ -12,7 +12,7 @@ namespace Flux::GameConfig
 		std::string starterSceneName = "";
 	}
 
-	void SetStarterSceneName(const std::string& _starterSceneName)
+	void SetStarterSceneName(std::string_view _starterSceneName)
 	{
 		using namespace Internal;
 		starterSceneName = _starterSceneName;

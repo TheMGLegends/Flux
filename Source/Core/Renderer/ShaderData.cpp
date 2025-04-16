@@ -19,9 +19,7 @@ namespace Flux
 	{
 	}
 
-	ShaderData::~ShaderData()
-	{
-	}
+	ShaderData::~ShaderData() = default;
 
 	ShaderType ShaderData::GetShaderType() const
 	{

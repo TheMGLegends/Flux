@@ -14,16 +14,16 @@ namespace Flux::FiletypeConfig
 
 	bool IsSupportedTextureFormat(const std::string& extension)
 	{
-		return SUPPORTED_TEXTURE_FORMATS.find(extension) != SUPPORTED_TEXTURE_FORMATS.end();
+		return SUPPORTED_TEXTURE_FORMATS.contains(extension);
 	}
 
 	bool IsSupportedModelFormat(const std::string& extension)
 	{
-		return SUPPORTED_MODEL_FORMATS.find(extension) != SUPPORTED_MODEL_FORMATS.end();
+		return SUPPORTED_MODEL_FORMATS.contains(extension);
 	}
 
 	bool IsSupportedAudioFormat(const std::string& extension)
 	{
-		return SUPPORTED_AUDIO_FORMATS.find(extension) != SUPPORTED_AUDIO_FORMATS.end();
+		return SUPPORTED_AUDIO_FORMATS.contains(extension);
 	}
 }

@@ -7,7 +7,5 @@ namespace Flux
 	{
 	}
 
-	LoadSceneEvent::~LoadSceneEvent()
-	{
-	}
+	LoadSceneEvent::~LoadSceneEvent() = default;
 }

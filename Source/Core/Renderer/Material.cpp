@@ -30,9 +30,7 @@ namespace Flux
 		sampler = AssetHandler::GetSamplerState();
 	}
 
-	Material::~Material()
-	{
-	}
+	Material::~Material() = default;
 
 	ConstantBufferType Material::GetConstantBufferType() const
 	{
