@@ -25,6 +25,28 @@ namespace Flux
 
 		const aiMesh* mesh = modelData->mMeshes[0];
 
+		// INFO: Find which index has the vertex colors
+		unsigned int vertexColourIndex = 0;
+		for (unsigned int i = 0; i < AI_MAX_NUMBER_OF_COLOR_SETS; i++)
+		{
+			if (mesh->HasVertexColors(i))
+			{
+				vertexColourIndex = i;
+				break;
+			}
+		}
+
+		// INFO: Find which index has the texture coordinates
+		unsigned int textureCoordinateIndex = 0;
+		for (unsigned int i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; i++)
+		{
+			if (mesh->HasTextureCoords(i))
+			{
+				textureCoordinateIndex = i;
+				break;
+			}
+		}
+
 		for (size_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++)
 		{
 			Vertex vertex;
@@ -38,7 +60,7 @@ namespace Flux
 			}
 
 			// INFO: Load Color Data
-			if (mesh->HasVertexColors(0))
+			if (mesh->HasVertexColors(vertexColourIndex))
 			{
 				vertex.color.x = mesh->mColors[0][vertexIndex].r;
 				vertex.color.y = mesh->mColors[0][vertexIndex].g;
@@ -47,7 +69,7 @@ namespace Flux
 			}
 
 			// INFO: Load Texture Coordinate Data
-			if (mesh->HasTextureCoords(0))
+			if (mesh->HasTextureCoords(textureCoordinateIndex))
 			{
 				vertex.texCoord.x = mesh->mTextureCoords[0][vertexIndex].x;
 				vertex.texCoord.y = mesh->mTextureCoords[0][vertexIndex].y;

@@ -233,6 +233,7 @@ namespace Flux
 		if (!scene)
 		{
 			Debug::LogError("AssetHandler::LoadModel() - Failed to load model. Filepath: " + modelPath.string());
+			Debug::LogError("AssetHandler::LoadModel() - Assimp Error: " + std::string(importer.GetErrorString()));
 			return FLUX_FAILURE;
 		}
 
