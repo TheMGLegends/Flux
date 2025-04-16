@@ -22,7 +22,7 @@ namespace Flux
 	{
 		currentTime = steady_clock::now();
 
-		deltaTime = duration_cast<microseconds>(currentTime - previousTime).count() / MICRO_TO_SEC;
+		deltaTime = static_cast<double>(duration_cast<microseconds>(currentTime - previousTime).count()) / MICRO_TO_SEC;
 		elapsedTime += deltaTime;
 
 		if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
@@ -43,9 +43,24 @@ namespace Flux
 		return false;
 	}
 
+	float Time::DeltaTime()
+	{
+		return static_cast<float>(deltaTime);
+	}
+
+	float Time::ElapsedTime()
+	{
+		return static_cast<float>(elapsedTime);
+	}
+
 	void Time::DecrementAccumulator()
 	{
 		accumulator -= static_cast<double>(TimeConfig::FIXED_DELTA_TIME);
+	}
+
+	float Time::Alpha()
+	{
+		return static_cast<float>(alpha);
 	}
 
 	unsigned int Time::GetFrameCount()

@@ -15,11 +15,11 @@ namespace Flux
 		static void Tick();
 		static bool PerformPhysicsUpdate();
 
-		static float DeltaTime() { return static_cast<float>(deltaTime); }
-		static float ElapsedTime() { return static_cast<float>(elapsedTime); }
+		static float DeltaTime();
+		static float ElapsedTime();
 
 		static void DecrementAccumulator();
-		static float Alpha() { return static_cast<float>(alpha); }
+		static float Alpha();
 		static unsigned int GetFrameCount();
 
 	private:
