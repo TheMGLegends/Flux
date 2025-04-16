@@ -75,8 +75,8 @@ namespace Flux
 
 		LoadAssets(FiletypeConfig::ASSET_DIRECTORY);
 
-		if (IS_FAILURE(LoadMaterial(ShaderType::Unlit))) { return E_FAIL; }
-		if (IS_FAILURE(LoadMaterial(ShaderType::Skybox))) { return E_FAIL; }
+		if (FLUX_FAIL(LoadMaterial(ShaderType::Unlit))) { return E_FAIL; }
+		if (FLUX_FAIL(LoadMaterial(ShaderType::Skybox))) { return E_FAIL; }
 
 		return S_OK;
 	}
@@ -96,7 +96,7 @@ namespace Flux
 				// INFO: Font Loading
 				if (extensionType == FiletypeConfig::SPRITEFONT)
 				{
-					if (IS_FAILURE(LoadFont(entry.path()))) { return E_FAIL; }
+					if (FLUX_FAIL(LoadFont(entry.path()))) { return E_FAIL; }
 					continue;
 				}
 
@@ -117,14 +117,14 @@ namespace Flux
 				// INFO: Model Loading
 				if (FiletypeConfig::IsSupportedModelFormat(extensionType))
 				{
-					if (IS_FAILURE(LoadModel(entry.path(), importer))) { return E_FAIL; }
+					if (FLUX_FAIL(LoadModel(entry.path(), importer))) { return E_FAIL; }
 					continue;
 				}
 
 				// INFO: Audio Loading
 				if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
 				{
-					if (IS_FAILURE(LoadAudio(entry.path()))) { return E_FAIL; }
+					if (FLUX_FAIL(LoadAudio(entry.path()))) { return E_FAIL; }
 					continue;
 				}
 

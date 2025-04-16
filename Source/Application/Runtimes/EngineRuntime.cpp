@@ -32,13 +32,13 @@ namespace Flux
 
 	int EngineRuntime::PreInitialise()
 	{
-		if (IS_FAILURE(Physics::Initialise()))
+		if (FLUX_FAIL(Physics::Initialise()))
 		{
 			Debug::LogError("EngineRuntime::PreInitialise() - Failed to initialise Physics System");
 			return FLUX_FAILURE;
 		}
 
-		if (IS_FAILURE(Audio::Initialise()))
+		if (FLUX_FAIL(Audio::Initialise()))
 		{
 			Debug::LogError("EngineRuntime::PreInitialise() - Failed to initialise Audio System");
 			return FLUX_FAILURE;

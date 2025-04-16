@@ -32,25 +32,25 @@ namespace Flux
 		SceneContext::SetScene(this);
 
 		// INFO: Setup Events to Listen For
-		if (IS_FAILURE(EventDispatcher::AddListener(EventType::GameObjectRemoved, this)))
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::GameObjectRemoved, this)))
 		{
 			Debug::LogError("Scene::Scene() - Failed to add GameObjectRemoved event listener");
 			return;
 		}
 
-		if (IS_FAILURE(EventDispatcher::AddListener(EventType::PlayModeExited, this)))
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::PlayModeExited, this)))
 		{
 			Debug::LogError("Scene::Scene() - Failed to add PlayModeExited event listener");
 			return;
 		}
 
-		if (IS_FAILURE(EventDispatcher::AddListener(EventType::SaveScene, this)))
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::SaveScene, this)))
 		{
 			Debug::LogError("Scene::Scene() - Failed to add SaveScene event listener");
 			return;
 		}
 
-		if (IS_FAILURE(EventDispatcher::AddListener(EventType::LoadScene, this)))
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::LoadScene, this)))
 		{
 			Debug::LogError("Scene::Scene() - Failed to add LoadScene event listener");
 			return;

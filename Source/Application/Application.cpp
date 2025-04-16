@@ -50,7 +50,7 @@ namespace Flux
 		SDL_GetWindowSize(window, &EngineConfig::WindowWidthRef(), &EngineConfig::WindowHeightRef());
 
 		// INFO: Input System Initialisation
-		if (IS_FAILURE(Input::Initialise(window)))
+		if (FLUX_FAIL(Input::Initialise(window)))
 		{
 			Debug::LogError("Application::Application() - Failed to initialise Input System");
 			return;
@@ -69,20 +69,20 @@ namespace Flux
 			return;
 		}
 
-		if (IS_FAILURE(renderer.PostInitialise()))
+		if (FLUX_FAIL(renderer.PostInitialise()))
 		{
 			Debug::LogError("Application::Application() - Failed to post-initialise Renderer");
 			return;
 		}
 
 		// INFO: Engine Runtime Initialisation
-		if (IS_FAILURE(engineRuntime.PreInitialise()))
+		if (FLUX_FAIL(engineRuntime.PreInitialise()))
 		{
 			Debug::LogError("Application::Application() - Failed to pre-initialise Engine Runtime");
 			return;
 		}
 
-		if (IS_FAILURE(engineRuntime.Initialise()))
+		if (FLUX_FAIL(engineRuntime.Initialise()))
 		{
 			Debug::LogError("Application::Application() - Failed to initialise Engine Runtime");
 			return;
@@ -91,13 +91,13 @@ namespace Flux
 		if (!isStandalone)
 		{
 			// INFO: Editor Runtime Initialisation
-			if (IS_FAILURE(editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext())))
+			if (FLUX_FAIL(editorRuntime.PreInitialise(window, renderer.GetDevice(), renderer.GetDeviceContext())))
 			{
 				Debug::LogError("Application::Application() - Failed to pre-initialise Editor Runtime");
 				return;
 			}
 
-			if (IS_FAILURE(editorRuntime.Initialise(renderer)))
+			if (FLUX_FAIL(editorRuntime.Initialise(renderer)))
 			{
 				Debug::LogError("Application::Application() - Failed to initialise Editor Runtime");
 				return;
@@ -105,7 +105,7 @@ namespace Flux
 		}
 
 		// INFO: Event Listener Registration
-		if (IS_FAILURE(EventDispatcher::AddListener(EventType::Quit, this)))
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::Quit, this)))
 		{
 			Debug::LogError("Application::Application() - Failed to add Quit event listener");
 			return;

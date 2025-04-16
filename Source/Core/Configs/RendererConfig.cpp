@@ -2,5 +2,5 @@
 
 namespace Flux::RendererConfig
 {
-	const bool VSYNC_ENABLED = false;
+	const bool VSYNC_ENABLED = true;
 }

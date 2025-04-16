@@ -30,13 +30,13 @@ namespace Flux
 
 	int SceneHierarchy::Initialise()
 	{
-		if (IS_FAILURE(EventDispatcher::AddListener(EventType::PlayModeExited, this)))
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::PlayModeExited, this)))
 		{
 			Debug::LogError("Failed to add listener for PlayModeExited event in SceneHierarchy");
 			return FLUX_FAILURE;
 		}
 
-		if (IS_FAILURE(EventDispatcher::AddListener(EventType::LoadScene, this)))
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::LoadScene, this)))
 		{
 			Debug::LogError("Failed to add listener for LoadScene event in SceneHierarchy");
 			return FLUX_FAILURE;

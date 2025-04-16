@@ -270,7 +270,7 @@ namespace Flux
 		}
 
 		// INFO: Setup Events to Listen For
-		if (IS_FAILURE(EventDispatcher::AddListener(EventType::WindowResized, this)))
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::WindowResized, this)))
 		{
 			Debug::LogError("Renderer::Initialise() - Failed to add Window Resized event listener");
 			return FLUX_FAILURE;
@@ -278,7 +278,7 @@ namespace Flux
 
 		if (!RuntimeConfig::IsStandalone())
 		{
-			if (IS_FAILURE(EventDispatcher::AddListener(EventType::SceneViewResized, this)))
+			if (FLUX_FAIL(EventDispatcher::AddListener(EventType::SceneViewResized, this)))
 			{
 				Debug::LogError("Renderer::Initialise() - Failed to add Scene View Resized event listener");
 				return FLUX_FAILURE;

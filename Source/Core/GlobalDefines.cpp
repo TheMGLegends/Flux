@@ -5,7 +5,7 @@ namespace Flux::GlobalDefines
 	const int FLUX_SUCCESS = 0;
 	const int FLUX_FAILURE = 1;
 
-	bool IS_FAILURE(int result)
+	bool FLUX_FAIL(int result)
 	{
 		return result != FLUX_SUCCESS;
 	}

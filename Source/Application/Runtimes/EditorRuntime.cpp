@@ -112,7 +112,7 @@ namespace Flux
 		{
 			std::unique_ptr<EditorPanel>& editorPanel = editorPanels[i];
 
-			if (IS_FAILURE(editorPanel->Initialise()))
+			if (FLUX_FAIL(editorPanel->Initialise()))
 			{
 				Debug::LogError("EditorRuntime::Initialise() - Failed to initialise EditorPanel");
 				return FLUX_FAILURE;
