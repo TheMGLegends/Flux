@@ -21,7 +21,7 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
-	DetailsPanel::DetailsPanel(SceneHierarchy* _sceneHierarchy) : sceneHierarchy(_sceneHierarchy)
+	DetailsPanel::DetailsPanel(SceneHierarchy* _sceneHierarchy) : sceneHierarchy(_sceneHierarchy), bigFont(nullptr)
 	{
 	}
 

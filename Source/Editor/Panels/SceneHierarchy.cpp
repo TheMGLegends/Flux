@@ -21,7 +21,7 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
-	SceneHierarchy::SceneHierarchy() : scene(SceneContext::GetScene()), selectedGameObject(nullptr), isRenaming(false)
+	SceneHierarchy::SceneHierarchy() : scene(SceneContext::GetScene()), selectedGameObject(nullptr), isRenaming(false), bigFont(nullptr)
 	{
 	}
 
