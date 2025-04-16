@@ -120,6 +120,8 @@ namespace Flux
 		if (!RuntimeConfig::IsStandalone()) { editorRuntime.Release(); }
 		Input::Release();
 
+		EventDispatcher::RemoveListener(this);
+
 		SDL_DestroyWindow(window);
 		SDL_Quit();
 	}

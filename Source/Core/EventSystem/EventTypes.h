@@ -7,12 +7,16 @@ namespace Flux
 		None = 0,
 
 		Quit,
-		GameObjectRemoved,
+
+		LoadScene,
+		SaveScene,
+
 		WindowResized,
 		SceneViewResized,
+		
+		GameObjectRemoved,
+
 		PlayModeExited,
-		SaveScene,
-		LoadScene
 	};
 }
 

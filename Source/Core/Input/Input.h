@@ -23,29 +23,29 @@ namespace Flux
 		static void Update();
 		static void Release();
 
-		static bool GetKey(SDL_Scancode key) { return currentKeyboardState[key]; }
-		static bool GetKeyDown(SDL_Scancode key) { return currentKeyboardState[key] && !previousKeyboardState[key]; }
-		static bool GetKeyUp(SDL_Scancode key) { return !currentKeyboardState[key] && previousKeyboardState[key]; }
+		static bool GetKey(SDL_Scancode key);
+		static bool GetKeyDown(SDL_Scancode key);
+		static bool GetKeyUp(SDL_Scancode key);
 
-		static bool GetMouseButton(SDL_MouseButtonFlags button) { return currentMouseState & SDL_BUTTON_MASK(button); }
-		static bool GetMouseButtonDown(SDL_MouseButtonFlags button) { return (currentMouseState & SDL_BUTTON_MASK(button)) && !(previousMouseState & SDL_BUTTON_MASK(button)); }
-		static bool GetMouseButtonUp(SDL_MouseButtonFlags button) { return !(currentMouseState & SDL_BUTTON_MASK(button)) && (previousMouseState & SDL_BUTTON_MASK(button)); }
+		static bool GetMouseButton(SDL_MouseButtonFlags button);
+		static bool GetMouseButtonDown(SDL_MouseButtonFlags button);
+		static bool GetMouseButtonUp(SDL_MouseButtonFlags button);
 
-		static const DirectX::SimpleMath::Vector2& GetMousePosition() { return mousePosition; }
-		static void SetMousePosition(const DirectX::SimpleMath::Vector2& position) { SDL_WarpMouseInWindow(window, position.x, position.y); }
+		static const DirectX::SimpleMath::Vector2& GetMousePosition();
+		static void SetMousePosition(const DirectX::SimpleMath::Vector2& position);
 
 		/// @param isRelative: true = relative, false = absolute
 		static void SetMouseMode(bool _isRelative);
-		static bool IsMouseRelative() { return isRelative; }
+		static bool IsMouseRelative();
 
 		/// @brief Get the vertical scroll of the mouse wheel
 		/// @param verticalScroll: The variable that will be populated with the vertical scroll value
 		/// @return true if the scroll wheel is being scrolled (not 0)
 		static bool GetMouseVerticalScroll(float& verticalScroll);
 
-		static bool GetGamepadButton(SDL_GamepadButton button) { return currentGamepadButtonState[button]; }
-		static bool GetGamepadButtonDown(SDL_GamepadButton button) { return currentGamepadButtonState[button] && !previousGamepadButtonState[button]; }
-		static bool GetGamepadButtonUp(SDL_GamepadButton button) { return !currentGamepadButtonState[button] && previousGamepadButtonState[button]; }
+		static bool GetGamepadButton(SDL_GamepadButton button);
+		static bool GetGamepadButtonDown(SDL_GamepadButton button);
+		static bool GetGamepadButtonUp(SDL_GamepadButton button);
 
 		/// @param trigger: Only works with SDL_GAMEPAD_AXIS_LEFT_TRIGGER and SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
 		/// @param axisState: Optional parameter to get the axis state of the trigger between 0 and 1
@@ -62,6 +62,9 @@ namespace Flux
 		static DirectX::SimpleMath::Vector2 GetJoystickAxes(GamepadJoystick joystick, bool inverseY = true);
 
 	private:
+		static int InitialiseGamepad();
+		static void PollEvents();
+
 		/// @brief Populates the currentGamepadState array with the current state of all buttons
 		static void GetGamepadButtonState();
 

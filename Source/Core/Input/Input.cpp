@@ -72,57 +72,10 @@ namespace Flux
 		previousMouseState = currentMouseState;
 
 		// INFO: Gamepad Input Initialisation
-		int count = 0;
-		SDL_JoystickID* joysticks = SDL_GetJoysticks(&count);
-
-		if (count > 0 && joysticks)
+		if (FLUX_FAIL(InitialiseGamepad()))
 		{
-			for (size_t i = 0; i < count; i++)
-			{
-				if (SDL_IsGamepad(joysticks[i]))
-				{
-					gamepad = SDL_OpenGamepad(joysticks[i]);
-					Debug::Log("Input::Initialise() - Gamepad Detected: " + std::string(SDL_GetGamepadName(gamepad)));
-					break;
-				}
-			}
-		}
-
-		if (gamepad)
-		{
-			currentGamepadButtonState = new bool[SDL_GAMEPAD_BUTTON_COUNT];
-			gamepadButtonLength = SDL_GAMEPAD_BUTTON_COUNT * sizeof(bool);
-			memset(currentGamepadButtonState, 0, gamepadButtonLength);
-			GetGamepadButtonState();
-
-			if (!currentGamepadButtonState)
-			{
-				Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Button State");
-				return FLUX_FAILURE;
-			}
-
-			previousGamepadButtonState = new bool[SDL_GAMEPAD_BUTTON_COUNT];
-			memcpy(previousGamepadButtonState, currentGamepadButtonState, gamepadButtonLength);
-
-			if (!previousGamepadButtonState)
-			{
-				Debug::LogError("Input::Initialise() - Failed to allocate memory for previous Gamepad Button State");
-				return FLUX_FAILURE;
-			}
-
-			currentGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
-			gamepadAxisLength = SDL_GAMEPAD_AXIS_COUNT * sizeof(Sint16);
-			memset(currentGamepadAxisState, 0, gamepadAxisLength);
-			GetGamepadAxisState();
-
-			if (!currentGamepadAxisState)
-			{
-				Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Axis State");
-				return FLUX_FAILURE;
-			}
-
-			previousGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
-			memcpy(previousGamepadAxisState, currentGamepadAxisState, gamepadAxisLength);
+			Debug::LogError("Input::Initialise() - Failed to initialise Gamepad");
+			return FLUX_FAILURE;
 		}
 
 		return FLUX_SUCCESS;
@@ -165,38 +118,7 @@ namespace Flux
 			GetGamepadAxisState();
 		}
 
-		SDL_Event event;
-
-		while (SDL_PollEvent(&event))
-		{
-			// INFO: ImGui Event Handling
-			if (!RuntimeConfig::IsStandalone()) { ImGui_ImplSDL3_ProcessEvent(&event); }
-
-			switch (event.type)
-			{
-			case SDL_EVENT_QUIT:
-			{
-				EventDispatcher::QueueEvent(EventType::Quit, nullptr);
-				break;
-			}
-			case SDL_EVENT_WINDOW_RESIZED:
-			{
-				// INFO: Update global window size variables
-				EngineConfig::SetWindowWidth(event.window.data1);
-				EngineConfig::SetWindowHeight(event.window.data2);
-
-				EventDispatcher::QueueEvent(EventType::WindowResized, nullptr);
-				break;
-			}
-			case SDL_EVENT_MOUSE_WHEEL:
-			{
-				mouseVerticalScroll = event.wheel.y;
-				break;
-			}
-			default:
-				break;
-			}
-		}
+		PollEvents();
 	}
 
 	void Input::Release()
@@ -238,6 +160,46 @@ namespace Flux
 		}
 	}
 
+	bool Input::GetKey(SDL_Scancode key)
+	{
+		return currentKeyboardState[key];
+	}
+
+	bool Input::GetKeyDown(SDL_Scancode key)
+	{
+		return currentKeyboardState[key] && !previousKeyboardState[key];
+	}
+
+	bool Input::GetKeyUp(SDL_Scancode key)
+	{
+		return !currentKeyboardState[key] && previousKeyboardState[key];
+	}
+
+	bool Input::GetMouseButton(SDL_MouseButtonFlags button)
+	{
+		return currentMouseState & SDL_BUTTON_MASK(button);
+	}
+
+	bool Input::GetMouseButtonDown(SDL_MouseButtonFlags button)
+	{
+		return (currentMouseState & SDL_BUTTON_MASK(button)) && !(previousMouseState & SDL_BUTTON_MASK(button));
+	}
+
+	bool Input::GetMouseButtonUp(SDL_MouseButtonFlags button)
+	{
+		return !(currentMouseState & SDL_BUTTON_MASK(button)) && (previousMouseState & SDL_BUTTON_MASK(button));
+	}
+
+	const DirectX::SimpleMath::Vector2& Input::GetMousePosition()
+	{
+		return mousePosition;
+	}
+
+	void Input::SetMousePosition(const DirectX::SimpleMath::Vector2& position)
+	{
+		SDL_WarpMouseInWindow(window, position.x, position.y);
+	}
+
 	void Input::SetMouseMode(bool _isRelative)
 	{
 		if (!window)
@@ -263,12 +225,32 @@ namespace Flux
 		isRelative = _isRelative;
 	}
 
+	bool Input::IsMouseRelative()
+	{
+		return isRelative;
+	}
+
 	bool Input::GetMouseVerticalScroll(float& verticalScroll)
 	{
 		if (mouseVerticalScroll == 0.0f) { return false; }
 
 		verticalScroll = mouseVerticalScroll;
 		return true;
+	}
+
+	bool Input::GetGamepadButton(SDL_GamepadButton button)
+	{
+		return currentGamepadButtonState[button];
+	}
+
+	bool Input::GetGamepadButtonDown(SDL_GamepadButton button)
+	{
+		return currentGamepadButtonState[button] && !previousGamepadButtonState[button];
+	}
+
+	bool Input::GetGamepadButtonUp(SDL_GamepadButton button)
+	{
+		return !currentGamepadButtonState[button] && previousGamepadButtonState[button];
 	}
 
 	bool Input::GetTrigger(SDL_GamepadAxis trigger, float* axisState)
@@ -327,6 +309,100 @@ namespace Flux
 		if (inverseY && axes.y != 0) { axes.y *= -1; }
 
 		return axes;
+	}
+
+	int Input::InitialiseGamepad()
+	{
+		int count = 0;
+		SDL_JoystickID* joysticks = SDL_GetJoysticks(&count);
+
+		if (count > 0 && joysticks)
+		{
+			for (size_t i = 0; i < count; i++)
+			{
+				if (SDL_IsGamepad(joysticks[i]))
+				{
+					gamepad = SDL_OpenGamepad(joysticks[i]);
+					Debug::Log("Input::Initialise() - Gamepad Detected: " + std::string(SDL_GetGamepadName(gamepad)));
+					break;
+				}
+			}
+		}
+
+		if (gamepad)
+		{
+			currentGamepadButtonState = new bool[SDL_GAMEPAD_BUTTON_COUNT];
+			gamepadButtonLength = SDL_GAMEPAD_BUTTON_COUNT * sizeof(bool);
+			memset(currentGamepadButtonState, 0, gamepadButtonLength);
+			GetGamepadButtonState();
+
+			if (!currentGamepadButtonState)
+			{
+				Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Button State");
+				return FLUX_FAILURE;
+			}
+
+			previousGamepadButtonState = new bool[SDL_GAMEPAD_BUTTON_COUNT];
+			memcpy(previousGamepadButtonState, currentGamepadButtonState, gamepadButtonLength);
+
+			if (!previousGamepadButtonState)
+			{
+				Debug::LogError("Input::Initialise() - Failed to allocate memory for previous Gamepad Button State");
+				return FLUX_FAILURE;
+			}
+
+			currentGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
+			gamepadAxisLength = SDL_GAMEPAD_AXIS_COUNT * sizeof(Sint16);
+			memset(currentGamepadAxisState, 0, gamepadAxisLength);
+			GetGamepadAxisState();
+
+			if (!currentGamepadAxisState)
+			{
+				Debug::LogError("Input::Initialise() - Failed to allocate memory for current Gamepad Axis State");
+				return FLUX_FAILURE;
+			}
+
+			previousGamepadAxisState = new Sint16[SDL_GAMEPAD_AXIS_COUNT];
+			memcpy(previousGamepadAxisState, currentGamepadAxisState, gamepadAxisLength);
+		}
+
+		return FLUX_SUCCESS;
+	}
+
+	void Input::PollEvents()
+	{
+		SDL_Event event;
+
+		while (SDL_PollEvent(&event))
+		{
+			// INFO: ImGui Event Handling
+			if (!RuntimeConfig::IsStandalone()) { ImGui_ImplSDL3_ProcessEvent(&event); }
+
+			switch (event.type)
+			{
+			case SDL_EVENT_QUIT:
+			{
+				EventDispatcher::QueueEvent(EventType::Quit, nullptr);
+				break;
+			}
+			case SDL_EVENT_WINDOW_RESIZED:
+			{
+				// INFO: Update global window size variables
+				EngineConfig::SetWindowWidth(event.window.data1);
+				EngineConfig::SetWindowHeight(event.window.data2);
+
+				EventDispatcher::QueueEvent(EventType::WindowResized, nullptr);
+				break;
+			}
+			case SDL_EVENT_MOUSE_WHEEL:
+			{
+				mouseVerticalScroll = event.wheel.y;
+				break;
+			}
+			default:
+				break;
+			}
+		}
 	}
 
 	void Input::GetGamepadButtonState()

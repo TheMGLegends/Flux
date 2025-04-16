@@ -46,6 +46,7 @@ namespace Flux
 
 	Renderer::~Renderer()
 	{
+		EventDispatcher::RemoveListener(this);
 	}
 
 	void Renderer::OnNotify(EventType eventType, std::shared_ptr<Event> event)

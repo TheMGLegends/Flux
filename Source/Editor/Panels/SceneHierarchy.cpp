@@ -26,6 +26,7 @@ namespace Flux
 
 	SceneHierarchy::~SceneHierarchy()
 	{
+		EventDispatcher::RemoveListener(this);
 	}
 
 	int SceneHierarchy::Initialise()

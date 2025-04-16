@@ -88,6 +88,8 @@ namespace Flux
 			physicsScene->release();
 			physicsScene = nullptr;
 		}
+
+		EventDispatcher::RemoveListener(this);
 	}
 
 	void Scene::Serialize(nlohmann::flux_json& json) const
@@ -143,6 +145,7 @@ namespace Flux
 				if (gameObject == gameObjectRemovedEvent->gameObject)
 				{
 					gameObjects.erase(gameObjects.begin() + i);
+					EditorConfig::SetSceneNeedsSaving(true);
 					break;
 				}
 			}
