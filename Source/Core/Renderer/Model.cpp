@@ -62,22 +62,22 @@ namespace Flux
 			}
 
 			vertices.push_back(vertex);
+		}
 
-			// INFO: Load Index Data
-			if (!mesh->HasFaces())
+		// INFO: Load Index Data
+		if (!mesh->HasFaces())
+		{
+			Debug::LogError("Model::Initialise() - Model has no faces");
+			return;
+		}
+
+		for (size_t faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++)
+		{
+			aiFace face = mesh->mFaces[faceIndex];
+
+			for (size_t indicesIndex = 0; indicesIndex < face.mNumIndices; indicesIndex++)
 			{
-				Debug::LogError("Model::Initialise() - Model has no faces");
-				return;
-			}
-
-			for (size_t faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++)
-			{
-				aiFace face = mesh->mFaces[faceIndex];
-
-				for (size_t indicesIndex = 0; indicesIndex < face.mNumIndices; indicesIndex++)
-				{
-					indices.push_back(face.mIndices[indicesIndex]);
-				}
+				indices.push_back(face.mIndices[indicesIndex]);
 			}
 		}
 
