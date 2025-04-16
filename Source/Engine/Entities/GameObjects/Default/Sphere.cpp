@@ -12,5 +12,7 @@ namespace Flux
 		}
 	}
 
-	Sphere::~Sphere() = default;
+	Sphere::~Sphere()
+	{
+	}
 }

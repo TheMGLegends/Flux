@@ -9,8 +9,7 @@ namespace Flux
 	struct AudioData
 	{
 	public:
-		AudioData(const std::string& _name, FMOD::Sound* _sound, FMOD::Channel* _channel)
-			: name(_name), sound(_sound), channel(_channel) {}
+		AudioData(std::string _name, FMOD::Sound* _sound, FMOD::Channel* _channel) : name(_name), sound(_sound), channel(_channel) {}
 		~AudioData() = default;
 
 		bool IsPlaying() const
@@ -56,7 +55,7 @@ namespace Flux
 		static void PlayMusic(const std::string& audioName, float volume = 1.0f, bool isLooping = true);
 
 		/// @brief Primarily used for looping music tracks
-		static void StopSound(std::string_view audioName);
+		static void StopSound(const std::string& audioName);
 		static void StopAllSounds();
 
 		static void ControlSounds(bool isPaused);

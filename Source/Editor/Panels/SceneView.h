@@ -13,16 +13,13 @@ namespace Flux
 	{
 	public:
 		SceneView(Renderer& _renderer, SceneHierarchy* _sceneHierarchy);
-		~SceneView() override;
+		virtual ~SceneView() override;
 
-		int Initialise() override;
-		void Update(float deltaTime) override;
+		virtual int Initialise() override;
+		virtual void Update(float deltaTime) override;
 
 	private:
-		void MaintainAspectRatio(ImVec2& sceneViewSize) const;
-		void DrawGizmos(const ImVec2& windowSize) const;
-		void DrawGizmoButtons(const ImVec2& windowSize, const ImVec2& sceneViewSize, ImGuiWindowFlags windowFlags) const;
-		void DrawSceneViewButtons(const ImVec2& windowSize, const ImVec2& sceneViewSize, ImGuiWindowFlags windowFlags) const;
+		void MaintainAspectRatio(ImVec2& sceneViewSize);
 
 	private:
 		Renderer& renderer;

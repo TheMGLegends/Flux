@@ -13,8 +13,12 @@ using namespace DirectX::SimpleMath;
 
 namespace Flux
 {
-	Component::Component(GameObject* _gameObject) : isActive(true), canHaveMultiple(false), isRemoveable(true),
-													name(""), componentType(ComponentType::None), gameObject(_gameObject), draggingBox(false)
+	Component::Component(GameObject* _gameObject) : isActive(true), canHaveMultiple(false), isRemoveable(true), gameObject(_gameObject),
+													name(""), componentType(ComponentType::None), draggingBox(false)
+	{
+	}
+
+	Component::~Component()
 	{
 	}
 
@@ -35,34 +39,9 @@ namespace Flux
 		isActive = json["IsActive"].get<bool>();
 	}
 
-	GameObject* Component::GetGameObject() const
-	{
-		return gameObject;
-	}
-
 	void Component::SetIsActive(bool _isActive)
 	{
 		if (isActive != _isActive) { isActive = _isActive; }
-	}
-
-	bool Component::IsActive() const
-	{
-		return isActive;
-	}
-
-	bool Component::CanHaveMultiple() const
-	{
-		return canHaveMultiple;
-	}
-
-	bool Component::IsRemoveable() const
-	{
-		return isRemoveable;
-	}
-
-	ComponentType Component::GetComponentType() const
-	{
-		return componentType;
 	}
 
 	bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed, const char* format, float min, float max)
@@ -140,12 +119,12 @@ namespace Flux
 
 			if (mousePosition.x <= 1.0f)
 			{
-				mousePosition.x = static_cast<float>(EngineConfig::GetWindowWidth()) - 2.0f;
+				mousePosition.x = EngineConfig::GetWindowWidth() - 2.0f;
 				Input::SetMousePosition(mousePosition);
 				io.MousePos = ImVec2(mousePosition.x, mousePosition.y);
 				io.MouseDelta = ImVec2(0.0f, 0.0f);
 			}
-			else if (mousePosition.x >= static_cast<float>(EngineConfig::GetWindowWidth()) - 1.0f)
+			else if (mousePosition.x >= EngineConfig::GetWindowWidth() - 1.0f)
 			{
 				mousePosition.x = 2.0f;
 				Input::SetMousePosition(mousePosition);
@@ -160,10 +139,5 @@ namespace Flux
 		}
 
 		return draggingBox;
-	}
-
-	void Component::SetGameObject(GameObject* _gameObject)
-	{
-		gameObject = _gameObject;
 	}
 }

@@ -85,18 +85,92 @@ namespace Flux
 			ImGui::Text(sceneName.c_str());
 			ImGui::PopFont();
 
-			// INFO: Game Settings Popup
-			GameSettingsPopup();
+			// INFO: Ability to Set as Starter Scene if right clicking scene name
+			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			{
+				ImGui::OpenPopup("GameSettings");
+			}
+
+			ImGui::SetNextWindowSize(ImVec2(127.0f, 22.0f));
+			if (ImGui::BeginPopup("GameSettings"))
+			{
+				if (ImGui::MenuItem("  Set Starter Scene"))
+				{
+					GameConfig::SetStarterSceneName(scene.GetSceneName());
+					GameConfig::SerializeGameConfig();
+				}
+
+				ImGui::EndPopup();
+			}
+
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
+			ImGui::PopStyleVar();
 
 			// INFO: Search Bar
 			ImGui::PushItemWidth(windowSize.x * 0.5f);
-			ImGui::SetCursorPosX(windowSize.x * 0.25f);
+			ImGui::SetCursorPosX((windowSize.x * 0.25f));
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 			ImGui::InputTextWithHint("##SearchBar", "Search...", &searchString, ImGuiInputTextFlags_CallbackAlways | ImGuiInputTextFlags_AutoSelectAll);
 			ImGui::PopStyleVar();
 
-			// INFO: Display Scene Objects
-			DisplaySceneObjects(windowSize);
+			ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuterH;
+			if (ImGui::BeginTable("##SceneObjects", 1, tableFlags, ImVec2(windowSize.x, windowSize.y * 0.75f), windowSize.x))
+			{
+				bool selectedGameObjectHovered = false;
+
+				for (size_t i = 0; i < scene.gameObjects.size(); i++)
+				{
+					std::unique_ptr<GameObject>& gameObject = scene.gameObjects[i];
+
+					const std::string& gameObjectName = gameObject->GetName();
+
+					if (searchString.empty() || gameObjectName.rfind(searchString, 0) != std::string::npos)
+					{
+						ImGui::TableNextRow();
+						ImGui::TableSetColumnIndex(0);
+
+						// INFO: Unique ID for each GameObject
+						if (ImGui::Selectable(("##" + gameObject->GetID()).c_str(), selectedGameObject == gameObject.get()))
+						{
+							selectedGameObject = gameObject.get();
+
+							// INFO: Default to Translate Operation if we are currently in pan mode
+							if (EditorConfig::GetCurrentTransformOperation() == -1)
+							{
+								EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::TRANSLATE);
+							}
+						}
+
+						if (ImGui::IsItemHovered() && gameObject.get() == selectedGameObject)
+						{
+							selectedGameObjectHovered = true;
+						}
+
+						if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObjectHovered)
+						{
+							isRenaming = true;
+						}
+
+						ImGui::SameLine();
+
+						if (isRenaming && selectedGameObject == gameObject.get())
+						{
+							ImGui::SetKeyboardFocusHere();
+							if (ImGui::InputText("##CustomNameInput", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue))
+							{
+								isRenaming = false;
+								EditorConfig::SetSceneNeedsSaving(true);
+							}
+						}
+						else
+						{
+							ImGui::TextUnformatted(gameObjectName.c_str());
+						}
+					}
+				}
+
+				ImGui::EndTable();
+			}
 
 			ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
@@ -105,8 +179,35 @@ namespace Flux
 				ImGui::BeginDisabled();
 			}
 
-			// INFO: Add GameObject Button
-			AddGameObjectButton(windowSize.x);
+			ImVec2 buttonSize = ImVec2(150.0f, 50.0f);
+			ImGui::SetCursorPosX((windowSize.x - buttonSize.x) * 0.5f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
+			if (ImGui::Button("Add GameObject", buttonSize))
+			{
+				ImGui::OpenPopup("AddGameObjectPopup");
+			}
+			ImGui::PopStyleVar(1);
+
+			if (ImGui::BeginPopup("AddGameObjectPopup"))
+			{
+				if (ImGui::MenuItem("Empty GameObject"))
+				{
+					scene.gameObjects.emplace_back(GameObject::CreateGameObject("GameObject"));
+					EditorConfig::SetSceneNeedsSaving(true);
+				}
+
+				// INFO: Go through each reflected game object type and add a menu item for each
+				for (auto& it : GameObject::GetGameObjectTypes())
+				{
+					if (ImGui::MenuItem(it.first.c_str()))
+					{
+						scene.gameObjects.emplace_back(GameObject::CreateGameObject(it.first));
+						EditorConfig::SetSceneNeedsSaving(true);
+					}
+				}
+
+				ImGui::EndPopup();
+			}
 
 			if (RuntimeConfig::IsInPlayMode())
 			{
@@ -125,122 +226,5 @@ namespace Flux
 	GameObject* SceneHierarchy::GetSelectedGameObject() const
 	{
 		return selectedGameObject;
-	}
-
-	void SceneHierarchy::DisplaySceneObjects(const ImVec2& windowSize)
-	{
-		ImGuiTableFlags tableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuterH;
-		if (ImGui::BeginTable("##SceneObjects", 1, tableFlags, ImVec2(windowSize.x, windowSize.y * 0.75f), windowSize.x))
-		{
-			bool selectedGameObjectHovered = false;
-
-			for (const auto& gameObject : scene.gameObjects)
-			{
-				const std::string& gameObjectName = gameObject->GetName();
-
-				if (!searchString.empty() && gameObjectName.rfind(searchString, 0) == std::string::npos) { continue; }
-
-				ImGui::TableNextRow();
-				ImGui::TableSetColumnIndex(0);
-
-				// INFO: Unique ID for each GameObject
-				if (ImGui::Selectable(("##" + gameObject->GetID()).c_str(), selectedGameObject == gameObject.get()))
-				{
-					selectedGameObject = gameObject.get();
-
-					// INFO: Default to Translate Operation if we are currently in pan mode
-					if (EditorConfig::GetCurrentTransformOperation() == EditorConfig::PAN)
-					{
-						EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::TRANSLATE);
-					}
-				}
-
-				if (ImGui::IsItemHovered() && gameObject.get() == selectedGameObject)
-				{
-					selectedGameObjectHovered = true;
-				}
-
-				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObjectHovered)
-				{
-					isRenaming = true;
-				}
-
-				ImGui::SameLine();
-
-				if (isRenaming && selectedGameObject == gameObject.get())
-				{
-					ImGui::SetKeyboardFocusHere();
-
-					if (ImGui::InputText("##CustomNameInput", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue))
-					{
-						isRenaming = false;
-						EditorConfig::SetSceneNeedsSaving(true);
-					}
-				}
-				else
-				{
-					ImGui::TextUnformatted(gameObjectName.c_str());
-				}
-			}
-
-			ImGui::EndTable();
-		}
-	}
-
-	void SceneHierarchy::GameSettingsPopup() const
-	{
-		// INFO: Ability to Set as Starter Scene if right clicking scene name
-		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-		{
-			ImGui::OpenPopup("GameSettings");
-		}
-
-		ImGui::SetNextWindowSize(ImVec2(127.0f, 22.0f));
-		if (ImGui::BeginPopup("GameSettings"))
-		{
-			if (ImGui::MenuItem("  Set Starter Scene"))
-			{
-				GameConfig::SetStarterSceneName(scene.GetSceneName());
-				GameConfig::SerializeGameConfig();
-			}
-
-			ImGui::EndPopup();
-		}
-
-		ImGui::Dummy(ImVec2(0.0f, 2.5f));
-		ImGui::PopStyleVar();
-	}
-
-	void SceneHierarchy::AddGameObjectButton(float windowWidth)
-	{
-		ImVec2 buttonSize = ImVec2(150.0f, 50.0f);
-		ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
-		if (ImGui::Button("Add GameObject", buttonSize))
-		{
-			ImGui::OpenPopup("AddGameObjectButton");
-		}
-		ImGui::PopStyleVar(1);
-
-		if (ImGui::BeginPopup("AddGameObjectButton"))
-		{
-			if (ImGui::MenuItem("Empty GameObject"))
-			{
-				scene.gameObjects.emplace_back(GameObject::CreateGameObject("GameObject"));
-				EditorConfig::SetSceneNeedsSaving(true);
-			}
-
-			// INFO: Go through each reflected game object type and add a menu item for each
-			for (auto& [name, function] : GameObject::GetGameObjectTypes())
-			{
-				if (ImGui::MenuItem(name.c_str()))
-				{
-					scene.gameObjects.emplace_back(GameObject::CreateGameObject(name));
-					EditorConfig::SetSceneNeedsSaving(true);
-				}
-			}
-
-			ImGui::EndPopup();
-		}
 	}
 }

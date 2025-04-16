@@ -16,23 +16,20 @@ namespace Flux
 	class Visualizer : public Component, public std::enable_shared_from_this<Visualizer>
 	{
 	public:
-		explicit Visualizer(GameObject* _gameObject);
-		~Visualizer() override;
+		Visualizer(GameObject* _gameObject);
+		virtual ~Visualizer() override;
 
-		void DrawDetails() override;
+		virtual void DrawDetails() override;
 
-		void Serialize(nlohmann::flux_json& json) const override;
-		void Deserialize(const nlohmann::flux_json& json) override;
+		virtual void Serialize(nlohmann::flux_json& json) const override;
+		virtual void Deserialize(const nlohmann::flux_json& json) override;
 
-		void SetModel(std::string_view _modelName);
+		void SetModel(const std::string& _modelName);
 
-		void SetMaterialTexture(std::string_view _textureName);
-		Material& GetMaterial();
+		void SetMaterialTexture(const std::string& _textureName);
+		inline Material& GetMaterial() { return material; }
 
 		void Draw(ID3D11DeviceContext& deviceContext);
-
-	private:
-		void DrawModelAndTextureSelector(bool treeOpened);
 
 	private:
 		Model* model;

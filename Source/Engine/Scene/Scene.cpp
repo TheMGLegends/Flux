@@ -101,8 +101,10 @@ namespace Flux
 		json["GameObjects"] = nlohmann::json::array();
 
 		// INFO: Serialize each GameObject in the Scene
-		for (auto& gameObject : gameObjects)
+		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
+			const std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
 			gameObject->Serialize(json);
 		}
 	}
@@ -138,7 +140,7 @@ namespace Flux
 			// INFO: Remove the GameObject from the Scene
 			for (size_t i = 0; i < gameObjects.size(); i++)
 			{
-				const GameObject* gameObject = gameObjects[i].get();
+				GameObject* gameObject = gameObjects[i].get();
 
 				if (gameObject == gameObjectRemovedEvent->gameObject)
 				{
@@ -149,25 +151,32 @@ namespace Flux
 			}
 
 			// INFO: Remove all now-expired components associated with the removed GameObject
-			for (auto& [type, componentList] : components)
+			for (auto& componentList : components)
 			{
-				std::erase_if(componentList, [gameObjectRemovedEvent](std::weak_ptr<Component> component) 
-					{ 
-						return component.expired(); 
-					});
+				componentList.second.erase(
+					std::remove_if(componentList.second.begin(), componentList.second.end(),
+						[](std::weak_ptr<Component> component) { return component.expired(); }),
+					componentList.second.end());
 			}
 
 			// INFO: Remove all now-expired debug wireframes associated with the removed GameObject
-			std::erase_if(debugWireframes, [](const DebugWireframeData& data)
-				{
-					return data.component.expired();
-				});
+			debugWireframes.erase(
+				std::remove_if(debugWireframes.begin(), debugWireframes.end(),
+					[](const DebugWireframeData& data) { return data.component.expired(); }),
+				debugWireframes.end());
 
 			// INFO: Remove all now-expired rigid actors associated with the removed GameObject
-			std::erase_if(rigidActorsToColliders, [](const auto& pair) 
+			for (auto it = rigidActorsToColliders.begin(); it != rigidActorsToColliders.end();)
+			{
+				if (it->second.expired())
 				{
-					return pair.second.expired();
-				});
+					it = rigidActorsToColliders.erase(it);
+				}
+				else
+				{
+					++it;
+				}
+			}
 		}
 		else if (eventType == EventType::PlayModeExited)
 		{
@@ -183,38 +192,39 @@ namespace Flux
 		{
 			std::shared_ptr<LoadSceneEvent> loadSceneEvent = std::static_pointer_cast<LoadSceneEvent>(event);
 
-			if (!loadSceneEvent) { return; }
-
-			if (RuntimeConfig::IsInPlayMode())
+			if (loadSceneEvent)
 			{
-				// INFO: Unpause the game if it was paused
-				if (RuntimeConfig::IsPaused())
+				if (RuntimeConfig::IsInPlayMode())
 				{
-					RuntimeConfig::TogglePause();
+					// INFO: Unpause the game if it was paused
+					if (RuntimeConfig::IsPaused())
+					{
+						RuntimeConfig::TogglePause();
+					}
+
+					Audio::StopAllSounds();
+
+					if (!loadSceneEvent->stayInPlayMode)
+					{
+						RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
+					}
+					else
+					{
+						// INFO: Need to run start again on new scene game objects
+						RuntimeConfig::SetPlayModeEntered(true);
+					}
 				}
 
-				Audio::StopAllSounds();
+				// INFO: Clear existing scene contents before loading 'new' scene
+				gameObjects.clear();
+				GameObject::ClearGameObjectTypeCounters();
+				components.clear();
+				debugWireframes.clear();
+				rigidActorsToColliders.clear();
+				playModeCamera.reset();
 
-				if (!loadSceneEvent->stayInPlayMode)
-				{
-					RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
-				}
-				else
-				{
-					// INFO: Need to run start again on new scene game objects
-					RuntimeConfig::SetPlayModeEntered(true);
-				}
+				DeserializeScene(loadSceneEvent->scenePath);
 			}
-
-			// INFO: Clear existing scene contents before loading 'new' scene
-			gameObjects.clear();
-			GameObject::ClearGameObjectTypeCounters();
-			components.clear();
-			debugWireframes.clear();
-			rigidActorsToColliders.clear();
-			playModeCamera.reset();
-
-			DeserializeScene(loadSceneEvent->scenePath);
 		}
 	}
 
@@ -232,21 +242,19 @@ namespace Flux
 			return;
 		}
 
-		using enum Flux::CollisionType;
-
 		for (physx::PxU32 i = 0; i < nbPairs; i++)
 		{
 			// INFO: OnCollisionEnter
 			if (pairs[i].events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
 			{
-				collider0->ExecuteCollisionCallback(CollisionEnter, collider1);
-				collider1->ExecuteCollisionCallback(CollisionEnter, collider0);
+				collider0->ExecuteCollisionCallback(CollisionType::CollisionEnter, collider1);
+				collider1->ExecuteCollisionCallback(CollisionType::CollisionEnter, collider0);
 			}
 			// INFO: OnCollisionExit
 			else if (pairs[i].events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
 			{
-				collider0->ExecuteCollisionCallback(CollisionExit, collider1);
-				collider1->ExecuteCollisionCallback(CollisionExit, collider0);
+				collider0->ExecuteCollisionCallback(CollisionType::CollisionExit, collider1);
+				collider1->ExecuteCollisionCallback(CollisionType::CollisionExit, collider0);
 			}
 		}
 	}
@@ -283,21 +291,23 @@ namespace Flux
 	void Scene::Start()
 	{
 		// INFO: Components Start
-		for (const auto& [type, componentList] : components)
+		for (size_t i = 0; i < components.size(); i++)
 		{
-			for (const auto& weakComponent : componentList)
+			std::vector<std::weak_ptr<Component>>& componentList = components[static_cast<ComponentType>(i+1)];
+			for (size_t j = 0; j < componentList.size(); j++)
 			{
-				if (std::shared_ptr<Component> component = weakComponent.lock())
-				{
-					component->Start();
-				}
+				std::shared_ptr<Component> component = componentList[j].lock();
+				if (component) { component->Start(); }
 			}
 		}
 
 		// INFO: GameObject Start
-		for (const auto& gameObject : gameObjects)
+		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
+			std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
 			if (!gameObject->IsActive()) { continue; }
+
 			gameObject->Start();
 		}
 	}
@@ -305,9 +315,12 @@ namespace Flux
 	void Scene::Update(float deltaTime)
 	{
 		// INFO: Update all custom user scripts
-		for (const auto& gameObject : gameObjects)
+		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
+			std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
 			if (!gameObject->IsActive()) { continue; }
+
 			gameObject->Update(deltaTime);
 		}
 
@@ -315,16 +328,17 @@ namespace Flux
 		std::vector<std::weak_ptr<Collider>> colliders;
 
 		auto boxColliders = GetComponents<BoxCollider>();
-		for (const auto& boxCollider : boxColliders) { colliders.push_back(boxCollider); }
+		for (auto& boxCollider : boxColliders) { colliders.push_back(boxCollider); }
 
 		auto sphereColliders = GetComponents<SphereCollider>();
-		for (const auto& sphereCollider : sphereColliders) { colliders.push_back(sphereCollider); }
+		for (auto& sphereCollider : sphereColliders) { colliders.push_back(sphereCollider); }
 
-		for (const auto& weakCollider : colliders)
+		for (size_t i = 0; i < colliders.size(); i++)
 		{
-			std::shared_ptr<Collider> collider = weakCollider.lock();
+			std::shared_ptr<Collider> collider = colliders[i].lock();
 
 			if (!collider || !collider->GetGameObject()->IsActive() || !collider->IsActive()) { continue; }
+
 			collider->Update(Time::Alpha());
 		}
 	}
@@ -333,9 +347,12 @@ namespace Flux
 	{
 		if (RuntimeConfig::IsInPlayMode() && !RuntimeConfig::IsPaused())
 		{
-			for (const auto& gameObject : gameObjects)
+			for (size_t i = 0; i < gameObjects.size(); i++)
 			{
+				std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
 				if (!gameObject->IsActive()) { continue; }
+
 				gameObject->LateUpdate(deltaTime);
 			}
 		}
@@ -345,23 +362,26 @@ namespace Flux
 
 	void Scene::FixedUpdate(float fixedDeltaTime)
 	{
-		for (const auto& gameObject : gameObjects)
+		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
+			std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
 			if (!gameObject->IsActive()) { continue; }
+
 			gameObject->FixedUpdate(fixedDeltaTime);
 		}
 	}
 
 	void Scene::DrawWireframes(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 	{
-		for (auto& debugWireframe : debugWireframes)
+		for (size_t i = 0; i < debugWireframes.size(); i++)
 		{
-			if (std::shared_ptr<Component> component = debugWireframe.component.lock(); !component || !component->GetGameObject()->IsActive() || !component->IsActive()) 
-			{ 
-				continue; 
-			}
+			DebugWireframeData& debugWireframeData = debugWireframes[i];
+			std::shared_ptr<Component> component = debugWireframeData.component.lock();
 
-			debugWireframe.debugWireframe->DrawWireframe(deviceContext, primitiveBatch);
+			if (!component || !component->GetGameObject()->IsActive() || !component->IsActive()) { continue; }
+
+			debugWireframeData.debugWireframe->DrawWireframe(deviceContext, primitiveBatch);
 		}
 	}
 
@@ -390,7 +410,9 @@ namespace Flux
 		[[fallthrough]];
 		case ComponentType::Camera:
 		{
-			if (std::weak_ptr<IDebugWireframe> debugWireframe = std::dynamic_pointer_cast<IDebugWireframe>(validComponent); !debugWireframe.expired())
+			std::weak_ptr<IDebugWireframe> debugWireframe = std::dynamic_pointer_cast<IDebugWireframe>(validComponent);
+
+			if (!debugWireframe.expired())
 			{
 				DebugWireframeData debugWireframeData(component, debugWireframe.lock().get());
 				debugWireframes.push_back(debugWireframeData);
@@ -423,7 +445,8 @@ namespace Flux
 
 	std::weak_ptr<Collider> Scene::GetCollider(physx::PxRigidActor* rigidActor)
 	{
-		if (auto it = rigidActorsToColliders.find(rigidActor); it != rigidActorsToColliders.end()) { return it->second; }
+		auto it = rigidActorsToColliders.find(rigidActor);
+		if (it != rigidActorsToColliders.end()) { return it->second; }
 
 		return std::weak_ptr<Collider>();
 	}
@@ -448,16 +471,6 @@ namespace Flux
 		}
 	}
 
-	const std::string& Scene::GetSceneName() const
-	{
-		return sceneName;
-	}
-
-	physx::PxScene& Scene::GetPhysicsScene() const
-	{
-		return *physicsScene;
-	}
-
 	void Scene::CreateDefaultScene(const std::filesystem::path& path)
 	{
 		// INFO: Save the current scene
@@ -476,7 +489,7 @@ namespace Flux
 
 		// INFO: Create a default play mode camera
 		gameObjects.emplace_back(std::make_unique<GameObject>());
-		const std::unique_ptr<GameObject>& gameObject = gameObjects.back();
+		std::unique_ptr<GameObject>& gameObject = gameObjects.back();
 		gameObject->SetName("Main Camera");
 		playModeCamera = gameObject->AddComponent<Camera>(gameObject.get());
 
@@ -533,17 +546,22 @@ namespace Flux
 	std::weak_ptr<Camera> Scene::FindFirstActiveCamera()
 	{
 		// INFO: Return if we have a valid camera
-		if (std::shared_ptr<Camera> playCamera = playModeCamera.lock(); playCamera && playCamera->GetGameObject()->IsActive() && playCamera->IsActive())
+		std::shared_ptr<Camera> playCamera = playModeCamera.lock();
+		if (playCamera && playCamera->GetGameObject()->IsActive() && playCamera->IsActive())
 		{
 			return playModeCamera;
 		}
 
-		for (const auto& gameObject : gameObjects)
+		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
-			if (!gameObject->IsActive()) { continue; }
-			std::shared_ptr<Camera> camera = gameObject->GetComponent<Camera>().lock();
-			if (camera && camera->IsActive())
+			std::unique_ptr<GameObject>& gameObject = gameObjects[i];
+
+			if (gameObject->HasComponent<Camera>())
 			{
+				std::shared_ptr<Camera> camera = gameObject->GetComponent<Camera>().lock();
+
+				if (!gameObject->IsActive() || !camera->IsActive()) { continue; }
+
 				playModeCamera = camera;
 				return playModeCamera;
 			}

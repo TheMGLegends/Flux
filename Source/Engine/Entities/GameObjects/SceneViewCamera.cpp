@@ -1,5 +1,7 @@
 #include "SceneViewCamera.h"
 
+#include <sstream>
+
 #include "Core/Configs/EditorConfig.h"
 
 #include "Core/Debug/Debug.h"
@@ -13,7 +15,7 @@ using namespace DirectX::SimpleMath;
 namespace Flux
 {
 	SceneViewCamera::SceneViewCamera() : rotationSpeed(0.001f), movementSpeed(10.0f), minMovementSpeed(1.0f),
-										 maxMovementSpeed(50.0f), pitchConstraints(-1.49f, 1.49f)
+		maxMovementSpeed(50.0f), pitchConstraints(-1.49f, 1.49f)
 	{
 		camera = AddComponent<Camera>(this);
 
@@ -27,7 +29,9 @@ namespace Flux
 		}
 	}
 
-	SceneViewCamera::~SceneViewCamera() = default;
+	SceneViewCamera::~SceneViewCamera()
+	{
+	}
 
 	void SceneViewCamera::LateUpdate(float deltaTime)
 	{
@@ -112,15 +116,13 @@ namespace Flux
 
 				if (oldMovementSpeed != movementSpeed)
 				{
-					std::string movementSpeedString = std::format("Movement Speed: {:.0f}", movementSpeed);
-					Debug::Log(movementSpeedString);
+					std::stringstream ss;
+					ss << std::fixed << std::setprecision(0) << movementSpeed;
+					std::string movementSpeedStr = ss.str();
+
+					Debug::Log("Movement Speed: " + movementSpeedStr);
 				}
 			}
 		}
-	}
-
-	std::weak_ptr<Camera> SceneViewCamera::GetCamera() const
-	{
-		return camera;
 	}
 }

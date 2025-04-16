@@ -57,9 +57,7 @@ namespace Flux
 		}
 	}
 
-	physx::PxFilterFlags Physics::CustomFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0, 
-													 physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1, physx::PxPairFlags& pairFlags, 
-													 const void* constantBlock, physx::PxU32 constantBlockSize)
+	physx::PxFilterFlags Physics::CustomFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0, physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1, physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 	{
 		// INFO: Let triggers through
 		if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
@@ -80,15 +78,5 @@ namespace Flux
 		}
 
 		return physx::PxFilterFlag::eDEFAULT;
-	}
-
-	physx::PxPhysics& Physics::GetPhysics()
-	{
-		return *physics;
-	}
-
-	const physx::PxMaterial& Physics::GetDefaultPhysicsMaterial()
-	{
-		return *defaultPhysicsMaterial;
 	}
 }

@@ -19,7 +19,9 @@ namespace Flux
 		isRemoveable = false;
 	}
 
-	Transform::~Transform() = default;
+	Transform::~Transform()
+	{
+	}
 
 	void Transform::DrawDetails()
 	{
@@ -120,34 +122,9 @@ namespace Flux
 		return Vector3::Transform(Vector3::Up, rotation);
 	}
 
-	void Transform::SetPosition(const Vector3& _position)
-	{
-		position = _position;
-	}
-
-	const Vector3& Transform::GetPosition() const
-	{
-		return position;
-	}
-
-	void Transform::SetRotation(const Quaternion& _rotation)
-	{
-		rotation = _rotation;
-	}
-
-	const Quaternion& Transform::GetRotation() const
-	{
-		return rotation;
-	}
-
-	void Transform::SetScale(const Vector3& _scale)
+	void Transform::SetScale(const DirectX::SimpleMath::Vector3& _scale)
 	{
 		scale = _scale;
-	}
-
-	const Vector3& Transform::GetScale() const
-	{
-		return scale;
 	}
 
 	void Transform::Rotate(const Vector3& eulerRotation)
@@ -156,10 +133,5 @@ namespace Flux
 
 		// INFO: Combine the current rotation with the new rotation
 		rotation *= rotationQuaternion;
-	}
-
-	void Transform::Translate(const Vector3& translation)
-	{
-		position += translation;
 	}
 }

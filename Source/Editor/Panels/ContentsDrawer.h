@@ -13,10 +13,10 @@ namespace Flux
 	{
 	public:
 		ContentsDrawer();
-		~ContentsDrawer() override;
+		virtual ~ContentsDrawer() override;
 
-		int Initialise() override;
-		void Update(float deltaTime) override;
+		virtual int Initialise() override;
+		virtual void Update(float deltaTime) override;
 
 		void UpdateContents();
 		void DrawContents();
@@ -40,15 +40,6 @@ namespace Flux
 			Texture,
 			SkyboxTexture
 		};
-
-		struct AssetIconData
-		{
-			ImTextureID textureID;
-			AssetType assetType;
-		};
-
-		void DrawContentsContextMenu() const;
-		AssetIconData ChooseAssetIcon(const ContentsData& contentsData) const;
 
 	private:
 		std::filesystem::path currentDirectory;

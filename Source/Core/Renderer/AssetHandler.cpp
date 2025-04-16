@@ -279,7 +279,7 @@ namespace Flux
 	{
 		if (auto it = shaders.find(shaderType); it != shaders.end()) { return it->second; }
 
-		Debug::LogError(std::format("AssetHandler::GetShaderData() - Failed to find shader data. Shader Type: {}", magic_enum::enum_integer(shaderType)));
+		Debug::LogError("AssetHandler::GetShaderData() - Failed to find shader data. Shader Type: " + std::to_string(magic_enum::enum_integer(shaderType)));
 		return EMPTY_SHADER_DATA;
 	}
 
@@ -287,7 +287,7 @@ namespace Flux
 	{
 		if (auto it = constantBuffers.find(constantBufferType); it != constantBuffers.end()) { return it->second; }
 
-		Debug::LogError(std::format("AssetHandler::GetConstantBufferData() - Failed to find constant buffer data. Constant Buffer Type: {}", magic_enum::enum_integer(constantBufferType)));
+		Debug::LogError("AssetHandler::GetConstantBufferData() - Failed to find constant buffer data. Constant Buffer Type: " + std::to_string(magic_enum::enum_integer(constantBufferType)));
 		return EMPTY_CONSTANT_BUFFER_DATA;
 	}
 
@@ -295,7 +295,7 @@ namespace Flux
 	{
 		if (auto it = depthWriteStates.find(depthWriteType); it != depthWriteStates.end()) { return it->second.Get(); }
 
-		Debug::LogError(std::format("AssetHandler::GetDepthWriteState() - Failed to find depth write state. Depth Write Type: {}", magic_enum::enum_integer(depthWriteType)));
+		Debug::LogError("AssetHandler::GetDepthWriteState() - Failed to find depth write state. Depth Write Type: " + std::to_string(magic_enum::enum_integer(depthWriteType)));
 		return nullptr;
 	}
 
@@ -303,7 +303,7 @@ namespace Flux
 	{
 		if (auto it = cullingModeStates.find(cullingModeType); it != cullingModeStates.end()) { return it->second.Get(); }
 
-		Debug::LogError(std::format("AssetHandler::GetCullingModeState() - Failed to find culling mode state. Culling Mode Type: {}", magic_enum::enum_integer(cullingModeType)));
+		Debug::LogError("AssetHandler::GetCullingModeState() - Failed to find culling mode state. Culling Mode Type: " + std::to_string(magic_enum::enum_integer(cullingModeType)));
 		return nullptr;
 	}
 

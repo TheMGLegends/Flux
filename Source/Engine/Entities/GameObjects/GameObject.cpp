@@ -14,7 +14,9 @@ namespace Flux
 		transform = AddComponent<Transform>(this);
 	}
 
-	GameObject::~GameObject() = default;
+	GameObject::~GameObject()
+	{
+	}
 
 	void GameObject::Serialize(nlohmann::flux_json& json) const
 	{
@@ -31,8 +33,10 @@ namespace Flux
 		nlohmann::flux_json& gameObjectJson = json["GameObjects"].back();
 
 		// INFO: Serialize each Component on the GameObject
-		for (auto& component : components)
+		for (size_t i = 0; i < components.size(); i++)
 		{
+			const std::shared_ptr<Component>& component = components[i];
+
 			component->Serialize(gameObjectJson);
 		}
 	}
@@ -55,7 +59,7 @@ namespace Flux
 			auto& componentData = json["Components"][i];
 
 			// INFO: Create the Component based on the type
-			auto componentType = static_cast<ComponentType>(componentData["ComponentType"].get<unsigned int>());
+			ComponentType componentType = static_cast<ComponentType>(componentData["ComponentType"].get<unsigned int>());
 
 			std::weak_ptr<Component> component;
 
@@ -99,9 +103,12 @@ namespace Flux
 			OnEnable();
 
 			// INFO: Components Start
-			for (auto& component : components)
+			for (size_t i = 0; i < components.size(); i++)
 			{
+				std::shared_ptr<Component>& component = components[i];
+
 				if (!component->IsActive()) { continue; }
+
 				component->Start();
 			}
 
@@ -123,31 +130,6 @@ namespace Flux
 		SetIsActive(false);
 	}
 
-	void GameObject::SetName(std::string_view _name)
-	{
-		name = _name;
-	}
-
-	std::string& GameObject::GetName()
-	{
-		return name;
-	}
-
-	const std::string& GameObject::GetID() const
-	{
-		return id;
-	}
-
-	void GameObject::SetID(std::string_view _id)
-	{
-		id = _id;
-	}
-
-	void GameObject::SetType(std::string_view _type)
-	{
-		type = _type;
-	}
-
 	std::unique_ptr<GameObject> GameObject::CreateGameObject(const std::string& typeName)
 	{
 		std::unique_ptr<GameObject> gameObject;
@@ -157,23 +139,20 @@ namespace Flux
 		{
 			gameObjectCounter++;
 			gameObject = std::make_unique<GameObject>();
-			std::string gameObjectIdentifier = std::format("GameObject{}", gameObjectCounter);
-			gameObject.get()->SetName(gameObjectIdentifier);
-			gameObject.get()->SetID(gameObjectIdentifier);
+			gameObject.get()->SetName("GameObject" + std::to_string(gameObjectCounter));
+			gameObject.get()->SetID("GameObject" + std::to_string(gameObjectCounter));
 			gameObject.get()->SetType("GameObject");
 
 			return gameObject;
 		}
 
-		if (auto it = gameObjectTypes.find(typeName); it != gameObjectTypes.end())
+		auto it = gameObjectTypes.find(typeName);
+		if (it != gameObjectTypes.end())
 		{
-			int count = gameObjectTypeCounters[typeName];
-			gameObjectTypeCounters[typeName]++;
-
+			int count = gameObjectTypeCounters[typeName]++;
 			gameObject = it->second();
-			std::string gameObjectIdentifier = std::format("{}{}", typeName, count);
-			gameObject.get()->SetName(gameObjectIdentifier);
-			gameObject.get()->SetID(gameObjectIdentifier);
+			gameObject.get()->SetName(typeName + std::to_string(count));
+			gameObject.get()->SetID(typeName + std::to_string(count));
 			gameObject.get()->SetType(typeName);
 
 			return gameObject;
@@ -189,7 +168,9 @@ namespace Flux
 
 	void GameObject::RegisterGameObjectType(const std::string& typeName, std::function<std::unique_ptr<GameObject>()> creator)
 	{
-		if (auto [data, result] = gameObjectTypes.try_emplace(typeName, std::move(creator)); !result)
+		auto result = gameObjectTypes.try_emplace(typeName, std::move(creator));
+
+		if (!result.second)
 		{
 			Debug::LogError("GameObject::RegisterGameObjectType - GameObject type already registered: " + typeName);
 			return;

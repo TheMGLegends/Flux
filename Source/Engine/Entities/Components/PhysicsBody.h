@@ -25,43 +25,43 @@ namespace Flux
 	class PhysicsBody : public Component, public std::enable_shared_from_this<PhysicsBody>
 	{
 	public:
-		explicit PhysicsBody(GameObject* _gameObject);
-		~PhysicsBody() override;
+		PhysicsBody(GameObject* _gameObject);
+		virtual ~PhysicsBody() override;
 
-		void PostConstruction() override;
-		void Start() override;
-		void DrawDetails() override;
+		virtual void PostConstruction() override;
+		virtual void Start() override;
+		virtual void DrawDetails() override;
 
-		void Serialize(nlohmann::flux_json& json) const override;
-		void Deserialize(const nlohmann::flux_json& json) override;
+		virtual void Serialize(nlohmann::flux_json& json) const override;
+		virtual void Deserialize(const nlohmann::flux_json& json) override;
 
-		void SetIsActive(bool _isActive) override;
+		virtual void SetIsActive(bool _isActive) override;
 
 		void AddForce(const DirectX::SimpleMath::Vector3& force, physx::PxForceMode::Enum forceMode = physx::PxForceMode::eFORCE);
 
 		void SetMass(float _mass);
-		float GetMass() const;
+		inline float GetMass() const { return mass; }
 
 		void SetDrag(float _drag);
-		float GetDrag() const;
+		inline float GetDrag() const { return drag; }
 
 		void SetAngularDrag(float _angularDrag);
-		float GetAngularDrag() const;
+		inline float GetAngularDrag() const { return angularDrag; }
 
 		void SetUseGravity(bool _useGravity);
-		bool UsesGravity() const;
+		inline bool UsesGravity() const { return useGravity; }
 
 		void SetPositionConstraint(bool isConstrained, ConstraintAxis axis);
-		bool IsPositionConstrained(ConstraintAxis axis) const;
+		inline bool IsPositionConstrained(ConstraintAxis axis) const { return positionConstraints[static_cast<size_t>(axis)]; }
 
 		void SetRotationConstraint(bool isConstrained, ConstraintAxis axis);
-		bool IsRotationConstrained(ConstraintAxis axis) const;
+		inline bool IsRotationConstrained(ConstraintAxis axis) const { return rotationConstraints[static_cast<size_t>(axis)]; }
 
 		physx::PxRigidDynamic* VerifyRigidActor();
 
 	private:
 		/// @return true if the field was changed
-		bool DisplayArray3Field(const char* label, bool* array) const;
+		bool DisplayArray3Field(const char* label, bool* array);
 
 	private:
 		std::weak_ptr<Collider> attachedCollider;

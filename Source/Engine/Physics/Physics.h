@@ -19,8 +19,8 @@ namespace Flux
 													   physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
 													   physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize);
 
-		static physx::PxPhysics& GetPhysics();
-		static const physx::PxMaterial& GetDefaultPhysicsMaterial();
+		static physx::PxPhysics& GetPhysics() { return *physics; }
+		static const physx::PxMaterial& GetDefaultPhysicsMaterial() { return *defaultPhysicsMaterial; }
 
 	private:
 		static physx::PxFoundation* foundation;

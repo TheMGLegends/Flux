@@ -123,19 +123,19 @@ namespace Flux
 
 	void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 	{
-		static const std::array<DirectX::XMVECTOR, 8> vertices =
+		static const DirectX::XMVECTOR vertices[8] =
 		{
-			DirectX::XMVECTOR{ -1, -1, -1, 0 },
-			DirectX::XMVECTOR{ 1, -1, -1, 0 },
-			DirectX::XMVECTOR{ 1, -1, 1, 0 },
-			DirectX::XMVECTOR{ -1, -1, 1, 0 },
-			DirectX::XMVECTOR{ -1, 1, -1, 0 },
-			DirectX::XMVECTOR{ 1, 1, -1, 0 },
-			DirectX::XMVECTOR{ 1, 1, 1, 0 },
-			DirectX::XMVECTOR{ -1, 1, 1, 0 }
+			{ -1, -1, -1, 0 },
+			{ 1, -1, -1, 0 },
+			{ 1, -1, 1, 0 },
+			{ -1, -1, 1, 0 },
+			{ -1, 1, -1, 0 },
+			{ 1, 1, -1, 0 },
+			{ 1, 1, 1, 0 },
+			{ -1, 1, 1, 0 }
 		};
 
-		static const std::array<unsigned short, 24> indices =
+		static const unsigned short indices[24] =
 		{
 			0, 1,
 			1, 2,
@@ -158,7 +158,7 @@ namespace Flux
 			DirectX::XMMATRIX world = owningTransform->GetWorldMatrix(size);
 
 			// INFO: Translate the vertices to world space
-			std::array<DirectX::VertexPositionColor, 8> worldVertices{};
+			DirectX::VertexPositionColor worldVertices[8]{};
 
 			bool isTrigger = IsTrigger();
 
@@ -168,7 +168,7 @@ namespace Flux
 				DirectX::XMStoreFloat4(&worldVertices[i].color, isTrigger ? DirectX::Colors::Yellow : DirectX::Colors::LawnGreen);
 			}
 
-			primitiveBatch.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, &indices[0], 24, &worldVertices[0], 8);
+			primitiveBatch.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, indices, 24, worldVertices, 8);
 		}
 	}
 
@@ -216,7 +216,8 @@ namespace Flux
 			// INFO: Remove the shape from the actor to allow for geometry changes
 			rigidActor->detachShape(*colliderShape);
 
-			if (physx::PxBoxGeometry boxGeometry{}; colliderShape->getBoxGeometry(boxGeometry))
+			physx::PxBoxGeometry boxGeometry{};
+			if (colliderShape->getBoxGeometry(boxGeometry))
 			{
 				Vector3 adjustedSize = size * GetGameObject()->transform.lock()->GetScale();
 				boxGeometry.halfExtents = { adjustedSize.x, adjustedSize.y, adjustedSize.z };
@@ -228,19 +229,9 @@ namespace Flux
 		}
 	}
 
-	void BoxCollider::SetSize(const Vector3& _size)
+	void BoxCollider::SetSize(const DirectX::SimpleMath::Vector3& _size)
 	{
 		if (size != _size) { size = _size; }
 		UpdateScale();
-	}
-
-	void BoxCollider::SetSize(float xHalfExtent, float yHalfExtent, float zHalfExtent)
-	{
-		SetSize(Vector3(xHalfExtent, yHalfExtent, zHalfExtent));
-	}
-
-	const Vector3& BoxCollider::GetSize() const
-	{
-		return size;
 	}
 }

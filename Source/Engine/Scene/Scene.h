@@ -30,20 +30,20 @@ namespace Flux
 
 	public:
 		Scene();
-		~Scene() override;
+		~Scene();
 
-		void Serialize(nlohmann::flux_json& json) const override;
-		void Deserialize(const nlohmann::flux_json& json) override;
+		virtual void Serialize(nlohmann::flux_json& json) const override;
+		virtual void Deserialize(const nlohmann::flux_json& json) override;
 
-		void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
+		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
-		void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override;
-		void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override;
+		virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override;
+		virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override;
 
-		void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override {}
-		void onWake(physx::PxActor** actors, physx::PxU32 count) override {}
-		void onSleep(physx::PxActor** actors, physx::PxU32 count) override {}
-		void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) override {}
+		virtual void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override {}
+		virtual void onWake(physx::PxActor** actors, physx::PxU32 count) override {}
+		virtual void onSleep(physx::PxActor** actors, physx::PxU32 count) override {}
+		virtual void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) override {}
 
 		void Start();
 		void Update(float deltaTime);
@@ -65,8 +65,8 @@ namespace Flux
 		/// @param isPrimary If true, returns the first active play mode camera in the scene
 		std::weak_ptr<Camera> GetCamera(bool isPrimary = false);
 
-		const std::string& GetSceneName() const;
-		physx::PxScene& GetPhysicsScene() const;
+		const std::string& GetSceneName() const { return sceneName; }
+		physx::PxScene& GetPhysicsScene() const { return *physicsScene; }
 
 		void CreateDefaultScene(const std::filesystem::path& path);
 		void SerializeScene(const std::filesystem::path& path);
@@ -102,43 +102,42 @@ namespace Flux
 	template<class T>
 	inline std::vector<std::weak_ptr<T>> Scene::GetComponents()
 	{
-		static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
+		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
 
 		std::vector<std::weak_ptr<T>> componentList;
 		ComponentType componentType = ComponentType::None;
 
-		if constexpr (std::is_same_v<T, Transform>)
+		if constexpr (std::is_same<T, Transform>::value)
 		{
 			componentType = ComponentType::Transform;
 		}
-		else if constexpr (std::is_same_v<T, Camera>)
+		else if constexpr (std::is_same<T, Camera>::value)
 		{
 			componentType = ComponentType::Camera;
 		}
-		else if constexpr (std::is_same_v<T, PhysicsBody>)
+		else if constexpr (std::is_same<T, PhysicsBody>::value)
 		{
 			componentType = ComponentType::PhysicsBody;
 		}
-		else if constexpr (std::is_same_v<T, Visualizer>)
+		else if constexpr (std::is_same<T, Visualizer>::value)
 		{
 			componentType = ComponentType::Visualizer;
 		}
-		else if constexpr (std::is_same_v<T, BoxCollider>)
+		else if constexpr (std::is_same<T, BoxCollider>::value)
 		{
 			componentType = ComponentType::BoxCollider;
 		}
-		else if constexpr (std::is_same_v<T, SphereCollider>)
+		else if constexpr (std::is_same<T, SphereCollider>::value)
 		{
 			componentType = ComponentType::SphereCollider;
 		}
 
-		if (const auto& it = components.find(componentType); it != components.end())
+		for (size_t i = 0; i < components[componentType].size(); i++)
 		{
-			for (const auto& component : it->second)
-			{
-				if (component.expired()) { continue; }
-				componentList.push_back(std::static_pointer_cast<T>(component.lock()));
-			}
+			if (components[componentType][i].expired())
+				continue;
+
+			componentList.push_back(std::static_pointer_cast<T>(components[componentType][i].lock()));
 		}
 
 		return componentList;

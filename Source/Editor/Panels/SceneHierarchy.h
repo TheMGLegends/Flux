@@ -6,7 +6,6 @@
 #include <string>
 
 struct ImFont;
-struct ImVec2;
 
 namespace Flux
 {
@@ -17,19 +16,14 @@ namespace Flux
 	{
 	public:
 		SceneHierarchy();
-		~SceneHierarchy() override;
+		virtual ~SceneHierarchy() override;
 
-		int Initialise() override;
-		void Update(float deltaTime) override;
+		virtual int Initialise() override;
+		virtual void Update(float deltaTime) override;
 
-		void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
+		virtual void OnNotify(EventType eventType, std::shared_ptr<Event> event) override;
 
 		GameObject* GetSelectedGameObject() const;
-
-	private:
-		void DisplaySceneObjects(const ImVec2& windowSize);
-		void GameSettingsPopup() const;
-		void AddGameObjectButton(float windowWidth);
 
 	private:
 		Scene& scene;

@@ -20,12 +20,14 @@ namespace Flux
 {
 	using namespace GlobalDefines;
 
-	ContentsDrawer::ContentsDrawer() : currentDirectory(), contents(), contentsRefreshTime(1.0f), currentRefreshTime(0.0f),
+	ContentsDrawer::ContentsDrawer() : contentsRefreshTime(1.0f), currentRefreshTime(0.0f), currentDirectory(), contents(), 
 									   folderIcon(0), meshIcon(0), audioIcon(0), ddsIcon(0), sceneIcon(0), defaultFileIcon(0)
 	{
 	}
 
-	ContentsDrawer::~ContentsDrawer() = default;
+	ContentsDrawer::~ContentsDrawer()
+	{
+	}
 
 	int ContentsDrawer::Initialise()
 	{
@@ -76,7 +78,24 @@ namespace Flux
 				ImGui::GetForegroundDrawList()->AddRectFilled(windowPos, ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), IM_COL32(0, 116, 188, 50));
 			}
 
-			DrawContentsContextMenu();
+			if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			{
+				ImGui::OpenPopup("ContentsContextMenu");
+			}
+
+			if (ImGui::BeginPopup("ContentsContextMenu"))
+			{
+				if (ImGui::MenuItem("New Scene"))
+				{
+					std::string newSceneName = "NewScene" + std::to_string(AssetHandler::GetSceneCount()) + ".json";
+					std::filesystem::path newScenePath = currentDirectory / newSceneName;
+
+					SceneContext::GetScene().CreateDefaultScene(newScenePath);
+					AssetHandler::StoreScenePath(newSceneName, newScenePath);
+				}
+
+				ImGui::EndPopup();
+			}
 
 			// INFO: Back Button
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
@@ -123,195 +142,162 @@ namespace Flux
 
 	void ContentsDrawer::DrawContents()
 	{
+		AssetType assetType = AssetType::None;
+		ImTextureID textureID = 0;
 		ImVec2 iconSize = ImVec2(50.0f, 50.0f);
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 		bool updateContents = false;
 
 		for (size_t i = 0; i < contents.size(); i++)
 		{
-			const ContentsData& contentsData = contents[i];
+			ContentsData& contentsData = contents[i];
 			const std::string& filenameString = contentsData.filenameString;
 
-			// INFO: Filter by Search String
-			if (!searchString.empty() && filenameString.rfind(searchString, 0) == std::string::npos) { continue; }
-
-			ImGui::PushID(static_cast<int>(i));
-
-			const std::filesystem::directory_entry& entry = contentsData.entry;
-			const std::filesystem::path& path = entry.path();
-			const std::string& filenameStemString = contentsData.filenameStemString;
-
-			// INFO: Choose the Asset Icon
-			AssetIconData assetIconData = ChooseAssetIcon(contentsData);
-
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(16.0f, 4.0f));
-
-			// INFO: Group Icon & Label
-			ImGui::BeginGroup();
-
-			// INFO: Remove Background Colour for Buttons
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-			ImGui::ImageButton("##Asset", assetIconData.textureID, iconSize);
-			ImGui::PopStyleColor();
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			if (searchString.empty() || filenameString.rfind(searchString, 0) != std::string::npos)
 			{
+				ImGui::PushID(static_cast<int>(i));
+
+				const std::filesystem::directory_entry& entry = contentsData.entry;
+				const std::string& filenameStemString = contentsData.filenameStemString;
+				const std::string& extensionType = contentsData.extensionType;
+				const std::filesystem::path& path = entry.path();
+
+				// INFO: Icon Choosing
 				if (entry.is_directory())
 				{
-					currentDirectory /= path.filename();
-					updateContents = true;
-					searchString.clear();
+					textureID = folderIcon; // INFO: Folders
 				}
-				else if (assetIconData.assetType == AssetType::Scene)
+				else if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
 				{
-					EventDispatcher::QueueEvent(EventType::LoadScene, std::make_shared<LoadSceneEvent>(path));
+					// INFO: Load Texture if not already loaded
+					if (!AssetHandler::HasTexture(filenameStemString))
+					{
+						AssetHandler::LoadTexture(path);
+					}
+
+					textureID = (ImTextureID)AssetHandler::GetTexture(filenameStemString); // INFO: Textures
+					assetType = AssetType::Texture;
 				}
-			}
-
-			// INFO: Setup Drag & Drop Payload
-			if (RuntimeConfig::IsInEditorMode() && ImGui::BeginDragDropSource())
-			{
-				std::string payloadType = "";
-
-				switch (assetIconData.assetType)
+				else if (FiletypeConfig::IsSupportedModelFormat(extensionType))
 				{
-				using enum AssetType;
-				case Model:
-					payloadType = "Model";
-					break;
-				case Texture:
-					payloadType = "Texture";
-					break;
-				case SkyboxTexture:
-					payloadType = "SkyboxTexture";
-					break;
-				default:
-					break;
+					// INFO: Load Model if not already loaded
+					if (!AssetHandler::HasModel(filenameStemString))
+					{
+						Assimp::Importer importer;
+						AssetHandler::LoadModel(path, importer);
+					}
+
+					textureID = meshIcon; // INFO: Meshes
+					assetType = AssetType::Model;
+				}
+				else if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
+				{
+					// INFO: Load Audio if not already loaded
+					if (!AssetHandler::HasAudioPath(filenameStemString))
+					{
+						AssetHandler::StoreAudioPath(path);
+					}
+
+					textureID = audioIcon; // INFO: Audio
+				}
+				else if (extensionType == FiletypeConfig::DDS)
+				{
+					// INFO: Load DDS Texture if not already loaded
+					if (!AssetHandler::HasTexture(filenameStemString, true))
+					{
+						AssetHandler::LoadTexture(path, true);
+					}
+
+					textureID = ddsIcon; // INFO: DDS Textures
+					assetType = AssetType::SkyboxTexture;
+				}
+				else if (extensionType == ".json")
+				{
+					textureID = sceneIcon; // INFO: Scenes
+					assetType = AssetType::Scene;
+				}
+				else
+				{
+					textureID = defaultFileIcon; // INFO: Generic Files
 				}
 
-				ImGui::Image(assetIconData.textureID, iconSize);
-				ImGui::SetDragDropPayload(payloadType.c_str(), filenameStemString.c_str(), filenameStemString.size() + 1);
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(16.0f, 4.0f));
 
-				ImGui::EndDragDropSource();
+				// INFO: Group Icon & Label
+				ImGui::BeginGroup();
+
+				// INFO: Remove Background Colour for Buttons
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+				ImGui::ImageButton("##Asset", textureID, iconSize);
+				ImGui::PopStyleColor();
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					if (entry.is_directory())
+					{
+						currentDirectory /= path.filename();
+						updateContents = true;
+						searchString.clear();
+					}
+					else if (assetType == AssetType::Scene)
+					{
+						EventDispatcher::QueueEvent(EventType::LoadScene, std::make_shared<LoadSceneEvent>(path));
+					}
+				}
+
+				// INFO: Setup Drag & Drop Payload
+				if (RuntimeConfig::IsInEditorMode())
+				{
+					if (ImGui::BeginDragDropSource())
+					{
+						std::string payloadType = "";
+
+						switch (assetType)
+						{
+						case AssetType::Model:
+							payloadType = "Model";
+							break;
+						case AssetType::Texture:
+							payloadType = "Texture";
+							break;
+						case AssetType::SkyboxTexture:
+							payloadType = "SkyboxTexture";
+							break;
+						default:
+							break;
+						}
+
+						ImGui::Image(textureID, iconSize);
+						ImGui::SetDragDropPayload(payloadType.c_str(), filenameStemString.c_str(), filenameStemString.size() + 1);
+
+						ImGui::EndDragDropSource();
+					}
+				}
+
+				// INFO: Centre Text if shorter than icon width
+				float textWidth = ImGui::CalcTextSize(filenameString.c_str()).x;
+				float paddingWidth = ImGui::GetStyle().ItemSpacing.x;
+
+				if (textWidth < iconSize.x + paddingWidth)
+				{
+					ImGui::SetCursorPos({ ImGui::GetCursorPos().x + (iconSize.x + (paddingWidth * 0.5f) - textWidth) * 0.5f, ImGui::GetCursorPos().y });
+				}
+
+				ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + iconSize.x + ImGui::GetStyle().ItemSpacing.x);
+				ImGui::Text(filenameString.c_str());
+				ImGui::PopTextWrapPos();
+
+				ImGui::EndGroup();
+
+				float nextItemPosition = ImGui::GetItemRectMax().x + ImGui::GetStyle().ItemSpacing.x + iconSize.x;
+				if (nextItemPosition < panelWidth) { ImGui::SameLine(); }
+
+				ImGui::PopStyleVar();
+
+				ImGui::PopID();
+
+				if (updateContents) { UpdateContents(); }
 			}
-
-			// INFO: Centre Text if shorter than icon width
-			float textWidth = ImGui::CalcTextSize(filenameString.c_str()).x;
-
-			if (float paddingWidth = ImGui::GetStyle().ItemSpacing.x; textWidth < iconSize.x + paddingWidth)
-			{
-				ImGui::SetCursorPos({ ImGui::GetCursorPos().x + (iconSize.x + (paddingWidth * 0.5f) - textWidth) * 0.5f, ImGui::GetCursorPos().y });
-			}
-
-			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + iconSize.x + ImGui::GetStyle().ItemSpacing.x);
-			ImGui::Text(filenameString.c_str());
-			ImGui::PopTextWrapPos();
-
-			ImGui::EndGroup();
-
-			if (float nextItemPosition = ImGui::GetItemRectMax().x + ImGui::GetStyle().ItemSpacing.x + iconSize.x; nextItemPosition < panelWidth) 
-			{ 
-				ImGui::SameLine(); 
-			}
-
-			ImGui::PopStyleVar();
-
-			ImGui::PopID();
-
-			if (updateContents) { UpdateContents(); }
 		}
-	}
-
-	void ContentsDrawer::DrawContentsContextMenu() const
-	{
-		if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-		{
-			ImGui::OpenPopup("ContentsContextMenu");
-		}
-
-		if (ImGui::BeginPopup("ContentsContextMenu"))
-		{
-			if (ImGui::MenuItem("New Scene"))
-			{
-				std::string newSceneName = std::format("NewScene{}.json", AssetHandler::GetSceneCount());
-				std::filesystem::path newScenePath = currentDirectory / newSceneName;
-
-				SceneContext::GetScene().CreateDefaultScene(newScenePath);
-				AssetHandler::StoreScenePath(newSceneName, newScenePath);
-			}
-
-			ImGui::EndPopup();
-		}
-	}
-
-	Flux::ContentsDrawer::AssetIconData ContentsDrawer::ChooseAssetIcon(const ContentsData& contentsData) const
-	{
-		AssetIconData assetIconData{};
-
-		const std::filesystem::directory_entry& entry = contentsData.entry;
-		const std::string& filenameStemString = contentsData.filenameStemString;
-		const std::string& extensionType = contentsData.extensionType;
-		const std::filesystem::path& path = entry.path();
-
-		// INFO: Icon Choosing
-		if (entry.is_directory())
-		{
-			assetIconData.textureID = folderIcon; // INFO: Folders
-		}
-		else if (FiletypeConfig::IsSupportedTextureFormat(extensionType))
-		{
-			// INFO: Load Texture if not already loaded
-			if (!AssetHandler::HasTexture(filenameStemString))
-			{
-				AssetHandler::LoadTexture(path);
-			}
-
-			assetIconData.textureID = (ImTextureID)AssetHandler::GetTexture(filenameStemString); // INFO: Textures
-			assetIconData.assetType = AssetType::Texture;
-		}
-		else if (FiletypeConfig::IsSupportedModelFormat(extensionType))
-		{
-			// INFO: Load Model if not already loaded
-			if (!AssetHandler::HasModel(filenameStemString))
-			{
-				Assimp::Importer importer;
-				AssetHandler::LoadModel(path, importer);
-			}
-
-			assetIconData.textureID = meshIcon; // INFO: Meshes
-			assetIconData.assetType = AssetType::Model;
-		}
-		else if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
-		{
-			// INFO: Load Audio if not already loaded
-			if (!AssetHandler::HasAudioPath(filenameStemString))
-			{
-				AssetHandler::StoreAudioPath(path);
-			}
-
-			assetIconData.textureID = audioIcon; // INFO: Audio
-		}
-		else if (extensionType == FiletypeConfig::DDS)
-		{
-			// INFO: Load DDS Texture if not already loaded
-			if (!AssetHandler::HasTexture(filenameStemString, true))
-			{
-				AssetHandler::LoadTexture(path, true);
-			}
-
-			assetIconData.textureID = ddsIcon; // INFO: DDS Textures
-			assetIconData.assetType = AssetType::SkyboxTexture;
-		}
-		else if (extensionType == ".json")
-		{
-			assetIconData.textureID = sceneIcon; // INFO: Scenes
-			assetIconData.assetType = AssetType::Scene;
-		}
-		else
-		{
-			assetIconData.textureID = defaultFileIcon; // INFO: Generic Files
-		}
-
-		return assetIconData;
 	}
 }

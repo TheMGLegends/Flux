@@ -44,7 +44,9 @@ namespace Flux
 		SetFrustum();
 	}
 
-	Camera::~Camera() = default;
+	Camera::~Camera()
+	{
+	}
 
 	void Camera::DrawDetails()
 	{
@@ -77,9 +79,105 @@ namespace Flux
 		}
 		ImGui::PopStyleVar();
 
-		// INFO: Camera Details
-		DrawCameraDetails(treeOpened);
+		if (treeOpened)
+		{
+			// INFO: Use Skybox Checkbox
+			ImGui::Text("Use Skybox");
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(136.0f);
+			if (ImGui::Checkbox("##UseSkybox", &useSkybox))
+			{
+				EditorConfig::SetSceneNeedsSaving(true);
+			}
 
+			// INFO: Skybox Texture Selector + Drag & Drop Field
+			ImGui::Text("Texture");
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(136.0f);
+			ImGui::SetNextItemWidth(150.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
+			if (ImGui::BeginCombo("##SkyboxTexture", skyboxTextureName.c_str(), ImGuiComboFlags_HeightLarge))
+			{
+				for (const auto& skyboxTexture : AssetHandler::GetTextures(true))
+				{
+					if (ImGui::Selectable(skyboxTexture.first.c_str(), skyboxTextureName == skyboxTexture.first))
+					{
+						SetMaterialTexture(skyboxTexture.first);
+						EditorConfig::SetSceneNeedsSaving(true);
+					}
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::PopStyleVar();
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SkyboxTexture"))
+				{
+					std::string textureName = static_cast<const char*>(payload->Data);
+					SetMaterialTexture(textureName);
+					EditorConfig::SetSceneNeedsSaving(true);
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
+			// INFO: Background Colour Picker
+			ImGuiColorEditFlags colourEditFlags = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreviewHalf;
+			ImGui::Text("Background");
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(136.0f);
+			if (ImGui::ColorEdit4("##BackgroundColour", &backgroundColour[0], colourEditFlags))
+			{
+				EditorConfig::SetSceneNeedsSaving(true);
+			}
+
+			// INFO: FOV Slider
+			ImGui::Text("Vertical FOV");
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(136.0f);
+			ImGui::SetNextItemWidth(200.0f);
+			if (ImGui::SliderFloat("##VerticalFOV", &verticalFOV, 1.0f, 150.0f, "%.1f", ImGuiSliderFlags_ClampOnInput))
+			{
+				EditorConfig::SetSceneNeedsSaving(true);
+			}
+
+			// INFO: Clipping Planes
+			ImGui::Text("Clipping Planes");
+			if (ImGui::BeginTable("##ClippingPlanes", 2))
+			{
+				ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 81.0f); // INFO: Label Column
+				ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 75.0f); // INFO: Value Column
+
+				ImGui::AlignTextToFramePadding();
+
+				ImGui::TableNextColumn();
+				ImGui::SetCursorPosX(50.0f);
+				ImGui::Text("Near");
+				ImGui::TableNextColumn();
+				ImGui::SetCursorPosX(136.0f);
+				if (ImGui::InputFloat("##NearClippingPlane", &nearClippingPlane, 0.0f, 0.0f, "%.1f"))
+				{
+					EditorConfig::SetSceneNeedsSaving(true);
+				}
+
+				ImGui::TableNextRow();
+
+				ImGui::TableNextColumn();
+				ImGui::SetCursorPosX(50.0f);
+				ImGui::Text("Far");
+				ImGui::TableNextColumn();
+				ImGui::SetCursorPosX(136.0f);
+				if (ImGui::InputFloat("##FarClippingPlane", &farClippingPlane, 0.0f, 0.0f, "%.1f"))
+				{
+					EditorConfig::SetSceneNeedsSaving(true);
+				}
+
+				ImGui::EndTable();
+			}
+
+			ImGui::TreePop();
+		}
 		ImGui::PopID();
 
 		ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
@@ -132,7 +230,7 @@ namespace Flux
 		{
 			DirectX::XMMATRIX world = owningTransform->GetWorldMatrix();
 
-			std::array<DirectX::VertexPositionColor, 24> worldFrustumVertices{};
+			DirectX::VertexPositionColor worldFrustumVertices[24]{};
 
 			for (size_t i = 0; i < 24; i++)
 			{
@@ -140,7 +238,7 @@ namespace Flux
 				DirectX::XMStoreFloat4(&worldFrustumVertices[i].color, DirectX::Colors::White);
 			}
 
-			primitiveBatch.Draw(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, &worldFrustumVertices[0], 24);
+			primitiveBatch.Draw(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, worldFrustumVertices, 24);
 		}
 	}
 
@@ -170,26 +268,6 @@ namespace Flux
 			aspectRatio, nearClippingPlane, farClippingPlane);
 	}
 
-	void Camera::SetBackgroundColour(const std::array<float, 4>& _backgroundColour)
-	{
-		backgroundColour = _backgroundColour;
-	}
-
-	const std::array<float, 4>& Camera::GetBackgroundColour() const
-	{
-		return backgroundColour;
-	}
-
-	void Camera::SetDrawFrustum(bool _drawFrustum)
-	{
-		shouldDrawFrustum = _drawFrustum;
-	}
-
-	bool Camera::ShouldDrawFrustum() const
-	{
-		return shouldDrawFrustum;
-	}
-
 	void Camera::SetSkyboxModel(const std::string& modelName)
 	{
 		skyboxModel = AssetHandler::GetModel(modelName);
@@ -200,26 +278,11 @@ namespace Flux
 		}
 	}
 
-	void Camera::SetMaterialTexture(std::string_view _textureName)
+	void Camera::SetMaterialTexture(const std::string& _textureName)
 	{
 		skyboxTextureName = _textureName;
 
 		skyboxMaterial.SetTexture(skyboxTextureName, true);
-	}
-
-	const std::string& Camera::GetSkyboxTextureName() const
-	{
-		return skyboxTextureName;
-	}
-
-	void Camera::SetUseSkybox(bool _useSkybox)
-	{
-		useSkybox = _useSkybox;
-	}
-
-	bool Camera::UseSkybox() const
-	{
-		return useSkybox;
 	}
 
 	void Camera::DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection)
@@ -244,32 +307,12 @@ namespace Flux
 		skyboxModel->Draw(deviceContext);
 	}
 
-	void Camera::SetVerticalFOV(float _verticalFOV)
-	{
-		verticalFOV = _verticalFOV;
-	}
-
-	void Camera::SetNearClippingPlane(float _nearClippingPlane)
-	{
-		nearClippingPlane = _nearClippingPlane;
-	}
-
-	void Camera::SetFarClippingPlane(float _farClippingPlane)
-	{
-		farClippingPlane = _farClippingPlane;
-	}
-
-	void Camera::SetAspectRatio(float screenWidth, float screenHeight)
-	{
-		aspectRatio = screenWidth / screenHeight;
-	}
-
 	void Camera::SetFrustum()
 	{
 		DirectX::BoundingFrustum::CreateFromMatrix(frustum, GetAdjustedProjectionMatrix(nearClippingPlane, farClippingPlane * 0.1f));
 
-		std::array<DirectX::XMFLOAT3, DirectX::BoundingFrustum::CORNER_COUNT> corners{};
-		frustum.GetCorners(&corners[0]);
+		DirectX::XMFLOAT3 corners[DirectX::BoundingFrustum::CORNER_COUNT]{};
+		frustum.GetCorners(corners);
 
 		frustumVertices[0] = DirectX::XMLoadFloat3(&corners[0]);
 		frustumVertices[1] = DirectX::XMLoadFloat3(&corners[1]);
@@ -303,107 +346,5 @@ namespace Flux
 	{
 		return DirectX::XMMatrixPerspectiveFovRH(DirectX::XMConvertToRadians(verticalFOV),
 			aspectRatio, _nearClippingPlane, _farClippingPlane);
-	}
-
-	void Camera::DrawCameraDetails(bool treeOpened)
-	{
-		if (!treeOpened) { return; }
-
-		// INFO: Use Skybox Checkbox
-		ImGui::Text("Use Skybox");
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(136.0f);
-		if (ImGui::Checkbox("##UseSkybox", &useSkybox))
-		{
-			EditorConfig::SetSceneNeedsSaving(true);
-		}
-
-		// INFO: Skybox Texture Selector + Drag & Drop Field
-		ImGui::Text("Texture");
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(136.0f);
-		ImGui::SetNextItemWidth(150.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
-		if (ImGui::BeginCombo("##SkyboxTexture", skyboxTextureName.c_str(), ImGuiComboFlags_HeightLarge))
-		{
-			for (const auto& [name, texture] : AssetHandler::GetTextures(true))
-			{
-				if (ImGui::Selectable(name.c_str(), skyboxTextureName == name))
-				{
-					SetMaterialTexture(name);
-					EditorConfig::SetSceneNeedsSaving(true);
-				}
-			}
-			ImGui::EndCombo();
-		}
-		ImGui::PopStyleVar();
-
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SkyboxTexture"))
-			{
-				std::string textureName = static_cast<const char*>(payload->Data);
-				SetMaterialTexture(textureName);
-				EditorConfig::SetSceneNeedsSaving(true);
-			}
-
-			ImGui::EndDragDropTarget();
-		}
-
-		// INFO: Background Colour Picker
-		ImGuiColorEditFlags colourEditFlags = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreviewHalf;
-		ImGui::Text("Background");
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(136.0f);
-		if (ImGui::ColorEdit4("##BackgroundColour", &backgroundColour[0], colourEditFlags))
-		{
-			EditorConfig::SetSceneNeedsSaving(true);
-		}
-
-		// INFO: FOV Slider
-		ImGui::Text("Vertical FOV");
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(136.0f);
-		ImGui::SetNextItemWidth(200.0f);
-		if (ImGui::SliderFloat("##VerticalFOV", &verticalFOV, 1.0f, 150.0f, "%.1f", ImGuiSliderFlags_ClampOnInput))
-		{
-			EditorConfig::SetSceneNeedsSaving(true);
-		}
-
-		// INFO: Clipping Planes
-		ImGui::Text("Clipping Planes");
-		if (ImGui::BeginTable("##ClippingPlanes", 2))
-		{
-			ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 81.0f); // INFO: Label Column
-			ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 75.0f); // INFO: Value Column
-
-			ImGui::AlignTextToFramePadding();
-
-			ImGui::TableNextColumn();
-			ImGui::SetCursorPosX(50.0f);
-			ImGui::Text("Near");
-			ImGui::TableNextColumn();
-			ImGui::SetCursorPosX(136.0f);
-			if (ImGui::InputFloat("##NearClippingPlane", &nearClippingPlane, 0.0f, 0.0f, "%.1f"))
-			{
-				EditorConfig::SetSceneNeedsSaving(true);
-			}
-
-			ImGui::TableNextRow();
-
-			ImGui::TableNextColumn();
-			ImGui::SetCursorPosX(50.0f);
-			ImGui::Text("Far");
-			ImGui::TableNextColumn();
-			ImGui::SetCursorPosX(136.0f);
-			if (ImGui::InputFloat("##FarClippingPlane", &farClippingPlane, 0.0f, 0.0f, "%.1f"))
-			{
-				EditorConfig::SetSceneNeedsSaving(true);
-			}
-
-			ImGui::EndTable();
-		}
-
-		ImGui::TreePop();
 	}
 }

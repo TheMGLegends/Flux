@@ -17,45 +17,44 @@ namespace Flux
 	class Camera : public Component, public IDebugWireframe, public std::enable_shared_from_this<Camera>
 	{
 	public:
-		explicit Camera(GameObject* _gameObject);
-		~Camera() override;
+		Camera(GameObject* _gameObject);
+		virtual ~Camera() override;
 
-		void DrawDetails() override;
+		virtual void DrawDetails() override;
 
-		void Serialize(nlohmann::flux_json& json) const override;
-		void Deserialize(const nlohmann::flux_json& json) override;
+		virtual void Serialize(nlohmann::flux_json& json) const override;
+		virtual void Deserialize(const nlohmann::flux_json& json) override;
 
-		void DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch) override;
+		virtual void DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch) override;
 
 		DirectX::XMMATRIX GetViewMatrix() const;
 		DirectX::XMMATRIX GetProjectionMatrix() const;
 
-		void SetBackgroundColour(const std::array<float, 4>& _backgroundColour);
-		const std::array<float, 4>& GetBackgroundColour() const;
+		inline const std::array<float, 4>& GetBackgroundColour() const { return backgroundColour; }
 
-		void SetDrawFrustum(bool _drawFrustum);
-		bool ShouldDrawFrustum() const;	
+		inline void SetDrawFrustum(bool _drawFrustum) { shouldDrawFrustum = _drawFrustum; }
+		inline bool ShouldDrawFrustum() const { return shouldDrawFrustum; }
+		
+		inline void SetBackgroundColour(const std::array<float, 4>& _backgroundColour) { backgroundColour = _backgroundColour; }
 
 		void SetSkyboxModel(const std::string& modelName);
-		void SetMaterialTexture(std::string_view _textureName);
+		void SetMaterialTexture(const std::string& _textureName);
 
-		const std::string& GetSkyboxTextureName() const;
+		inline const std::string& GetSkyboxTextureName() const { return skyboxTextureName; }
 
-		void SetUseSkybox(bool _useSkybox);
-		bool UseSkybox() const;
+		inline void SetUseSkybox(bool _useSkybox) { useSkybox = _useSkybox; }
+		inline bool UseSkybox() const { return useSkybox; }
 
 		void DrawSkybox(ID3D11DeviceContext& deviceContext, const DirectX::XMMATRIX& translation, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection);
 
 	private:
-		void SetVerticalFOV(float _verticalFOV);
-		void SetNearClippingPlane(float _nearClippingPlane);
-		void SetFarClippingPlane(float _farClippingPlane);
-		void SetAspectRatio(float screenWidth, float screenHeight);
+		inline void SetVerticalFOV(float _verticalFOV) { verticalFOV = _verticalFOV; }
+		inline void SetNearClippingPlane(float _nearClippingPlane) { nearClippingPlane = _nearClippingPlane; }
+		inline void SetFarClippingPlane(float _farClippingPlane) { farClippingPlane = _farClippingPlane; }
+		inline void SetAspectRatio(float screenWidth, float screenHeight) { aspectRatio = screenWidth / screenHeight; }
 
 		void SetFrustum();
 		DirectX::XMMATRIX GetAdjustedProjectionMatrix(float _nearClippingPlane, float _farClippingPlane) const;
-
-		void DrawCameraDetails(bool treeOpened);
 
 	private:
 		std::weak_ptr<Transform> transform;
@@ -68,7 +67,7 @@ namespace Flux
 		std::array<float, 4> backgroundColour;
 
 		DirectX::BoundingFrustum frustum;
-		std::array<DirectX::XMVECTOR, 24> frustumVertices;
+		DirectX::XMVECTOR frustumVertices[24];
 		bool shouldDrawFrustum;
 
 
