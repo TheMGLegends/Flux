@@ -9,13 +9,13 @@ namespace Flux
 	class Transform : public Component
 	{
 	public:
-		Transform(GameObject* _gameObject);
-		virtual ~Transform() override;
+		explicit Transform(GameObject* _gameObject);
+		~Transform() override;
 
-		virtual void DrawDetails() override;
+		void DrawDetails() override;
 
-		virtual void Serialize(nlohmann::flux_json& json) const override;
-		virtual void Deserialize(const nlohmann::flux_json& json) override;
+		void Serialize(nlohmann::flux_json& json) const override;
+		void Deserialize(const nlohmann::flux_json& json) override;
 
 		DirectX::XMMATRIX GetWorldMatrix() const;
 		DirectX::XMMATRIX GetWorldMatrix(const DirectX::SimpleMath::Vector3& offsetScale) const;
@@ -24,17 +24,17 @@ namespace Flux
 		DirectX::SimpleMath::Vector3 Right() const;
 		DirectX::SimpleMath::Vector3 Up() const;
 
-		inline void SetPosition(const DirectX::SimpleMath::Vector3& _position) { position = _position; }
-		inline const DirectX::SimpleMath::Vector3& GetPosition() const { return position; }
+		void SetPosition(const DirectX::SimpleMath::Vector3& _position);
+		const DirectX::SimpleMath::Vector3& GetPosition() const;
 
-		inline void SetRotation(const DirectX::SimpleMath::Quaternion& _rotation) { rotation = _rotation; }
-		inline const DirectX::SimpleMath::Quaternion& GetRotation() const { return rotation; }
+		void SetRotation(const DirectX::SimpleMath::Quaternion& _rotation);
+		const DirectX::SimpleMath::Quaternion& GetRotation() const;
 		
 		void SetScale(const DirectX::SimpleMath::Vector3& _scale);
-		inline const DirectX::SimpleMath::Vector3& GetScale() const { return scale; }
+		const DirectX::SimpleMath::Vector3& GetScale() const;
 
 		void Rotate(const DirectX::SimpleMath::Vector3& eulerAngles);
-		inline void Translate(const DirectX::SimpleMath::Vector3& translation) { position += translation; }
+		void Translate(const DirectX::SimpleMath::Vector3& translation);
 
 	private:
 		DirectX::SimpleMath::Vector3 position;

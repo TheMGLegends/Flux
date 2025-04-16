@@ -10,7 +10,7 @@ namespace Flux
 
 	public:
 		Cube();
-		virtual ~Cube() override;
+		~Cube() override;
 	};
 }
 

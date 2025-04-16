@@ -15,8 +15,7 @@ namespace Flux
 		friend class GameObject;
 
 	public:
-		Component(GameObject* _gameObject);
-		virtual ~Component() = 0;
+		explicit Component(GameObject* _gameObject);
 
 		/// @brief Called after the Component is constructed and added to the GameObject
 		virtual void PostConstruction() {}
@@ -27,18 +26,18 @@ namespace Flux
 		/// @brief Called by details panel, should implement logic to draw the component details using ImGui
 		virtual void DrawDetails() {}
 
-		virtual void Serialize(nlohmann::flux_json& json) const override;
-		virtual void Deserialize(const nlohmann::flux_json& json) override;
+		void Serialize(nlohmann::flux_json& json) const override;
+		void Deserialize(const nlohmann::flux_json& json) override;
 
-		GameObject* GetGameObject() const { return gameObject; }
+		GameObject* GetGameObject() const;
 
 		virtual void SetIsActive(bool _isActive);
-		bool IsActive() const { return isActive; }
+		bool IsActive() const;
 
-		bool CanHaveMultiple() const { return canHaveMultiple; }
-		bool IsRemoveable() const { return isRemoveable; }
+		bool CanHaveMultiple() const;
+		bool IsRemoveable() const;
 
-		ComponentType GetComponentType() const { return componentType; }
+		ComponentType GetComponentType() const;
 
 	protected:
 		/// @min Applies to the X value
@@ -47,7 +46,7 @@ namespace Flux
 		bool DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed = 0.1f, const char* format = "%.2f", float min = 0.0f, float max = 0.0f);
 
 	private:
-		void SetGameObject(GameObject* _gameObject) { gameObject = _gameObject; }
+		void SetGameObject(GameObject* _gameObject);
 
 	protected:
 		bool isActive;

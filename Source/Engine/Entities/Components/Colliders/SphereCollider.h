@@ -7,26 +7,26 @@ namespace Flux
 	class SphereCollider : public Collider, public std::enable_shared_from_this<SphereCollider>
 	{
 	public:
-		SphereCollider(GameObject* _gameObject);
-		virtual ~SphereCollider() override;
+		explicit SphereCollider(GameObject* _gameObject);
+		~SphereCollider() override;
 
-		virtual void Start() override;
-		virtual void DrawDetails() override;
+		void Start() override;
+		void DrawDetails() override;
 
-		virtual void Serialize(nlohmann::flux_json& json) const override;
-		virtual void Deserialize(const nlohmann::flux_json& json) override;
+		void Serialize(nlohmann::flux_json& json) const override;
+		void Deserialize(const nlohmann::flux_json& json) override;
 
-		virtual void DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch) override;
+		void DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch) override;
 		
-		virtual void SetColliderShape() override;
-		virtual void UpdateScale() override;
+		void SetColliderShape() override;
+		void UpdateScale() override;
 
 		void SetRadius(float _radius);
-		inline float GetRadius() const { return radius; }
+		float GetRadius() const;
 
 	private:
-		void DrawRing(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch, const DirectX::XMVECTOR& centre,
-			const DirectX::XMVECTOR& majorAxis, const DirectX::XMVECTOR& minorAxis, bool isTrigger);
+		void DrawRing(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch, const DirectX::XMVECTOR& centre,
+					  const DirectX::XMVECTOR& majorAxis, const DirectX::XMVECTOR& minorAxis, bool isTrigger) const;
 
 	private:
 		float radius;

@@ -12,8 +12,8 @@ using namespace DirectX::SimpleMath;
 
 namespace Flux 
 {
-	Collider::Collider(GameObject* _gameObject) : Component(_gameObject), rigidActor(nullptr), colliderShape(nullptr), isTrigger(false),
-		centre(Vector3::Zero), rigidActorType(RigidActorType::Static)
+	Collider::Collider(GameObject* _gameObject) : Component(_gameObject), rigidActor(nullptr), colliderShape(nullptr), 
+												  isTrigger(false), rigidActorType(RigidActorType::Static)
 	{
 		GameObject* gameObject = GetGameObject();
 
@@ -23,11 +23,12 @@ namespace Flux
 		}
 
 		// INFO: Set Default Collision Callbacks
-		collisionCallbacks.try_emplace(CollisionType::CollisionEnter, std::bind(&GameObject::OnCollisionEnter, gameObject, std::placeholders::_1));
-		collisionCallbacks.try_emplace(CollisionType::CollisionExit, std::bind(&GameObject::OnCollisionExit, gameObject, std::placeholders::_1));
+		using enum Flux::CollisionType;
+		collisionCallbacks.try_emplace(CollisionEnter, std::bind_front(&GameObject::OnCollisionEnter, gameObject));
+		collisionCallbacks.try_emplace(CollisionExit, std::bind_front(&GameObject::OnCollisionExit, gameObject));
 
-		collisionCallbacks.try_emplace(CollisionType::TriggerEnter, std::bind(&GameObject::OnTriggerEnter, gameObject, std::placeholders::_1));
-		collisionCallbacks.try_emplace(CollisionType::TriggerExit, std::bind(&GameObject::OnTriggerExit, gameObject, std::placeholders::_1));
+		collisionCallbacks.try_emplace(TriggerEnter, std::bind_front(&GameObject::OnTriggerEnter, gameObject));
+		collisionCallbacks.try_emplace(TriggerExit, std::bind_front(&GameObject::OnTriggerExit, gameObject));
 
 		// INFO: Set the Rigid Actor
 		SetRigidActor();
@@ -63,7 +64,7 @@ namespace Flux
 
 				if (rigidActorType == RigidActorType::Dynamic)
 				{
-					physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+					auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
 					rigidDynamic->wakeUp();
 				}
 			}
@@ -76,7 +77,7 @@ namespace Flux
 
 	void Collider::Update(float alpha)
 	{
-		GameObject* gameObject = GetGameObject();
+		const GameObject* gameObject = GetGameObject();
 		std::shared_ptr<Transform> transform = gameObject->transform.lock();
 
 		if (!gameObject || !gameObject->IsActive() || !isActive) { return; }
@@ -88,9 +89,7 @@ namespace Flux
 			case RigidActorType::Static:
 			{
 				// INFO: Granted that it's static we update the actor using transform values
-				physx::PxRigidStatic* rigidStatic = static_cast<physx::PxRigidStatic*>(rigidActor);
-
-				if (rigidStatic)
+				if (auto rigidStatic = static_cast<physx::PxRigidStatic*>(rigidActor); rigidStatic)
 				{
 					const Vector3& position = transform->GetPosition();
 					const Quaternion& rotation = transform->GetRotation();
@@ -105,9 +104,7 @@ namespace Flux
 			case RigidActorType::Dynamic:
 			{
 				// INFO: Granted that it's dynamic we update the transform using physics simulation values
-				physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
-
-				if (rigidDynamic)
+				if (auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor); rigidDynamic)
 				{
 					physx::PxTransform physxTransform = rigidDynamic->getGlobalPose();
 					Vector3 currentPosition = transform->GetPosition();
@@ -136,7 +133,6 @@ namespace Flux
 
 		auto& jsonBack = json["Components"].back();
 		jsonBack["IsTrigger"] = isTrigger;
-		jsonBack["Centre"] = { centre.x, centre.y, centre.z };
 	}
 
 	void Collider::Deserialize(const nlohmann::flux_json& json)
@@ -146,7 +142,6 @@ namespace Flux
 
 		// INFO: Deserialize Collider Data
 		isTrigger = json["IsTrigger"].get<bool>();
-		centre = Vector3(json["Centre"][0].get<float>(), json["Centre"][1].get<float>(), json["Centre"][2].get<float>());
 	}
 
 	void Collider::SetIsTrigger(bool _isTrigger)
@@ -160,35 +155,38 @@ namespace Flux
 				colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 				colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 
+				if (rigidActorType != RigidActorType::Dynamic) { return; }
+
 				// INFO: Disable gravity and prevent physics movement by changing to kinematic
-				if (rigidActorType == RigidActorType::Dynamic)
-				{
-					physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
-					rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-					rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
-				}
+				auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+				rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+				rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
 			}
 			else
 			{
 				colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 				colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 
+				if (rigidActorType != RigidActorType::Dynamic) { return; }
+
 				// INFO: Re-enable gravity and physics movement
-				if (rigidActorType == RigidActorType::Dynamic)
+				auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+				rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+
+				std::shared_ptr<PhysicsBody> physicsBody = GetGameObject()->GetComponent<PhysicsBody>().lock();
+
+				// INFO: Only enable gravity if theres an associated PhysicsBody that uses gravity
+				if (physicsBody && physicsBody->UsesGravity())
 				{
-					physx::PxRigidDynamic* rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
-					rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-
-					std::shared_ptr<PhysicsBody> physicsBody = GetGameObject()->GetComponent<PhysicsBody>().lock();
-
-					// INFO: Only enable gravity if theres an associated PhysicsBody that uses gravity
-					if (physicsBody && physicsBody->UsesGravity())
-					{
-						rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
-					}
+					rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
 				}
 			}
 		}
+	}
+
+	bool Collider::IsTrigger() const
+	{
+		return isTrigger;
 	}
 
 	void Collider::ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other)
@@ -227,10 +225,9 @@ namespace Flux
 		{
 			const Vector3& position = gameObject->transform.lock()->GetPosition();
 			const Quaternion& rotation = gameObject->transform.lock()->GetRotation();
-			std::shared_ptr<PhysicsBody> physicsBody = gameObject->GetComponent<PhysicsBody>().lock();
 
 			// INFO: Setup as rigid static actor
-			if (!physicsBody || !physicsBody->IsActive())
+			if (std::shared_ptr<PhysicsBody> physicsBody = gameObject->GetComponent<PhysicsBody>().lock(); !physicsBody || !physicsBody->IsActive())
 			{
 				rigidActor = physics.createRigidStatic(physx::PxTransform(position.x, position.y, position.z,
 					physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
@@ -250,5 +247,20 @@ namespace Flux
 				SceneContext::GetScene().RegisterRigidActorToCollider(collider, rigidActor);
 			}
 		}
+	}
+
+	physx::PxRigidActor* Collider::GetRigidActor() const
+	{
+		return rigidActor;
+	}
+
+	physx::PxShape& Collider::GetColliderShape() const
+	{
+		return *colliderShape;
+	}
+
+	RigidActorType Collider::GetRigidActorType() const
+	{
+		return rigidActorType;
 	}
 }

@@ -20,10 +20,10 @@ namespace Flux
 	{
 	public:
 		GameObject();
-		virtual ~GameObject();
+		~GameObject() override;
 
-		virtual void Serialize(nlohmann::flux_json& json) const override;
-		virtual void Deserialize(const nlohmann::flux_json& json) override;
+		void Serialize(nlohmann::flux_json& json) const override;
+		void Deserialize(const nlohmann::flux_json& json) override;
 
 		template<class T>
 		bool HasComponent();
@@ -61,13 +61,13 @@ namespace Flux
 		virtual void OnDestroy() {}
 
 		/// @brief Used to set display name of GameObject
-		void SetName(const std::string& _name) { name = _name; }
-		std::string& GetName() { return name; }
-		const std::string& GetID() const { return id; }
+		void SetName(std::string_view _name);
+		std::string& GetName();
+		const std::string& GetID() const;
 
 	private:
-		void SetID(const std::string& _id) { id = _id; }
-		void SetType(const std::string& _type) { type = _type; }
+		void SetID(std::string_view _id);
+		void SetType(std::string_view _type);
 
 	public:
 		std::weak_ptr<Transform> transform;
@@ -106,7 +106,7 @@ namespace Flux
 	template<class T>
 	inline bool GameObject::HasComponent()
 	{
-		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+		static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
 		// INFO: Check if component exists
 		for (auto& component : components)
@@ -121,7 +121,7 @@ namespace Flux
 	template<class T>
 	inline std::weak_ptr<T> GameObject::GetComponent()
 	{
-		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+		static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
 		// INFO: Check if component exists
 		for (auto& component : components)
@@ -137,15 +137,16 @@ namespace Flux
 	template<class T, typename ...Args>
 	inline std::weak_ptr<T> GameObject::AddComponent(Args && ...args)
 	{
-		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
-
-		std::weak_ptr<T> existingComponent = GetComponent<T>();
+		static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
 		// INFO: Do not add the component if it already exists and we can only have one
-		if (!existingComponent.expired() && !existingComponent.lock()->CanHaveMultiple()) { return existingComponent; }
+		if (std::weak_ptr<T> existingComponent = GetComponent<T>(); !existingComponent.expired() && !existingComponent.lock()->CanHaveMultiple()) 
+		{ 
+			return existingComponent; 
+		}
 
 		// INFO: Special Case for Collider Components
-		if (std::is_base_of<Collider, T>::value)
+		if (std::is_base_of_v<Collider, T>)
 		{
 			std::shared_ptr<Collider> existingCollider = GetComponent<Collider>().lock();
 
@@ -176,7 +177,7 @@ namespace Flux
 	template<class T>
 	inline void GameObject::RemoveComponent(std::weak_ptr<T> component)
 	{
-		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+		static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
 		std::shared_ptr<T> validComponent = component.lock();
 

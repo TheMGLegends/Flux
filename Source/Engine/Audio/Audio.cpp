@@ -45,9 +45,7 @@ namespace Flux
 		// INFO: Check channels for sounds that have finished playing
 		std::erase_if(audios, [](const AudioData& audio)
 			{
-				bool isPlaying = audio.IsPlaying();
-
-				if (!isPlaying)
+				if (bool isPlaying = audio.IsPlaying(); !isPlaying)
 				{
 					audio.channel->stop();
 					audio.sound->release();
@@ -189,7 +187,7 @@ namespace Flux
 		audios.emplace_back(audioName, music, channel);
 	}
 
-	void Audio::StopSound(const std::string& audioName)
+	void Audio::StopSound(std::string_view audioName)
 	{
 		for (auto& audio : audios)
 		{

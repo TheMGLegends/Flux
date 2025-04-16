@@ -32,9 +32,7 @@ namespace Flux
 		}
 	}
 
-	PhysicsBody::~PhysicsBody()
-	{
-	}
+	PhysicsBody::~PhysicsBody() = default;
 
 	void PhysicsBody::PostConstruction()
 	{
@@ -228,14 +226,11 @@ namespace Flux
 	{
 		physx::PxRigidDynamic* rigidDynamic = VerifyRigidActor();
 
-		if (rigidDynamic)
+		// INFO: Check to see if the rigid body is not kinematic
+		if (rigidDynamic && !rigidDynamic->getRigidBodyFlags().isSet(physx::PxRigidBodyFlag::eKINEMATIC))
 		{
-			// INFO: Check to see if the rigid body is not kinematic
-			if (!rigidDynamic->getRigidBodyFlags().isSet(physx::PxRigidBodyFlag::eKINEMATIC))
-			{
-				physx::PxVec3 physxForce(force.x, force.y, force.z);
-				rigidDynamic->addForce(physxForce, forceMode);
-			}
+			physx::PxVec3 physxForce(force.x, force.y, force.z);
+			rigidDynamic->addForce(physxForce, forceMode);
 		}
 	}
 
@@ -251,6 +246,11 @@ namespace Flux
 		}
 	}
 
+	float PhysicsBody::GetMass() const
+	{
+		return mass;
+	}
+
 	void PhysicsBody::SetDrag(float _drag)
 	{
 		if (drag != _drag) { drag = _drag; }
@@ -261,6 +261,11 @@ namespace Flux
 		{
 			rigidDynamic->setLinearDamping(drag);
 		}
+	}
+
+	float PhysicsBody::GetDrag() const
+	{
+		return drag;
 	}
 
 	void PhysicsBody::SetAngularDrag(float _angularDrag)
@@ -275,6 +280,11 @@ namespace Flux
 		}
 	}
 
+	float PhysicsBody::GetAngularDrag() const
+	{
+		return angularDrag;
+	}
+
 	void PhysicsBody::SetUseGravity(bool _useGravity)
 	{
 		if (useGravity != _useGravity) { useGravity = _useGravity; }
@@ -285,6 +295,11 @@ namespace Flux
 		{
 			rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !useGravity);
 		}
+	}
+
+	bool PhysicsBody::UsesGravity() const
+	{
+		return useGravity;
 	}
 
 	void PhysicsBody::SetPositionConstraint(bool isConstrained, ConstraintAxis axis)
@@ -310,6 +325,11 @@ namespace Flux
 		}
 	}
 
+	bool PhysicsBody::IsPositionConstrained(ConstraintAxis axis) const
+	{
+		return positionConstraints[static_cast<size_t>(axis)];
+	}
+
 	void PhysicsBody::SetRotationConstraint(bool isConstrained, ConstraintAxis axis)
 	{
 		if (axis == ConstraintAxis::Count)
@@ -333,6 +353,11 @@ namespace Flux
 		}
 	}
 
+	bool PhysicsBody::IsRotationConstrained(ConstraintAxis axis) const
+	{
+		return rotationConstraints[static_cast<size_t>(axis)];
+	}
+
 	physx::PxRigidDynamic* PhysicsBody::VerifyRigidActor()
 	{
 		if (std::shared_ptr<Collider> collider = attachedCollider.lock())
@@ -353,7 +378,7 @@ namespace Flux
 		return nullptr;
 	}
 
-	bool PhysicsBody::DisplayArray3Field(const char* label, bool* array)
+	bool PhysicsBody::DisplayArray3Field(const char* label, bool* array) const
 	{
 		bool changed = false;
 

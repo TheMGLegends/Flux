@@ -12,7 +12,5 @@ namespace Flux
 		}
 	}
 
-	Cube::~Cube()
-	{
-	}
+	Cube::~Cube() = default;
 }

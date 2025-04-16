@@ -39,9 +39,7 @@ namespace Flux
 	{
 	}
 
-	SceneView::~SceneView()
-	{
-	}
+	SceneView::~SceneView() = default;
 
 	int SceneView::Initialise()
 	{
@@ -121,112 +119,7 @@ namespace Flux
 			}
 
 			// INFO: Gizmos
-			if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused())
-			{
-				GameObject* selectedGameObject = sceneHierarchy != nullptr ? sceneHierarchy->GetSelectedGameObject() : nullptr;
-
-				if (selectedGameObject)
-				{
-					ImGuizmo::SetOrthographic(false);
-					ImGuizmo::SetDrawlist();
-
-					ImVec2 windowPos = ImGui::GetWindowPos();
-					ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
-
-					// INFO: Retrieve active camera and camera matrices
-					std::shared_ptr<Camera> camera = SceneContext::GetScene().GetCamera().lock();
-					DirectX::XMFLOAT4X4 cameraView{};
-					DirectX::XMFLOAT4X4 cameraProjection{};
-					DirectX::XMStoreFloat4x4(&cameraView, camera->GetViewMatrix());
-					DirectX::XMStoreFloat4x4(&cameraProjection, camera->GetProjectionMatrix());
-
-					// INFO: Snapping
-					bool isSnapEnabled = Input::GetKey(SDL_SCANCODE_LCTRL);
-
-					// INFO: Populate Snap Values
-					float snapValues[3]{};
-
-					switch (EditorConfig::GetCurrentTransformOperation())
-					{
-					case ImGuizmo::OPERATION::TRANSLATE:
-					{
-						float translationSnapValue = EditorConfig::GetTranslationSnapValue();
-
-						snapValues[0] = translationSnapValue;
-						snapValues[1] = translationSnapValue;
-						snapValues[2] = translationSnapValue;
-						break;
-					}
-					case ImGuizmo::OPERATION::ROTATE:
-					{
-						float rotationSnapValue = EditorConfig::GetRotationSnapValue();
-
-						snapValues[0] = rotationSnapValue;
-						snapValues[1] = rotationSnapValue;
-						snapValues[2] = rotationSnapValue;
-						break;
-					}
-					case ImGuizmo::OPERATION::SCALE:
-					{
-						float scaleSnapValue = EditorConfig::GetScaleSnapValue();
-
-						snapValues[0] = scaleSnapValue;
-						snapValues[1] = scaleSnapValue;
-						snapValues[2] = scaleSnapValue;
-						break;
-					}
-					default:
-						break;
-					}
-
-					// INFO: Retrieve selected game object's transform
-					std::shared_ptr<Transform> transform = selectedGameObject->transform.lock();
-					DirectX::XMFLOAT4X4 transformMatrix{};
-					DirectX::XMStoreFloat4x4(&transformMatrix, transform->GetWorldMatrix());
-
-					int transformOperation = EditorConfig::GetCurrentTransformOperation();
-					ImGuizmo::MODE transformMode = EditorConfig::GetTransformMode();
-
-					if (transformOperation != EditorConfig::PAN)
-					{
-						bool overrideMode = false;
-
-						if (transformOperation == ImGuizmo::OPERATION::SCALE && transformMode == ImGuizmo::MODE::WORLD)
-						{
-							// INFO: ImGuizmo does not support scaling in world mode
-							overrideMode = true;
-						}
-
-						ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0],(ImGuizmo::OPERATION)transformOperation,
-											 overrideMode ? ImGuizmo::MODE::LOCAL : transformMode, &transformMatrix.m[0][0], nullptr, 
-											 isSnapEnabled ? snapValues : nullptr);
-					}
-
-					if (ImGuizmo::IsUsing() && RuntimeConfig::IsInEditorMode())
-					{
-						DirectX::XMVECTOR position{};
-						DirectX::XMVECTOR rotation{};
-						DirectX::XMVECTOR scale{};
-
-						DirectX::XMMATRIX matrix = DirectX::XMLoadFloat4x4(&transformMatrix);
-						DirectX::XMMatrixDecompose(&scale, &rotation, &position, matrix);
-
-						Vector3 positionVector;
-						DirectX::XMStoreFloat3(&positionVector, position);
-						transform->SetPosition(positionVector);
-
-						Vector3 scaleVector;
-						DirectX::XMStoreFloat3(&scaleVector, scale);
-						transform->SetScale(scaleVector);
-
-						Quaternion rotationQuaternion;
-						DirectX::XMStoreFloat4(&rotationQuaternion, rotation);
-						transform->SetRotation(rotationQuaternion);
-
-						EditorConfig::SetSceneNeedsSaving(true);
-					}
-				}
-			}
+			DrawGizmos(windowSize);
 
 			ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBackground;
 
@@ -236,147 +129,19 @@ namespace Flux
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 			// INFO: Gizmo Selection Buttons
-			ImGui::SetCursorPos({ (windowSize.x - sceneViewSize.x) * 0.5f, (windowSize.y - sceneViewSize.y) * 0.5f });
-
-			if (ImGui::BeginChild("DummyChild", { 0, 0 }, true, windowFlags))
-			{
-				// INFO: Panel Background Styles
-				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.172f, 0.169f, 0.169f, 1.0f));
-				ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10.0f);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 2.5f, 2.5f });
-				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
-
-				windowFlags &= ~ImGuiWindowFlags_NoBackground;
-
-				// INFO: Gizmo Selector Panel
-				if (ImGui::BeginChild("GizmoSelectors", { 196, 50 }, true, windowFlags))
-				{
-					int transformOperation = EditorConfig::GetCurrentTransformOperation();
-
-					// INFO: Pan Button
-					if (ImGui::ImageButton("PanButton", transformOperation != EditorConfig::PAN ? panTexture : panTextureSelected, { 40.0f, 40.0f }))
-					{
-						EditorConfig::SetCurretTransformOperation(EditorConfig::PAN);
-					}
-
-					ImGui::SameLine();
-
-					// INFO: Translation Button
-					if (ImGui::ImageButton("TranslationButton", transformOperation != ImGuizmo::OPERATION::TRANSLATE ? translationTexture : translationTextureSelected, { 40.0f, 40.0f }))
-					{
-						EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::TRANSLATE);
-					}
-
-					ImGui::SameLine();
-
-					// INFO: Rotation Button
-					if (ImGui::ImageButton("RotationButton", transformOperation != ImGuizmo::OPERATION::ROTATE ? rotationTexture : rotationTextureSelected, { 40.0f, 40.0f }))
-					{
-						EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::ROTATE);
-					}
-
-					ImGui::SameLine();
-
-					// INFO: Scale Button
-					if (ImGui::ImageButton("ScaleButton", transformOperation != ImGuizmo::OPERATION::SCALE ? scaleTexture : scaleTextureSelected, { 40.0f, 40.0f }))
-					{
-						EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::SCALE);
-					}
-
-					ImGui::PopStyleColor();
-					ImGui::PopStyleVar(3);
-					ImGui::EndChild();
-				}
-
-				ImGui::EndChild();
-			}
+			DrawGizmoButtons(windowSize, sceneViewSize, windowFlags);
 
 			windowFlags |= ImGuiWindowFlags_NoBackground;
-			ImTextureID buttonTexture = 0;
 
-			// INFO: Play Button
-			ImGui::SetCursorPos({ (windowSize.x / 2.0f) - 55.0f, (windowSize.y - sceneViewSize.y) * 0.5f });
-
-			if (ImGui::BeginChild("PlayButton", { 0.0f, 0.0f }, true, windowFlags))
-			{
-				// INFO: Determine Play Button Texture
-				buttonTexture = RuntimeConfig::IsInEditorMode() ? playButtonEditorMode : playButtonPlayMode;
-
-				// INFO: If the Play Button is Pressed
-				if (ImGui::ImageButton("PlayButton", buttonTexture, { 50.0f, 50.0f }))
-				{
-					// INFO: Logic for entering Play Mode
-					if (RuntimeConfig::IsInEditorMode())
-					{
-						RuntimeConfig::SetMode(RuntimeConfig::Mode::Play);
-					}
-					// INFO: Logic for exiting Play Mode
-					else
-					{
-						RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
-						Audio::StopAllSounds();
-
-						// INFO: Unpause the game if it was paused
-						if (RuntimeConfig::IsPaused())
-						{
-							RuntimeConfig::TogglePause();
-						}
-
-						EventDispatcher::QueueEvent(EventType::PlayModeExited, nullptr);
-					}
-				}
-
-				ImGui::EndChild();
-			}
-
-			// INFO: Pause Button
-			ImGui::SetCursorPos({ (windowSize.x / 2.0f) + 5.0f, (windowSize.y - sceneViewSize.y) * 0.5f });
-
-			if (ImGui::BeginChild("PauseButton", { 0.0f, 0.0f }, true, windowFlags))
-			{
-				if (RuntimeConfig::IsInEditorMode())
-				{
-					buttonTexture = pauseButtonUnavailable;
-				}
-				else
-				{
-					if (RuntimeConfig::IsPaused())
-					{
-						buttonTexture = pauseButtonSelected;
-					}
-					else
-					{
-						buttonTexture = pauseButtonAvailable;
-					}
-				}
-
-				if (ImGui::ImageButton("PauseButton", buttonTexture, { 50.0f, 50.0f }))
-				{
-					if (RuntimeConfig::IsInPlayMode())
-					{
-						RuntimeConfig::TogglePause();
-
-						// INFO: Pause/Unpause Audio
-						if (RuntimeConfig::IsPaused())
-						{
-							Audio::ControlSounds(true);
-						}
-						else
-						{
-							Audio::ControlSounds(false);
-						}
-					}
-				}
-
-				ImGui::EndChild();
-			}
+			// INFO: Scene View Buttons
+			DrawSceneViewButtons(windowSize, sceneViewSize, windowFlags);
 
 			ImGui::PopStyleColor(3);
 			ImGui::End();
 		}
 	}
 
-	void SceneView::MaintainAspectRatio(ImVec2& sceneViewSize)
+	void SceneView::MaintainAspectRatio(ImVec2& sceneViewSize) const
 	{
 		// INFO: Maintain Aspect Ratio
 		float adheringWidth = sceneViewSize.y * EngineConfig::ASPECT_RATIO;
@@ -394,5 +159,251 @@ namespace Flux
 		// INFO: Adjust for Top Bar and Scroll Bar
 		sceneViewSize.x -= 15.0f;
 		sceneViewSize.y -= 40.0f;
+	}
+
+	void SceneView::DrawGizmos(const ImVec2& windowSize) const
+	{
+		if (!RuntimeConfig::IsInEditorMode() && !RuntimeConfig::IsPaused()) { return; }
+
+		const GameObject* selectedGameObject = sceneHierarchy != nullptr ? sceneHierarchy->GetSelectedGameObject() : nullptr;
+
+		if (selectedGameObject)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			ImVec2 windowPos = ImGui::GetWindowPos();
+			ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
+
+			// INFO: Retrieve active camera and camera matrices
+			std::shared_ptr<Camera> camera = SceneContext::GetScene().GetCamera().lock();
+			DirectX::XMFLOAT4X4 cameraView{};
+			DirectX::XMFLOAT4X4 cameraProjection{};
+			DirectX::XMStoreFloat4x4(&cameraView, camera->GetViewMatrix());
+			DirectX::XMStoreFloat4x4(&cameraProjection, camera->GetProjectionMatrix());
+
+			// INFO: Snapping
+			bool isSnapEnabled = Input::GetKey(SDL_SCANCODE_LCTRL);
+
+			// INFO: Populate Snap Values
+			std::array<float, 3> snapValues{};
+
+			switch (EditorConfig::GetCurrentTransformOperation())
+			{
+			case ImGuizmo::OPERATION::TRANSLATE:
+			{
+				float translationSnapValue = EditorConfig::GetTranslationSnapValue();
+
+				snapValues[0] = translationSnapValue;
+				snapValues[1] = translationSnapValue;
+				snapValues[2] = translationSnapValue;
+				break;
+			}
+			case ImGuizmo::OPERATION::ROTATE:
+			{
+				float rotationSnapValue = EditorConfig::GetRotationSnapValue();
+
+				snapValues[0] = rotationSnapValue;
+				snapValues[1] = rotationSnapValue;
+				snapValues[2] = rotationSnapValue;
+				break;
+			}
+			case ImGuizmo::OPERATION::SCALE:
+			{
+				float scaleSnapValue = EditorConfig::GetScaleSnapValue();
+
+				snapValues[0] = scaleSnapValue;
+				snapValues[1] = scaleSnapValue;
+				snapValues[2] = scaleSnapValue;
+				break;
+			}
+			default:
+				break;
+			}
+
+			// INFO: Retrieve selected game object's transform
+			std::shared_ptr<Transform> transform = selectedGameObject->transform.lock();
+			DirectX::XMFLOAT4X4 transformMatrix{};
+			DirectX::XMStoreFloat4x4(&transformMatrix, transform->GetWorldMatrix());
+
+			int transformOperation = EditorConfig::GetCurrentTransformOperation();
+			ImGuizmo::MODE transformMode = EditorConfig::GetTransformMode();
+
+			if (transformOperation != EditorConfig::PAN)
+			{
+				bool overrideMode = false;
+
+				if (transformOperation == ImGuizmo::OPERATION::SCALE && transformMode == ImGuizmo::MODE::WORLD)
+				{
+					// INFO: ImGuizmo does not support scaling in world mode
+					overrideMode = true;
+				}
+
+				ImGuizmo::Manipulate(&cameraView.m[0][0], &cameraProjection.m[0][0], (ImGuizmo::OPERATION)transformOperation,
+					overrideMode ? ImGuizmo::MODE::LOCAL : transformMode, &transformMatrix.m[0][0], nullptr,
+					isSnapEnabled ? &snapValues[0] : nullptr);
+			}
+
+			if (ImGuizmo::IsUsing() && RuntimeConfig::IsInEditorMode())
+			{
+				DirectX::XMVECTOR position{};
+				DirectX::XMVECTOR rotation{};
+				DirectX::XMVECTOR scale{};
+
+				DirectX::XMMATRIX matrix = DirectX::XMLoadFloat4x4(&transformMatrix);
+				DirectX::XMMatrixDecompose(&scale, &rotation, &position, matrix);
+
+				Vector3 positionVector;
+				DirectX::XMStoreFloat3(&positionVector, position);
+				transform->SetPosition(positionVector);
+
+				Vector3 scaleVector;
+				DirectX::XMStoreFloat3(&scaleVector, scale);
+				transform->SetScale(scaleVector);
+
+				Quaternion rotationQuaternion;
+				DirectX::XMStoreFloat4(&rotationQuaternion, rotation);
+				transform->SetRotation(rotationQuaternion);
+
+				EditorConfig::SetSceneNeedsSaving(true);
+			}
+		}
+	}
+
+	void SceneView::DrawGizmoButtons(const ImVec2& windowSize, const ImVec2& sceneViewSize, ImGuiWindowFlags windowFlags) const
+	{
+		ImGui::SetCursorPos({ (windowSize.x - sceneViewSize.x) * 0.5f, (windowSize.y - sceneViewSize.y) * 0.5f });
+
+		if (ImGui::BeginChild("DummyChild", { 0, 0 }, true, windowFlags))
+		{
+			// INFO: Panel Background Styles
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.172f, 0.169f, 0.169f, 1.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 2.5f, 2.5f });
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
+
+			windowFlags &= ~ImGuiWindowFlags_NoBackground;
+
+			// INFO: Gizmo Selector Panel
+			if (ImGui::BeginChild("GizmoSelectors", { 196, 50 }, true, windowFlags))
+			{
+				int transformOperation = EditorConfig::GetCurrentTransformOperation();
+
+				// INFO: Pan Button
+				if (ImGui::ImageButton("PanButton", transformOperation != EditorConfig::PAN ? panTexture : panTextureSelected, { 40.0f, 40.0f }))
+				{
+					EditorConfig::SetCurretTransformOperation(EditorConfig::PAN);
+				}
+
+				ImGui::SameLine();
+
+				// INFO: Translation Button
+				if (ImGui::ImageButton("TranslationButton", transformOperation != ImGuizmo::OPERATION::TRANSLATE ? translationTexture : translationTextureSelected, { 40.0f, 40.0f }))
+				{
+					EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::TRANSLATE);
+				}
+
+				ImGui::SameLine();
+
+				// INFO: Rotation Button
+				if (ImGui::ImageButton("RotationButton", transformOperation != ImGuizmo::OPERATION::ROTATE ? rotationTexture : rotationTextureSelected, { 40.0f, 40.0f }))
+				{
+					EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::ROTATE);
+				}
+
+				ImGui::SameLine();
+
+				// INFO: Scale Button
+				if (ImGui::ImageButton("ScaleButton", transformOperation != ImGuizmo::OPERATION::SCALE ? scaleTexture : scaleTextureSelected, { 40.0f, 40.0f }))
+				{
+					EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::SCALE);
+				}
+
+				ImGui::PopStyleColor();
+				ImGui::PopStyleVar(3);
+				ImGui::EndChild();
+			}
+
+			ImGui::EndChild();
+		}
+	}
+
+	void SceneView::DrawSceneViewButtons(const ImVec2& windowSize, const ImVec2& sceneViewSize, ImGuiWindowFlags windowFlags) const
+	{
+		ImTextureID buttonTexture = 0;
+
+		// INFO: Play Button
+		ImGui::SetCursorPos({ (windowSize.x / 2.0f) - 55.0f, (windowSize.y - sceneViewSize.y) * 0.5f });
+
+		if (ImGui::BeginChild("PlayButton", { 0.0f, 0.0f }, true, windowFlags))
+		{
+			// INFO: Determine Play Button Texture
+			buttonTexture = RuntimeConfig::IsInEditorMode() ? playButtonEditorMode : playButtonPlayMode;
+
+			// INFO: If the Play Button is Pressed
+			if (ImGui::ImageButton("PlayButton", buttonTexture, { 50.0f, 50.0f }))
+			{
+				// INFO: Logic for entering Play Mode
+				if (RuntimeConfig::IsInEditorMode())
+				{
+					RuntimeConfig::SetMode(RuntimeConfig::Mode::Play);
+				}
+				// INFO: Logic for exiting Play Mode
+				else
+				{
+					RuntimeConfig::SetMode(RuntimeConfig::Mode::Editor);
+					Audio::StopAllSounds();
+
+					// INFO: Unpause the game if it was paused
+					if (RuntimeConfig::IsPaused())
+					{
+						RuntimeConfig::TogglePause();
+					}
+
+					EventDispatcher::QueueEvent(EventType::PlayModeExited, nullptr);
+				}
+			}
+
+			ImGui::EndChild();
+		}
+
+		// INFO: Pause Button
+		ImGui::SetCursorPos({ (windowSize.x / 2.0f) + 5.0f, (windowSize.y - sceneViewSize.y) * 0.5f });
+
+		if (ImGui::BeginChild("PauseButton", { 0.0f, 0.0f }, true, windowFlags))
+		{
+			if (RuntimeConfig::IsInEditorMode())
+			{
+				buttonTexture = pauseButtonUnavailable;
+			}
+			else
+			{
+				if (RuntimeConfig::IsPaused())
+				{
+					buttonTexture = pauseButtonSelected;
+				}
+				else
+				{
+					buttonTexture = pauseButtonAvailable;
+				}
+			}
+
+			if (ImGui::ImageButton("PauseButton", buttonTexture, { 50.0f, 50.0f }) && RuntimeConfig::IsInPlayMode())
+			{
+				RuntimeConfig::TogglePause();
+
+				// INFO: Pause/Unpause Audio
+				if (RuntimeConfig::IsPaused())
+				{
+					Audio::ControlSounds(true);
+				}
+				else
+				{
+					Audio::ControlSounds(false);
+				}
+			}
+
+			ImGui::EndChild();
+		}
 	}
 }

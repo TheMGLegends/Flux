@@ -35,7 +35,7 @@ namespace Flux
 	inline T* SceneContext::SpawnGameObject(const DirectX::SimpleMath::Vector3& spawnLocation, const DirectX::SimpleMath::Quaternion& spawnRotation, Args && ...args)
 	{
 		// INFO: Ensure T is a derived class of GameObject
-		static_assert(std::is_base_of<GameObject, T>::value, "T must derive from GameObject");
+		static_assert(std::is_base_of_v<GameObject, T>, "T must derive from GameObject");
 
 		if (!scene)
 		{
@@ -47,10 +47,10 @@ namespace Flux
 		scene->gameObjects.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
 
 		// INFO: Get a reference to the newly created GameObject
-		T* newGameObject = dynamic_cast<T*>(scene->gameObjects.back().get());
+		auto newGameObject = dynamic_cast<T*>(scene->gameObjects.back().get());
 
 		// INFO: Set the GameObject's transform properties
-		if (!newGameObject->transform.expired(); std::shared_ptr<Transform> newGameObjectTransform = newGameObject->transform.lock())
+		if (std::shared_ptr<Transform> newGameObjectTransform = newGameObject->transform.lock())
 		{
 			newGameObjectTransform->SetPosition(spawnLocation);
 			newGameObjectTransform->SetRotation(spawnRotation);
