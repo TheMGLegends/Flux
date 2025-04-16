@@ -10,11 +10,11 @@ namespace Flux
 	{
 	public:
 		SceneViewCamera();
-		virtual ~SceneViewCamera() override;
+		~SceneViewCamera() override;
 
-		virtual void LateUpdate(float deltaTime) override;
+		void LateUpdate(float deltaTime) override;
 
-		std::weak_ptr<Camera> GetCamera() const { return camera; }
+		std::weak_ptr<Camera> GetCamera() const;
 
 	private:
 		std::weak_ptr<Camera> camera;

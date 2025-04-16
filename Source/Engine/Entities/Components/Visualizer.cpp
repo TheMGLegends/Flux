@@ -27,9 +27,7 @@ namespace Flux
 		material = AssetHandler::GetMaterial(ShaderType::Unlit);
 	}
 
-	Visualizer::~Visualizer()
-	{
-	}
+	Visualizer::~Visualizer() = default;
 
 	void Visualizer::DrawDetails()
 	{
@@ -62,72 +60,9 @@ namespace Flux
 		}
 		ImGui::PopStyleVar();
 
-		if (treeOpened)
-		{
-			// INFO: Model Selector + Drag & Drop Field
-			ImGui::Text("Model");
-			ImGui::SameLine();
-			ImGui::SetCursorPosX(136.0f);
-			ImGui::SetNextItemWidth(150.0f);
-			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
-			if (ImGui::BeginCombo("##Models", modelName.c_str(), ImGuiComboFlags_HeightLarge))
-			{
-				for (const auto& model : AssetHandler::GetModels())
-				{
-					if (ImGui::Selectable(model.first.c_str(), modelName == model.first))
-					{
-						SetModel(model.first);
-						EditorConfig::SetSceneNeedsSaving(true);
-					}
-				}
-				ImGui::EndCombo();
-			}
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Model"))
-				{
-					std::string modelName = static_cast<const char*>(payload->Data);
-					SetModel(modelName);
-					EditorConfig::SetSceneNeedsSaving(true);
-				}
-
-				ImGui::EndDragDropTarget();
-			}
-
-			// INFO: Model Texture Selector + Drag & Drop Field
-			ImGui::Text("Texture");
-			ImGui::SameLine();
-			ImGui::SetCursorPosX(136.0f);
-			ImGui::SetNextItemWidth(150.0f);
-			if (ImGui::BeginCombo("##ModelTexture", textureName.c_str(), ImGuiComboFlags_HeightLarge))
-			{
-				for (const auto& texture : AssetHandler::GetTextures())
-				{
-					if (ImGui::Selectable(texture.first.c_str(), textureName == texture.first))
-					{
-						SetMaterialTexture(texture.first);
-						EditorConfig::SetSceneNeedsSaving(true);
-					}
-				}
-				ImGui::EndCombo();
-			}
-			ImGui::PopStyleVar();
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Texture"))
-				{
-					std::string textureName = static_cast<const char*>(payload->Data);
-					SetMaterialTexture(textureName);
-					EditorConfig::SetSceneNeedsSaving(true);
-				}
-
-				ImGui::EndDragDropTarget();
-			}
-
-			ImGui::TreePop();
-		}
+		// INFO: Model & Texture Selector
+		DrawModelAndTextureSelector(treeOpened);
+		
 		ImGui::PopID();
 
 		ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
@@ -153,7 +88,7 @@ namespace Flux
 		SetMaterialTexture(json["TextureName"].get<std::string>());
 	}
 
-	void Visualizer::SetModel(const std::string& _modelName)
+	void Visualizer::SetModel(std::string_view _modelName)
 	{
 		modelName = _modelName;
 
@@ -166,11 +101,16 @@ namespace Flux
 		}
 	}
 
-	void Visualizer::SetMaterialTexture(const std::string& _textureName)
+	void Visualizer::SetMaterialTexture(std::string_view _textureName)
 	{
 		textureName = _textureName;
 
 		material.SetTexture(textureName);
+	}
+
+	Material& Visualizer::GetMaterial()
+	{
+		return material;
 	}
 
 	void Visualizer::Draw(ID3D11DeviceContext& deviceContext)
@@ -183,5 +123,74 @@ namespace Flux
 
 		material.Bind(deviceContext);
 		model->Draw(deviceContext);
+	}
+
+	void Visualizer::DrawModelAndTextureSelector(bool treeOpened)
+	{
+		if (!treeOpened) { return; }
+
+		// INFO: Model Selector + Drag & Drop Field
+		ImGui::Text("Model");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
+		ImGui::SetNextItemWidth(150.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
+		if (ImGui::BeginCombo("##Models", modelName.c_str(), ImGuiComboFlags_HeightLarge))
+		{
+			for (const auto& [name, modelPtr] : AssetHandler::GetModels())
+			{
+				if (ImGui::Selectable(name.c_str(), modelName == name))
+				{
+					SetModel(name);
+					EditorConfig::SetSceneNeedsSaving(true);
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Model"))
+			{
+				std::string payloadModelName = static_cast<const char*>(payload->Data);
+				SetModel(payloadModelName);
+				EditorConfig::SetSceneNeedsSaving(true);
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		// INFO: Model Texture Selector + Drag & Drop Field
+		ImGui::Text("Texture");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(136.0f);
+		ImGui::SetNextItemWidth(150.0f);
+		if (ImGui::BeginCombo("##ModelTexture", textureName.c_str(), ImGuiComboFlags_HeightLarge))
+		{
+			for (const auto& [name, texture] : AssetHandler::GetTextures())
+			{
+				if (ImGui::Selectable(name.c_str(), textureName == name))
+				{
+					SetMaterialTexture(name);
+					EditorConfig::SetSceneNeedsSaving(true);
+				}
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::PopStyleVar();
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Texture"))
+			{
+				std::string payloadTextureName = static_cast<const char*>(payload->Data);
+				SetMaterialTexture(payloadTextureName);
+				EditorConfig::SetSceneNeedsSaving(true);
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::TreePop();
 	}
 }

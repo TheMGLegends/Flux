@@ -138,9 +138,9 @@ namespace Flux
 
 		bool isTrigger = IsTrigger();
 
-		DrawRing(deviceContext, primitiveBatch, centre, xRange, yRange, isTrigger);
-		DrawRing(deviceContext, primitiveBatch, centre, xRange, zRange, isTrigger);
-		DrawRing(deviceContext, primitiveBatch, centre, yRange, zRange, isTrigger);
+		DrawRing(primitiveBatch, centre, xRange, yRange, isTrigger);
+		DrawRing(primitiveBatch, centre, xRange, zRange, isTrigger);
+		DrawRing(primitiveBatch, centre, yRange, zRange, isTrigger);
 	}
 
 	void SphereCollider::SetColliderShape()
@@ -183,8 +183,7 @@ namespace Flux
 			// INFO: Remove the shape from the actor to allow for geometry changes
 			rigidActor->detachShape(*colliderShape);
 
-			physx::PxSphereGeometry sphereGeometry{};
-			if (colliderShape->getSphereGeometry(sphereGeometry))
+			if (physx::PxSphereGeometry sphereGeometry{}; colliderShape->getSphereGeometry(sphereGeometry))
 			{
 				Vector3 scale = GetGameObject()->transform.lock()->GetScale();
 				sphereGeometry.radius = radius * MathHelpers::Max(scale.x, scale.y, scale.z);
@@ -202,12 +201,17 @@ namespace Flux
 		UpdateScale();
 	}
 
-	void SphereCollider::DrawRing(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch,
-		const DirectX::XMVECTOR& centre, const DirectX::XMVECTOR& majorAxis, const DirectX::XMVECTOR& minorAxis, bool isTrigger)
+	float SphereCollider::GetRadius() const
+	{
+		return radius;
+	}
+
+	void SphereCollider::DrawRing(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch, const DirectX::XMVECTOR& centre, 
+								  const DirectX::XMVECTOR& majorAxis, const DirectX::XMVECTOR& minorAxis, bool isTrigger) const
 	{
 		static const int ringSegments = 32;
 
-		DirectX::VertexPositionColor vertices[ringSegments + 1]{};
+		std::array<DirectX::VertexPositionColor, ringSegments + 1> vertices{};
 
 		float segmentAngle = DirectX::XM_2PI / static_cast<float>(ringSegments);
 		DirectX::XMVECTOR cosSegment = DirectX::XMVectorReplicate(cosf(segmentAngle));
@@ -237,6 +241,6 @@ namespace Flux
 
 		vertices[ringSegments] = vertices[0];
 
-		primitiveBatch.Draw(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, vertices, static_cast<size_t>(ringSegments) + 1);
+		primitiveBatch.Draw(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, &vertices[0], static_cast<size_t>(ringSegments) + 1);
 	}
 }

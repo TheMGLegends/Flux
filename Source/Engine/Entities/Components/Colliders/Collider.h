@@ -36,21 +36,18 @@ namespace Flux
 	class Collider : public Component, public IDebugWireframe
 	{
 	public:
-		Collider(GameObject* _gameObject);
+		explicit Collider(GameObject* _gameObject);
 		
-		virtual void Start() override;
-		virtual void SetIsActive(bool _isActive) override;
+		void Start() override;
+		void SetIsActive(bool _isActive) override;
 
 		void Update(float alpha);
 
-		virtual void Serialize(nlohmann::flux_json& json) const override;
-		virtual void Deserialize(const nlohmann::flux_json& json) override;
+		void Serialize(nlohmann::flux_json& json) const override;
+		void Deserialize(const nlohmann::flux_json& json) override;
 
 		void SetIsTrigger(bool _isTrigger);
-		inline bool IsTrigger() const { return isTrigger; }
-
-		inline void SetCentre(const DirectX::SimpleMath::Vector3& _centre) { centre = _centre; }
-		inline const DirectX::SimpleMath::Vector3& GetCentre() const { return centre; }
+		bool IsTrigger() const;
 
 		void ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other);
 
@@ -60,9 +57,9 @@ namespace Flux
 		virtual void SetColliderShape() = 0;
 		virtual void UpdateScale() = 0;
 
-		inline physx::PxRigidActor* GetRigidActor() const { return rigidActor; }
-		inline physx::PxShape& GetColliderShape() const { return *colliderShape; }
-		inline RigidActorType GetRigidActorType() const { return rigidActorType; }
+		physx::PxRigidActor* GetRigidActor() const;
+		physx::PxShape& GetColliderShape() const;
+		RigidActorType GetRigidActorType() const;
 
 	protected:
 		physx::PxRigidActor* rigidActor;
@@ -71,8 +68,6 @@ namespace Flux
 		bool isTrigger;
 
 	private:
-		DirectX::SimpleMath::Vector3 centre; // TODO: DOESNT WORK WITH CURRENT IMPLEMENTATION, EITHER DELETE OR FIX
-
 		std::unordered_map<CollisionType, std::function<void(std::shared_ptr<Collider>)>> collisionCallbacks;
 		RigidActorType rigidActorType;
 	};

@@ -10,7 +10,7 @@ namespace Flux
 
 	public:
 		Sphere();
-		virtual ~Sphere() override;
+		~Sphere() override;
 	};
 }
 

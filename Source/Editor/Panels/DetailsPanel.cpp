@@ -25,9 +25,7 @@ namespace Flux
 	{
 	}
 
-	DetailsPanel::~DetailsPanel()
-	{
-	}
+	DetailsPanel::~DetailsPanel() = default;
 
 	int DetailsPanel::Initialise()
 	{
@@ -96,73 +94,18 @@ namespace Flux
 				ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
 				// INFO: Display Game Object Component Details
-				std::vector<std::shared_ptr<Component>>& components = selectedGameObject->GetComponents();
+				const std::vector<std::shared_ptr<Component>>& components = selectedGameObject->GetComponents();
 				int componentCount = static_cast<int>(components.size());
 
 				ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 
-				for (size_t i = 0; i < components.size(); i++)
+				for (const auto& component : components)
 				{
-					std::shared_ptr<Component>& component = components[i];
-
 					component->DrawDetails();
 				}
 
 				// INFO: Add Component Button
-				ImGui::Dummy(ImVec2(0.0f, 10.0f));
-
-				ImVec2 buttonSize = ImVec2(150.0f, 50.0f);
-				ImGui::SetCursorPosX((windowSize.x - buttonSize.x) * 0.5f);
-				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
-				if (ImGui::Button("Add Component", buttonSize))
-				{
-					ImGui::OpenPopup("AddComponentPopup");
-				}
-				ImGui::PopStyleVar(1);
-
-				if (ImGui::BeginPopup("AddComponentPopup"))
-				{
-					std::weak_ptr<Component> component;
-					bool menuItemClicked = false;
-
-					if (ImGui::MenuItem("Camera"))
-					{
-						component = selectedGameObject->AddComponent<Camera>(selectedGameObject);
-						menuItemClicked = true;
-					}
-
-					if (ImGui::MenuItem("Physics Body"))
-					{
-						component = selectedGameObject->AddComponent<PhysicsBody>(selectedGameObject);
-						menuItemClicked = true;
-					}
-
-					if (ImGui::MenuItem("Visualizer"))
-					{
-						component = selectedGameObject->AddComponent<Visualizer>(selectedGameObject);
-						menuItemClicked = true;
-					}
-
-					if (ImGui::MenuItem("Box Collider"))
-					{
-						component = selectedGameObject->AddComponent<BoxCollider>(selectedGameObject);
-						menuItemClicked = true;
-					}
-
-					if (ImGui::MenuItem("Sphere Collider"))
-					{
-						component = selectedGameObject->AddComponent<SphereCollider>(selectedGameObject);
-						menuItemClicked = true;
-					}
-
-					if (menuItemClicked)
-					{
-						ComponentAlreadyExists(componentCount, static_cast<int>(selectedGameObject->GetComponents().size()), component);
-						EditorConfig::SetSceneNeedsSaving(true);
-					}
-
-					ImGui::EndPopup();
-				}
+				AddComponentPopup(selectedGameObject, componentCount, windowSize.x);
 			}
 
 			ImGui::End();
@@ -174,7 +117,65 @@ namespace Flux
 		}
 	}
 
-	void DetailsPanel::ComponentAlreadyExists(int oldComponentCount, int newComponentCount, std::weak_ptr<Component> component)
+	void DetailsPanel::AddComponentPopup(GameObject* selectedGameObject, int componentCount, float windowWidth) const
+	{
+		ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+		ImVec2 buttonSize = ImVec2(150.0f, 50.0f);
+		ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
+		if (ImGui::Button("Add Component", buttonSize))
+		{
+			ImGui::OpenPopup("AddComponentPopup");
+		}
+		ImGui::PopStyleVar(1);
+
+		if (ImGui::BeginPopup("AddComponentPopup"))
+		{
+			std::weak_ptr<Component> component;
+			bool menuItemClicked = false;
+
+			if (ImGui::MenuItem("Camera"))
+			{
+				component = selectedGameObject->AddComponent<Camera>(selectedGameObject);
+				menuItemClicked = true;
+			}
+
+			if (ImGui::MenuItem("Physics Body"))
+			{
+				component = selectedGameObject->AddComponent<PhysicsBody>(selectedGameObject);
+				menuItemClicked = true;
+			}
+
+			if (ImGui::MenuItem("Visualizer"))
+			{
+				component = selectedGameObject->AddComponent<Visualizer>(selectedGameObject);
+				menuItemClicked = true;
+			}
+
+			if (ImGui::MenuItem("Box Collider"))
+			{
+				component = selectedGameObject->AddComponent<BoxCollider>(selectedGameObject);
+				menuItemClicked = true;
+			}
+
+			if (ImGui::MenuItem("Sphere Collider"))
+			{
+				component = selectedGameObject->AddComponent<SphereCollider>(selectedGameObject);
+				menuItemClicked = true;
+			}
+
+			if (menuItemClicked)
+			{
+				ComponentAlreadyExists(componentCount, static_cast<int>(selectedGameObject->GetComponents().size()), component);
+				EditorConfig::SetSceneNeedsSaving(true);
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+
+	void DetailsPanel::ComponentAlreadyExists(int oldComponentCount, int newComponentCount, std::weak_ptr<Component> component) const
 	{
 		if (oldComponentCount == newComponentCount)
 		{
