@@ -5,6 +5,8 @@
 
 #include <string>
 
+struct ImFont;
+
 namespace Flux
 {
 	class GameObject;
@@ -29,6 +31,8 @@ namespace Flux
 
 		bool isRenaming;
 		std::string searchString;
+
+		ImFont* bigFont;
 	};
 }
 

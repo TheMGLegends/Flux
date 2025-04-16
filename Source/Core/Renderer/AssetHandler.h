@@ -23,6 +23,7 @@ struct ID3D11DeviceContext;
 struct ID3D11RasterizerState;
 struct ID3D11SamplerState;
 struct ID3D11ShaderResourceView;
+struct ImFont;
 
 namespace Flux
 {
@@ -43,9 +44,10 @@ namespace Flux
 		static HRESULT LoadAssets(const std::filesystem::path& assetDirectory);
 
 		static int LoadFont(const std::filesystem::path& fontPath); // INFO: SpriteFont for UI text rendering (ImGui Fonts are not stored/loaded here)
+		static int LoadImGuiFont(const std::filesystem::path& fontPath, float pixelSize); 
 		static HRESULT LoadTexture(const std::filesystem::path& texturePath, bool isDDS = false);
 		static int LoadModel(const std::filesystem::path& modelPath, Assimp::Importer& importer);
-		static int LoadAudio(const std::filesystem::path& audioPath);
+		static int StoreAudioPath(const std::filesystem::path& audioPath);
 
 		static int StoreScenePath(const std::string& sceneName, const std::filesystem::path& scenePath);
 
@@ -53,8 +55,9 @@ namespace Flux
 		static ConstantBufferData& GetConstantBufferData(DirectXConfig::ConstantBufferType constantBufferType);
 		static ID3D11DepthStencilState* GetDepthWriteState(DirectXConfig::DepthWriteType depthWriteType);
 		static ID3D11RasterizerState* GetCullingModeState(DirectXConfig::CullingModeType cullingModeType);
-		static ID3D11SamplerState* GetSamplerState() { return samplerState.Get(); }
+		static ID3D11SamplerState* GetSamplerState();
 		static DirectX::SpriteFont* GetFont(const std::string& fontName);
+		static ImFont* GetImGuiFont(const std::string& fontName);
 		static ID3D11ShaderResourceView* GetTexture(const std::string& textureName, bool isSkyboxTexture = false);
 		static bool HasTexture(const std::string& textureName, bool isSkyboxTexture = false);
 		static Model* GetModel(const std::string& modelName);
@@ -62,12 +65,12 @@ namespace Flux
 
 		/// @brief Returns a copy of a default material that can then be modified
 		static Material GetMaterial(DirectXConfig::ShaderType shaderType);
-		static const std::filesystem::path& GetAudioPath(const std::string& audioName);
-		static bool HasAudioFile(const std::string& audioName);
 
-		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetTextures() { return textures; }
-		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetSkyboxTextures() { return skyboxTextures; }
-		static std::unordered_map<std::string, std::unique_ptr<Model>>& GetModels() { return models; }
+		static const std::filesystem::path& GetAudioPath(const std::string& audioName);
+		static bool HasAudioPath(const std::string& audioName);
+
+		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetTextures(bool isSkyboxTextures = false);
+		static std::unordered_map<std::string, std::unique_ptr<Model>>& GetModels();
 
 		static const std::filesystem::path& GetScenePath(const std::string& sceneName);
 		static int GetSceneCount() { return static_cast<int>(scenePaths.size()); }
@@ -97,6 +100,7 @@ namespace Flux
 		static Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
 
 		static std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>> fonts;
+		static std::unordered_map<std::string, ImFont*> imGuiFonts;
 		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textures;
 		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> skyboxTextures;
 		static std::unordered_map<std::string, std::unique_ptr<Model>> models;

@@ -24,8 +24,8 @@ namespace Flux
 			     DirectXConfig::CullingModeType cullingModeType, const std::string& textureName, bool isSkyboxTexture = false);
 		~Material();
 
-		inline DirectXConfig::ConstantBufferType GetConstantBufferType() const { return constantBufferType; }
-		inline ID3D11Buffer* GetConstantBuffer() const { return constantBuffer; }
+		DirectXConfig::ConstantBufferType GetConstantBufferType() const;
+		ID3D11Buffer* GetConstantBuffer() const;
 
 		void SetTexture(const std::string& textureName, bool isSkyboxTexture = false);
 

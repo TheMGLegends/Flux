@@ -37,7 +37,7 @@ namespace Flux
 
 		void Draw(ID3D11DeviceContext& deviceContext);
 
-		inline const std::string& GetModelName() const { return modelName; }
+		const std::string& GetModelName() const;
 
 	private:
 		std::string modelName;

@@ -38,9 +38,8 @@ namespace Flux
 	using namespace DirectXConfig;
 	using namespace GlobalDefines;
 
-	Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullptr), renderTargetView(nullptr),
-		depthStencilView(nullptr), spriteBatch(nullptr), backBufferViewport(), sceneViewViewport(),
-		depthDisabled(nullptr)
+	Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullptr), renderTargetView(nullptr), depthStencilView(nullptr), 
+						   spriteBatch(nullptr), backBufferViewport(), sceneViewViewport(), depthDisabled(nullptr)
 	{
 	}
 
@@ -434,6 +433,21 @@ namespace Flux
 		}
 
 		swapChain->Present((UINT)RendererConfig::VSYNC_ENABLED, 0);
+	}
+
+	ID3D11Device& Renderer::GetDevice()
+	{
+		return *device.Get();
+	}
+
+	ID3D11DeviceContext& Renderer::GetDeviceContext()
+	{
+		return *deviceContext.Get();
+	}
+
+	ID3D11ShaderResourceView* Renderer::GetRenderTextureShaderResourceView()
+	{
+		return renderTextureShaderResourceView.Get();
 	}
 
 	void Renderer::OnWindowResized()

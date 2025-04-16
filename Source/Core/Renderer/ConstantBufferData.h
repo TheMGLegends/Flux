@@ -16,8 +16,8 @@ namespace Flux
 		ConstantBufferData(DirectXConfig::ConstantBufferType _constantBufferType, Microsoft::WRL::ComPtr<ID3D11Buffer> _buffer);
 		~ConstantBufferData();
 
-		DirectXConfig::ConstantBufferType GetConstantBufferType() const { return constantBufferType; }
-		ID3D11Buffer* GetConstantBuffer() { return buffer.Get(); }
+		DirectXConfig::ConstantBufferType GetConstantBufferType() const;
+		ID3D11Buffer* GetConstantBuffer();
 
 	private:
 		DirectXConfig::ConstantBufferType constantBufferType;

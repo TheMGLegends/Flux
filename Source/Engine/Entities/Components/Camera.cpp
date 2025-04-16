@@ -98,7 +98,7 @@ namespace Flux
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 			if (ImGui::BeginCombo("##SkyboxTexture", skyboxTextureName.c_str(), ImGuiComboFlags_HeightLarge))
 			{
-				for (const auto& skyboxTexture : AssetHandler::GetSkyboxTextures())
+				for (const auto& skyboxTexture : AssetHandler::GetTextures(true))
 				{
 					if (ImGui::Selectable(skyboxTexture.first.c_str(), skyboxTextureName == skyboxTexture.first))
 					{

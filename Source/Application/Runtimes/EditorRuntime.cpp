@@ -14,6 +14,7 @@
 #include "Core/Debug/FrameRateMonitor.h"
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Input/Input.h"
+#include "Core/Renderer/AssetHandler.h"
 
 #include "Editor/Panels/ContentsDrawer.h"
 #include "Editor/Panels/DetailsPanel.h"
@@ -43,7 +44,15 @@ namespace Flux
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		SetCustomStyle();
+
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Default/Fonts/OpenSans-Bold.ttf", EditorConfig::FONT_SIZE);
+
+		// INFO: Bigger Font for Titles
+		if (FLUX_FAIL(AssetHandler::LoadImGuiFont("Assets/Default/Fonts/OpenSans-Bold.ttf", EditorConfig::FONT_SIZE + 2.0f)))
+		{
+			Debug::LogError("EditorRuntime::PreInitialise() - Failed to load ImGui font");
+			return FLUX_FAILURE;
+		}
 
 		if (!ImGui_ImplSDL3_InitForD3D(window))
 		{

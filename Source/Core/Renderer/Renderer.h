@@ -36,9 +36,9 @@ namespace Flux
 		int PostInitialise();
 		void RenderFrame(Scene& scene);
 
-		ID3D11Device& GetDevice() { return *device.Get(); }
-		ID3D11DeviceContext& GetDeviceContext() { return *deviceContext.Get(); }
-		ID3D11ShaderResourceView* GetRenderTextureShaderResourceView() { return renderTextureShaderResourceView.Get(); }
+		ID3D11Device& GetDevice();
+		ID3D11DeviceContext& GetDeviceContext();
+		ID3D11ShaderResourceView* GetRenderTextureShaderResourceView();
 
 	private:
 		/// @brief Resizes the buffer responsible for ImGui rendering

@@ -9,6 +9,7 @@
 #include <d3d11shader.h>
 #include <fmod.hpp>
 #include <fmod_errors.h>
+#include <imgui.h>
 #include <magic_enum.hpp>
 #include <SpriteFont.h>
 #include <WICTextureLoader.h>
@@ -43,10 +44,11 @@ namespace Flux
 	ComPtr<ID3D11SamplerState> AssetHandler::samplerState;
 
 	std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>> AssetHandler::fonts;
-	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> AssetHandler::textures;
-	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> AssetHandler::skyboxTextures;
+	std::unordered_map<std::string, ImFont*> AssetHandler::imGuiFonts;
+	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>> AssetHandler::textures;
+	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>> AssetHandler::skyboxTextures;
 	std::unordered_map<std::string, std::unique_ptr<Model>> AssetHandler::models;
-	std::unordered_map<DirectXConfig::ShaderType, Material> AssetHandler::materials;
+	std::unordered_map<ShaderType, Material> AssetHandler::materials;
 	std::unordered_map<std::string, std::filesystem::path> AssetHandler::audioPaths;
 
 	std::unordered_map<std::string, std::filesystem::path> AssetHandler::scenePaths;
@@ -124,11 +126,11 @@ namespace Flux
 				// INFO: Audio Loading
 				if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
 				{
-					if (FLUX_FAIL(LoadAudio(entry.path()))) { return E_FAIL; }
+					if (FLUX_FAIL(StoreAudioPath(entry.path()))) { return E_FAIL; }
 					continue;
 				}
 
-				// INFO: First Scene Loading
+				// INFO: Scene Loading
 				if (extensionType == FiletypeConfig::SCENE)
 				{
 					StoreScenePath(entry.path().stem().string(), entry.path());
@@ -166,6 +168,25 @@ namespace Flux
 		return FLUX_SUCCESS;
 	}
 
+	int AssetHandler::LoadImGuiFont(const std::filesystem::path& fontPath, float pixelSize)
+	{
+		ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF(fontPath.string().c_str(), pixelSize);
+
+		if (!font)
+		{
+			Debug::LogError("AssetHandler::LoadImGuiFont() - Failed to create ImGui font. Filepath: " + fontPath.string());
+			return FLUX_FAILURE;
+		}
+
+		if (!imGuiFonts.insert({ fontPath.stem().string(), font }).second)
+		{
+			Debug::LogError("AssetHandler::LoadImGuiFont() - Failed to insert ImGui font into map. Filepath: " + fontPath.string());
+			return FLUX_FAILURE;
+		}
+
+		return FLUX_SUCCESS;
+	}
+
 	HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath, bool isDDS)
 	{
 		HRESULT hResult = S_OK;
@@ -187,20 +208,13 @@ namespace Flux
 		if (isDDS)
 		{
 			hResult = DirectX::CreateDDSTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
-		}
-		else
-		{
-			hResult = DirectX::CreateWICTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
-		}
 
-		if (FAILED(hResult))
-		{
-			Debug::LogError("AssetHandler::LoadTexture() - Failed to create texture. Filepath: " + texturePath.string());
-			return hResult;
-		}
+			if (FAILED(hResult))
+			{
+				Debug::LogError("AssetHandler::LoadTexture() - Failed to create texture. Filepath: " + texturePath.string());
+				return hResult;
+			}
 
-		if (isDDS)
-		{
 			if (!skyboxTextures.insert({ texturePath.stem().string(), texture }).second)
 			{
 				Debug::LogError("AssetHandler::LoadTexture() - Failed to insert skybox texture into map. Filepath: " + texturePath.string());
@@ -209,6 +223,14 @@ namespace Flux
 		}
 		else
 		{
+			hResult = DirectX::CreateWICTextureFromFile(&deviceRef, &deviceContextRef, texturePath.c_str(), nullptr, &texture);
+
+			if (FAILED(hResult))
+			{
+				Debug::LogError("AssetHandler::LoadTexture() - Failed to create texture. Filepath: " + texturePath.string());
+				return hResult;
+			}
+
 			if (!textures.insert({ texturePath.stem().string(), std::move(texture) }).second)
 			{
 				Debug::LogError("AssetHandler::LoadTexture() - Failed to insert texture into map. Filepath: " + texturePath.string());
@@ -255,11 +277,11 @@ namespace Flux
 		return FLUX_SUCCESS;
 	}
 
-	int AssetHandler::LoadAudio(const std::filesystem::path& audioPath)
+	int AssetHandler::StoreAudioPath(const std::filesystem::path& audioPath)
 	{
 		if (!audioPaths.insert({ audioPath.stem().string(), audioPath }).second)
 		{
-			Debug::LogError("AssetHandler::LoadAudio() - Failed to insert audio path into map. Filepath: " + audioPath.string());
+			Debug::LogError("AssetHandler::StoreAudioPath() - Failed to insert audio path into map. Filepath: " + audioPath.string());
 			return FLUX_FAILURE;
 		}
 
@@ -277,7 +299,7 @@ namespace Flux
 		return FLUX_SUCCESS;
 	}
 
-	ShaderData& AssetHandler::GetShaderData(DirectXConfig::ShaderType shaderType)
+	ShaderData& AssetHandler::GetShaderData(ShaderType shaderType)
 	{
 		auto it = shaders.find(shaderType);
 		if (it != shaders.end()) { return it->second; }
@@ -286,7 +308,7 @@ namespace Flux
 		return EMPTY_SHADER_DATA;
 	}
 
-	ConstantBufferData& AssetHandler::GetConstantBufferData(DirectXConfig::ConstantBufferType constantBufferType)
+	ConstantBufferData& AssetHandler::GetConstantBufferData(ConstantBufferType constantBufferType)
 	{
 		auto it = constantBuffers.find(constantBufferType);
 		if (it != constantBuffers.end()) { return it->second; }
@@ -295,7 +317,7 @@ namespace Flux
 		return EMPTY_CONSTANT_BUFFER_DATA;
 	}
 
-	ID3D11DepthStencilState* AssetHandler::GetDepthWriteState(DirectXConfig::DepthWriteType depthWriteType)
+	ID3D11DepthStencilState* AssetHandler::GetDepthWriteState(DepthWriteType depthWriteType)
 	{
 		auto it = depthWriteStates.find(depthWriteType);
 		if (it != depthWriteStates.end()) { return it->second.Get(); }
@@ -304,7 +326,7 @@ namespace Flux
 		return nullptr;
 	}
 
-	ID3D11RasterizerState* AssetHandler::GetCullingModeState(DirectXConfig::CullingModeType cullingModeType)
+	ID3D11RasterizerState* AssetHandler::GetCullingModeState(CullingModeType cullingModeType)
 	{
 		auto it = cullingModeStates.find(cullingModeType);
 		if (it != cullingModeStates.end()) { return it->second.Get(); }
@@ -313,12 +335,26 @@ namespace Flux
 		return nullptr;
 	}
 
+	ID3D11SamplerState* AssetHandler::GetSamplerState()
+	{
+		return samplerState.Get();
+	}
+
 	DirectX::SpriteFont* AssetHandler::GetFont(const std::string& fontName)
 	{
 		auto it = fonts.find(fontName);
 		if (it != fonts.end()) { return it->second.get(); }
 
 		Debug::LogError("AssetHandler::GetFont() - Failed to find font. Font Name: " + fontName);
+		return nullptr;
+	}
+
+	ImFont* AssetHandler::GetImGuiFont(const std::string& fontName)
+	{
+		auto it = imGuiFonts.find(fontName);
+		if (it != imGuiFonts.end()) { return it->second; }
+
+		Debug::LogError("AssetHandler::GetImGuiFont() - Failed to find ImGui font. Font Name: " + fontName);
 		return nullptr;
 	}
 
@@ -365,7 +401,7 @@ namespace Flux
 		return models.find(modelName) != models.end();
 	}
 
-	Material AssetHandler::GetMaterial(DirectXConfig::ShaderType shaderType)
+	Material AssetHandler::GetMaterial(ShaderType shaderType)
 	{
 		auto it = materials.find(shaderType);
 		if (it != materials.end()) { return it->second; }
@@ -383,9 +419,26 @@ namespace Flux
 		return EMPTY_PATH;
 	}
 
-	bool AssetHandler::HasAudioFile(const std::string& audioName)
+	bool AssetHandler::HasAudioPath(const std::string& audioName)
 	{
 		return audioPaths.find(audioName) != audioPaths.end();
+	}
+
+	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>>& AssetHandler::GetTextures(bool isSkyboxTextures)
+	{
+		if (isSkyboxTextures)
+		{
+			return skyboxTextures;
+		}
+		else
+		{
+			return textures;
+		}
+	}
+
+	std::unordered_map<std::string, std::unique_ptr<Model>>& AssetHandler::GetModels()
+	{
+		return models;
 	}
 
 	const std::filesystem::path& AssetHandler::GetScenePath(const std::string& sceneName)

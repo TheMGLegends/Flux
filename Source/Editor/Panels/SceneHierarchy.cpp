@@ -12,6 +12,7 @@
 
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Input/Input.h"
+#include "Core/Renderer/AssetHandler.h"
 #include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
 
 #include "Engine/Scene/SceneContext.h"
@@ -40,6 +41,14 @@ namespace Flux
 		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::LoadScene, this)))
 		{
 			Debug::LogError("Failed to add listener for LoadScene event in SceneHierarchy");
+			return FLUX_FAILURE;
+		}
+
+		bigFont = AssetHandler::GetImGuiFont("OpenSans-Bold");
+
+		if (!bigFont)
+		{
+			Debug::LogError("SceneHierarchy::Initialise() - Failed to load big font");
 			return FLUX_FAILURE;
 		}
 
@@ -72,7 +81,9 @@ namespace Flux
 			std::string sceneName = EditorConfig::SceneNeedsSaving() ? scene.GetSceneName() + "*" : scene.GetSceneName();
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
 			ImGui::SetCursorPosX((windowSize.x - ImGui::CalcTextSize(sceneName.c_str()).x) * 0.5f);
+			ImGui::PushFont(bigFont);
 			ImGui::Text(sceneName.c_str());
+			ImGui::PopFont();
 
 			// INFO: Ability to Set as Starter Scene if right clicking scene name
 			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))

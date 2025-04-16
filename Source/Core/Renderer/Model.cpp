@@ -128,4 +128,9 @@ namespace Flux
 
 		deviceContext.DrawIndexed(static_cast<UINT>(indices.size()), 0, 0);
 	}
+
+	const std::string& Model::GetModelName() const
+	{
+		return modelName;
+	}
 }

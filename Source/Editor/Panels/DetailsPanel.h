@@ -4,6 +4,8 @@
 
 #include <memory>
 
+struct ImFont;
+
 namespace Flux
 {
 	class Component;
@@ -23,6 +25,7 @@ namespace Flux
 
 	private:
 		SceneHierarchy* sceneHierarchy;
+		ImFont* bigFont;
 	};
 }
 

@@ -19,10 +19,10 @@ namespace Flux
 				   Microsoft::WRL::ComPtr<ID3D11InputLayout> _inputLayout);
 		~ShaderData();
 
-		DirectXConfig::ShaderType GetShaderType() const { return shaderType; }
-		ID3D11VertexShader* GetVertexShader() { return vertexShader.Get(); }
-		ID3D11PixelShader* GetPixelShader() { return pixelShader.Get(); }
-		ID3D11InputLayout* GetInputLayout() { return inputLayout.Get(); }
+		DirectXConfig::ShaderType GetShaderType() const;
+		ID3D11VertexShader* GetVertexShader();
+		ID3D11PixelShader* GetPixelShader();
+		ID3D11InputLayout* GetInputLayout();
 
 	private:
 		DirectXConfig::ShaderType shaderType;

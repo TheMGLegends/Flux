@@ -13,6 +13,7 @@
 #include "Core/Configs/RuntimeConfig.h"
 
 #include "Core/Debug/Debug.h"
+#include "Core/Renderer/AssetHandler.h"
 
 #include "Engine/Entities/GameObjects/GameObject.h"
 
@@ -30,6 +31,14 @@ namespace Flux
 
 	int DetailsPanel::Initialise()
 	{
+		bigFont = AssetHandler::GetImGuiFont("OpenSans-Bold");
+
+		if (!bigFont)
+		{
+			Debug::LogError("SceneHierarchy::Initialise() - Failed to load big font");
+			return FLUX_FAILURE;
+		}
+
 		return FLUX_SUCCESS;
 	}
 
@@ -74,12 +83,14 @@ namespace Flux
 				ImGui::SameLine();
 
 				// INFO: Displaying Game Object Name
+				ImGui::PushFont(bigFont);
 				float inputWidth = ImGui::CalcTextSize(selectedGameObject->GetName().c_str()).x;
 				inputWidth += 9.0f;
 
 				ImGui::SetCursorPosX((windowSize.x - inputWidth) * 0.5f);
 				ImGui::SetNextItemWidth(inputWidth);
 				ImGui::InputText("##GameObjectName", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue);
+				ImGui::PopFont();
 				ImGui::PopStyleVar();
 
 				ImGui::Dummy(ImVec2(0.0f, 5.0f));

@@ -193,9 +193,9 @@ namespace Flux
 				else if (FiletypeConfig::IsSupportedAudioFormat(extensionType))
 				{
 					// INFO: Load Audio if not already loaded
-					if (!AssetHandler::HasAudioFile(filenameStemString))
+					if (!AssetHandler::HasAudioPath(filenameStemString))
 					{
-						AssetHandler::LoadAudio(path);
+						AssetHandler::StoreAudioPath(path);
 					}
 
 					textureID = audioIcon; // INFO: Audio
