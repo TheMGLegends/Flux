@@ -101,7 +101,7 @@ namespace Flux
 
 				for (const auto& component : components)
 				{
-					component->DrawDetails();
+					if (component) { component->DrawDetails(); }
 				}
 
 				// INFO: Add Component Button
