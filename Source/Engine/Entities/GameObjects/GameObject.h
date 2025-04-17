@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "Core/Helpers/StringHasher.h"
+
 #include "Engine/Scene/SceneContext.h"
 #include "Engine/Entities/Components/Transform.h"
 #include "Engine/Entities/Components/Colliders/Collider.h"
@@ -45,20 +47,20 @@ namespace Flux
 
 		void Destroy();
 
-		virtual void Start() {}
-		virtual void Update(float deltaTime) {}
-		virtual void LateUpdate(float deltaTime) {}
-		virtual void FixedUpdate(float fixedDeltaTime) {}
+		virtual void Start() { /*INFO: Default Implementation Left Blank*/ }
+		virtual void Update(float deltaTime) { /*INFO: Default Implementation Left Blank*/ }
+		virtual void LateUpdate(float deltaTime) { /*INFO: Default Implementation Left Blank*/ }
+		virtual void FixedUpdate(float fixedDeltaTime) { /*INFO: Default Implementation Left Blank*/ }
 
-		virtual void OnCollisionEnter(std::shared_ptr<Collider> other) {}
-		virtual void OnCollisionExit(std::shared_ptr<Collider> other) {}
+		virtual void OnCollisionEnter(std::shared_ptr<Collider> other) { /*INFO: Default Implementation Left Blank*/ }
+		virtual void OnCollisionExit(std::shared_ptr<Collider> other) { /*INFO: Default Implementation Left Blank*/ }
 
-		virtual void OnTriggerEnter(std::shared_ptr<Collider> other) {}
-		virtual void OnTriggerExit(std::shared_ptr<Collider> other) {}
+		virtual void OnTriggerEnter(std::shared_ptr<Collider> other) { /*INFO: Default Implementation Left Blank*/ }
+		virtual void OnTriggerExit(std::shared_ptr<Collider> other) { /*INFO: Default Implementation Left Blank*/ }
 
-		virtual void OnDisable() {}
-		virtual void OnEnable() {}
-		virtual void OnDestroy() {}
+		virtual void OnDisable() { /*INFO: Default Implementation Left Blank*/ }
+		virtual void OnEnable() { /*INFO: Default Implementation Left Blank*/ }
+		virtual void OnDestroy() { /*INFO: Default Implementation Left Blank*/ }
 
 		/// @brief Used to set display name of GameObject
 		void SetName(std::string_view _name);
@@ -83,7 +85,7 @@ namespace Flux
 	// INFO: GameObject Factory (Reflection)
 	public:
 		static std::unique_ptr<GameObject> CreateGameObject(const std::string& typeName);
-		static const std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>>& GetGameObjectTypes();
+		static const std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>, StringHasher, std::equal_to<>>& GetGameObjectTypes();
 		static void ClearGameObjectTypeCounters() { gameObjectCounter = -1; gameObjectTypeCounters.clear(); }
 
 	protected:
@@ -98,8 +100,8 @@ namespace Flux
 	inline static ObjectRegister objectRegister;
 
 	private:
-		static inline std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>> gameObjectTypes;
-		static inline std::unordered_map<std::string, int> gameObjectTypeCounters;
+		static inline std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>, StringHasher, std::equal_to<>> gameObjectTypes;
+		static inline std::unordered_map<std::string, int, StringHasher, std::equal_to<>> gameObjectTypeCounters;
 		static int gameObjectCounter; // INFO: Only for Game Objects since they don't get reflected
 	};
 

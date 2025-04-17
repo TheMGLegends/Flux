@@ -40,15 +40,15 @@ namespace Flux
 		void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override;
 		void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override;
 
-		void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override {}
-		void onWake(physx::PxActor** actors, physx::PxU32 count) override {}
-		void onSleep(physx::PxActor** actors, physx::PxU32 count) override {}
-		void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) override {}
+		void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override { /*INFO: Default Implementation Left Blank*/ }
+		void onWake(physx::PxActor** actors, physx::PxU32 count) override { /*INFO: Default Implementation Left Blank*/ }
+		void onSleep(physx::PxActor** actors, physx::PxU32 count) override { /*INFO: Default Implementation Left Blank*/ }
+		void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) override { /*INFO: Default Implementation Left Blank*/ }
 
-		void Start();
+		void Start() const;
 		void Update(float deltaTime);
 		void LateUpdate(float deltaTime);
-		void FixedUpdate(float fixedDeltaTime);
+		void FixedUpdate(float fixedDeltaTime) const;
 
 		void DrawWireframes(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch);
 

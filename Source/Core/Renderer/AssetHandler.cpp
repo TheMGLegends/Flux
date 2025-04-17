@@ -43,15 +43,15 @@ namespace Flux
 
 	ComPtr<ID3D11SamplerState> AssetHandler::samplerState;
 
-	std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>> AssetHandler::fonts;
-	std::unordered_map<std::string, ImFont*> AssetHandler::imGuiFonts;
-	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>> AssetHandler::textures;
-	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>> AssetHandler::skyboxTextures;
-	std::unordered_map<std::string, std::unique_ptr<Model>> AssetHandler::models;
+	std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>, StringHasher, std::equal_to<>> AssetHandler::fonts;
+	std::unordered_map<std::string, ImFont*, StringHasher, std::equal_to<>> AssetHandler::imGuiFonts;
+	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>, StringHasher, std::equal_to<>> AssetHandler::textures;
+	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>, StringHasher, std::equal_to<>> AssetHandler::skyboxTextures;
+	std::unordered_map<std::string, std::unique_ptr<Model>, StringHasher, std::equal_to<>> AssetHandler::models;
 	std::unordered_map<ShaderType, Material> AssetHandler::materials;
-	std::unordered_map<std::string, std::filesystem::path> AssetHandler::audioPaths;
+	std::unordered_map<std::string, std::filesystem::path, StringHasher, std::equal_to<>> AssetHandler::audioPaths;
 
-	std::unordered_map<std::string, std::filesystem::path> AssetHandler::scenePaths;
+	std::unordered_map<std::string, std::filesystem::path, StringHasher, std::equal_to<>> AssetHandler::scenePaths;
 
 	ConstantBufferData AssetHandler::EMPTY_CONSTANT_BUFFER_DATA;
 	ShaderData AssetHandler::EMPTY_SHADER_DATA;
@@ -392,7 +392,7 @@ namespace Flux
 		return audioPaths.contains(audioName);
 	}
 
-	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>>& AssetHandler::GetTextures(bool isSkyboxTextures)
+	std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>, StringHasher, std::equal_to<>>& AssetHandler::GetTextures(bool isSkyboxTextures)
 	{
 		if (isSkyboxTextures)
 		{
@@ -404,7 +404,7 @@ namespace Flux
 		}
 	}
 
-	std::unordered_map<std::string, std::unique_ptr<Model>>& AssetHandler::GetModels()
+	std::unordered_map<std::string, std::unique_ptr<Model>, StringHasher, std::equal_to<>>& AssetHandler::GetModels()
 	{
 		return models;
 	}

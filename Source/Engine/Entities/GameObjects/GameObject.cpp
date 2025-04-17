@@ -99,7 +99,7 @@ namespace Flux
 			OnEnable();
 
 			// INFO: Components Start
-			for (auto& component : components)
+			for (const auto& component : components)
 			{
 				if (!component->IsActive()) { continue; }
 				component->Start();
@@ -182,7 +182,7 @@ namespace Flux
 		return nullptr;
 	}
 
-	const std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>>& GameObject::GetGameObjectTypes()
+	const std::unordered_map<std::string, std::function<std::unique_ptr<GameObject>()>, StringHasher, std::equal_to<>>& GameObject::GetGameObjectTypes()
 	{
 		return gameObjectTypes;
 	}

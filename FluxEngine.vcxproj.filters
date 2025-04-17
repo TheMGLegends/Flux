@@ -409,6 +409,9 @@
     <ClInclude Include="Source\Core\Configs\GameConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\Helpers\StringHasher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Vendors\imgui\debuggers\imgui.natvis" />

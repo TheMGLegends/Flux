@@ -280,7 +280,7 @@ namespace Flux
 		}
 	}
 
-	void Scene::Start()
+	void Scene::Start() const
 	{
 		// INFO: Components Start
 		for (const auto& [type, componentList] : components)
@@ -343,7 +343,7 @@ namespace Flux
 		if (RuntimeConfig::IsInEditorMode() || RuntimeConfig::IsPaused()) { sceneViewCamera->LateUpdate(deltaTime); }
 	}
 
-	void Scene::FixedUpdate(float fixedDeltaTime)
+	void Scene::FixedUpdate(float fixedDeltaTime) const
 	{
 		for (const auto& gameObject : gameObjects)
 		{

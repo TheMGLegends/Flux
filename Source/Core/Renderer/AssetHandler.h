@@ -12,6 +12,7 @@
 #include "ShaderData.h"
 
 #include "Core/Configs/DirectXConfig.h"
+#include "Core/Helpers/StringHasher.h"
 #include "Core/Renderer/Material.h"
 
 namespace Assimp { class Importer; }
@@ -69,8 +70,8 @@ namespace Flux
 		static const std::filesystem::path& GetAudioPath(const std::string& audioName);
 		static bool HasAudioPath(const std::string& audioName);
 
-		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& GetTextures(bool isSkyboxTextures = false);
-		static std::unordered_map<std::string, std::unique_ptr<Model>>& GetModels();
+		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, StringHasher, std::equal_to<>>& GetTextures(bool isSkyboxTextures = false);
+		static std::unordered_map<std::string, std::unique_ptr<Model>, StringHasher, std::equal_to<>>& GetModels();
 
 		static const std::filesystem::path& GetScenePath(const std::string& sceneName);
 		static int GetSceneCount();
@@ -99,15 +100,15 @@ namespace Flux
 
 		static Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
 
-		static std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>> fonts;
-		static std::unordered_map<std::string, ImFont*> imGuiFonts;
-		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textures;
-		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> skyboxTextures;
-		static std::unordered_map<std::string, std::unique_ptr<Model>> models;
+		static std::unordered_map<std::string, std::unique_ptr<DirectX::SpriteFont>, StringHasher, std::equal_to<>> fonts;
+		static std::unordered_map<std::string, ImFont*, StringHasher, std::equal_to<>> imGuiFonts;
+		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, StringHasher, std::equal_to<>> textures;
+		static std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, StringHasher, std::equal_to<>> skyboxTextures;
+		static std::unordered_map<std::string, std::unique_ptr<Model>, StringHasher, std::equal_to<>> models;
 		static std::unordered_map<DirectXConfig::ShaderType, Material> materials;
-		static std::unordered_map<std::string, std::filesystem::path> audioPaths;
+		static std::unordered_map<std::string, std::filesystem::path, StringHasher, std::equal_to<>> audioPaths;
 
-		static std::unordered_map<std::string, std::filesystem::path> scenePaths;
+		static std::unordered_map<std::string, std::filesystem::path, StringHasher, std::equal_to<>> scenePaths;
 
 		static ConstantBufferData EMPTY_CONSTANT_BUFFER_DATA;
 		static ShaderData EMPTY_SHADER_DATA;
