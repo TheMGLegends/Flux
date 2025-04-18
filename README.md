@@ -21,7 +21,7 @@ provide a better development experience for the user:
 
 1. [ImGui](https://github.com/ocornut/imgui) - Editor UI
 2. [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo) - Editor Gizmos
-3. [fmod](https://www.fmod.com/) - Audio
+3. [fmod](https://www.fmod.com/) - Audio (FMOD Core API)
 4. [PhysX](https://github.com/NVIDIA-Omniverse/PhysX) - Physics
 5. [DirectXTK](https://github.com/microsoft/DirectXTK) - Texture Loading, Maths, Text Rendering, Debug Gizmos
 6. [nlohmann json](https://github.com/nlohmann/json) - De/Serialization
