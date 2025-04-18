@@ -1,0 +1,104 @@
+This project uses the following third-party libraries. Each library is subject to its own license terms as described below.
+
+---
+
+1. ImGui (https://github.com/ocornut/imgui)  
+License: MIT  
+Copyright (c) 2014-2025 Omar Cornut  
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software...
+
+[Full MIT License: https://github.com/ocornut/imgui/blob/master/LICENSE.txt]
+
+---
+
+2. ImGuizmo (https://github.com/CedricGuillemet/ImGuizmo)  
+License: MIT  
+Copyright (c) 2016 Cedric Guillemet  
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software...
+
+[Full MIT License: https://github.com/CedricGuillemet/ImGuizmo/blob/master/LICENSE]
+
+---
+
+3. FMOD Core API (https://www.fmod.com/)  
+License: Proprietary (Free for Non-Commercial or Limited Commercial Use)  
+© Firelight Technologies Pty Ltd.  
+
+This project uses the FMOD Core API for audio functionality. FMOD is **not open-source** and is distributed under a proprietary license.  
+Use is permitted under the following conditions:
+- Free for non-commercial projects
+- Free for commercial projects under $200K USD/year revenue
+
+Redistribution of FMOD binaries is permitted under these license terms.  
+For full details, visit: https://www.fmod.com/licensing
+
+FMOD binaries included in this project are provided in accordance with these terms.
+
+---
+
+4. PhysX SDK (https://github.com/NVIDIA-Omniverse/PhysX)  
+License: BSD 3-Clause License  
+Copyright (c) 2008-2025, NVIDIA Corporation  
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:  
+1. Redistributions of source code must retain the above copyright...  
+2. Redistributions in binary form must reproduce the above copyright...  
+3. Neither the name of NVIDIA Corporation nor the names of its contributors...
+
+[Full License: https://github.com/NVIDIA-Omniverse/PhysX/blob/main/LICENSE.txt]
+
+---
+
+5. DirectXTK (https://github.com/microsoft/DirectXTK)  
+License: MIT  
+Copyright (c) Microsoft Corporation  
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software...
+
+[Full MIT License: https://github.com/microsoft/DirectXTK/blob/main/LICENSE]
+
+---
+
+6. nlohmann/json (https://github.com/nlohmann/json)  
+License: MIT  
+Copyright (c) 2013-2025 Niels Lohmann  
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software...
+
+[Full MIT License: https://github.com/nlohmann/json/blob/develop/LICENSE.MIT]
+
+---
+
+7. Assimp (https://github.com/assimp/assimp)  
+License: BSD 3-Clause License  
+Copyright (c) 2006-2025  
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:  
+1. Redistributions of source code must retain the above copyright...  
+2. Redistributions in binary form must reproduce the above copyright...
+
+[Full License: https://github.com/assimp/assimp/blob/master/LICENSE]
+
+---
+
+8. SDL (https://github.com/libsdl-org/SDL)  
+License: zlib License  
+
+SDL is provided 'as-is', without any express or implied warranty...  
+You may use this software for any purpose, including commercial applications, and alter it and redistribute it freely...
+
+[Full License: https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt]
+
+---
+
+9. magic_enum (https://github.com/Neargye/magic_enum)  
+License: MIT  
+Copyright (c) 2019-2025 Neargye  
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software...
+
+[Full MIT License: https://github.com/Neargye/magic_enum/blob/master/LICENSE]
+
+---
