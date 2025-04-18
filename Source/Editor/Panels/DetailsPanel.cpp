@@ -87,7 +87,10 @@ namespace Flux
 
 				ImGui::SetCursorPosX((windowSize.x - inputWidth) * 0.5f);
 				ImGui::SetNextItemWidth(inputWidth);
-				ImGui::InputText("##GameObjectName", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue);
+				if (ImGui::InputText("##GameObjectName", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue))
+				{
+					EditorConfig::SetSceneNeedsSaving(true);
+				}
 				ImGui::PopFont();
 				ImGui::PopStyleVar();
 
