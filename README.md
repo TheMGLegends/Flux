@@ -27,6 +27,7 @@ provide a better development experience for the user:
 6. [nlohmann json](https://github.com/nlohmann/json) - De/Serialization
 7. [Assimp](https://github.com/assimp/assimp) - Model Loading
 8. [SDL](https://github.com/libsdl-org/SDL) - Window Creation & Input
+9. [magic_enum](https://github.com/Neargye/magic_enum) - Displaying Enums as Text
 
 ## What Is Offered
 
