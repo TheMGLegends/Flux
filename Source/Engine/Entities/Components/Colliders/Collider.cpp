@@ -106,8 +106,11 @@ namespace Flux
 			}
 			case RigidActorType::Dynamic:
 			{
-				// INFO: Granted that it's dynamic we update the transform using physics simulation values
-				if (auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor); rigidDynamic)
+				auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+				if (!rigidDynamic) { return; }
+
+				// INFO: Update rigid dynamic using physics if not kinematic
+				if (!rigidDynamic->getRigidBodyFlags().isSet(physx::PxRigidBodyFlag::eKINEMATIC))
 				{
 					physx::PxTransform physxTransform = rigidDynamic->getGlobalPose();
 					Vector3 currentPosition = transform->GetPosition();
@@ -119,6 +122,16 @@ namespace Flux
 					// INFO: Lerp the position and rotation to avoid jittering
 					transform->SetPosition(Vector3::Lerp(currentPosition, newPosition, alpha));
 					transform->SetRotation(Quaternion::Slerp(currentRotation, newRotation, alpha));
+				}
+				else
+				{
+					const Vector3& position = transform->GetPosition();
+					const Quaternion& rotation = transform->GetRotation();
+
+					physx::PxTransform physxTransform(physx::PxVec3(position.x, position.y, position.z),
+														physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w));
+
+					rigidDynamic->setKinematicTarget(physxTransform);
 				}
 
 				break;
@@ -177,18 +190,30 @@ namespace Flux
 			rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
 
 			std::shared_ptr<PhysicsBody> physicsBody = GetGameObject()->GetComponent<PhysicsBody>().lock();
+			if (!physicsBody) { return; }
 
 			// INFO: Only enable gravity if theres an associated PhysicsBody that uses gravity
-			if (physicsBody && physicsBody->UsesGravity())
+			if (physicsBody->UsesGravity())
 			{
 				rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
 			}
+
+			// INFO: Based on kinematic setting in PhysicsBody set the kinematic flag
+			rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, physicsBody->IsKinematic());
 		}
 	}
 
 	bool Collider::IsTrigger() const
 	{
 		return isTrigger;
+	}
+
+	void Collider::SetIsKinematic(bool isKinematic)
+	{
+		if(!rigidActor || rigidActorType == RigidActorType::Static) { return; }
+
+		auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+		rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, isKinematic);
 	}
 
 	void Collider::ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other)

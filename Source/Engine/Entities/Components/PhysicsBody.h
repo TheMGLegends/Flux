@@ -52,6 +52,8 @@ namespace Flux
 		void SetUseGravity(bool _useGravity);
 		bool UsesGravity() const;
 
+		bool IsKinematic() const;
+
 		void SetPositionConstraint(bool isConstrained, ConstraintAxis axis);
 		bool IsPositionConstrained(ConstraintAxis axis) const;
 
@@ -71,6 +73,7 @@ namespace Flux
 		float drag;
 		float angularDrag;
 		bool useGravity;
+		bool isKinematic;
 
 		std::array<bool, static_cast<size_t>(ConstraintAxis::Count)> positionConstraints;
 		std::array<bool, static_cast<size_t>(ConstraintAxis::Count)> rotationConstraints;

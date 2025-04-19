@@ -49,6 +49,8 @@ namespace Flux
 		void SetIsTrigger(bool _isTrigger);
 		bool IsTrigger() const;
 
+		void SetIsKinematic(bool isKinematic);
+
 		void ExecuteCollisionCallback(CollisionType collisionType, std::shared_ptr<Collider> other);
 
 		/// @brief Sets the rigid actor to be either static or dynamic depending on if a physics body is found on the GameObject

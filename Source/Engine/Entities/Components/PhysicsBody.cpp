@@ -19,7 +19,8 @@ using namespace DirectX::SimpleMath;
 
 namespace Flux
 {
-	PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), mass(1.0f), drag(0.0f), angularDrag(0.05f), useGravity(true)
+	PhysicsBody::PhysicsBody(GameObject* _gameObject) : Component(_gameObject), mass(1.0f), drag(0.0f), angularDrag(0.05f), 
+														useGravity(true), isKinematic(false)
 	{
 		name = "PhysicsBody";
 		componentType = ComponentType::PhysicsBody;
@@ -163,6 +164,19 @@ namespace Flux
 			ImGui::SetCursorPosX(136.0f);
 			if (ImGui::Checkbox("##UseGravity", &useGravity))
 			{
+				EditorConfig::SetSceneNeedsSaving(true);
+			}
+
+			// INFO: Is Kinematic Checkbox
+			ImGui::Text("Is Kinematic");
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(136.0f);
+			if (ImGui::Checkbox("##IsKinematic", &isKinematic))
+			{
+				if (std::shared_ptr<Collider> collider = attachedCollider.lock())
+				{
+					collider->SetIsKinematic(isKinematic);
+				}
 				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
@@ -313,6 +327,11 @@ namespace Flux
 	bool PhysicsBody::UsesGravity() const
 	{
 		return useGravity;
+	}
+
+	bool PhysicsBody::IsKinematic() const
+	{
+		return isKinematic;
 	}
 
 	void PhysicsBody::SetPositionConstraint(bool isConstrained, ConstraintAxis axis)
