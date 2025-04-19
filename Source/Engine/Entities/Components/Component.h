@@ -45,8 +45,10 @@ namespace Flux
 	protected:
 		/// @min Applies to the X value
 		/// @max Applies to the X value
+		/// @restrictAll If true, all three values will be clamped to the min and max otherwise only X
 		/// @return true if the field was changed
-		bool DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed = 0.1f, const char* format = "%.2f", float min = 0.0f, float max = 0.0f);
+		bool DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed = 0.1f, 
+								 const char* format = "%.2f", float min = 0.0f, float max = 0.0f, bool restrictAll = false);
 
 	private:
 		void SetGameObject(GameObject* _gameObject);

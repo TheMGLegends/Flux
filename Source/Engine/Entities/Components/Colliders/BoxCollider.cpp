@@ -90,7 +90,7 @@ namespace Flux
 				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
-			if (DisplayVector3Field("Size", size, 0.1f, "%.1f"))
+			if (DisplayVector3Field("Size", size, 0.1f, "%.1f", 0.1f, 10000, true))
 			{
 				UpdateScale();
 				EditorConfig::SetSceneNeedsSaving(true);
@@ -182,7 +182,8 @@ namespace Flux
 
 		// INFO: Create Box Collider Shape (Scale Size with Transform Scale)
 		Vector3 adjustedSize = GetGameObject()->transform.lock()->GetScale() * size;
-		colliderShape = Physics::GetPhysics().createShape(physx::PxBoxGeometry(adjustedSize.x, adjustedSize.y, adjustedSize.z), Physics::GetDefaultPhysicsMaterial(), true);
+		colliderShape = Physics::GetPhysics().createShape(physx::PxBoxGeometry(std::abs(adjustedSize.x), std::abs(adjustedSize.y), std::abs(adjustedSize.z)), 
+														  Physics::GetDefaultPhysicsMaterial(), true);
 
 		// INFO: Default Collisions with everything
 		physx::PxFilterData filterData{};
@@ -219,7 +220,7 @@ namespace Flux
 			if (physx::PxBoxGeometry boxGeometry{}; colliderShape->getBoxGeometry(boxGeometry))
 			{
 				Vector3 adjustedSize = size * GetGameObject()->transform.lock()->GetScale();
-				boxGeometry.halfExtents = { adjustedSize.x, adjustedSize.y, adjustedSize.z };
+				boxGeometry.halfExtents = { std::abs(adjustedSize.x), std::abs(adjustedSize.y), std::abs(adjustedSize.z) };
 				colliderShape->setGeometry(boxGeometry);
 			}
 

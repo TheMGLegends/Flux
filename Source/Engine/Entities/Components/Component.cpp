@@ -65,7 +65,7 @@ namespace Flux
 		return componentType;
 	}
 
-	bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed, const char* format, float min, float max)
+	bool Component::DisplayVector3Field(const char* label, DirectX::SimpleMath::Vector3& value, float speed, const char* format, float min, float max, bool restrictAll)
 	{
 		if (ImGui::BeginTable(label, 2))
 		{
@@ -96,6 +96,9 @@ namespace Flux
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 
+			float actualMin = restrictAll ? min : 0.0f;
+			float actualMax = restrictAll ? max : 0.0f;
+
 			// INFO: Y Value
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.75f, 0.0f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.75f, 0.0f, 1.0f));
@@ -105,7 +108,8 @@ namespace Flux
 			ImGui::Button("Y");
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
-			if (ImGui::DragFloat("##Y", &value.y, speed, 0.0f, 0.0f, format))
+
+			if (ImGui::DragFloat("##Y", &value.y, speed, actualMin, actualMax, format, ImGuiSliderFlags_ClampOnInput))
 			{
 				draggingBox = true;
 			}
@@ -122,7 +126,7 @@ namespace Flux
 			ImGui::Button("Z");
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
-			if (ImGui::DragFloat("##Z", &value.z, speed, 0.0f, 0.0f, format))
+			if (ImGui::DragFloat("##Z", &value.z, speed, actualMin, actualMax, format, ImGuiSliderFlags_ClampOnInput))
 			{
 				draggingBox = true;
 			}

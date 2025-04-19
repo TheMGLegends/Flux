@@ -273,6 +273,12 @@ namespace Flux
 
 	void PhysicsBody::SetMass(float _mass)
 	{
+		if (_mass == 0.0f)
+		{
+			Debug::LogWarning("PhysicsBody::SetMass() - Mass cannot be zero, setting to default value of 1.0f");
+			_mass = 1.0f;
+		}
+
 		if (mass != _mass) { mass = _mass; }
 
 		physx::PxRigidDynamic* rigidDynamic = VerifyRigidActor();

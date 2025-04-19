@@ -97,7 +97,7 @@ namespace Flux
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(136.0f);
 			ImGui::SetNextItemWidth(50.0f);
-			if (ImGui::InputFloat("##Radius", &radius, 0.0f, 0.0f, "%.1f"))
+			if (ImGui::DragFloat("##Radius", &radius, 0.1f, 0.1f, 10000.0f, "%.1f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				UpdateScale();
 				EditorConfig::SetSceneNeedsSaving(true);
@@ -151,8 +151,10 @@ namespace Flux
 			colliderShape = nullptr;
 		}
 
-		// INFO: Create Sphere Collider Shape
-		colliderShape = Physics::GetPhysics().createShape(physx::PxSphereGeometry(radius), Physics::GetDefaultPhysicsMaterial(), true);
+		// INFO: Create Sphere Collider Shape (Scale Radius with Transform Scale)
+		Vector3 gameObjectScale = GetGameObject()->transform.lock()->GetScale();
+		float adjustedScale = std::abs(MathHelpers::Max(gameObjectScale.x, gameObjectScale.y, gameObjectScale.z)) * radius;
+		colliderShape = Physics::GetPhysics().createShape(physx::PxSphereGeometry(adjustedScale), Physics::GetDefaultPhysicsMaterial(), true);
 
 		// INFO: Default Collisions with everything
 		physx::PxFilterData filterData{};
@@ -189,7 +191,7 @@ namespace Flux
 			if (physx::PxSphereGeometry sphereGeometry{}; colliderShape->getSphereGeometry(sphereGeometry))
 			{
 				Vector3 scale = GetGameObject()->transform.lock()->GetScale();
-				sphereGeometry.radius = radius * MathHelpers::Max(scale.x, scale.y, scale.z);
+				sphereGeometry.radius = radius * std::abs(MathHelpers::Max(scale.x, scale.y, scale.z));
 				colliderShape->setGeometry(sphereGeometry);
 			}
 
