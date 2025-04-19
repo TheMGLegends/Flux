@@ -38,6 +38,12 @@ namespace Flux
 			return;
 		}
 
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::ComponentRemoved, this)))
+		{
+			Debug::LogError("Scene::Scene() - Failed to add ComponentRemoved event listener");
+			return;
+		}
+
 		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::PlayModeExited, this)))
 		{
 			Debug::LogError("Scene::Scene() - Failed to add PlayModeExited event listener");
@@ -147,24 +153,27 @@ namespace Flux
 					break;
 				}
 			}
+		}
 
-			// INFO: Remove all now-expired components associated with the removed GameObject
+		if (eventType == EventType::GameObjectRemoved || eventType == EventType::ComponentRemoved)
+		{
+			// INFO: Remove all expired components
 			for (auto& [type, componentList] : components)
 			{
-				std::erase_if(componentList, [gameObjectRemovedEvent](std::weak_ptr<Component> component) 
-					{ 
-						return component.expired(); 
+				std::erase_if(componentList, [](std::weak_ptr<Component> component)
+					{
+						return component.expired();
 					});
 			}
 
-			// INFO: Remove all now-expired debug wireframes associated with the removed GameObject
+			// INFO: Remove all expired debug wireframes
 			std::erase_if(debugWireframes, [](const DebugWireframeData& data)
 				{
 					return data.component.expired();
 				});
 
-			// INFO: Remove all now-expired rigid actors associated with the removed GameObject
-			std::erase_if(rigidActorsToColliders, [](const auto& pair) 
+			// INFO: Remove all expired rigid actors
+			std::erase_if(rigidActorsToColliders, [](const auto& pair)
 				{
 					return pair.second.expired();
 				});
@@ -228,7 +237,22 @@ namespace Flux
 
 		if (!collider0 || !collider1)
 		{
-			Debug::LogError("Scene::onContact() - Collider is expired");
+			if (!collider0)
+			{
+				if (rigidActorsToColliders.contains(actor0))
+				{
+					rigidActorsToColliders.erase(actor0);
+				}
+			}
+
+			if (!collider1)
+			{
+				if (rigidActorsToColliders.contains(actor1))
+				{
+					rigidActorsToColliders.erase(actor1);
+				}
+			}
+
 			return;
 		}
 
@@ -261,7 +285,20 @@ namespace Flux
 
 		if (!triggerCollider || !otherCollider)
 		{
-			Debug::LogError("Scene::onTrigger() - Other Collider is expired");
+			if (!triggerCollider)
+			{
+				if (rigidActorsToColliders.contains(triggerActor))
+				{
+					rigidActorsToColliders.erase(triggerActor);
+				}
+			}
+			if (!otherCollider)
+			{
+				if (rigidActorsToColliders.contains(otherActor))
+				{
+					rigidActorsToColliders.erase(otherActor);
+				}
+			}
 			return;
 		}
 

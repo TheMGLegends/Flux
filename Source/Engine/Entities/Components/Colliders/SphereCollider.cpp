@@ -170,6 +170,10 @@ namespace Flux
 			}
 
 			SceneContext::GetScene().GetPhysicsScene().addActor(*rigidActor);
+
+			// INFO: Reset active and trigger states
+			SetIsActive(isActive);
+			SetIsTrigger(isTrigger);
 		}
 	}
 

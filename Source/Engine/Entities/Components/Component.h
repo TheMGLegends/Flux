@@ -20,6 +20,9 @@ namespace Flux
 		/// @brief Called after the Component is constructed and added to the GameObject
 		virtual void PostConstruction() { /*INFO: Default Implementation Left Blank*/ }
 
+		/// @brief Called after the component is removed from the GameObject
+		virtual void PostDestruction() { /*INFO: Default Implementation Left Blank*/ }
+
 		/// @brief Called before GameObject start inside of Scene start
 		virtual void Start() { /*INFO: Default Implementation Left Blank*/ }
 

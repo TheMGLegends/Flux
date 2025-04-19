@@ -65,6 +65,19 @@ namespace Flux
 		}
 	}
 
+	void PhysicsBody::PostDestruction()
+	{
+		// INFO: Set the attached collider to be static if it is valid
+		if (std::shared_ptr<Collider> collider = attachedCollider.lock())
+		{
+			// INFO: Reset the rigid actor to be static
+			collider->SetRigidActor();
+
+			// INFO: Reset the collider shape to be attached to the new rigid actor
+			collider->SetColliderShape();
+		}
+	}
+
 	void PhysicsBody::Start()
 	{
 		// INFO: Initialise rigid actor with values from the PhysicsBody ready for simulation

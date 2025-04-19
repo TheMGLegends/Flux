@@ -191,9 +191,6 @@ namespace Flux
 		filterData.word1 = 1;
 		colliderShape->setSimulationFilterData(filterData);
 
-		// INFO: Reset trigger state
-		SetIsTrigger(isTrigger);
-
 		// INFO: Ensure Rigid Actor is valid
 		if (rigidActor)
 		{
@@ -203,6 +200,10 @@ namespace Flux
 			}
 
 			SceneContext::GetScene().GetPhysicsScene().addActor(*rigidActor);
+
+			// INFO: Reset active and trigger states
+			SetIsActive(isActive);
+			SetIsTrigger(isTrigger);
 		}
 	}
 

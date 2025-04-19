@@ -15,6 +15,7 @@ namespace Flux
 		SceneViewResized,
 		
 		GameObjectRemoved,
+		ComponentRemoved,
 
 		PlayModeExited,
 	};

@@ -29,6 +29,7 @@ namespace Flux
 		~PhysicsBody() override;
 
 		void PostConstruction() override;
+		void PostDestruction() override;
 		void Start() override;
 		void DrawDetails() override;
 

@@ -1,6 +1,5 @@
 #include "GameObject.h"
 
-#include "Core/EventSystem/EventDispatcher.h"
 #include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
 
 #include "Engine/Entities/Components/Components.h"

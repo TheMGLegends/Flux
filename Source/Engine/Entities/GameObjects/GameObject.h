@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Helpers/StringHasher.h"
 
 #include "Engine/Scene/SceneContext.h"
@@ -192,6 +193,8 @@ namespace Flux
 			if (castedComponent && castedComponent == validComponent)
 			{
 				components.erase(it);
+				validComponent->PostDestruction();
+				EventDispatcher::QueueEvent(EventType::ComponentRemoved, nullptr);
 				break;
 			}
 			else

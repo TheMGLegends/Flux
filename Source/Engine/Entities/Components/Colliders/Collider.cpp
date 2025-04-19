@@ -56,22 +56,25 @@ namespace Flux
 	{
 		Component::SetIsActive(_isActive);
 
-		if (colliderShape && rigidActor)
-		{
-			if (isActive)
-			{
-				rigidActor->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+		if (!colliderShape || !rigidActor) { return; }
 
-				if (rigidActorType == RigidActorType::Dynamic)
+		if (isActive)
+		{
+			rigidActor->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, false);
+
+			if (rigidActorType == RigidActorType::Dynamic)
+			{
+				auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+
+				if (!rigidDynamic->getRigidBodyFlags().isSet(physx::PxRigidBodyFlag::eKINEMATIC))
 				{
-					auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
 					rigidDynamic->wakeUp();
 				}
 			}
-			else
-			{
-				rigidActor->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
-			}
+		}
+		else
+		{
+			rigidActor->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
 		}
 	}
 
@@ -148,38 +151,37 @@ namespace Flux
 	{
 		isTrigger = _isTrigger;
 
-		if (colliderShape)
+		if (!colliderShape || !isActive) { return; }
+
+		if (isTrigger)
 		{
-			if (isTrigger)
+			colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+
+			if (rigidActorType != RigidActorType::Dynamic) { return; }
+
+			// INFO: Disable gravity and prevent physics movement by changing to kinematic
+			auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+			rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+			rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
+		}
+		else
+		{
+			colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+
+			if (rigidActorType != RigidActorType::Dynamic) { return; }
+
+			// INFO: Re-enable gravity and physics movement
+			auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
+			rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+
+			std::shared_ptr<PhysicsBody> physicsBody = GetGameObject()->GetComponent<PhysicsBody>().lock();
+
+			// INFO: Only enable gravity if theres an associated PhysicsBody that uses gravity
+			if (physicsBody && physicsBody->UsesGravity())
 			{
-				colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-				colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-
-				if (rigidActorType != RigidActorType::Dynamic) { return; }
-
-				// INFO: Disable gravity and prevent physics movement by changing to kinematic
-				auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
-				rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-				rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
-			}
-			else
-			{
-				colliderShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-				colliderShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-
-				if (rigidActorType != RigidActorType::Dynamic) { return; }
-
-				// INFO: Re-enable gravity and physics movement
-				auto rigidDynamic = static_cast<physx::PxRigidDynamic*>(rigidActor);
-				rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-
-				std::shared_ptr<PhysicsBody> physicsBody = GetGameObject()->GetComponent<PhysicsBody>().lock();
-
-				// INFO: Only enable gravity if theres an associated PhysicsBody that uses gravity
-				if (physicsBody && physicsBody->UsesGravity())
-				{
-					rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
-				}
+				rigidDynamic->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
 			}
 		}
 	}
