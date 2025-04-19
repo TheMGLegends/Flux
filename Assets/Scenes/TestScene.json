@@ -14,17 +14,17 @@
                     "Position": [
                         0.0,
                         0.0,
-                        -4.5
+                        1.7742587
                     ],
                     "Rotation": [
-                        -0.0,
+                        -21.342398,
                         0.0,
                         0.0
                     ],
                     "Scale": [
                         1.0,
-                        1.0,
-                        1.0
+                        1.0000002,
+                        1.0000002
                     ]
                 },
                 {
@@ -56,19 +56,19 @@
                     "IsActive": true,
                     "ComponentType": 1,
                     "Position": [
-                        0.0,
+                        3.7329512,
                         0.0,
                         -8.5
                     ],
                     "Rotation": [
-                        49.99999,
-                        44.99997,
-                        1.3282356e-05
+                        49.999943,
+                        44.99994,
+                        2.125175e-05
                     ],
                     "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
+                        0.99999946,
+                        0.9999997,
+                        0.9999993
                     ]
                 },
                 {
@@ -83,11 +83,6 @@
                     "IsActive": true,
                     "ComponentType": 5,
                     "IsTrigger": false,
-                    "Centre": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
                     "Size": [
                         1.0,
                         1.0,
@@ -102,6 +97,7 @@
                     "Drag": 0.0,
                     "AngularDrag": 0.05,
                     "UseGravity": true,
+                    "IsKinematic": false,
                     "PositionConstraints": [
                         false,
                         false,
@@ -146,11 +142,6 @@
                     "IsActive": true,
                     "ComponentType": 5,
                     "IsTrigger": true,
-                    "Centre": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
                     "Size": [
                         1.0,
                         1.0,
@@ -197,11 +188,6 @@
                     "IsActive": true,
                     "ComponentType": 6,
                     "IsTrigger": false,
-                    "Centre": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
                     "Radius": 3.0
                 }
             ]
@@ -222,7 +208,7 @@
                         -15.0
                     ],
                     "Rotation": [
-                        -30.0,
+                        -0.0,
                         0.0,
                         0.0
                     ],
@@ -244,11 +230,6 @@
                     "IsActive": true,
                     "ComponentType": 5,
                     "IsTrigger": false,
-                    "Centre": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
                     "Size": [
                         1.0,
                         1.0,
@@ -303,9 +284,9 @@
                     "IsActive": true,
                     "ComponentType": 1,
                     "Position": [
-                        -10.0,
-                        0.0,
-                        0.0
+                        3.3153756,
+                        -2.2909255,
+                        -7.877093
                     ],
                     "Rotation": [
                         -0.0,
@@ -324,6 +305,37 @@
                     "ComponentType": 4,
                     "ModelName": "Cube",
                     "TextureName": "DefaultTexture"
+                },
+                {
+                    "Name": "PhysicsBody",
+                    "IsActive": true,
+                    "ComponentType": 3,
+                    "Mass": 1.0,
+                    "Drag": 0.0,
+                    "AngularDrag": 0.05,
+                    "UseGravity": true,
+                    "IsKinematic": false,
+                    "PositionConstraints": [
+                        false,
+                        false,
+                        false
+                    ],
+                    "RotationConstraints": [
+                        false,
+                        false,
+                        false
+                    ]
+                },
+                {
+                    "Name": "BoxCollider",
+                    "IsActive": true,
+                    "ComponentType": 5,
+                    "IsTrigger": false,
+                    "Size": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
                 }
             ]
         },

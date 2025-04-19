@@ -87,6 +87,7 @@ namespace Flux
 		SetDrag(drag);
 		SetAngularDrag(angularDrag);
 		SetUseGravity(useGravity);
+		SetIsKinematic(isKinematic);
 
 		for (size_t i = 0; i < static_cast<size_t>(ConstraintAxis::Count); ++i)
 		{
@@ -172,10 +173,6 @@ namespace Flux
 			ImGui::SetCursorPosX(136.0f);
 			if (ImGui::Checkbox("##IsKinematic", &isKinematic))
 			{
-				if (std::shared_ptr<Collider> collider = attachedCollider.lock())
-				{
-					collider->SetIsKinematic(isKinematic);
-				}
 				EditorConfig::SetSceneNeedsSaving(true);
 			}
 
@@ -208,6 +205,7 @@ namespace Flux
 		jsonBack["Drag"] = drag;
 		jsonBack["AngularDrag"] = angularDrag;
 		jsonBack["UseGravity"] = useGravity;
+		jsonBack["IsKinematic"] = isKinematic;
 		jsonBack["PositionConstraints"] = { positionConstraints[0], positionConstraints[1], positionConstraints[2] };
 		jsonBack["RotationConstraints"] = { rotationConstraints[0], rotationConstraints[1], rotationConstraints[2] };
 	}
@@ -222,6 +220,7 @@ namespace Flux
 		drag = json["Drag"].get<float>();
 		angularDrag = json["AngularDrag"].get<float>();
 		useGravity = json["UseGravity"].get<bool>();
+		isKinematic = json["IsKinematic"].get<bool>();
 
 		auto& positionConstraintsJson = json["PositionConstraints"];
 		for (size_t i = 0; i < positionConstraintsJson.size(); ++i)
@@ -257,6 +256,18 @@ namespace Flux
 		{
 			physx::PxVec3 physxForce(force.x, force.y, force.z);
 			rigidDynamic->addForce(physxForce, forceMode);
+		}
+	}
+
+	void PhysicsBody::AddTorque(const DirectX::SimpleMath::Vector3& torque, physx::PxForceMode::Enum forceMode)
+	{
+		physx::PxRigidDynamic* rigidDynamic = VerifyRigidActor();
+
+		// INFO: Check to see if the rigid body is not kinematic
+		if (rigidDynamic && !rigidDynamic->getRigidBodyFlags().isSet(physx::PxRigidBodyFlag::eKINEMATIC))
+		{
+			physx::PxVec3 physxTorque(torque.x, torque.y, torque.z);
+			rigidDynamic->addTorque(physxTorque, forceMode);
 		}
 	}
 
@@ -326,6 +337,16 @@ namespace Flux
 	bool PhysicsBody::UsesGravity() const
 	{
 		return useGravity;
+	}
+
+	void PhysicsBody::SetIsKinematic(bool _isKinematic)
+	{
+		if (isKinematic != _isKinematic) { isKinematic = _isKinematic; }
+
+		if (std::shared_ptr<Collider> collider = attachedCollider.lock())
+		{
+			collider->SetIsKinematic(isKinematic);
+		}
 	}
 
 	bool PhysicsBody::IsKinematic() const

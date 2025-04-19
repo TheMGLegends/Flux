@@ -39,6 +39,7 @@ namespace Flux
 		void SetIsActive(bool _isActive) override;
 
 		void AddForce(const DirectX::SimpleMath::Vector3& force, physx::PxForceMode::Enum forceMode = physx::PxForceMode::eFORCE);
+		void AddTorque(const DirectX::SimpleMath::Vector3& torque, physx::PxForceMode::Enum forceMode = physx::PxForceMode::eFORCE);
 
 		void SetMass(float _mass);
 		float GetMass() const;
@@ -52,6 +53,7 @@ namespace Flux
 		void SetUseGravity(bool _useGravity);
 		bool UsesGravity() const;
 
+		void SetIsKinematic(bool _isKinematic);
 		bool IsKinematic() const;
 
 		void SetPositionConstraint(bool isConstrained, ConstraintAxis axis);
