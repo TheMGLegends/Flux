@@ -11,8 +11,6 @@ namespace Flux
 	public:
 		Cube();
 		~Cube() override;
-
-		void Update(float deltaTime) override;
 	};
 }
 
