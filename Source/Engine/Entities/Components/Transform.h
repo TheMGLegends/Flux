@@ -19,6 +19,7 @@ namespace Flux
 
 		DirectX::XMMATRIX GetWorldMatrix() const;
 		DirectX::XMMATRIX GetWorldMatrix(const DirectX::SimpleMath::Vector3& offsetScale) const;
+		DirectX::XMMATRIX GetWorldMatrix(float customUniformScale) const;
 
 		DirectX::SimpleMath::Vector3 Forward() const;
 		DirectX::SimpleMath::Vector3 Right() const;

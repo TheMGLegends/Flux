@@ -153,7 +153,7 @@ namespace Flux
 				io.MouseDelta = ImVec2(0.0f, 0.0f);
 			}
 
-			if (Input::GetMouseButtonUp(SDL_BUTTON_LEFT))
+			if (Input::GetMouseButtonUp(SDL_BUTTON_LEFT) || !ImGui::IsWindowFocused())
 			{
 				draggingBox = false;
 			}

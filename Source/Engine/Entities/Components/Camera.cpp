@@ -50,17 +50,16 @@ namespace Flux
 	{
 		ImGui::PushID(this);
 
-		bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
-
 		// INFO: Active Checkbox
-		ImGui::SameLine();
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 		if (ImGui::Checkbox("##ComponentActive", &isActive))
 		{
 			EditorConfig::SetSceneNeedsSaving(true);
 		}
-		ImGui::PopStyleVar();
+
+		ImGui::SameLine();
+		bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow);
 
 		// INFO: Remove Component Button
 		ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
@@ -75,7 +74,7 @@ namespace Flux
 				EditorConfig::SetSceneNeedsSaving(true);
 			}
 		}
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
 
 		// INFO: Camera Details
 		DrawCameraDetails(treeOpened);
@@ -130,7 +129,7 @@ namespace Flux
 
 		if (owningTransform)
 		{
-			DirectX::XMMATRIX world = owningTransform->GetWorldMatrix();
+			DirectX::XMMATRIX world = owningTransform->GetWorldMatrix(1.0f);
 
 			std::array<DirectX::VertexPositionColor, 24> worldFrustumVertices{};
 

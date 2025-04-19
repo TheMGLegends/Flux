@@ -23,7 +23,10 @@ namespace Flux
 
 	void Transform::DrawDetails()
 	{
-		if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+		ImGui::Dummy(ImVec2(18.0f, 10.0f));
+
+		ImGui::SameLine();
+		if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow))
 		{
 			// INFO: Translation Row
 			if (DisplayVector3Field("Position", position))
@@ -100,6 +103,17 @@ namespace Flux
 
 		Vector3 adjustedScale = scale * offsetScale;
 		DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScalingFromVector(adjustedScale);
+		DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationQuaternion(rotation);
+
+		return scaleMatrix * rotationMatrix * translationMatrix;
+	}
+
+	DirectX::XMMATRIX Transform::GetWorldMatrix(float customUniformScale) const
+	{
+		DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslationFromVector(position);
+
+		auto customScale = Vector3(customUniformScale, customUniformScale, customUniformScale);
+		DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScalingFromVector(customScale);
 		DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationQuaternion(rotation);
 
 		return scaleMatrix * rotationMatrix * translationMatrix;
