@@ -158,6 +158,12 @@ namespace Flux
 				if (ImGui::IsItemHovered() && gameObject.get() == selectedGameObject)
 				{
 					selectedGameObjectHovered = true;
+
+					// INFO: De-select the selected GameObject if right-clicked and isn't renaming
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && !isRenaming)
+					{
+						selectedGameObject = nullptr;
+					}
 				}
 
 				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObjectHovered)
