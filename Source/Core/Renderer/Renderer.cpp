@@ -39,8 +39,8 @@ namespace Flux
 	using namespace GlobalDefines;
 
 	Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullptr), renderTargetView(nullptr), depthStencilView(nullptr), 
-						   backBufferViewport(), sceneViewViewport(), spriteBatch(nullptr), depthDisabled(nullptr), 
-						   sampleCount(D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT), sampleQuality(0)
+						   backBufferViewport(), sceneViewViewport(), sampleCount(D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT), sampleQuality(0), 
+						   spriteBatch(nullptr), depthDisabled(nullptr)
 	{
 	}
 
@@ -64,6 +64,8 @@ namespace Flux
 	HRESULT Renderer::Initialise(HWND hWnd)
 	{
 		HRESULT hResult = { S_OK };
+
+		bool isStandalone = RuntimeConfig::IsStandalone();
 
 		// INFO: Set the viewports
 		backBufferViewport.Width = static_cast<float>(EngineConfig::GetWindowWidth());
@@ -175,8 +177,8 @@ namespace Flux
 
 		// INFO: Create the texture description for the render texture & depth stencil buffer
 		D3D11_TEXTURE2D_DESC td = { 0 };
-		td.Width = static_cast<UINT>(sceneViewViewport.Width);
-		td.Height = static_cast<UINT>(sceneViewViewport.Height);
+		td.Width = isStandalone ? static_cast<UINT>(backBufferViewport.Width) : static_cast<UINT>(sceneViewViewport.Width);
+		td.Height = isStandalone ? static_cast<UINT>(backBufferViewport.Height) : static_cast<UINT>(sceneViewViewport.Height);
 		td.MipLevels = 1;
 		td.ArraySize = 1;
 		td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -301,7 +303,7 @@ namespace Flux
 			return E_FAIL;
 		}
 
-		if (!RuntimeConfig::IsStandalone())
+		if (!isStandalone)
 		{
 			// INFO: Create the resources needed for the debug wireframe rendering
 			batchEffect = std::make_unique<BasicEffect>(device.Get());
@@ -343,7 +345,7 @@ namespace Flux
 			return FLUX_FAILURE;
 		}
 
-		if (!RuntimeConfig::IsStandalone() && FLUX_FAIL(EventDispatcher::AddListener(EventType::SceneViewResized, this)))
+		if (!isStandalone && FLUX_FAIL(EventDispatcher::AddListener(EventType::SceneViewResized, this)))
 		{
 			Debug::LogError("Renderer::Initialise() - Failed to add Scene View Resized event listener");
 			return FLUX_FAILURE;
@@ -521,6 +523,7 @@ namespace Flux
 
 	void Renderer::OnWindowResized()
 	{
+		bool isStandalone = RuntimeConfig::IsStandalone();
 		int windowWidth = EngineConfig::GetWindowWidth();
 		int windowHeight = EngineConfig::GetWindowHeight();
 
@@ -564,7 +567,52 @@ namespace Flux
 			backBufferViewport.Width = static_cast<float>(windowWidth);
 			backBufferViewport.Height = static_cast<float>(windowHeight);
 
-			deviceContext->OMSetRenderTargets(1, backBufferRenderTargetView.GetAddressOf(), nullptr);
+			if (isStandalone)
+			{
+				// INFO: Create the texture description for the depth stencil buffer
+				D3D11_TEXTURE2D_DESC td = { 0 };
+				td.Width = isStandalone ? static_cast<UINT>(backBufferViewport.Width) : static_cast<UINT>(sceneViewViewport.Width);
+				td.Height = isStandalone ? static_cast<UINT>(backBufferViewport.Height) : static_cast<UINT>(sceneViewViewport.Height);
+				td.MipLevels = 1;
+				td.ArraySize = 1;
+				td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+				td.SampleDesc.Count = sampleCount;
+				td.SampleDesc.Quality = sampleQuality - 1;
+
+				td.Usage = D3D11_USAGE_DEFAULT;
+				td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+				td.CPUAccessFlags = 0;
+				td.MiscFlags = 0;
+
+				// INFO: Create the depth stencil buffer
+				ComPtr<ID3D11Texture2D> depthStencilBuffer;
+				hResult = device->CreateTexture2D(&td, nullptr, &depthStencilBuffer);
+
+				if (FAILED(hResult))
+				{
+					Debug::LogError("Renderer::Initialise() - Failed to create Depth Stencil Buffer");
+					return;
+				}
+
+				// INFO: Create the depth stencil view description
+				D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
+				ZeroMemory(&dsvd, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+				dsvd.Format = td.Format;
+				dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+				dsvd.Flags = 0;
+
+				// INFO: Create the depth stencil view
+				hResult = device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsvd, &depthStencilView);
+
+				if (FAILED(hResult))
+				{
+					Debug::LogError("Renderer::Initialise() - Failed to create Depth Stencil View");
+					return;
+				}
+			}
+
+			deviceContext->OMSetRenderTargets(1, backBufferRenderTargetView.GetAddressOf(), isStandalone ? depthStencilView.Get() : nullptr);
 			deviceContext->RSSetViewports(1, &backBufferViewport);
 		}
 	}
