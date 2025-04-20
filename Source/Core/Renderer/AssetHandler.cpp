@@ -678,7 +678,7 @@ namespace Flux
 		rasterizerDescription.SlopeScaledDepthBias = 0.0f;
 		rasterizerDescription.DepthClipEnable = TRUE;
 		rasterizerDescription.ScissorEnable = FALSE;
-		rasterizerDescription.MultisampleEnable = FALSE;
+		rasterizerDescription.MultisampleEnable = TRUE;
 		rasterizerDescription.AntialiasedLineEnable = FALSE;
 
 		ComPtr<ID3D11RasterizerState> rasterizerState;

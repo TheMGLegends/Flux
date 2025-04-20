@@ -12,19 +12,19 @@
                     "IsActive": true,
                     "ComponentType": 1,
                     "Position": [
-                        0.0,
-                        0.0,
-                        1.7742587
-                    ],
-                    "Rotation": [
-                        -21.342398,
+                        -18.777597,
                         0.0,
                         0.0
                     ],
+                    "Rotation": [
+                        -0.0,
+                        -90.00038,
+                        0.0
+                    ],
                     "Scale": [
-                        1.0,
+                        0.9997922,
                         1.0000002,
-                        1.0000002
+                        0.999804
                     ]
                 },
                 {
@@ -56,19 +56,19 @@
                     "IsActive": true,
                     "ComponentType": 1,
                     "Position": [
-                        3.7329512,
-                        0.0,
-                        -8.5
+                        -0.016308427,
+                        1.7441043,
+                        -0.21846843
                     ],
                     "Rotation": [
-                        49.999943,
+                        49.999928,
                         44.99994,
-                        2.125175e-05
+                        1.328234e-05
                     ],
                     "Scale": [
-                        0.99999946,
-                        0.9999997,
-                        0.9999993
+                        0.9999994,
+                        0.9999995,
+                        0.9999989
                     ]
                 },
                 {
@@ -123,16 +123,16 @@
                     "ComponentType": 1,
                     "Position": [
                         0.0,
-                        -5.0,
-                        -10.0
+                        -12.5,
+                        0.0
                     ],
                     "Rotation": [
                         -0.0,
-                        44.999992,
-                        0.0
+                        0.0,
+                        -0.0
                     ],
                     "Scale": [
-                        1.0,
+                        10.0,
                         1.0,
                         1.0
                     ]
@@ -163,7 +163,7 @@
                     "Position": [
                         0.0,
                         -4.0,
-                        -25.0
+                        0.0
                     ],
                     "Rotation": [
                         -0.0,
@@ -204,18 +204,18 @@
                     "ComponentType": 1,
                     "Position": [
                         0.0,
-                        -10.0,
-                        -15.0
+                        -7.5,
+                        10.0
                     ],
                     "Rotation": [
-                        -0.0,
+                        -30.0,
                         0.0,
                         0.0
                     ],
                     "Scale": [
                         10.0,
-                        1.0,
-                        10.0
+                        0.9999941,
+                        9.999991
                     ]
                 },
                 {
@@ -249,9 +249,9 @@
                     "IsActive": true,
                     "ComponentType": 1,
                     "Position": [
-                        10.0,
+                        -10.0,
                         0.0,
-                        0.0
+                        -5.0
                     ],
                     "Rotation": [
                         -0.0,
@@ -284,9 +284,9 @@
                     "IsActive": true,
                     "ComponentType": 1,
                     "Position": [
-                        3.3153756,
-                        -2.2909255,
-                        -7.877093
+                        -10.0,
+                        0.0,
+                        5.0
                     ],
                     "Rotation": [
                         -0.0,
@@ -294,9 +294,44 @@
                         0.0
                     ],
                     "Scale": [
-                        0.5,
-                        0.5,
-                        0.5
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "Name": "Visualizer",
+                    "IsActive": true,
+                    "ComponentType": 4,
+                    "ModelName": "Cube",
+                    "TextureName": "PlayButtonEditorMode"
+                }
+            ]
+        },
+        {
+            "Name": "Platform2",
+            "ID": "GameObject6",
+            "Type": "GameObject",
+            "IsActive": true,
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        -7.5,
+                        -10.0
+                    ],
+                    "Rotation": [
+                        30.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Scale": [
+                        10.0,
+                        1.0,
+                        10.0
                     ]
                 },
                 {
@@ -305,26 +340,6 @@
                     "ComponentType": 4,
                     "ModelName": "Cube",
                     "TextureName": "DefaultTexture"
-                },
-                {
-                    "Name": "PhysicsBody",
-                    "IsActive": true,
-                    "ComponentType": 3,
-                    "Mass": 1.0,
-                    "Drag": 0.0,
-                    "AngularDrag": 0.05,
-                    "UseGravity": true,
-                    "IsKinematic": false,
-                    "PositionConstraints": [
-                        false,
-                        false,
-                        false
-                    ],
-                    "RotationConstraints": [
-                        false,
-                        false,
-                        false
-                    ]
                 },
                 {
                     "Name": "BoxCollider",
@@ -336,50 +351,6 @@
                         1.0,
                         1.0
                     ]
-                }
-            ]
-        },
-        {
-            "Name": "Camera2",
-            "ID": "GameObject5",
-            "Type": "GameObject",
-            "IsActive": true,
-            "Components": [
-                {
-                    "Name": "Transform",
-                    "IsActive": true,
-                    "ComponentType": 1,
-                    "Position": [
-                        0.0,
-                        0.0,
-                        -30.0
-                    ],
-                    "Rotation": [
-                        -0.0,
-                        179.99995,
-                        0.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                },
-                {
-                    "Name": "Camera",
-                    "IsActive": true,
-                    "ComponentType": 2,
-                    "FOV": 90.0,
-                    "NearClippingPlane": 0.1,
-                    "FarClippingPlane": 100.0,
-                    "BackgroundColour": [
-                        0.5,
-                        0.5,
-                        0.5,
-                        1.0
-                    ],
-                    "SkyboxTexture": "DefaultSkybox",
-                    "UseSkybox": true
                 }
             ]
         }

@@ -52,6 +52,7 @@ namespace Flux
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> renderTexture; // INFO: Acts as our back buffer
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> resolvedRenderTexture; // INFO: Used for MSAA
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferRenderTargetView;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> renderTextureShaderResourceView; // INFO: Used by ImGui to read the texture
@@ -59,6 +60,9 @@ namespace Flux
 
 		D3D11_VIEWPORT backBufferViewport;
 		D3D11_VIEWPORT sceneViewViewport;
+
+		UINT sampleCount;
+		UINT sampleQuality;
 
 
 		// INFO: UI Rendering

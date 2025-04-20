@@ -39,7 +39,8 @@ namespace Flux
 	using namespace GlobalDefines;
 
 	Renderer::Renderer() : device(nullptr), deviceContext(nullptr), swapChain(nullptr), renderTargetView(nullptr), depthStencilView(nullptr), 
-						   backBufferViewport(), sceneViewViewport(), spriteBatch(nullptr), depthDisabled(nullptr)
+						   backBufferViewport(), sceneViewViewport(), spriteBatch(nullptr), depthDisabled(nullptr), 
+						   sampleCount(D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT), sampleQuality(0)
 	{
 	}
 
@@ -79,6 +80,66 @@ namespace Flux
 		sceneViewViewport.TopLeftX = 0.0f;
 		sceneViewViewport.TopLeftY = 0.0f;
 
+		// INFO: Create Device
+		hResult = D3D11CreateDevice(
+			nullptr,
+			D3D_DRIVER_TYPE_HARDWARE,
+			nullptr,
+			D3D11_CREATE_DEVICE_DEBUG,
+			nullptr,
+			0,
+			D3D11_SDK_VERSION,
+			&device,
+			nullptr,
+			&deviceContext
+		);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::Initialise() - Failed to create Device and Device Context");
+			return hResult;
+		}
+
+		// INFO: Check if we can use MSAA
+		for (; sampleCount > 1; sampleCount /= 2)
+		{
+			device->CheckMultisampleQualityLevels(
+				DXGI_FORMAT_R8G8B8A8_UNORM,
+				sampleCount,
+				&sampleQuality
+			);
+
+			if (sampleQuality > 0) { break; }
+		}
+
+		// INFO: Access the factory to create the swap chain
+		ComPtr<IDXGIDevice> dxgiDevice;
+		hResult = device->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgiDevice);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::Initialise() - Failed to create DXGI Device");
+			return hResult;
+		}
+
+		ComPtr<IDXGIAdapter> dxgiAdapter;
+		hResult = dxgiDevice->GetAdapter(&dxgiAdapter);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::Initialise() - Failed to create DXGI Adapter");
+			return hResult;
+		}
+
+		ComPtr<IDXGIFactory> dxgiFactory;
+		hResult = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&dxgiFactory);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::Initialise() - Failed to create DXGI Factory");
+			return hResult;
+		}
+
 		// INFO: Create the swap chain description
 		DXGI_SWAP_CHAIN_DESC scd = { 0 };
 		scd.BufferDesc.Width = static_cast<UINT>(backBufferViewport.Width);
@@ -89,8 +150,8 @@ namespace Flux
 		scd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		scd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
-		scd.SampleDesc.Count = 1;
-		scd.SampleDesc.Quality = 0;
+		scd.SampleDesc.Count = sampleCount;
+		scd.SampleDesc.Quality = sampleQuality - 1;
 
 		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		scd.BufferCount = 1;
@@ -99,20 +160,11 @@ namespace Flux
 		scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-		// INFO: Create the device, device context, swap chain and front/back buffers
-		hResult = D3D11CreateDeviceAndSwapChain(
-			nullptr,
-			D3D_DRIVER_TYPE_HARDWARE,
-			nullptr,
-			D3D11_CREATE_DEVICE_DEBUG,
-			nullptr,
-			0,
-			D3D11_SDK_VERSION,
+		// INFO: Create the swap chain and front/back buffers
+		hResult = dxgiFactory->CreateSwapChain(
+			device.Get(),
 			&scd,
-			&swapChain,
-			&device,
-			nullptr,
-			&deviceContext
+			swapChain.GetAddressOf()
 		);
 
 		if (FAILED(hResult))
@@ -129,11 +181,11 @@ namespace Flux
 		td.ArraySize = 1;
 		td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
-		td.SampleDesc.Count = scd.SampleDesc.Count;
-		td.SampleDesc.Quality = scd.SampleDesc.Quality;
+		td.SampleDesc.Count = sampleCount;
+		td.SampleDesc.Quality = sampleQuality - 1;
 
 		td.Usage = D3D11_USAGE_DEFAULT;
-		td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		td.BindFlags = D3D11_BIND_RENDER_TARGET;
 		td.CPUAccessFlags = 0;
 		td.MiscFlags = 0;
 
@@ -143,6 +195,19 @@ namespace Flux
 		if (FAILED(hResult))
 		{
 			Debug::LogError("Renderer::Initialise() - Failed to create Render Texture");
+			return hResult;
+		}
+
+		// INFO: Create the resolved version of the render texture
+		td.SampleDesc.Count = 1;
+		td.SampleDesc.Quality = 0;
+		td.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+		hResult = device->CreateTexture2D(&td, nullptr, &resolvedRenderTexture);
+
+		if (FAILED(hResult))
+		{
+			Debug::LogError("Renderer::Initialise() - Failed to create Resolved Render Texture");
 			return hResult;
 		}
 
@@ -181,7 +246,7 @@ namespace Flux
 		srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvd.Texture2D.MipLevels = 1;
 
-		hResult = device->CreateShaderResourceView(renderTexture.Get(), &srvd, &renderTextureShaderResourceView);
+		hResult = device->CreateShaderResourceView(resolvedRenderTexture.Get(), &srvd, &renderTextureShaderResourceView);
 
 		if (FAILED(hResult))
 		{
@@ -191,6 +256,8 @@ namespace Flux
 
 		// INFO: Adjust the texture description to work for the depth stencil buffer
 		td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		td.SampleDesc.Count = sampleCount;
+		td.SampleDesc.Quality = sampleQuality - 1;
 		td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
 		// INFO: Create the depth stencil buffer
@@ -207,7 +274,7 @@ namespace Flux
 		D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
 		ZeroMemory(&dsvd, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 		dsvd.Format = td.Format;
-		dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 		dsvd.Flags = 0;
 
 		// INFO: Create the depth stencil view
@@ -425,6 +492,15 @@ namespace Flux
 #endif
 		}
 
+		// INFO: Resolve the render texture to the resolved render texture
+		deviceContext->ResolveSubresource(
+			resolvedRenderTexture.Get(),
+			0,
+			renderTexture.Get(),
+			0,
+			DXGI_FORMAT_R8G8B8A8_UNORM
+		);
+
 		swapChain->Present((UINT)RendererConfig::VSYNC_ENABLED, 0);
 	}
 
@@ -505,6 +581,7 @@ namespace Flux
 			deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
 			renderTexture.Reset();
+			resolvedRenderTexture.Reset();
 			renderTextureShaderResourceView.Reset();
 			renderTargetView.Reset();
 			depthStencilView.Reset();
@@ -519,11 +596,11 @@ namespace Flux
 			td.ArraySize = 1;
 			td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
-			td.SampleDesc.Count = 1;
-			td.SampleDesc.Quality = 0;
+			td.SampleDesc.Count = sampleCount;
+			td.SampleDesc.Quality = sampleQuality - 1;
 
 			td.Usage = D3D11_USAGE_DEFAULT;
-			td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			td.BindFlags = D3D11_BIND_RENDER_TARGET;
 			td.CPUAccessFlags = 0;
 			td.MiscFlags = 0;
 
@@ -533,6 +610,19 @@ namespace Flux
 			if (FAILED(hResult))
 			{
 				Debug::LogError("Renderer::OnSceneViewResized() - Failed to create Render Texture");
+				return;
+			}
+
+			// INFO: Create the resolved version of the render texture
+			td.SampleDesc.Count = 1;
+			td.SampleDesc.Quality = 0;
+			td.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+			hResult = device->CreateTexture2D(&td, nullptr, &resolvedRenderTexture);
+
+			if (FAILED(hResult))
+			{
+				Debug::LogError("Renderer::Initialise() - Failed to create Resolved Render Texture");
 				return;
 			}
 
@@ -552,7 +642,7 @@ namespace Flux
 			srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			srvd.Texture2D.MipLevels = 1;
 
-			hResult = device->CreateShaderResourceView(renderTexture.Get(), &srvd, &renderTextureShaderResourceView);
+			hResult = device->CreateShaderResourceView(resolvedRenderTexture.Get(), &srvd, &renderTextureShaderResourceView);
 
 			if (FAILED(hResult))
 			{
@@ -562,6 +652,8 @@ namespace Flux
 
 			// INFO: Adjust the texture description to work for the depth stencil buffer
 			td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+			td.SampleDesc.Count = sampleCount;
+			td.SampleDesc.Quality = sampleQuality - 1;
 			td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
 			ComPtr<ID3D11Texture2D> depthStencilBuffer;
@@ -576,7 +668,7 @@ namespace Flux
 			D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
 			ZeroMemory(&dsvd, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 			dsvd.Format = td.Format;
-			dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 			dsvd.Flags = 0;
 
 			hResult = device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsvd, &depthStencilView);
