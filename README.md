@@ -95,8 +95,9 @@ Here is a list of all the controls/features provided by the editor thus far:
 14. Z (Scene View + Object Selected) – Toggle transform space (World/Local)
 15. Double Click (Scene in Contents Drawer) – Open selected scene
 16. Details Panel (Object Selected) – Rename object via name field
-17. F3 – Toggle FPS counter on/off
-18. Custom Classes – To appear in Add GameObject, follow Cube/Sphere class examples
+17. F3 – Toggle FPS counter (Editor)
+18. F4 - Toggle vsync (Editor)
+19. Custom Classes – To appear in Add GameObject, follow Cube/Sphere class examples
 
 ## Getting the Engine
 
