@@ -8,6 +8,7 @@
 #include "Core/GlobalDefines.h"
 
 #include "Core/Configs/EditorConfig.h"
+#include "Core/Configs/RendererConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 
 #include "Core/Debug/Debug.h"
@@ -130,7 +131,18 @@ namespace Flux
 		FrameRateMonitor::Update(deltaTime);
 
 		// INFO: Toggle FPS Counter Visibility
-		if (Input::GetKeyDown(SDL_SCANCODE_F3)) { FrameRateMonitor::Toggle(); }
+		if (Input::GetKeyDown(SDL_SCANCODE_F3)) 
+		{ 
+			FrameRateMonitor::Toggle(); 
+			FrameRateMonitor::IsActive() ? Debug::Log("EditorRuntime::Update() - FPS Counter Enabled") : Debug::Log("EditorRuntime::Update() - FPS Counter Disabled");
+		}
+
+		// INFO: Toggle VSync
+		if (Input::GetKeyDown(SDL_SCANCODE_F4))
+		{
+			RendererConfig::ToggleVSync();
+			RendererConfig::IsVSyncEnabled() ? Debug::Log("EditorRuntime::Update() - VSync Enabled") : Debug::Log("EditorRuntime::Update() - VSync Disabled");
+		}
 
 		// INFO: Save Scene if CTRL+S is Pressed and in Editor Mode
 		if (RuntimeConfig::IsInEditorMode() && Input::GetKey(SDL_SCANCODE_LCTRL) && Input::GetKeyDown(SDL_SCANCODE_S))

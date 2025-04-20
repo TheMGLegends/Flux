@@ -503,7 +503,7 @@ namespace Flux
 			DXGI_FORMAT_R8G8B8A8_UNORM
 		);
 
-		swapChain->Present((UINT)RendererConfig::VSYNC_ENABLED, 0);
+		swapChain->Present((UINT)RendererConfig::IsVSyncEnabled(), 0);
 	}
 
 	ID3D11Device& Renderer::GetDevice()

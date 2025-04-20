@@ -62,8 +62,13 @@ namespace Flux::FrameRateMonitor
 	void Toggle()
 	{
 		using namespace Internal;
-
 		isActive = !isActive;
+	}
+
+	bool IsActive()
+	{
+		using namespace Internal;
+		return isActive;
 	}
 
 }

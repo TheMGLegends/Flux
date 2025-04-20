@@ -61,7 +61,7 @@ namespace Flux
 		return FLUX_SUCCESS;
 	}
 
-	void EngineRuntime::Start()
+	void EngineRuntime::Start() const
 	{
 		scene->Start();
 	}
@@ -71,7 +71,7 @@ namespace Flux
 		scene->Update(deltaTime);
 	}
 
-	void EngineRuntime::FixedUpate(float fixedDeltaTime)
+	void EngineRuntime::FixedUpate(float fixedDeltaTime) const
 	{
 		while (Time::PerformPhysicsUpdate())
 		{

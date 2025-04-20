@@ -28,5 +28,6 @@ namespace Flux::FrameRateMonitor
 
 	/// @brief Toggles Active State (Starts as Active)
 	void Toggle();
+	bool IsActive();
 }
 

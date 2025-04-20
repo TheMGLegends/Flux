@@ -15,9 +15,9 @@ namespace Flux
 		int PreInitialise() const;
 		int Initialise();
 
-		void Start();
+		void Start() const;
 		void Update(float deltaTime);
-		void FixedUpate(float fixedDeltaTime);
+		void FixedUpate(float fixedDeltaTime) const;
 		void LateUpdate(float deltaTime);
 
 		void Release();
