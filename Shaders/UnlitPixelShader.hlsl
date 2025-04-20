@@ -10,7 +10,6 @@ struct PIn
 
 float4 main(PIn input) : SV_TARGET
 {
-    //float4 sampled = texture0.Load(int2(input.uv), 0);
     float4 sampled = texture0.Sample(samplerState, input.uv);
     return input.colour * sampled;
 }
