@@ -79,23 +79,24 @@ Utilizing the third-party libraries above, the following is offered by the engin
 
 Here is a list of all the controls/features provided by the editor thus far:
 
-1. Right Click (Scene Name) – Set starter scene in scene hierarchy panel.
+1. Right Click (Scene Name) – Set starter scene in scene hierarchy panel
 2. Double Click (Game Object) – Rename object in scene hierarchy
-3. Ctrl + S – Save current scene
-4. Asterisk (*) Next to Scene Name – Indicates unsaved changes
-5. Right Click (Contents Drawer) – Add a new scene in the current directory
-6. Right Click + Drag (Scene View) – Look around using editor camera
-7. Right Click + WASD (Scene View) – Fly through scene (editor mode only)
-8. Right Click + Q/E (Scene View) – Move editor camera down/up
-9. Scroll Wheel (Scene View Selected) – Adjust editor camera movement speed
-10. Double Click (Folder in Contents Drawer) – Open folder to view contents
-11. Drag & Drop (Asset) – Move asset (texture/model) into component in details panel
-12. Q/W/E/R (Scene View Selected) – Change transform mode: Pan, Translate, Rotate, Scale
-13. Z (Scene View + Object Selected) – Toggle transform space (World/Local)
-14. Double Click (Scene in Contents Drawer) – Open selected scene
-15. Details Panel (Object Selected) – Rename object via name field
-16. F3 – Toggle FPS counter on/off
-17. Custom Classes – To appear in Add GameObject, follow Cube/Sphere class examples
+3. Right Click (Selected Game Object) - Deselects the object if not renaming
+4. Ctrl + S – Save current scene
+5. Asterisk (*) Next to Scene Name – Indicates unsaved changes
+6. Right Click (Contents Drawer) – Add a new scene in the current directory
+7. Right Click + Drag (Scene View) – Look around using editor camera
+8. Right Click + WASD (Scene View) – Fly through scene (editor mode only)
+9. Right Click + Q/E (Scene View) – Move editor camera down/up
+10. Scroll Wheel (Scene View Selected) – Adjust editor camera movement speed
+11. Double Click (Folder in Contents Drawer) – Open folder to view contents
+12. Drag & Drop (Asset) – Move asset (texture/model) into component in details panel
+13. Q/W/E/R (Scene View Selected) – Change transform mode: Pan, Translate, Rotate, Scale
+14. Z (Scene View + Object Selected) – Toggle transform space (World/Local)
+15. Double Click (Scene in Contents Drawer) – Open selected scene
+16. Details Panel (Object Selected) – Rename object via name field
+17. F3 – Toggle FPS counter on/off
+18. Custom Classes – To appear in Add GameObject, follow Cube/Sphere class examples
 
 ## Getting the Engine
 
