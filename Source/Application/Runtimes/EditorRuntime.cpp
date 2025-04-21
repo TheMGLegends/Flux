@@ -8,6 +8,7 @@
 #include "Core/GlobalDefines.h"
 
 #include "Core/Configs/EditorConfig.h"
+#include "Core/Configs/GameConfig.h"
 #include "Core/Configs/RendererConfig.h"
 #include "Core/Configs/RuntimeConfig.h"
 
@@ -148,6 +149,7 @@ namespace Flux
 		if (RuntimeConfig::IsInEditorMode() && Input::GetKey(SDL_SCANCODE_LCTRL) && Input::GetKeyDown(SDL_SCANCODE_S))
 		{
 			EventDispatcher::Notify(EventType::SaveScene, nullptr);
+			GameConfig::SerializeGameConfig();
 		}
 
 		ImGui_ImplSDL3_NewFrame();

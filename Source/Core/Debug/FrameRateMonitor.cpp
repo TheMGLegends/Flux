@@ -65,6 +65,12 @@ namespace Flux::FrameRateMonitor
 		isActive = !isActive;
 	}
 
+	void SetIsActive(bool _isActive)
+	{
+		using namespace Internal;
+		isActive = _isActive;
+	}
+
 	bool IsActive()
 	{
 		using namespace Internal;

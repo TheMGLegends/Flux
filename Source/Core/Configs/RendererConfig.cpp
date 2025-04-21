@@ -13,6 +13,12 @@ namespace Flux::RendererConfig
 		vsyncEnabled = !vsyncEnabled;
 	}
 
+	void SetVSyncEnabled(bool _vsyncEnabled)
+	{
+		using namespace Internal;
+		vsyncEnabled = _vsyncEnabled;
+	}
+
 	bool IsVSyncEnabled()
 	{
 		using namespace Internal;

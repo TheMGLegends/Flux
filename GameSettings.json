@@ -1,3 +1,5 @@
 {
-    "StarterSceneName": "TestScene"
+    "FrameCounterActive": true,
+    "StarterSceneName": "TestScene",
+    "VSyncEnabled": true
 }

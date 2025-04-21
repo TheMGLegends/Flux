@@ -8,6 +8,7 @@ namespace Flux::RendererConfig
 	}
 
 	void ToggleVSync();
+	void SetVSyncEnabled(bool _vsyncEnabled);
 	bool IsVSyncEnabled();
 }
 

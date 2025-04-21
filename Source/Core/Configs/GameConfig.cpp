@@ -3,7 +3,10 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
+#include "Core/Configs/RendererConfig.h"
+
 #include "Core/Debug/Debug.h"
+#include "Core/Debug/FrameRateMonitor.h"
 
 namespace Flux::GameConfig
 {
@@ -30,6 +33,8 @@ namespace Flux::GameConfig
 
 		nlohmann::json json;
 		json["StarterSceneName"] = starterSceneName;
+		json["FrameCounterActive"] = FrameRateMonitor::IsActive();
+		json["VSyncEnabled"] = RendererConfig::IsVSyncEnabled();
 
 		std::ofstream file("GameSettings.json");
 		if (file.is_open())
@@ -52,6 +57,8 @@ namespace Flux::GameConfig
 		{
 			nlohmann::json json = nlohmann::json::parse(file);
 			starterSceneName = json["StarterSceneName"].get<std::string>();
+			FrameRateMonitor::SetIsActive(json["FrameCounterActive"].get<bool>());
+			RendererConfig::SetVSyncEnabled(json["VSyncEnabled"].get<bool>());
 		}
 		else
 		{
