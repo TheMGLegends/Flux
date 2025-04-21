@@ -75,14 +75,6 @@ namespace Flux
 				vertex.texCoord.y = mesh->mTextureCoords[0][vertexIndex].y;
 			}
 
-			// INFO: Load Normal Data
-			if (mesh->HasNormals())
-			{
-				vertex.normal.x = mesh->mNormals[vertexIndex].x;
-				vertex.normal.y = mesh->mNormals[vertexIndex].y;
-				vertex.normal.z = mesh->mNormals[vertexIndex].z;
-			}
-
 			vertices.push_back(vertex);
 		}
 

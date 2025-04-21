@@ -27,7 +27,6 @@ namespace Flux
 			DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 			DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			DirectX::XMFLOAT2 texCoord = DirectX::XMFLOAT2(0.0f, 0.0f);
-			DirectX::XMFLOAT3 normal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
 		};
 
 	public:

@@ -8,7 +8,6 @@ struct VIn
     float3 position : POSITION;
     float4 colour : COLOR0;
     float2 uv : TEXCOORD0;
-    float3 normal : NORMAL;
 };
 
 struct VOut
