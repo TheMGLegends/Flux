@@ -168,7 +168,7 @@ namespace Flux
 					}
 				}
 
-				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObjectHovered)
+				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && selectedGameObjectHovered && RuntimeConfig::IsInEditorMode())
 				{
 					isRenaming = true;
 				}
