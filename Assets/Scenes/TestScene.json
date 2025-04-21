@@ -3,7 +3,6 @@
     "GameObjects": [
         {
             "Name": "Camera",
-            "ID": "GameObject0",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -47,7 +46,6 @@
         },
         {
             "Name": "PhysicsCube",
-            "ID": "GameObject1",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -113,7 +111,6 @@
         },
         {
             "Name": "TriggerBox",
-            "ID": "GameObject2",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -152,7 +149,6 @@
         },
         {
             "Name": "ColliderSphere",
-            "ID": "GameObject3",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -194,7 +190,6 @@
         },
         {
             "Name": "Platform",
-            "ID": "GameObject4",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
@@ -240,7 +235,6 @@
         },
         {
             "Name": "VisualSphere",
-            "ID": "Sphere0",
             "Type": "Sphere",
             "IsActive": true,
             "Components": [
@@ -275,7 +269,6 @@
         },
         {
             "Name": "VisualCube",
-            "ID": "Cube0",
             "Type": "Cube",
             "IsActive": true,
             "Components": [
@@ -310,7 +303,6 @@
         },
         {
             "Name": "Platform2",
-            "ID": "GameObject6",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [

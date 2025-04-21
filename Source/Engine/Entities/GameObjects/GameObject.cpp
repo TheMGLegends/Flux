@@ -8,7 +8,7 @@ namespace Flux
 {
 	int GameObject::gameObjectCounter = -1;
 
-	GameObject::GameObject() : isActive(true), name("GameObject"), id("GameObject"), type("GameObject")
+	GameObject::GameObject() : isActive(true), name("GameObject"), type("GameObject")
 	{
 		transform = AddComponent<Transform>(this);
 	}
@@ -20,7 +20,6 @@ namespace Flux
 		// INFO: Serialize GameObject Data
 		json["GameObjects"].push_back({
 			{"Name", name},
-			{"ID", id},
 			{"Type", type},
 			{"IsActive", isActive},
 			{"Components", nlohmann::json::array()} // INFO: JSON array to store all Components
@@ -40,7 +39,6 @@ namespace Flux
 	{
 		// INFO: Deserialize GameObject Data
 		name = json["Name"].get<std::string>();
-		id = json["ID"].get<std::string>();
 		type = json["Type"].get<std::string>();
 		isActive = json["IsActive"].get<bool>();
 
@@ -132,16 +130,6 @@ namespace Flux
 		return name;
 	}
 
-	const std::string& GameObject::GetID() const
-	{
-		return id;
-	}
-
-	void GameObject::SetID(std::string_view _id)
-	{
-		id = _id;
-	}
-
 	void GameObject::SetType(std::string_view _type)
 	{
 		type = _type;
@@ -158,7 +146,6 @@ namespace Flux
 			gameObject = std::make_unique<GameObject>();
 			std::string gameObjectIdentifier = std::format("GameObject{}", gameObjectCounter);
 			gameObject.get()->SetName(gameObjectIdentifier);
-			gameObject.get()->SetID(gameObjectIdentifier);
 			gameObject.get()->SetType("GameObject");
 
 			return gameObject;
@@ -172,7 +159,6 @@ namespace Flux
 			gameObject = it->second();
 			std::string gameObjectIdentifier = std::format("{}{}", typeName, count);
 			gameObject.get()->SetName(gameObjectIdentifier);
-			gameObject.get()->SetID(gameObjectIdentifier);
 			gameObject.get()->SetType(typeName);
 
 			return gameObject;

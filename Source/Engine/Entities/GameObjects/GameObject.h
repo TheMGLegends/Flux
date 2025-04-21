@@ -66,10 +66,8 @@ namespace Flux
 		/// @brief Used to set display name of GameObject
 		void SetName(std::string_view _name);
 		std::string& GetName();
-		const std::string& GetID() const;
 
 	private:
-		void SetID(std::string_view _id);
 		void SetType(std::string_view _type);
 
 	public:
@@ -80,7 +78,6 @@ namespace Flux
 		std::vector<std::shared_ptr<Component>> components;
 
 		std::string name; // INFO: Used by Editor GUI to display the name of the GameObject
-		std::string id; // INFO: Used by ImGui to ensure a unique ID for each GameObject
 		std::string type; // INFO: Used by Deserialization to determine the type of the GameObject to instantiate
 
 	// INFO: GameObject Factory (Reflection)

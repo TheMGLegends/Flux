@@ -144,7 +144,8 @@ namespace Flux
 				ImGui::TableSetColumnIndex(0);
 
 				// INFO: Unique ID for each GameObject
-				if (ImGui::Selectable(("##" + gameObject->GetID()).c_str(), selectedGameObject == gameObject.get()))
+				ImGui::PushID(gameObject.get());
+				if (ImGui::Selectable("##GameObject", selectedGameObject == gameObject.get()))
 				{
 					selectedGameObject = gameObject.get();
 
@@ -154,6 +155,7 @@ namespace Flux
 						EditorConfig::SetCurretTransformOperation(ImGuizmo::OPERATION::TRANSLATE);
 					}
 				}
+				ImGui::PopID();
 
 				if (ImGui::IsItemHovered() && gameObject.get() == selectedGameObject)
 				{

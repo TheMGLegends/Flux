@@ -3,7 +3,6 @@
     "GameObjects": [
         {
             "Name": "Main Camera",
-            "ID": "GameObject",
             "Type": "GameObject",
             "IsActive": true,
             "Components": [
