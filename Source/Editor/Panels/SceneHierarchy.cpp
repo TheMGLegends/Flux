@@ -209,7 +209,7 @@ namespace Flux
 			if (ImGui::MenuItem("  Set Starter Scene"))
 			{
 				GameConfig::SetStarterSceneName(scene.GetSceneName());
-				GameConfig::SerializeGameConfig();
+				GameConfig::SerializeGameConfig(SceneContext::GetScene().GetEditorCamera());
 			}
 
 			ImGui::EndPopup();

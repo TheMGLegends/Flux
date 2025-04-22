@@ -14,6 +14,9 @@ namespace Flux
 
 		void LateUpdate(float deltaTime) override;
 
+		void SerializeEditorCamera(nlohmann::flux_json& json);
+		void DeserializeEditorCamera(nlohmann::flux_json& json);
+
 		std::weak_ptr<Camera> GetCamera() const;
 
 	private:

@@ -23,6 +23,8 @@
 #include "Editor/Panels/SceneHierarchy.h"
 #include "Editor/Panels/SceneView.h"
 
+#include "Engine/Scene/SceneContext.h"
+
 namespace Flux
 {
 	using namespace GlobalDefines;
@@ -149,7 +151,7 @@ namespace Flux
 		if (RuntimeConfig::IsInEditorMode() && Input::GetKey(SDL_SCANCODE_LCTRL) && Input::GetKeyDown(SDL_SCANCODE_S))
 		{
 			EventDispatcher::Notify(EventType::SaveScene, nullptr);
-			GameConfig::SerializeGameConfig();
+			GameConfig::SerializeGameConfig(SceneContext::GetScene().GetEditorCamera());
 		}
 
 		ImGui_ImplSDL3_NewFrame();

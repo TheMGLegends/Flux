@@ -81,10 +81,6 @@ namespace Flux
 		{
 			Debug::LogError("Scene::Scene() - Failed to create PhysX Scene");
 		}
-
-		// INFO: Load the starter scene found in the game settings
-		const std::filesystem::path& starterScenePath = AssetHandler::GetScenePath(GameConfig::GetStarterSceneName());
-		DeserializeScene(starterScenePath);
 	}
 
 	Scene::~Scene()
@@ -96,6 +92,22 @@ namespace Flux
 		}
 
 		EventDispatcher::RemoveListener(this);
+	}
+
+	int Scene::Initialise()
+	{
+		// INFO: Load the starter scene found in the game settings
+		const std::filesystem::path& starterScenePath = AssetHandler::GetScenePath(GameConfig::GetStarterSceneName());
+
+		if (starterScenePath.empty())
+		{
+			Debug::LogError("Scene::Initialise() - Failed to load starter scene");
+			return FLUX_FAILURE;
+		}
+
+		DeserializeScene(starterScenePath);
+
+		return FLUX_SUCCESS;
 	}
 
 	void Scene::Serialize(nlohmann::flux_json& json) const
@@ -483,6 +495,11 @@ namespace Flux
 		{
 			return sceneViewCamera->GetCamera();
 		}
+	}
+
+	SceneViewCamera* Scene::GetEditorCamera() const
+	{
+		return sceneViewCamera.get();
 	}
 
 	const std::string& Scene::GetSceneName() const

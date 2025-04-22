@@ -47,14 +47,21 @@ namespace Flux
 
 	int EngineRuntime::Initialise()
 	{
-		// INFO: Deserialize Game Settings
-		GameConfig::DeserializeGameConfig();
-
 		scene = std::make_unique<Scene>();
 
 		if (!scene)
 		{
 			Debug::LogError("EngineRuntime::Initialise() - Failed to create Scene");
+			return FLUX_FAILURE;
+		}
+
+		// INFO: Deserialize Game Settings
+		GameConfig::DeserializeGameConfig(scene->GetEditorCamera());
+
+		// INFO: Initialise the Scene
+		if (FLUX_FAIL(scene->Initialise()))
+		{
+			Debug::LogError("EngineRuntime::Initialise() - Failed to initialise Scene");
 			return FLUX_FAILURE;
 		}
 

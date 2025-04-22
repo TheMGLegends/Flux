@@ -1,5 +1,28 @@
 {
-    "FrameCounterActive": true,
     "StarterSceneName": "TestScene",
-    "VSyncEnabled": true
+    "FrameCounterActive": true,
+    "VSyncEnabled": true,
+    "SceneViewCamera": [
+        {
+            "RotationSpeed": 0.001,
+            "MovementSpeed": 10.0,
+            "MinMovementSpeed": 1.0,
+            "MaxMovementSpeed": 50.0,
+            "PitchConstraints": [
+                -1.49,
+                1.49
+            ],
+            "Position": [
+                8.049024,
+                10.836439,
+                37.90213
+            ],
+            "Rotation": [
+                -0.1257584,
+                0.2806323,
+                0.037117418,
+                0.9508168
+            ]
+        }
+    ]
 }

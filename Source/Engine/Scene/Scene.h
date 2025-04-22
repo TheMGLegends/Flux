@@ -32,6 +32,8 @@ namespace Flux
 		Scene();
 		~Scene() override;
 
+		int Initialise();
+
 		void Serialize(nlohmann::flux_json& json) const override;
 		void Deserialize(const nlohmann::flux_json& json) override;
 
@@ -64,6 +66,9 @@ namespace Flux
 		/// @brief Returns the scene view camera if in editor mode otherwise returns first active camera in the scene
 		/// @param isPrimary If true, returns the first active play mode camera in the scene
 		std::weak_ptr<Camera> GetCamera(bool isPrimary = false);
+
+		/// @brief SceneViewCamera (Editor Camera), used for de/serialization of scene view contents
+		SceneViewCamera* GetEditorCamera() const;
 
 		const std::string& GetSceneName() const;
 		physx::PxScene& GetPhysicsScene() const;

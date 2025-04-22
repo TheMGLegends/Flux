@@ -119,6 +119,44 @@ namespace Flux
 		}
 	}
 
+	void SceneViewCamera::SerializeEditorCamera(nlohmann::flux_json& json)
+	{
+		auto transformRef = transform.lock();
+		Vector3 position = transformRef->GetPosition();
+		Quaternion rotation = transformRef->GetRotation();
+
+		json["SceneViewCamera"].push_back({
+			{"RotationSpeed", rotationSpeed},
+			{"MovementSpeed", movementSpeed},
+			{"MinMovementSpeed", minMovementSpeed},
+			{"MaxMovementSpeed", maxMovementSpeed},
+			{"PitchConstraints", { pitchConstraints.x, pitchConstraints.y }},
+			{"Position", { position.x, position.y, position.z }},
+			{"Rotation", { rotation.x, rotation.y, rotation.z, rotation.w }}
+			});
+	}
+
+	void SceneViewCamera::DeserializeEditorCamera(nlohmann::flux_json& json)
+	{
+		auto transformRef = transform.lock();
+		auto& sceneViewCameraData = json["SceneViewCamera"].back();
+
+		rotationSpeed = sceneViewCameraData["RotationSpeed"].get<float>();
+		movementSpeed = sceneViewCameraData["MovementSpeed"].get<float>();
+		minMovementSpeed = sceneViewCameraData["MinMovementSpeed"].get<float>();
+		maxMovementSpeed = sceneViewCameraData["MaxMovementSpeed"].get<float>();
+		pitchConstraints = Vector2(sceneViewCameraData["PitchConstraints"][0].get<float>(), sceneViewCameraData["PitchConstraints"][1].get<float>());
+
+		transformRef->SetPosition(Vector3(sceneViewCameraData["Position"][0].get<float>(),
+										  sceneViewCameraData["Position"][1].get<float>(),
+										  sceneViewCameraData["Position"][2].get<float>()));
+
+		transformRef->SetRotation(Quaternion(sceneViewCameraData["Rotation"][0].get<float>(),
+											 sceneViewCameraData["Rotation"][1].get<float>(),
+											 sceneViewCameraData["Rotation"][2].get<float>(),
+											 sceneViewCameraData["Rotation"][3].get<float>()));
+	}
+
 	std::weak_ptr<Camera> SceneViewCamera::GetCamera() const
 	{
 		return camera;

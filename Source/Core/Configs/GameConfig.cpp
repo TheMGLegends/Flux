@@ -8,6 +8,8 @@
 #include "Core/Debug/Debug.h"
 #include "Core/Debug/FrameRateMonitor.h"
 
+#include "Engine/Entities/GameObjects/SceneViewCamera.h"
+
 namespace Flux::GameConfig
 {
 	namespace Internal
@@ -27,14 +29,16 @@ namespace Flux::GameConfig
 		return starterSceneName;
 	}
 
-	void SerializeGameConfig()
+	void SerializeGameConfig(SceneViewCamera* sceneViewCamera)
 	{
 		using namespace Internal;
 
-		nlohmann::json json;
+		nlohmann::flux_json json;
 		json["StarterSceneName"] = starterSceneName;
 		json["FrameCounterActive"] = FrameRateMonitor::IsActive();
 		json["VSyncEnabled"] = RendererConfig::IsVSyncEnabled();
+
+		if (sceneViewCamera) { sceneViewCamera->SerializeEditorCamera(json); }
 
 		std::ofstream file("GameSettings.json");
 		if (file.is_open())
@@ -47,7 +51,7 @@ namespace Flux::GameConfig
 		}
 	}
 
-	void DeserializeGameConfig()
+	void DeserializeGameConfig(SceneViewCamera* sceneViewCamera)
 	{
 		using namespace Internal;
 
@@ -55,15 +59,16 @@ namespace Flux::GameConfig
 
 		if (file.is_open())
 		{
-			nlohmann::json json = nlohmann::json::parse(file);
+			nlohmann::flux_json json = nlohmann::json::parse(file);
 			starterSceneName = json["StarterSceneName"].get<std::string>();
 			FrameRateMonitor::SetIsActive(json["FrameCounterActive"].get<bool>());
 			RendererConfig::SetVSyncEnabled(json["VSyncEnabled"].get<bool>());
+			if (sceneViewCamera) { sceneViewCamera->DeserializeEditorCamera(json); }
 		}
 		else
 		{
 			Debug::LogError("GameConfig::DeserializeGameConfig() - Failed to open GameSettings.json");
-			SerializeGameConfig();
+			SerializeGameConfig(sceneViewCamera);
 		}
 	}
 }
