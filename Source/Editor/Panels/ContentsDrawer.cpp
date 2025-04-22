@@ -12,6 +12,7 @@
 #include "Core/EventSystem/EventDispatcher.h"
 #include "Core/Helpers/StringHelpers.h"
 #include "Core/Renderer/AssetHandler.h"
+#include "Core/EventSystem/Events/CreateSceneEvent.h"
 #include "Core/EventSystem/Events/LoadSceneEvent.h"
 
 #include "Engine/Scene/SceneContext.h"
@@ -236,15 +237,14 @@ namespace Flux
 				std::string newSceneName = std::format("NewScene{}.json", AssetHandler::GetSceneCount());
 				std::filesystem::path newScenePath = currentDirectory / newSceneName;
 
-				SceneContext::GetScene().CreateDefaultScene(newScenePath);
-				AssetHandler::StoreScenePath(newSceneName, newScenePath);
+				EventDispatcher::QueueEvent(EventType::CreateScene, std::make_shared<CreateSceneEvent>(newSceneName, newScenePath));
 			}
 
 			ImGui::EndPopup();
 		}
 	}
 
-	Flux::ContentsDrawer::AssetIconData ContentsDrawer::ChooseAssetIcon(const ContentsData& contentsData) const
+	ContentsDrawer::AssetIconData ContentsDrawer::ChooseAssetIcon(const ContentsData& contentsData) const
 	{
 		AssetIconData assetIconData{};
 

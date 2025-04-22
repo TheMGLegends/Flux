@@ -148,6 +148,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\EventSystem\Events\CreateSceneEvent.cpp" />
     <ClCompile Include="Source\Core\Configs\GameConfig.cpp" />
     <ClCompile Include="Source\Core\Configs\EditorConfig.cpp" />
     <ClCompile Include="Source\Core\Configs\EngineConfig.cpp" />
@@ -213,6 +214,7 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\EventSystem\Events\CreateSceneEvent.h" />
     <ClInclude Include="Source\Core\Configs\GameConfig.h" />
     <ClInclude Include="Source\Core\EventSystem\Events\LoadSceneEvent.h" />
     <ClInclude Include="Source\Core\Helpers\StringHasher.h" />

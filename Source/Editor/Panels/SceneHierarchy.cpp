@@ -44,6 +44,12 @@ namespace Flux
 			return FLUX_FAILURE;
 		}
 
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::CreateScene, this)))
+		{
+			Debug::LogError("Failed to add listener for CreateScene event in SceneHierarchy");
+			return FLUX_FAILURE;
+		}
+
 		bigFont = AssetHandler::GetImGuiFont("OpenSans-Bold");
 
 		if (!bigFont)
@@ -119,7 +125,19 @@ namespace Flux
 
 	void SceneHierarchy::OnNotify(EventType eventType, std::shared_ptr<Event> event)
 	{
-		if (eventType == EventType::PlayModeExited || eventType == EventType::LoadScene) { selectedGameObject = nullptr; }
+		switch (eventType)
+		{
+		case EventType::LoadScene:
+		case EventType::CreateScene:
+		case EventType::PlayModeExited:
+		{
+			selectedGameObject = nullptr;
+			EditorConfig::SetSceneNeedsSaving(false);
+			break;
+		}
+		default:
+			break;
+		}
 	}
 
 	GameObject* SceneHierarchy::GetSelectedGameObject() const

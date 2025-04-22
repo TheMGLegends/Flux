@@ -11,6 +11,7 @@
 
 #include "Core/Debug/Debug.h"
 #include "Core/EventSystem/EventDispatcher.h"
+#include "Core/EventSystem/Events/CreateSceneEvent.h"
 #include "Core/EventSystem/Events/GameObjectRemovedEvent.h"
 #include "Core/EventSystem/Events/LoadSceneEvent.h"
 #include "Core/Renderer/AssetHandler.h"
@@ -59,6 +60,12 @@ namespace Flux
 		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::LoadScene, this)))
 		{
 			Debug::LogError("Scene::Scene() - Failed to add LoadScene event listener");
+			return;
+		}
+
+		if (FLUX_FAIL(EventDispatcher::AddListener(EventType::CreateScene, this)))
+		{
+			Debug::LogError("Scene::Scene() - Failed to add CreateScene event listener");
 			return;
 		}
 
@@ -236,6 +243,13 @@ namespace Flux
 			playModeCamera.reset();
 
 			DeserializeScene(loadSceneEvent->scenePath);
+		}
+		else if (eventType == EventType::CreateScene)
+		{
+			std::shared_ptr<CreateSceneEvent> createSceneEvent = std::static_pointer_cast<CreateSceneEvent>(event);
+
+			CreateDefaultScene(createSceneEvent->scenePath);
+			AssetHandler::StoreScenePath(createSceneEvent->sceneName, createSceneEvent->scenePath);
 		}
 	}
 
@@ -517,6 +531,7 @@ namespace Flux
 		// INFO: Save the current scene
 		if (!scenePath.empty())
 		{
+			Debug::LogWarning("Scene::CreateDefaultScene() - Saving current scene before creating the new one");
 			SerializeScene(scenePath);
 		}
 

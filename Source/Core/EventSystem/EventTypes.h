@@ -10,6 +10,7 @@ namespace Flux
 
 		LoadScene,
 		SaveScene,
+		CreateScene,
 
 		WindowResized,
 		SceneViewResized,
