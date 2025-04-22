@@ -15,6 +15,7 @@
 #include "Core/EventSystem/Events/CreateSceneEvent.h"
 #include "Core/EventSystem/Events/LoadSceneEvent.h"
 
+#include "Engine/Audio/Audio.h"
 #include "Engine/Scene/SceneContext.h"
 
 namespace Flux
@@ -167,6 +168,10 @@ namespace Flux
 				{
 					EventDispatcher::QueueEvent(EventType::LoadScene, std::make_shared<LoadSceneEvent>(path));
 				}
+				else if (assetIconData.assetType == AssetType::Audio)
+				{
+					Audio::PlaySoundInEditor(filenameStemString, 0.25f);
+				}
 			}
 
 			// INFO: Setup Drag & Drop Payload
@@ -290,6 +295,7 @@ namespace Flux
 			}
 
 			assetIconData.textureID = audioIcon; // INFO: Audio
+			assetIconData.assetType = AssetType::Audio;
 		}
 		else if (extensionType == FiletypeConfig::DDS)
 		{

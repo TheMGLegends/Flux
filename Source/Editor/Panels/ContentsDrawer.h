@@ -38,7 +38,8 @@ namespace Flux
 			Scene,
 			Model,
 			Texture,
-			SkyboxTexture
+			SkyboxTexture,
+			Audio
 		};
 
 		struct AssetIconData

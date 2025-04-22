@@ -9,6 +9,7 @@ namespace Flux
 	struct AudioData
 	{
 	public:
+		AudioData() : name(""), sound(nullptr), channel(nullptr) {}
 		AudioData(const std::string& _name, FMOD::Sound* _sound, FMOD::Channel* _channel)
 			: name(_name), sound(_sound), channel(_channel) {}
 		~AudioData() = default;
@@ -55,6 +56,13 @@ namespace Flux
 		/// @param isLooping If false the music will play once, if true the music will loop
 		static void PlayMusic(const std::string& audioName, float volume = 1.0f, bool isLooping = true);
 
+		/// @brief Used for playing sound assets that are double clicked in the content drawer
+		/// @param volume 0.0f to 1.0f (0.0f is silent, 1.0f is full volume)
+		static void PlaySoundInEditor(const std::string& audioName, float volume = 1.0f);
+
+		/// @brief When play mode entered this is executed
+		static void StopSoundInEditor();
+
 		/// @brief Primarily used for looping music tracks
 		static void StopSound(std::string_view audioName);
 		static void StopAllSounds();
@@ -66,6 +74,7 @@ namespace Flux
 	private:
 		static FMOD::System* system;
 		static std::vector<AudioData> audios;
+		static AudioData editorAudio; // INFO: Used for playing sounds in the editor
 	};
 }
 

@@ -347,6 +347,7 @@ namespace Flux
 				if (RuntimeConfig::IsInEditorMode())
 				{
 					RuntimeConfig::SetMode(RuntimeConfig::Mode::Play);
+					Audio::StopSoundInEditor();
 				}
 				// INFO: Logic for exiting Play Mode
 				else
