@@ -139,22 +139,55 @@ namespace Flux
 	void SceneViewCamera::DeserializeEditorCamera(nlohmann::flux_json& json)
 	{
 		auto transformRef = transform.lock();
+
+		if (!json.contains("SceneViewCamera"))
+		{
+			Debug::LogError("SceneViewCamera::DeserializeEditorCamera() - SceneViewCamera data not found in JSON");
+			return;
+		}
+
 		auto& sceneViewCameraData = json["SceneViewCamera"].back();
 
-		rotationSpeed = sceneViewCameraData["RotationSpeed"].get<float>();
-		movementSpeed = sceneViewCameraData["MovementSpeed"].get<float>();
-		minMovementSpeed = sceneViewCameraData["MinMovementSpeed"].get<float>();
-		maxMovementSpeed = sceneViewCameraData["MaxMovementSpeed"].get<float>();
-		pitchConstraints = Vector2(sceneViewCameraData["PitchConstraints"][0].get<float>(), sceneViewCameraData["PitchConstraints"][1].get<float>());
+		if (json.contains("RotationSpeed"))
+		{
+			rotationSpeed = sceneViewCameraData["RotationSpeed"].get<float>();
+		}
 
-		transformRef->SetPosition(Vector3(sceneViewCameraData["Position"][0].get<float>(),
-										  sceneViewCameraData["Position"][1].get<float>(),
-										  sceneViewCameraData["Position"][2].get<float>()));
+		if (json.contains("MovementSpeed"))
+		{
+			movementSpeed = sceneViewCameraData["MovementSpeed"].get<float>();
+		}
 
-		transformRef->SetRotation(Quaternion(sceneViewCameraData["Rotation"][0].get<float>(),
-											 sceneViewCameraData["Rotation"][1].get<float>(),
-											 sceneViewCameraData["Rotation"][2].get<float>(),
-											 sceneViewCameraData["Rotation"][3].get<float>()));
+		if (json.contains("MinMovementSpeed"))
+		{
+			minMovementSpeed = sceneViewCameraData["MinMovementSpeed"].get<float>();
+		}
+
+		if (json.contains("MaxMovementSpeed"))
+		{
+			maxMovementSpeed = sceneViewCameraData["MaxMovementSpeed"].get<float>();
+		}
+
+		if (json.contains("PitchConstraints"))
+		{
+			pitchConstraints.x = sceneViewCameraData["PitchConstraints"][0].get<float>();
+			pitchConstraints.y = sceneViewCameraData["PitchConstraints"][1].get<float>();
+		}
+
+		if (json.contains("Position"))
+		{
+			transformRef->SetPosition(Vector3(sceneViewCameraData["Position"][0].get<float>(),
+											  sceneViewCameraData["Position"][1].get<float>(),
+											  sceneViewCameraData["Position"][2].get<float>()));
+		}
+
+		if (json.contains("Rotation"))
+		{
+			transformRef->SetRotation(Quaternion(sceneViewCameraData["Rotation"][0].get<float>(),
+												 sceneViewCameraData["Rotation"][1].get<float>(),
+												 sceneViewCameraData["Rotation"][2].get<float>(),
+												 sceneViewCameraData["Rotation"][3].get<float>()));
+		}
 	}
 
 	std::weak_ptr<Camera> SceneViewCamera::GetCamera() const

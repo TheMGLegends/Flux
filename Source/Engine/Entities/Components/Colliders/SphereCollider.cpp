@@ -59,7 +59,7 @@ namespace Flux
 		bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow);
 
 		// INFO: Remove Component Button
-		ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+		ImVec2 buttonSize{ 65.0f, 0.0f };
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
 		if (ImGui::Button("Remove", buttonSize))
@@ -115,7 +115,8 @@ namespace Flux
 		// INFO: Serialize Parent Class
 		Collider::Serialize(json);
 
-		json["Components"].back()["Radius"] = radius;
+		auto& jsonBack = json["Components"].back();
+		jsonBack["Radius"] = radius;
 	}
 
 	void SphereCollider::Deserialize(const nlohmann::flux_json& json)
@@ -123,8 +124,11 @@ namespace Flux
 		// INFO: Deserialize Parent Class
 		Collider::Deserialize(json);
 
-		// INFO: Deserialize SphereCollider Data
-		radius = json["Radius"].get<float>();
+		if (json.contains("Radius"))
+		{
+			// INFO: Deserialize SphereCollider Data
+			radius = json["Radius"].get<float>();
+		}
 	}
 
 	void SphereCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)

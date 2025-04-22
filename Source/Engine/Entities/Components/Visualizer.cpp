@@ -45,7 +45,7 @@ namespace Flux
 		bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow);
 
 		// INFO: Remove Component Button
-		ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+		ImVec2 buttonSize{ 65.0f, 0.0f };
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
 		if (ImGui::Button("Remove", buttonSize))
@@ -83,8 +83,15 @@ namespace Flux
 		Component::Deserialize(json);
 
 		// INFO: Deserialize Visualizer Data
-		SetModel(json["ModelName"].get<std::string>());
-		SetMaterialTexture(json["TextureName"].get<std::string>());
+		if (json.contains("ModelName"))
+		{
+			SetModel(json["ModelName"].get<std::string>());
+		}
+
+		if (json.contains("TextureName"))
+		{
+			SetMaterialTexture(json["TextureName"].get<std::string>());
+		}
 	}
 
 	void Visualizer::SetModel(std::string_view _modelName)

@@ -24,10 +24,7 @@ namespace Flux
 
 		listeners[eventType].push_back(listener);
 
-		// INFO: Check if the listener was added successfully
-		if (listeners[eventType].back() == listener) { return FLUX_SUCCESS; }
-
-		return FLUX_FAILURE;
+		return FLUX_SUCCESS;
 	}
 
 	void EventDispatcher::RemoveListener(const IEventListener* listener)
@@ -66,8 +63,6 @@ namespace Flux
 
 	void EventDispatcher::ProcessEvents()
 	{
-		if (eventQueue.empty()) { return; }
-
 		while (!eventQueue.empty())
 		{
 			const auto& [eventType, event] = eventQueue.front();

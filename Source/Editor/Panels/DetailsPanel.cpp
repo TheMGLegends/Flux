@@ -124,7 +124,7 @@ namespace Flux
 	{
 		ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
-		ImVec2 buttonSize = ImVec2(150.0f, 50.0f);
+		ImVec2 buttonSize{ 150.0f, 50.0f };
 		ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
 		if (ImGui::Button("Add Component", buttonSize))
@@ -186,7 +186,7 @@ namespace Flux
 
 			if (existingComponent)
 			{
-				std::string componentType = std::string(magic_enum::enum_name(component.lock()->GetComponentType()));
+				std::string componentType{ magic_enum::enum_name(component.lock()->GetComponentType()) };
 				std::string gameObjectName = component.lock()->GetGameObject()->GetName();
 				Debug::LogWarning("DetailsPanel::ComponentAlreadyExists() - " + componentType + " component already exists on " + gameObjectName);
 			}

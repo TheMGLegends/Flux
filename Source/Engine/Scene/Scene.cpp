@@ -135,22 +135,28 @@ namespace Flux
 	void Scene::Deserialize(const nlohmann::flux_json& json)
 	{
 		// INFO: Load the name of the Scene
-		sceneName = json["SceneName"].get<std::string>();
+		if (json.contains("SceneName"))
+		{
+			sceneName = json["SceneName"].get<std::string>();
+		}
 
 		// INFO: Find out how many game objects are in the scene
-		size_t gameObjectCount = json["GameObjects"].size();
-
-		// INFO: Deserialize each GameObject in the Scene
-		for (size_t i = 0; i < gameObjectCount; i++)
+		if (json.contains("GameObjects"))
 		{
-			// INFO: Retrieve the game object data from the json file
-			auto& gameObjectData = json["GameObjects"][i];
+			size_t gameObjectCount = json["GameObjects"].size();
 
-			// INFO: Create the GameObject based on the type
-			gameObjects.emplace_back(GameObject::CreateGameObject(gameObjectData["Type"].get<std::string>()));
+			// INFO: Deserialize each GameObject in the Scene
+			for (size_t i = 0; i < gameObjectCount; i++)
+			{
+				// INFO: Retrieve the game object data from the json file
+				auto& gameObjectData = json["GameObjects"][i];
 
-			// INFO: Deserialize the newly created GameObject with the gameObjects data
-			gameObjects.back()->Deserialize(gameObjectData);
+				// INFO: Create the GameObject based on the type
+				gameObjects.emplace_back(GameObject::CreateGameObject(gameObjectData["Type"].get<std::string>()));
+
+				// INFO: Deserialize the newly created GameObject with the gameObjects data
+				gameObjects.back()->Deserialize(gameObjectData);
+			}
 		}
 	}
 

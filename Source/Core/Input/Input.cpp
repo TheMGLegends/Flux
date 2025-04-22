@@ -258,7 +258,7 @@ namespace Flux
 		if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) { return false; }
 
 		// INFO: Normalize the axis (0 to 1)
-		if (axisState) { *axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX; }
+		if (axisState) { *axisState = currentGamepadAxisState[trigger] / static_cast<float>(SDL_JOYSTICK_AXIS_MAX); }
 
 		return currentGamepadAxisState[trigger] > 0;
 	}
@@ -268,7 +268,7 @@ namespace Flux
 		if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) { return false; }
 
 		// INFO: Normalize the axis (0 to 1)
-		if (axisState) { *axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX; }
+		if (axisState) { *axisState = currentGamepadAxisState[trigger] / static_cast<float>(SDL_JOYSTICK_AXIS_MAX); }
 
 		return currentGamepadAxisState[trigger] > 0 && previousGamepadAxisState[trigger] == 0;
 	}
@@ -278,7 +278,7 @@ namespace Flux
 		if (trigger != SDL_GAMEPAD_AXIS_LEFT_TRIGGER && trigger != SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) { return false; }
 
 		// INFO: Normalize the axis (0 to 1)
-		if (axisState) { *axisState = currentGamepadAxisState[trigger] / (float)SDL_JOYSTICK_AXIS_MAX; }
+		if (axisState) { *axisState = currentGamepadAxisState[trigger] / static_cast<float>(SDL_JOYSTICK_AXIS_MAX); }
 
 		return currentGamepadAxisState[trigger] == 0 && previousGamepadAxisState[trigger] > 0;
 	}
@@ -303,8 +303,8 @@ namespace Flux
 		}
 
 		// INFO: Normalize the axes (-1 to 1)
-		axes.x = axes.x < 0 ? axes.x / (float)(SDL_JOYSTICK_AXIS_MAX + 1) : axes.x / (float)SDL_JOYSTICK_AXIS_MAX;
-		axes.y = axes.y < 0 ? axes.y / (float)(SDL_JOYSTICK_AXIS_MAX + 1) : axes.y / (float)SDL_JOYSTICK_AXIS_MAX;
+		axes.x = axes.x < 0 ? axes.x / static_cast<float>((SDL_JOYSTICK_AXIS_MAX + 1)) : axes.x / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
+		axes.y = axes.y < 0 ? axes.y / static_cast<float>((SDL_JOYSTICK_AXIS_MAX + 1)) : axes.y / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
 
 		if (inverseY && axes.y != 0) { axes.y *= -1; }
 

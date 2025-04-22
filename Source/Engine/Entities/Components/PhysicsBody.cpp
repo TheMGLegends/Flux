@@ -112,7 +112,7 @@ namespace Flux
 		bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow);
 
 		// INFO: Remove Component Button
-		ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+		ImVec2 buttonSize{ 65.0f, 0.0f };
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
 		if (ImGui::Button("Remove", buttonSize))
@@ -216,22 +216,48 @@ namespace Flux
 		Component::Deserialize(json);
 
 		// INFO: Deserialize PhysicsBody Data
-		mass = json["Mass"].get<float>();
-		drag = json["Drag"].get<float>();
-		angularDrag = json["AngularDrag"].get<float>();
-		useGravity = json["UseGravity"].get<bool>();
-		isKinematic = json["IsKinematic"].get<bool>();
 
-		auto& positionConstraintsJson = json["PositionConstraints"];
-		for (size_t i = 0; i < positionConstraintsJson.size(); ++i)
+		if (json.contains("Mass"))
 		{
-			positionConstraints[i] = positionConstraintsJson[i].get<bool>();
+			mass = json["Mass"].get<float>();
 		}
 
-		auto& rotationConstraintsJson = json["RotationConstraints"];
-		for (size_t i = 0; i < rotationConstraintsJson.size(); ++i)
+		if (json.contains("Drag"))
 		{
-			rotationConstraints[i] = rotationConstraintsJson[i].get<bool>();
+			drag = json["Drag"].get<float>();
+		}
+
+		if (json.contains("AngularDrag"))
+		{
+			angularDrag = json["AngularDrag"].get<float>();
+		}
+
+		if (json.contains("UseGravity"))
+		{
+			useGravity = json["UseGravity"].get<bool>();
+		}
+
+		if (json.contains("IsKinematic"))
+		{
+			isKinematic = json["IsKinematic"].get<bool>();
+		}
+
+		if (json.contains("PositionConstraints"))
+		{
+			auto& positionConstraintsJson = json["PositionConstraints"];
+			for (size_t i = 0; i < positionConstraintsJson.size(); ++i)
+			{
+				positionConstraints[i] = positionConstraintsJson[i].get<bool>();
+			}
+		}
+
+		if (json.contains("RotationConstraints"))
+		{
+			auto& rotationConstraintsJson = json["RotationConstraints"];
+			for (size_t i = 0; i < rotationConstraintsJson.size(); ++i)
+			{
+				rotationConstraints[i] = rotationConstraintsJson[i].get<bool>();
+			}
 		}
 	}
 

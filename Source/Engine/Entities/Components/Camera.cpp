@@ -23,8 +23,8 @@ namespace Flux
 	using namespace DirectXConfig;
 
 	Camera::Camera(GameObject* _gameObject) : Component(_gameObject), verticalFOV(90.0f), nearClippingPlane(0.1f), farClippingPlane(100.0f),
-		aspectRatio(EngineConfig::ASPECT_RATIO), backgroundColour(0.5f, 0.5f, 0.5f, 1.0f),
-		shouldDrawFrustum(true), skyboxTextureName("DefaultSkybox"), useSkybox(true)
+											  aspectRatio(EngineConfig::ASPECT_RATIO), backgroundColour(0.5f, 0.5f, 0.5f, 1.0f),
+											  shouldDrawFrustum(true), skyboxTextureName("DefaultSkybox"), useSkybox(true)
 	{
 		name = "Camera";
 		componentType = ComponentType::Camera;
@@ -62,7 +62,7 @@ namespace Flux
 		bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow);
 
 		// INFO: Remove Component Button
-		ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+		ImVec2 buttonSize{ 65.0f, 0.0f };
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
 		if (ImGui::Button("Remove", buttonSize))
@@ -104,18 +104,39 @@ namespace Flux
 		Component::Deserialize(json);
 
 		// INFO: Deserialize Camera Data
-		verticalFOV = json["FOV"].get<float>();
-		nearClippingPlane = json["NearClippingPlane"].get<float>();
-		farClippingPlane = json["FarClippingPlane"].get<float>();
-
-		auto& backgroundColourJson = json["BackgroundColour"];
-		for (size_t i = 0; i < backgroundColourJson.size(); i++)
+		if (json.contains("FOV"))
 		{
-			backgroundColour[i] = backgroundColourJson[i].get<float>();
+			verticalFOV = json["FOV"].get<float>();
 		}
 
-		SetMaterialTexture(json["SkyboxTexture"].get<std::string>());
-		useSkybox = json["UseSkybox"].get<bool>();
+		if (json.contains("NearClippingPlane"))
+		{
+			nearClippingPlane = json["NearClippingPlane"].get<float>();
+		}
+
+		if (json.contains("FarClippingPlane"))
+		{
+			farClippingPlane = json["FarClippingPlane"].get<float>();
+		}
+
+		if (json.contains("BackgroundColour"))
+		{
+			auto& backgroundColourJson = json["BackgroundColour"];
+			for (size_t i = 0; i < backgroundColourJson.size(); i++)
+			{
+				backgroundColour[i] = backgroundColourJson[i].get<float>();
+			}
+		}
+
+		if (json.contains("SkyboxTexture"))
+		{
+			SetMaterialTexture(json["SkyboxTexture"].get<std::string>());
+		}
+
+		if (json.contains("UseSkybox"))
+		{
+			useSkybox = json["UseSkybox"].get<bool>();
+		}
 
 		// INFO: Initialise Bounding Frustum
 		SetFrustum();

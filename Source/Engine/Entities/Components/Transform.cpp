@@ -81,11 +81,22 @@ namespace Flux
 		Component::Deserialize(json);
 
 		// INFO: Deserialize Transform Data
-		position = Vector3(json["Position"][0].get<float>(), json["Position"][1].get<float>(), json["Position"][2].get<float>());
-		rotation = Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(json["Rotation"][1].get<float>()),
-													  DirectX::XMConvertToRadians(json["Rotation"][0].get<float>()),
-													  DirectX::XMConvertToRadians(json["Rotation"][2].get<float>()));
-		scale = Vector3(json["Scale"][0].get<float>(), json["Scale"][1].get<float>(), json["Scale"][2].get<float>());
+		if (json.contains("Position"))
+		{
+			position = Vector3(json["Position"][0].get<float>(), json["Position"][1].get<float>(), json["Position"][2].get<float>());
+		}
+
+		if (json.contains("Rotation"))
+		{
+			rotation = Quaternion::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(json["Rotation"][1].get<float>()),
+														  DirectX::XMConvertToRadians(json["Rotation"][0].get<float>()),
+														  DirectX::XMConvertToRadians(json["Rotation"][2].get<float>()));
+		}
+
+		if (json.contains("Scale"))
+		{
+			scale = Vector3(json["Scale"][0].get<float>(), json["Scale"][1].get<float>(), json["Scale"][2].get<float>());
+		}
 	}
 
 	DirectX::XMMATRIX Transform::GetWorldMatrix() const

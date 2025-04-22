@@ -125,7 +125,7 @@ namespace Flux
 
 	void ContentsDrawer::DrawContents()
 	{
-		ImVec2 iconSize = ImVec2(50.0f, 50.0f);
+		ImVec2 iconSize{ 50.0f, 50.0f };
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 		bool updateContents = false;
 

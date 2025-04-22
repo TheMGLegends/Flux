@@ -31,8 +31,16 @@ namespace Flux
 	void Component::Deserialize(const nlohmann::flux_json& json)
 	{
 		// INFO: Deserialize Component Data
-		name = json["Name"].get<std::string>();
-		isActive = json["IsActive"].get<bool>();
+
+		if (json.contains("Name"))
+		{
+			name = json["Name"].get<std::string>();
+		}
+
+		if (json.contains("IsActive"))
+		{
+			isActive = json["IsActive"].get<bool>();
+		}
 	}
 
 	GameObject* Component::GetGameObject() const

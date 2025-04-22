@@ -239,7 +239,7 @@ namespace Flux
 
 	void SceneHierarchy::AddGameObjectButton(float windowWidth)
 	{
-		ImVec2 buttonSize = ImVec2(150.0f, 50.0f);
+		ImVec2 buttonSize{ 150.0f, 50.0f };
 		ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
 		if (ImGui::Button("Add GameObject", buttonSize))

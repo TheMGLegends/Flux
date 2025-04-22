@@ -165,7 +165,7 @@ namespace Flux
 
 	HRESULT AssetHandler::LoadTexture(const std::filesystem::path& texturePath, bool isDDS)
 	{
-		HRESULT hResult = S_OK;
+		HRESULT hResult{ S_OK };
 
 		hResult = VerifyDeviceAndContext(true);
 
@@ -424,7 +424,7 @@ namespace Flux
 
 	HRESULT AssetHandler::LoadShaders(ShaderType shaderType, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& pixelShaderPath)
 	{
-		HRESULT hResult = S_OK;
+		HRESULT hResult{ S_OK };
 
 		if (FAILED(VerifyDeviceAndContext()))
 		{
@@ -530,7 +530,7 @@ namespace Flux
 
 	HRESULT AssetHandler::LoadConstantBuffer(ConstantBufferType constantBufferType)
 	{
-		HRESULT hResult = S_OK;
+		HRESULT hResult{ S_OK };
 
 		if (FAILED(VerifyDeviceAndContext()))
 		{
@@ -579,7 +579,7 @@ namespace Flux
 
 	HRESULT AssetHandler::LoadDepthWriteState(DepthWriteType depthWriteType)
 	{
-		HRESULT hResult = S_OK;
+		HRESULT hResult{ S_OK };
 
 		if (FAILED(VerifyDeviceAndContext()))
 		{
@@ -642,7 +642,7 @@ namespace Flux
 
 	HRESULT AssetHandler::LoadCullingModeState(CullingModeType cullingModeType)
 	{
-		HRESULT hResult = S_OK;
+		HRESULT hResult{ S_OK };
 
 		if (FAILED(VerifyDeviceAndContext()))
 		{
@@ -701,7 +701,7 @@ namespace Flux
 
 	HRESULT AssetHandler::LoadSamplerState()
 	{
-		HRESULT hResult = S_OK;
+		HRESULT hResult{ S_OK };
 
 		if (FAILED(VerifyDeviceAndContext()))
 		{
@@ -770,7 +770,7 @@ namespace Flux
 
 	HRESULT AssetHandler::VerifyDeviceAndContext(bool verifyContext)
 	{
-		HRESULT hResult = S_OK;
+		HRESULT hResult{ S_OK };
 
 		if (!device.has_value())
 		{

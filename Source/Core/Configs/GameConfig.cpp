@@ -63,11 +63,32 @@ namespace Flux::GameConfig
 		if (file.is_open())
 		{
 			nlohmann::flux_json json = nlohmann::json::parse(file);
-			starterSceneName = json["StarterSceneName"].get<std::string>();
-			FrameRateMonitor::SetIsActive(json["FrameCounterActive"].get<bool>());
-			RendererConfig::SetVSyncEnabled(json["VSyncEnabled"].get<bool>());
-			EditorConfig::SetCurretTransformOperation(json["TransformOperation"].get<int>());
-			EditorConfig::SetTransformMode(static_cast<ImGuizmo::MODE>(json["TransformMode"].get<int>()));
+
+			if (json.contains("StarterSceneName"))
+			{
+				starterSceneName = json["StarterSceneName"].get<std::string>();
+			}
+
+			if (json.contains("FrameCounterActive"))
+			{
+				FrameRateMonitor::SetIsActive(json["FrameCounterActive"].get<bool>());
+			}
+
+			if (json.contains("VSyncEnabled"))
+			{
+				RendererConfig::SetVSyncEnabled(json["VSyncEnabled"].get<bool>());
+			}
+
+			if (json.contains("TransformOperation"))
+			{
+				EditorConfig::SetCurretTransformOperation(json["TransformOperation"].get<int>());
+			}
+
+			if (json.contains("TransformMode"))
+			{
+				EditorConfig::SetTransformMode(static_cast<ImGuizmo::MODE>(json["TransformMode"].get<int>()));
+			}
+
 			if (sceneViewCamera) { sceneViewCamera->DeserializeEditorCamera(json); }
 		}
 		else

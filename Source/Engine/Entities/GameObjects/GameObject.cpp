@@ -38,50 +38,64 @@ namespace Flux
 	void GameObject::Deserialize(const nlohmann::flux_json& json)
 	{
 		// INFO: Deserialize GameObject Data
-		name = json["Name"].get<std::string>();
-		type = json["Type"].get<std::string>();
-		isActive = json["IsActive"].get<bool>();
-
-		// INFO: Find out how many components are on the GameObject
-		size_t componentCount = json["Components"].size();
-
-		// INFO: Deserialize each Component on the GameObject
-		for (size_t i = 0; i < componentCount; i++)
+		if (json.contains("Name"))
 		{
-			// INFO: Retrieve the component data from the json file
-			auto& componentData = json["Components"][i];
+			name = json["Name"].get<std::string>();
+		}
 
-			// INFO: Create the Component based on the type
-			auto componentType = static_cast<ComponentType>(componentData["ComponentType"].get<unsigned int>());
+		if (json.contains("Type"))
+		{
+			type = json["Type"].get<std::string>();
+		}
 
-			std::weak_ptr<Component> component;
+		if (json.contains("IsActive"))
+		{
+			isActive = json["IsActive"].get<bool>();
+		}
 
-			switch (componentType)
+		if (json.contains("Components"))
+		{
+			// INFO: Find out how many components are on the GameObject
+			size_t componentCount = json["Components"].size();
+
+			// INFO: Deserialize each Component on the GameObject
+			for (size_t i = 0; i < componentCount; i++)
 			{
-			case ComponentType::Transform:
-				component = AddComponent<Transform>(this);
-				break;
-			case ComponentType::Camera:
-				component = AddComponent<Camera>(this);
-				break;
-			case ComponentType::PhysicsBody:
-				component = AddComponent<PhysicsBody>(this);
-				break;
-			case ComponentType::Visualizer:
-				component = AddComponent<Visualizer>(this);
-				break;
-			case ComponentType::BoxCollider:
-				component = AddComponent<BoxCollider>(this);
-				break;
-			case ComponentType::SphereCollider:
-				component = AddComponent<SphereCollider>(this);
-				break;
-			case ComponentType::None:
-			default:
-				break;
-			}
+				// INFO: Retrieve the component data from the json file
+				auto& componentData = json["Components"][i];
 
-			if (!component.expired()) { component.lock()->Deserialize(componentData); }
+				// INFO: Create the Component based on the type
+				auto componentType = static_cast<ComponentType>(componentData["ComponentType"].get<unsigned int>());
+
+				std::weak_ptr<Component> component;
+
+				switch (componentType)
+				{
+				case ComponentType::Transform:
+					component = AddComponent<Transform>(this);
+					break;
+				case ComponentType::Camera:
+					component = AddComponent<Camera>(this);
+					break;
+				case ComponentType::PhysicsBody:
+					component = AddComponent<PhysicsBody>(this);
+					break;
+				case ComponentType::Visualizer:
+					component = AddComponent<Visualizer>(this);
+					break;
+				case ComponentType::BoxCollider:
+					component = AddComponent<BoxCollider>(this);
+					break;
+				case ComponentType::SphereCollider:
+					component = AddComponent<SphereCollider>(this);
+					break;
+				case ComponentType::None:
+				default:
+					break;
+				}
+
+				if (!component.expired()) { component.lock()->Deserialize(componentData); }
+			}
 		}
 	}
 

@@ -57,7 +57,7 @@ namespace Flux
 		bool treeOpened = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow);
 
 		// INFO: Remove Component Button
-		ImVec2 buttonSize = ImVec2(65.0f, 0.0f);
+		ImVec2 buttonSize{ 65.0f, 0.0f };
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonSize.x + 10.0f));
 		if (ImGui::Button("Remove", buttonSize))
@@ -108,7 +108,8 @@ namespace Flux
 		// INFO: Serialize Parent Class
 		Collider::Serialize(json);
 
-		json["Components"].back()["Size"] = { size.x, size.y, size.z };
+		auto& jsonBack = json["Components"].back();
+		jsonBack["Size"] = { size.x, size.y, size.z };
 	}
 
 	void BoxCollider::Deserialize(const nlohmann::flux_json& json)
@@ -116,8 +117,11 @@ namespace Flux
 		// INFO: Deserialize Parent Class
 		Collider::Deserialize(json);
 
-		// INFO: Deserialize BoxCollider Data
-		size = Vector3(json["Size"][0].get<float>(), json["Size"][1].get<float>(), json["Size"][2].get<float>());
+		if (json.contains("Size"))
+		{
+			// INFO: Deserialize BoxCollider Data
+			size = Vector3(json["Size"][0].get<float>(), json["Size"][1].get<float>(), json["Size"][2].get<float>());
+		}
 	}
 
 	void BoxCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)

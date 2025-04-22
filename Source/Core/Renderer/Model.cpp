@@ -97,7 +97,7 @@ namespace Flux
 
 		D3D11_BUFFER_DESC vbd = {};
 		vbd.Usage = D3D11_USAGE_DYNAMIC;
-		vbd.ByteWidth = (UINT)(sizeof(Vertex) * vertices.size());
+		vbd.ByteWidth = static_cast<UINT>((sizeof(Vertex) * vertices.size()));
 		vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
@@ -114,7 +114,7 @@ namespace Flux
 
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.Usage = D3D11_USAGE_DEFAULT;
-		ibd.ByteWidth = (UINT)(sizeof(unsigned int) * indices.size());
+		ibd.ByteWidth = static_cast<UINT>((sizeof(unsigned int) * indices.size()));
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA isd = {};

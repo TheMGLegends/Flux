@@ -156,8 +156,11 @@ namespace Flux
 		// INFO: Deserialize Parent Class
 		Component::Deserialize(json);
 
-		// INFO: Deserialize Collider Data
-		isTrigger = json["IsTrigger"].get<bool>();
+		if (json.contains("IsTrigger"))
+		{
+			// INFO: Deserialize Collider Data
+			isTrigger = json["IsTrigger"].get<bool>();
+		}
 	}
 
 	void Collider::SetIsTrigger(bool _isTrigger)
