@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
+#include "Core/Configs/EditorConfig.h"
 #include "Core/Configs/RendererConfig.h"
 
 #include "Core/Debug/Debug.h"
@@ -37,6 +38,8 @@ namespace Flux::GameConfig
 		json["StarterSceneName"] = starterSceneName;
 		json["FrameCounterActive"] = FrameRateMonitor::IsActive();
 		json["VSyncEnabled"] = RendererConfig::IsVSyncEnabled();
+		json["TransformOperation"] = EditorConfig::GetCurrentTransformOperation();
+		json["TransformMode"] = EditorConfig::GetTransformMode();
 
 		if (sceneViewCamera) { sceneViewCamera->SerializeEditorCamera(json); }
 
@@ -63,6 +66,8 @@ namespace Flux::GameConfig
 			starterSceneName = json["StarterSceneName"].get<std::string>();
 			FrameRateMonitor::SetIsActive(json["FrameCounterActive"].get<bool>());
 			RendererConfig::SetVSyncEnabled(json["VSyncEnabled"].get<bool>());
+			EditorConfig::SetCurretTransformOperation(json["TransformOperation"].get<int>());
+			EditorConfig::SetTransformMode(static_cast<ImGuizmo::MODE>(json["TransformMode"].get<int>()));
 			if (sceneViewCamera) { sceneViewCamera->DeserializeEditorCamera(json); }
 		}
 		else

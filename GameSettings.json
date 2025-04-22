@@ -2,6 +2,8 @@
     "StarterSceneName": "TestScene",
     "FrameCounterActive": true,
     "VSyncEnabled": true,
+    "TransformOperation": -1,
+    "TransformMode": 0,
     "SceneViewCamera": [
         {
             "RotationSpeed": 0.001,
@@ -13,15 +15,15 @@
                 1.49
             ],
             "Position": [
-                8.049024,
-                10.836439,
-                37.90213
+                1.1050812,
+                4.094227,
+                7.334653
             ],
             "Rotation": [
-                -0.1257584,
-                0.2806323,
-                0.037117418,
-                0.9508168
+                -0.12274408,
+                0.3189633,
+                0.04170044,
+                0.9388596
             ]
         }
     ]

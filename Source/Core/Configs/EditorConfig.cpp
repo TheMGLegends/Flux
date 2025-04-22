@@ -71,6 +71,12 @@ namespace Flux::EditorConfig
 		currentTransformOperation = previousTransformOperation;
 	}
 
+	void SetTransformMode(ImGuizmo::MODE _transformMode)
+	{
+		using namespace Internal;
+		transformMode = _transformMode;
+	}
+
 	ImGuizmo::MODE GetTransformMode()
 	{
 		using namespace Internal;

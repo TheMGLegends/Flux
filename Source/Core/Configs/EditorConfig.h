@@ -40,6 +40,7 @@ namespace Flux::EditorConfig
 	void StorePreviousTransformOperation();
 	void RevertToPreviousTransformOperation();
 
+	void SetTransformMode(ImGuizmo::MODE _transformMode);
 	ImGuizmo::MODE GetTransformMode();
 	void SwitchTransformMode();
 
