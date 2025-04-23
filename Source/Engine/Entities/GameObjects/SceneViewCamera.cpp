@@ -148,40 +148,40 @@ namespace Flux
 
 		auto& sceneViewCameraData = json["SceneViewCamera"].back();
 
-		if (json.contains("RotationSpeed"))
+		if (sceneViewCameraData.contains("RotationSpeed"))
 		{
 			rotationSpeed = sceneViewCameraData["RotationSpeed"].get<float>();
 		}
 
-		if (json.contains("MovementSpeed"))
+		if (sceneViewCameraData.contains("MovementSpeed"))
 		{
 			movementSpeed = sceneViewCameraData["MovementSpeed"].get<float>();
 		}
 
-		if (json.contains("MinMovementSpeed"))
+		if (sceneViewCameraData.contains("MinMovementSpeed"))
 		{
 			minMovementSpeed = sceneViewCameraData["MinMovementSpeed"].get<float>();
 		}
 
-		if (json.contains("MaxMovementSpeed"))
+		if (sceneViewCameraData.contains("MaxMovementSpeed"))
 		{
 			maxMovementSpeed = sceneViewCameraData["MaxMovementSpeed"].get<float>();
 		}
 
-		if (json.contains("PitchConstraints"))
+		if (sceneViewCameraData.contains("PitchConstraints"))
 		{
 			pitchConstraints.x = sceneViewCameraData["PitchConstraints"][0].get<float>();
 			pitchConstraints.y = sceneViewCameraData["PitchConstraints"][1].get<float>();
 		}
 
-		if (json.contains("Position"))
+		if (sceneViewCameraData.contains("Position"))
 		{
 			transformRef->SetPosition(Vector3(sceneViewCameraData["Position"][0].get<float>(),
 											  sceneViewCameraData["Position"][1].get<float>(),
 											  sceneViewCameraData["Position"][2].get<float>()));
 		}
 
-		if (json.contains("Rotation"))
+		if (sceneViewCameraData.contains("Rotation"))
 		{
 			transformRef->SetRotation(Quaternion(sceneViewCameraData["Rotation"][0].get<float>(),
 												 sceneViewCameraData["Rotation"][1].get<float>(),
