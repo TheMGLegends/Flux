@@ -189,6 +189,9 @@
     <ClCompile Include="Source\Core\Configs\GameConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Core\EventSystem\Events\CreateSceneEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -410,6 +413,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Helpers\StringHasher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\EventSystem\Events\CreateSceneEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
