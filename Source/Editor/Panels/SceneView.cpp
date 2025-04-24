@@ -35,7 +35,9 @@ namespace Flux
 																				 rotationTexture(0), rotationTextureSelected(0),
 																				 scaleTexture(0), scaleTextureSelected(0),
 																				 playButtonEditorMode(0), playButtonPlayMode(0),
-																				 pauseButtonUnavailable(0), pauseButtonSelected(0), pauseButtonAvailable(0)
+																				 pauseButtonUnavailable(0), pauseButtonSelected(0), 
+																				 pauseButtonAvailable(0), isResizing(false),
+																				 runCount(2)
 	{
 	}
 
@@ -113,6 +115,13 @@ namespace Flux
 			// INFO: Check and Update Scene View Size if Necessary
 			if (EditorConfig::GetSceneViewWidth() != sceneViewSize.x || EditorConfig::GetSceneViewHeight() != sceneViewSize.y)
 			{
+				isResizing = true;
+			}
+
+			if (isResizing && Input::GetMouseButtonUp(SDL_BUTTON_LEFT) || runCount > 0)
+			{
+				runCount--;
+				isResizing = false;
 				EditorConfig::SetSceneViewWidth(sceneViewSize.x);
 				EditorConfig::SetSceneViewHeight(sceneViewSize.y);
 				EventDispatcher::QueueEvent(EventType::SceneViewResized, nullptr);

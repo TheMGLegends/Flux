@@ -46,6 +46,9 @@ namespace Flux
 		ImTextureID pauseButtonUnavailable;
 		ImTextureID pauseButtonSelected;
 		ImTextureID pauseButtonAvailable;
+
+		bool isResizing;
+		int runCount; // INFO: Times to run sceneView resize event initially to get it to size correctly on startup
 	};
 }
 
