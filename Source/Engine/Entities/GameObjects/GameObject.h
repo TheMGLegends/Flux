@@ -37,9 +37,8 @@ namespace Flux
 		template<class T, typename... Args>
 		std::weak_ptr<T> AddComponent(Args&&... args);
 
-		/// @brief Used internally, do not call if you are a user
 		template<class T>
-		void RemoveComponent(std::weak_ptr<T> component);
+		bool RemoveComponent(std::weak_ptr<T> component);
 
 		void SetIsActive(bool _isActive);
 		bool IsActive() const { return isActive; }
@@ -175,7 +174,7 @@ namespace Flux
 	}
 
 	template<class T>
-	inline void GameObject::RemoveComponent(std::weak_ptr<T> component)
+	inline bool GameObject::RemoveComponent(std::weak_ptr<T> component)
 	{
 		static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
@@ -192,12 +191,14 @@ namespace Flux
 				components.erase(it);
 				validComponent->PostDestruction();
 				EventDispatcher::QueueEvent(EventType::ComponentRemoved, nullptr);
-				break;
+				return true;
 			}
 			else
 			{
 				++it;
 			}
 		}
+
+		return false;
 	}
 }
