@@ -346,6 +346,12 @@ namespace Flux
 				// INFO: Logic for entering Play Mode
 				if (RuntimeConfig::IsInEditorMode())
 				{
+					// INFO: Warning that unsaved changes will be lost
+					if (EditorConfig::SceneNeedsSaving())
+					{
+						Debug::LogWarning("Scene has unsaved changes, these will be lost once play mode is exited");
+					}
+
 					RuntimeConfig::SetMode(RuntimeConfig::Mode::Play);
 					Audio::StopSoundInEditor();
 				}
