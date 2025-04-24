@@ -180,7 +180,7 @@ namespace Flux
 
 		std::shared_ptr<T> validComponent = component.lock();
 
-		if (!validComponent || !validComponent->IsRemoveable()) { return; }
+		if (!validComponent || !validComponent->IsRemoveable()) { return false; }
 
 		for (auto it = components.begin(); it != components.end();)
 		{
