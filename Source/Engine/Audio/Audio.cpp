@@ -275,6 +275,18 @@ namespace Flux
 		for (auto& audio : audios) { audio.channel->setPaused(isPaused); }
 	}
 
+	bool Audio::IsSoundPlaying(const std::string& audioName)
+	{
+		for (const auto& audio : audios)
+		{
+			if (audio.name == audioName)
+			{
+				return audio.IsPlaying();
+			}
+		}
+		return false;
+	}
+
 	void Audio::SetListenerAttributes(const FMOD_VECTOR& position, const FMOD_VECTOR& velocity, const FMOD_VECTOR& forward, const FMOD_VECTOR& up)
 	{
 		system->set3DListenerAttributes(0, &position, &velocity, &forward, &up);

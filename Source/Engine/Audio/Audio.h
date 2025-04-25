@@ -69,6 +69,8 @@ namespace Flux
 
 		static void ControlSounds(bool isPaused);
 
+		static bool IsSoundPlaying(const std::string& audioName);
+
 		static void SetListenerAttributes(const FMOD_VECTOR& position, const FMOD_VECTOR& velocity, const FMOD_VECTOR& forward, const FMOD_VECTOR& up);
 
 	private:

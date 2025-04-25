@@ -1,0 +1,219 @@
+{
+    "SceneName": "ShowcaseLevel",
+    "GameObjects": [
+        {
+            "Name": "Main Camera",
+            "Type": "GameObject",
+            "IsActive": true,
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        -179.99995,
+                        0.0
+                    ],
+                    "Scale": [
+                        0.9999988,
+                        1.0,
+                        0.9999988
+                    ]
+                },
+                {
+                    "Name": "Camera",
+                    "IsActive": true,
+                    "ComponentType": 2,
+                    "FOV": 90.0,
+                    "NearClippingPlane": 0.1,
+                    "FarClippingPlane": 100.0,
+                    "BackgroundColour": [
+                        0.5,
+                        0.5,
+                        0.5,
+                        1.0
+                    ],
+                    "SkyboxTexture": "DefaultSkybox",
+                    "UseSkybox": true
+                }
+            ]
+        },
+        {
+            "Name": "Player",
+            "Type": "Player",
+            "IsActive": true,
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        0.0,
+                        10.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Scale": [
+                        0.1,
+                        0.1,
+                        0.1
+                    ]
+                },
+                {
+                    "Name": "SphereCollider",
+                    "IsActive": true,
+                    "ComponentType": 6,
+                    "IsTrigger": false,
+                    "Radius": 1.0
+                },
+                {
+                    "Name": "PhysicsBody",
+                    "IsActive": true,
+                    "ComponentType": 3,
+                    "Mass": 1.0,
+                    "Drag": 0.0,
+                    "AngularDrag": 0.05,
+                    "UseGravity": true,
+                    "IsKinematic": false,
+                    "PositionConstraints": [
+                        true,
+                        false,
+                        true
+                    ],
+                    "RotationConstraints": [
+                        true,
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "Name": "Visualizer",
+                    "IsActive": true,
+                    "ComponentType": 4,
+                    "ModelName": "FlappyBirdModel",
+                    "TextureName": "FlappyBirdTexture"
+                }
+            ]
+        },
+        {
+            "Name": "Background",
+            "Type": "GameObject",
+            "IsActive": true,
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        0.0,
+                        15.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        179.99995,
+                        0.0
+                    ],
+                    "Scale": [
+                        29.999992,
+                        15.0,
+                        0.99999976
+                    ]
+                },
+                {
+                    "Name": "Visualizer",
+                    "IsActive": true,
+                    "ComponentType": 4,
+                    "ModelName": "Quad",
+                    "TextureName": "FlappyBirdBackground"
+                }
+            ]
+        },
+        {
+            "Name": "BarrierTop",
+            "Type": "Barrier",
+            "IsActive": true,
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        11.0,
+                        10.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Scale": [
+                        3.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "Name": "BoxCollider",
+                    "IsActive": true,
+                    "ComponentType": 5,
+                    "IsTrigger": true,
+                    "Size": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "BarrierBottom",
+            "Type": "Barrier",
+            "IsActive": true,
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        -11.0,
+                        10.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Scale": [
+                        3.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "Name": "BoxCollider",
+                    "IsActive": true,
+                    "ComponentType": 5,
+                    "IsTrigger": true,
+                    "Size": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ]
+        }
+    ]
+}
