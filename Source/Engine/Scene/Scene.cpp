@@ -340,11 +340,13 @@ namespace Flux
 			if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
 			{
 				triggerCollider->ExecuteCollisionCallback(CollisionType::TriggerEnter, otherCollider);
+				otherCollider->ExecuteCollisionCallback(CollisionType::TriggerEnter, triggerCollider);
 			}
 			// INFO: OnTriggerExit
 			else if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
 			{
 				triggerCollider->ExecuteCollisionCallback(CollisionType::TriggerExit, otherCollider);
+				otherCollider->ExecuteCollisionCallback(CollisionType::TriggerExit, triggerCollider);
 			}
 		}
 	}
