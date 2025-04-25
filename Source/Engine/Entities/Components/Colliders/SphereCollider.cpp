@@ -133,11 +133,16 @@ namespace Flux
 
 	void SphereCollider::DrawWireframe(ID3D11DeviceContext& deviceContext, DirectX::PrimitiveBatch<DirectX::VertexPositionColor>& primitiveBatch)
 	{
-		DirectX::XMVECTOR centre = DirectX::XMLoadFloat3(&GetGameObject()->transform.lock()->GetPosition());
+		auto transform = GetGameObject()->transform.lock();
 
-		DirectX::XMVECTOR xRange = DirectX::XMVectorSet(radius, 0, 0, 0);
-		DirectX::XMVECTOR yRange = DirectX::XMVectorSet(0, radius, 0, 0);
-		DirectX::XMVECTOR zRange = DirectX::XMVectorSet(0, 0, radius, 0);
+		DirectX::XMVECTOR centre = DirectX::XMLoadFloat3(&transform->GetPosition());
+
+		Vector3 gameObjectScale = transform->GetScale();
+		float adjustedScale = std::abs(MathHelpers::Max(gameObjectScale.x, gameObjectScale.y, gameObjectScale.z)) * radius;
+
+		DirectX::XMVECTOR xRange = DirectX::XMVectorSet(adjustedScale, 0, 0, 0);
+		DirectX::XMVECTOR yRange = DirectX::XMVectorSet(0, adjustedScale, 0, 0);
+		DirectX::XMVECTOR zRange = DirectX::XMVectorSet(0, 0, adjustedScale, 0);
 
 		bool isTrigger = IsTrigger();
 

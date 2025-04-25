@@ -148,6 +148,8 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Showcase\PipeManager.cpp" />
+    <ClCompile Include="Source\Showcase\Pipe.cpp" />
     <ClCompile Include="Source\Showcase\Barrier.cpp" />
     <ClCompile Include="Source\Showcase\Player.cpp" />
     <ClCompile Include="Source\Core\EventSystem\Events\CreateSceneEvent.cpp" />
@@ -216,6 +218,8 @@ xcopy /y /d "$(SolutionDir)Vendors\fmod\studio\lib\x64\*.dll" "$(OutDir)"</Comma
     <None Include="Vendors\imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Showcase\PipeManager.h" />
+    <ClInclude Include="Source\Showcase\Pipe.h" />
     <ClInclude Include="Source\Showcase\Barrier.h" />
     <ClInclude Include="Source\Showcase\Player.h" />
     <ClInclude Include="Source\Core\EventSystem\Events\CreateSceneEvent.h" />

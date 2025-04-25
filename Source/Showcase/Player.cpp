@@ -14,7 +14,7 @@ using namespace DirectX::SimpleMath;
 
 namespace Flux
 {
-	Player::Player() : jumpForce(2.0f), torqueScale(1.0f), isJumping(false), isDead(false)
+	Player::Player() : jumpForce(5.0f), torqueScale(1.0f), isJumping(false), isDead(false)
 	{
 		sphereCollider = AddComponent<SphereCollider>(this);
 
@@ -61,7 +61,7 @@ namespace Flux
 
 			if (auto pb = physicsBody.lock())
 			{
-				pb->AddForce({ 0.0f, jumpForce, 0.0f });
+				pb->AddForce({ 0.0f, jumpForce, 0.0f }, physx::PxForceMode::eIMPULSE);
 			}
 		}
 

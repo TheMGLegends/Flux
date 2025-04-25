@@ -64,9 +64,9 @@
                         0.0
                     ],
                     "Scale": [
-                        0.1,
-                        0.1,
-                        0.1
+                        1.0,
+                        1.0,
+                        1.0
                     ]
                 },
                 {
@@ -74,7 +74,7 @@
                     "IsActive": true,
                     "ComponentType": 6,
                     "IsTrigger": false,
-                    "Radius": 1.0
+                    "Radius": 0.5
                 },
                 {
                     "Name": "PhysicsBody",
@@ -208,6 +208,33 @@
                     "ComponentType": 5,
                     "IsTrigger": true,
                     "Size": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "PipeManager",
+            "Type": "PipeManager",
+            "IsActive": true,
+            "Components": [
+                {
+                    "Name": "Transform",
+                    "IsActive": true,
+                    "ComponentType": 1,
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Scale": [
                         1.0,
                         1.0,
                         1.0
