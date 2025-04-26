@@ -197,10 +197,20 @@ namespace Flux
 				{
 					ImGui::SetKeyboardFocusHere();
 
-					if (ImGui::InputText("##CustomNameInput", &selectedGameObject->GetName(), ImGuiInputTextFlags_EnterReturnsTrue))
+					std::string objectName = selectedGameObject->GetName();
+
+					// INFO: Info enter is pressed or mouse is clicked outside of the input box we want to stop renaming
+					//       and set the new name (If it is different we want to set the scene as needing saving)
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsItemHovered() 
+						|| ImGui::InputText("##CustomNameInput", &objectName, ImGuiInputTextFlags_EnterReturnsTrue))
 					{
 						isRenaming = false;
-						EditorConfig::SetSceneNeedsSaving(true);
+
+						if (objectName != selectedGameObject->GetName())
+						{
+							selectedGameObject->SetName(objectName);
+							EditorConfig::SetSceneNeedsSaving(true);
+						}
 					}
 				}
 				else
