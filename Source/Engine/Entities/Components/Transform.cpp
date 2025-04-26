@@ -7,6 +7,7 @@
 #include "Core/Configs/EditorConfig.h"
 
 #include "Engine/Entities/GameObjects/GameObject.h"
+#include "Engine/Entities/Components/Colliders/Collider.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -168,6 +169,11 @@ namespace Flux
 	void Transform::SetScale(const Vector3& _scale)
 	{
 		scale = _scale;
+
+		if (auto collider = GetGameObject()->GetComponent<Collider>().lock())
+		{
+			collider->UpdateScale();
+		}
 	}
 
 	const Vector3& Transform::GetScale() const
