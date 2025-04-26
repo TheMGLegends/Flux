@@ -134,12 +134,6 @@ namespace Flux
 
 	void Scene::Deserialize(const nlohmann::flux_json& json)
 	{
-		// INFO: Load the name of the Scene
-		if (json.contains("SceneName"))
-		{
-			sceneName = json["SceneName"].get<std::string>();
-		}
-
 		// INFO: Find out how many game objects are in the scene
 		if (json.contains("GameObjects"))
 		{
@@ -587,6 +581,7 @@ namespace Flux
 		EditorConfig::SetSceneNeedsSaving(false);
 
 		scenePath = path;
+		sceneName = scenePath.stem().string();
 
 		// INFO: Clear existing scene contents before loading 'new' scene
 		gameObjects.clear();
