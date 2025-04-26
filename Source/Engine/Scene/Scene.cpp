@@ -366,8 +366,10 @@ namespace Flux
 		}
 
 		// INFO: GameObject Start
-		for (const auto& gameObject : gameObjects)
+		for (size_t i = 0; i < gameObjects.size(); i++)
 		{
+			const auto& gameObject = gameObjects[i];
+
 			if (!gameObject->IsActive()) { continue; }
 			gameObject->Start();
 		}

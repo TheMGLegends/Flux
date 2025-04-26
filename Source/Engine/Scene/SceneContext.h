@@ -24,12 +24,43 @@ namespace Flux
 
 		static void LoadScene(const std::string& sceneName);
 
+		template<class T>
+		static T* FindFirstGameObjectByName(const std::string& name);
+
 		template<class T, typename... Args>
 		static T* SpawnGameObject(const DirectX::SimpleMath::Vector3& spawnLocation, const DirectX::SimpleMath::Quaternion& spawnRotation, Args&&... args);
 
 	private:
 		static Scene* scene;
 	};
+
+	template<class T>
+	inline T* SceneContext::FindFirstGameObjectByName(const std::string& name)
+	{
+		// INFO: Ensure T is a derived class of GameObject
+		static_assert(std::is_base_of_v<GameObject, T>, "T must derive from GameObject");
+
+		if (!scene)
+		{
+			Debug::LogError("SceneContext::SpawnGameObject - Scene is not set!");
+			return nullptr;
+		}
+
+		for (auto& gameObject : scene->gameObjects)
+		{
+			if (gameObject->GetName() == name)
+			{
+				if (auto obj = dynamic_cast<T*>(gameObject.get()))
+				{
+					return obj;
+				}
+
+				continue;
+			}
+		}
+
+		return nullptr;
+	}
 
 	template<class T, typename ...Args>
 	inline T* SceneContext::SpawnGameObject(const DirectX::SimpleMath::Vector3& spawnLocation, const DirectX::SimpleMath::Quaternion& spawnRotation, Args && ...args)

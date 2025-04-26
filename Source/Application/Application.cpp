@@ -20,6 +20,9 @@ namespace Flux
 
 	Application::Application(bool isStandalone) : window(nullptr), isRunning(false)
 	{
+		// INFO: Set Random Seed
+		srand(static_cast<unsigned int>(time(nullptr)));
+
 		if (isStandalone) { RuntimeConfig::EnableStandalone(); }
 
 		// INFO: Disable Support for DirectInput (Legacy API), now loads faster
