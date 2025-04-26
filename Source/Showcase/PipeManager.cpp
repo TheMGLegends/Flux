@@ -44,7 +44,7 @@ namespace Flux
 			// INFO: Scorer Creation
 			scorer = SceneContext::SpawnGameObject<Scorer>(position, Quaternion::Identity);
 			scorer->SetName("Scorer");
-			scorer->transform.lock()->SetScale(Vector3(0.75f, 1.0f, 1.0f));
+			scorer->GetComponent<BoxCollider>().lock()->SetSize(Vector3(0.75f, 1.0f, 1.0f));
 
 			// INFO: Bottom Pipe Creation
 			bottomPipe = SceneContext::SpawnGameObject<Pipe>(position, Quaternion::Identity);
