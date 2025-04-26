@@ -283,8 +283,7 @@ namespace Flux
 			{
 				return audio.IsPlaying();
 			}
-		}
-		
+		}	
 		return false;
 	}
 
