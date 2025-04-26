@@ -86,7 +86,7 @@
                     "UseGravity": true,
                     "IsKinematic": false,
                     "PositionConstraints": [
-                        true,
+                        false,
                         false,
                         true
                     ],

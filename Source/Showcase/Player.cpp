@@ -1,6 +1,8 @@
 #include "Player.h"
 
 #include "Barrier.h"
+#include "Pipe.h"
+#include "Scorer.h"
 
 #include "Core/Input/Input.h"
 
@@ -14,7 +16,7 @@ using namespace DirectX::SimpleMath;
 
 namespace Flux
 {
-	Player::Player() : jumpForce(5.0f), torqueScale(1.0f), isJumping(false), isDead(false)
+	Player::Player() : jumpForce(5.0f), deathDelay(2.0f), deathTimer(0.0f), isJumping(false), isDead(false)
 	{
 		sphereCollider = AddComponent<SphereCollider>(this);
 
@@ -30,8 +32,11 @@ namespace Flux
 	{
 		if (isDead)
 		{
-			if (!Audio::IsSoundPlaying("FlappyBirdDie"))
+			deathTimer += deltaTime;
+
+			if (deathTimer >= deathDelay)
 			{
+				deathTimer = 0.0f;
 				SceneContext::LoadScene("ShowcaseLevel");
 			}
 
@@ -54,11 +59,6 @@ namespace Flux
 		{
 			isJumping = false;
 
-			if (physicsBody.expired())
-			{
-				Debug::Log("Fucked");
-			}
-
 			if (auto pb = physicsBody.lock())
 			{
 				pb->AddForce({ 0.0f, jumpForce, 0.0f }, physx::PxForceMode::eIMPULSE);
@@ -67,8 +67,21 @@ namespace Flux
 
 	}
 
+	void Player::OnCollisionEnter(std::shared_ptr<Collider> other)
+	{
+		if (isDead) { return; }
+
+		if (dynamic_cast<Pipe*>(other->GetGameObject()))
+		{
+			isDead = true;
+			Audio::PlaySound2D("FlappyBirdHit", 0.75f);
+		}
+	}
+
 	void Player::OnTriggerExit(std::shared_ptr<Collider> other)
 	{
+		if (isDead) { return; }
+
 		if (dynamic_cast<Barrier*>(other->GetGameObject()))
 		{
 			isDead = true;

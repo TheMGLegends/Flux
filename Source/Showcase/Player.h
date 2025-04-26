@@ -18,7 +18,11 @@ namespace Flux
 
 		void Update(float deltaTime) override;
 		void FixedUpdate(float fixedDeltaTime) override;
+
+		void OnCollisionEnter(std::shared_ptr<Collider> other) override;
 		void OnTriggerExit(std::shared_ptr<Collider> other) override;
+
+		bool IsDead() const { return isDead; }
 
 	private:
 		std::weak_ptr<PhysicsBody> physicsBody;
@@ -26,7 +30,10 @@ namespace Flux
 		std::weak_ptr<Visualizer> visualizer;
 
 		float jumpForce;
-		float torqueScale;
+
+		float deathDelay;
+		float deathTimer;
+
 		bool isJumping;
 		bool isDead;
 	};
