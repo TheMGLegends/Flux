@@ -99,6 +99,7 @@ Here is a list of all the controls/features provided by the editor thus far:
 18. F4 - Toggle vsync (Editor)
 19. Custom Classes – To appear in Add GameObject, follow Cube/Sphere class examples
 20. Double Click (Audio Files in Contents Drawer) - Plays/Stops the audio
+21. F (Scene View + Object Selected) - Teleport to selected object location
 
 ## Getting the Engine
 
