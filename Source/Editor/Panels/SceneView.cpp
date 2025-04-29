@@ -21,6 +21,7 @@
 #include "Engine/Scene/SceneContext.h"
 #include "Engine/Entities/Components/Transform.h"
 #include "Engine/Entities/GameObjects/GameObject.h"
+#include "Engine/Entities/GameObjects/SceneViewCamera.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -101,6 +102,15 @@ namespace Flux
 				{
 					ImGui::SetWindowFocus();
 				}
+			}
+
+			const GameObject* selectedGameObject = sceneHierarchy != nullptr ? sceneHierarchy->GetSelectedGameObject() : nullptr;
+
+			// INFO: Teleport to selected GameObject with editor camera
+			if (Input::GetKeyDown(SDL_SCANCODE_F) && selectedGameObject && !Input::GetMouseButton(SDL_BUTTON_RIGHT) && !ImGuizmo::IsUsing())
+			{
+				auto transform = selectedGameObject->transform.lock();
+				SceneContext::GetScene().GetEditorCamera()->transform.lock()->SetPosition(transform->GetPosition());
 			}
 
 			ImVec2 windowSize = ImGui::GetWindowSize();
