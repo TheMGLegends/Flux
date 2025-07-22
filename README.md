@@ -2,7 +2,13 @@
 
 <p align="center">
   <a>
-    <img src="Assets/Default/FluxIcon.ico" width="200" height = "200" alt="Flux Engine logo">
+    <img src="Assets/Default/FluxIcon.ico" width="200" height = "200" alt="Flux Engine Logo">
+  </a>
+</p>
+
+<p align="center">
+  <a>
+    <img src="Assets/Default/Screenshots/FluxEngine.png" width="1920" height = "1080" alt="Flux Engine Editor">
   </a>
 </p>
 
