@@ -26,16 +26,29 @@
 -- postbuildcommands
 -- runtime
 
+newoption {
+    trigger = "config",
+    description = "Select the build configuration",
+    default = "Debug",
+    category = "Build Options",
+    allowed = { 
+        {"Debug", "Debug Build"}, 
+        {"Release", "Release Build"}
+    }
+}
+
 workspace "Flux"
     architecture "x86_64" -- Only 64-Bit Systems are Supported
     configurations { "Debug", "Release" }
     builddir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+    -- TODO Include External Library Premakes (They reference externalprojects with functions for setup into main project)
+    include "Flux/vendor/spdlog"
+
     -- Startup Project
     filter "action:vs*"
         startproject "Sandbox"
-
-    -- TODO Include External Library Premakes (They reference externalprojects with functions for setup into main project)
+        buildoptions { "/utf-8" }
 
     -- Main Project
     project "Flux"
@@ -47,14 +60,13 @@ workspace "Flux"
         targetdir ("build/" .. builddir .. "/%{prj.name}")
         objdir ("build-int/" .. builddir .. "/%{prj.name}")
 
-        -- Precompiled Header
-        pchheader "src/pch.h"
-        pchsource "src/pch.cpp"
+        -- TODO Precompiled Header
 
         -- Project Source Files
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
         -- TODO Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
+        UseSPDLOG()
 
         -- Flux Engine Include Directory
         includedirs { "%{prj.name}/src" }
