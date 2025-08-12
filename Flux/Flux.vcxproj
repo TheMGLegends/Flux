@@ -75,6 +75,11 @@
       <AdditionalLibraryDirectories>vendor\spdlog\install\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\build\Debug-windows-x86_64\Flux\Flux.lib</ImportLibrary>
     </Link>
+    <PreBuildEvent>
+      <Command>cmake -S vendor/spdlog -B vendor/spdlog/build/debug -G "Visual Studio 17 2022" -A x64 -DSPDLOG_USE_STD_FORMAT=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DCMAKE_INSTALL_PREFIX=vendor/spdlog/install/debug
+cmake --build vendor/spdlog/build/debug --config Debug
+cmake --install vendor/spdlog/build/debug --config Debug --prefix vendor/spdlog/install/debug</Command>
+    </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy /Q /E /Y /I ..\build\Debug-windows-x86_64\Flux\Flux.dll ..\build\Debug-windows-x86_64\Sandbox</Command>
     </PostBuildEvent>
@@ -104,6 +109,11 @@
       <AdditionalLibraryDirectories>vendor\spdlog\install\release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\build\Release-windows-x86_64\Flux\Flux.lib</ImportLibrary>
     </Link>
+    <PreBuildEvent>
+      <Command>cmake -S vendor/spdlog -B vendor/spdlog/build/release -G "Visual Studio 17 2022" -A x64 -DSPDLOG_USE_STD_FORMAT=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_INSTALL_PREFIX=vendor/spdlog/install/release
+cmake --build vendor/spdlog/build/release --config Release
+cmake --install vendor/spdlog/build/release --config Release --prefix vendor/spdlog/install/release</Command>
+    </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy /Q /E /Y /I ..\build\Release-windows-x86_64\Flux\Flux.dll ..\build\Release-windows-x86_64\Sandbox</Command>
     </PostBuildEvent>
