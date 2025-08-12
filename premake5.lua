@@ -1,30 +1,32 @@
+---@diagnostic disable: undefined-global
 -- Implementation Supports: Windows
 
--- Useful commands to integrate:
--- cppdialect
--- defines
--- externalproject
--- files
--- filter
--- includedirs
--- kind
--- language
--- libdirs
--- links
--- location
--- objdir
--- optimize
--- project
--- startproject
--- staticruntime
--- targetdir
--- warnings
--- workspace
--- pchheader
--- pchsource
--- systemversion
--- postbuildcommands
--- runtime
+--[[Useful Commands List:
+cppdialect
+defines
+externalproject
+files
+filter
+includedirs
+kind
+language
+libdirs
+links
+location
+objdir
+optimize
+project
+startproject
+staticruntime
+targetdir
+warnings
+workspace
+pchheader
+pchsource
+systemversion
+postbuildcommands
+runtime
+--]]
 
 newoption {
     trigger = "config",
@@ -43,7 +45,7 @@ workspace "Flux"
     builddir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
     -- TODO Include External Library Premakes (They reference externalprojects with functions for setup into main project)
-    include "Flux/vendor/spdlog"
+    include "Flux/vendor/spdlog" -- Logging Library
 
     -- Startup Project
     filter "action:vs*"
@@ -69,7 +71,7 @@ workspace "Flux"
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
         -- TODO Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
-        UseSPDLOG()
+        UseSPDLOG() -- Logging Library
 
         -- Flux Engine Include Directory
         includedirs { "%{prj.name}/src" }
@@ -101,7 +103,7 @@ workspace "Flux"
             optimize "On"
             runtime "Release"
         filter {}
-    
+
     -- Sandbox Project
     project "Sandbox"
         location "Sandbox"
@@ -115,11 +117,13 @@ workspace "Flux"
         -- Project Source Files
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
-        -- TODO Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
-        includedirs { "Flux/vendor/spdlog/include" }
+        -- Sandbox Include Directories
+        includedirs 
+        {
+            "Flux/vendor/spdlog/include", -- Logging Library
 
-        -- Sandbox Include Directory
-        includedirs { "Flux/src" }
+            "Flux/src" 
+        }
 
         -- Link to Flux Engine
         links { "Flux" }
