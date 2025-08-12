@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Flux">
+      <UniqueIdentifier>{044D857C-F083-860D-9970-6C108586020F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Flux\Events">
+      <UniqueIdentifier>{68AC69DE-D461-E2D3-5D56-DCAAC90AD9D7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Flux\Logging">
+      <UniqueIdentifier>{9AF142B6-8654-D25A-2FDA-0A111B1C9EDD}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Flux.h" />
+    <ClInclude Include="src\Flux\Application.h">
+      <Filter>Flux</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\Core.h">
+      <Filter>Flux</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\EntryPoint.h">
+      <Filter>Flux</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\Events\ApplicationEvent.h">
+      <Filter>Flux\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\Events\Event.h">
+      <Filter>Flux\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\Events\KeyEvent.h">
+      <Filter>Flux\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\Events\MouseEvent.h">
+      <Filter>Flux\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\Logging\CoreFormatter.h">
+      <Filter>Flux\Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\Logging\Log.h">
+      <Filter>Flux\Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FluxPCH.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Flux\Application.cpp">
+      <Filter>Flux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Flux\Logging\CoreFormatter.cpp">
+      <Filter>Flux\Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Flux\Logging\Log.cpp">
+      <Filter>Flux\Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FluxPCH.cpp" />
+  </ItemGroup>
+</Project>

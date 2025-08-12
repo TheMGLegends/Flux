@@ -49,6 +49,7 @@ workspace "Flux"
     filter "action:vs*"
         startproject "Sandbox"
         buildoptions { "/utf-8" }
+    filter {}
 
     -- Main Project
     project "Flux"
@@ -60,7 +61,9 @@ workspace "Flux"
         targetdir ("build/" .. builddir .. "/%{prj.name}")
         objdir ("build-int/" .. builddir .. "/%{prj.name}")
 
-        -- TODO Precompiled Header
+        -- Precompiled Header
+        pchheader "FluxPCH.h"
+        pchsource "Flux/src/FluxPCH.cpp"
 
         -- Project Source Files
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
@@ -83,18 +86,21 @@ workspace "Flux"
             systemversion "latest"
 
             defines { "FLUX_PLATFORM_WINDOWS", "FLUX_BUILD_DLL" }
+        filter {}
 
         -- Debug Configuration Settings
         filter "configurations:Debug"
             defines { "FLUX_DEBUG" }
             symbols "On"
             runtime "Debug"
+        filter {}
 
         -- Release Configuration Settings
         filter "configurations:Release"
             defines { "FLUX_RELEASE" }
             optimize "On"
             runtime "Release"
+        filter {}
     
     -- Sandbox Project
     project "Sandbox"
@@ -110,17 +116,13 @@ workspace "Flux"
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
         -- TODO Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
+        includedirs { "Flux/vendor/spdlog/include" }
 
         -- Sandbox Include Directory
-        includedirs { "%{prj.name}/src" }
+        includedirs { "Flux/src" }
 
         -- Link to Flux Engine
         links { "Flux" }
-
-        -- Post Build Commands (Copy Executable into Running Project Build Directory)
-        local sourceDir = "%{cfg.buildtarget.relpath}"
-        local destinationDir = "../build/" .. builddir .. "/Sandbox"
-        postbuildcommands { "{COPYDIR} " .. sourceDir .. " " .. destinationDir }
 
         -- Windows Specific Settings
         filter "system:windows"
@@ -129,15 +131,18 @@ workspace "Flux"
             systemversion "latest"
 
             defines { "FLUX_PLATFORM_WINDOWS" }
+        filter {}
 
         -- Debug Configuration Settings
         filter "configurations:Debug"
             defines { "FLUX_DEBUG" }
             symbols "On"
             runtime "Debug"
+        filter {}
 
         -- Release Configuration Settings
         filter "configurations:Release"
             defines { "FLUX_RELEASE" }
             optimize "On"
             runtime "Release"
+        filter {}

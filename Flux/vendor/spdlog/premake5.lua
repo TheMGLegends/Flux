@@ -14,16 +14,18 @@ elseif os.host() == "windows" and _OPTIONS["config"] == "Release" then
 end
 
 function UseSPDLOG()
-    defines { "SPDLOG_COMPILED_LIB" }
+    defines { "SPDLOG_COMPILED_LIB", "SPDLOG_USE_STD_FORMAT" }
     includedirs { "Flux/vendor/spdlog/include" }
 
     filter "configurations:Debug"
         links { "spdlogd" }
         libdirs { "Flux/vendor/spdlog/install/debug/lib" }
+    filter {}
     
     filter "configurations:Release"
         links { "spdlog" }
         libdirs { "Flux/vendor/spdlog/install/release/lib" }
+    filter {}
 end
 
 -- TODO Make external project so it shows up in the solution
