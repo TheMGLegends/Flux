@@ -1,4 +1,5 @@
----@diagnostic disable: undefined-global
+---@diagnostic disable: undefined-global, lowercase-global
+
 -- Implementation Supports: Windows
 
 --[[Useful Commands List:
@@ -28,23 +29,13 @@ postbuildcommands
 runtime
 --]]
 
-newoption {
-    trigger = "config",
-    description = "Select the build configuration",
-    default = "Debug",
-    category = "Build Options",
-    allowed = { 
-        {"Debug", "Debug Build"}, 
-        {"Release", "Release Build"}
-    }
-}
-
 workspace "Flux"
     architecture "x86_64" -- Only 64-Bit Systems are Supported
     configurations { "Debug", "Release" }
     builddir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
     -- TODO Include External Library Premakes (They reference externalprojects with functions for setup into main project)
+    include "Flux/vendor/entt" -- Entity-Component-System Library
     include "Flux/vendor/spdlog" -- Logging Library
 
     -- Startup Project
@@ -71,6 +62,7 @@ workspace "Flux"
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
         -- TODO Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
+        UseENTT() -- Entity-Component-System Library
         UseSPDLOG() -- Logging Library
 
         -- Flux Engine Include Directory
@@ -118,11 +110,12 @@ workspace "Flux"
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
         -- Sandbox Include Directories
-        includedirs 
+        includedirs
         {
+            "Flux/vendor/entt/single_include", -- Entity-Component-System Library
             "Flux/vendor/spdlog/include", -- Logging Library
 
-            "Flux/src" 
+            "Flux/src"
         }
 
         -- Link to Flux Engine
