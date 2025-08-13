@@ -59,8 +59,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>FluxPCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;FLUX_PLATFORM_WINDOWS;FLUX_BUILD_DLL;FLUX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\entt\single_include;vendor\spdlog\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_BUILD_DLL;FLUX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>vendor\entt\single_include;vendor\spdlog\include;vendor\yaml-cpp\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -71,8 +71,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>spdlogd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\spdlog\install\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>spdlogd.lib;yaml-cppd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\spdlog\install\debug\lib;vendor\yaml-cpp\install\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\build\Debug-windows-x86_64\Flux\Flux.lib</ImportLibrary>
     </Link>
     <PreBuildEvent>
@@ -81,7 +81,10 @@ cmake --build vendor/entt/build/debug --config Debug
 cmake --install vendor/entt/build/debug --config Debug --prefix vendor/entt/install/debug
 cmake -S vendor/spdlog -B vendor/spdlog/build/debug -G "Visual Studio 17 2022" -A x64 -DSPDLOG_USE_STD_FORMAT=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DCMAKE_INSTALL_PREFIX=vendor/spdlog/install/debug
 cmake --build vendor/spdlog/build/debug --config Debug
-cmake --install vendor/spdlog/build/debug --config Debug --prefix vendor/spdlog/install/debug</Command>
+cmake --install vendor/spdlog/build/debug --config Debug --prefix vendor/spdlog/install/debug
+cmake -S vendor/yaml-cpp -B vendor/yaml-cpp/build/debug -G "Visual Studio 17 2022" -A x64 -DYAML_CPP_INSTALL=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DCMAKE_INSTALL_PREFIX=vendor/yaml-cpp/install/debug
+cmake --build vendor/yaml-cpp/build/debug --config Debug
+cmake --install vendor/yaml-cpp/build/debug --config Debug --prefix vendor/yaml-cpp/install/debug</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy /Q /E /Y /I ..\build\Debug-windows-x86_64\Flux\Flux.dll ..\build\Debug-windows-x86_64\Sandbox</Command>
@@ -92,8 +95,8 @@ cmake --install vendor/spdlog/build/debug --config Debug --prefix vendor/spdlog/
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>FluxPCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;FLUX_PLATFORM_WINDOWS;FLUX_BUILD_DLL;FLUX_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\entt\single_include;vendor\spdlog\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_BUILD_DLL;FLUX_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>vendor\entt\single_include;vendor\spdlog\include;vendor\yaml-cpp\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -108,8 +111,8 @@ cmake --install vendor/spdlog/build/debug --config Debug --prefix vendor/spdlog/
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>spdlog.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\spdlog\install\release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>spdlog.lib;yaml-cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\spdlog\install\release\lib;vendor\yaml-cpp\install\release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\build\Release-windows-x86_64\Flux\Flux.lib</ImportLibrary>
     </Link>
     <PreBuildEvent>
@@ -118,7 +121,10 @@ cmake --build vendor/entt/build/release --config Release
 cmake --install vendor/entt/build/release --config Release --prefix vendor/entt/install/release
 cmake -S vendor/spdlog -B vendor/spdlog/build/release -G "Visual Studio 17 2022" -A x64 -DSPDLOG_USE_STD_FORMAT=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_INSTALL_PREFIX=vendor/spdlog/install/release
 cmake --build vendor/spdlog/build/release --config Release
-cmake --install vendor/spdlog/build/release --config Release --prefix vendor/spdlog/install/release</Command>
+cmake --install vendor/spdlog/build/release --config Release --prefix vendor/spdlog/install/release
+cmake -S vendor/yaml-cpp -B vendor/yaml-cpp/build/release -G "Visual Studio 17 2022" -A x64 -DYAML_CPP_INSTALL=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_INSTALL_PREFIX=vendor/yaml-cpp/install/release
+cmake --build vendor/yaml-cpp/build/release --config Release
+cmake --install vendor/yaml-cpp/build/release --config Release --prefix vendor/yaml-cpp/install/release</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy /Q /E /Y /I ..\build\Release-windows-x86_64\Flux\Flux.dll ..\build\Release-windows-x86_64\Sandbox</Command>

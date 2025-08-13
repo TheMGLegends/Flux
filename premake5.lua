@@ -35,8 +35,9 @@ workspace "Flux"
     builddir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
     -- TODO Include External Library Premakes (They reference externalprojects with functions for setup into main project)
-    include "Flux/vendor/entt" -- Entity-Component-System Library
-    include "Flux/vendor/spdlog" -- Logging Library
+    include "Flux/vendor/entt"      -- Entity-Component-System Library
+    include "Flux/vendor/spdlog"    -- Logging Library
+    include "Flux/vendor/yaml-cpp"  -- YAML Parser Library
 
     -- Startup Project
     filter "action:vs*"
@@ -62,8 +63,9 @@ workspace "Flux"
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
         -- TODO Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
-        UseENTT() -- Entity-Component-System Library
+        UseENTT()   -- Entity-Component-System Library
         UseSPDLOG() -- Logging Library
+        UseYAML()   -- YAML Parser Library
 
         -- Flux Engine Include Directory
         includedirs { "%{prj.name}/src" }
@@ -112,8 +114,9 @@ workspace "Flux"
         -- Sandbox Include Directories
         includedirs
         {
-            "Flux/vendor/entt/single_include", -- Entity-Component-System Library
-            "Flux/vendor/spdlog/include", -- Logging Library
+            "Flux/vendor/entt/single_include",  -- Entity-Component-System Library
+            "Flux/vendor/spdlog/include",       -- Logging Library
+            "Flux/vendor/yaml-cpp/include",     -- YAML Parser Library
 
             "Flux/src"
         }
