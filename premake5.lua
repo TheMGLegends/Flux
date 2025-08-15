@@ -37,6 +37,7 @@ workspace "Flux"
     -- TODO Include External Library Premakes (They reference externalprojects with functions for setup into main project)
     include "Flux/vendor/box2d"      -- 2D Physics Library
     include "Flux/vendor/entt"      -- Entity-Component-System Library
+    include "Flux/vendor/sfml"      -- Simple and Fast Multimedia Library
     include "Flux/vendor/spdlog"    -- Logging Library
     include "Flux/vendor/yaml-cpp"  -- YAML Parser Library
 
@@ -66,6 +67,7 @@ workspace "Flux"
         -- TODO Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
         UseBOX2D()   -- 2D Physics Library
         UseENTT()   -- Entity-Component-System Library
+        UseSFML()   -- Simple and Fast Multimedia Library
         UseSPDLOG() -- Logging Library
         UseYAML()   -- YAML Parser Library
 
@@ -118,6 +120,7 @@ workspace "Flux"
         {
             "Flux/vendor/box2d/include",        -- 2D Physics Library
             "Flux/vendor/entt/single_include",  -- Entity-Component-System Library
+            "Flux/vendor/sfml/include",         -- Simple and Fast Multimedia Library
             "Flux/vendor/spdlog/include",       -- Logging Library
             "Flux/vendor/yaml-cpp/include",     -- YAML Parser Library
 

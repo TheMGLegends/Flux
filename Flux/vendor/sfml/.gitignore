@@ -3,5 +3,6 @@
 .vs/
 .vscode/
 build/
+install/
 cmake-build-*/
 CMakeUserPresets.json
