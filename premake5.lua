@@ -29,6 +29,10 @@ postbuildcommands
 runtime
 --]]
 
+function DirectoryExists(path)
+    return os.rename(path, path) and os.isdir(path)
+end
+
 workspace "Flux"
     architecture "x86_64" -- Only 64-Bit Systems are Supported
     configurations { "Debug", "Release" }
