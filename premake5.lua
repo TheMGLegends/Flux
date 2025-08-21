@@ -1,4 +1,4 @@
----@diagnostic disable: undefined-global, lowercase-global
+---@diagnostic disable: undefined-global, lowercase-global, undefined-field
 
 -- Implementation Supports: Windows
 
@@ -38,7 +38,7 @@ workspace "Flux"
     configurations { "Debug", "Release" }
     builddir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-    -- TODO Include External Library Premakes (They reference externalprojects with functions for setup into main project)
+    -- Include External Library Premakes
     include "Flux/vendor/box2d"      -- 2D Physics Library
     include "Flux/vendor/entt"      -- Entity-Component-System Library
     include "Flux/vendor/sfml"      -- Simple and Fast Multimedia Library
@@ -68,7 +68,7 @@ workspace "Flux"
         -- Project Source Files
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
-        -- TODO Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
+        -- Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
         UseBOX2D()   -- 2D Physics Library
         UseENTT()   -- Entity-Component-System Library
         UseSFML()   -- Simple and Fast Multimedia Library
@@ -81,7 +81,11 @@ workspace "Flux"
         -- Post Build Commands (Copy DLL into Running Project Build Directory)
         local sourceDir = "%{cfg.buildtarget.relpath}"
         local destinationDir = "../build/" .. builddir .. "/Sandbox"
-        postbuildcommands { "{COPYDIR} " .. sourceDir .. " " .. destinationDir }
+        postbuildcommands
+        {
+            "{MKDIR} " .. destinationDir,
+            "{COPYDIR} " .. sourceDir .. " " .. destinationDir
+        }
 
         -- Windows Specific Settings
         filter "system:windows"

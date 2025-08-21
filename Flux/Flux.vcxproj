@@ -76,7 +76,8 @@
       <ImportLibrary>..\build\Debug-windows-x86_64\Flux\Flux.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Q /E /Y /I ..\build\Debug-windows-x86_64\Flux\Flux.dll ..\build\Debug-windows-x86_64\Sandbox</Command>
+      <Command>IF NOT EXIST ..\build\Debug-windows-x86_64\Sandbox (mkdir ..\build\Debug-windows-x86_64\Sandbox)
+xcopy /Q /E /Y /I ..\build\Debug-windows-x86_64\Flux\Flux.dll ..\build\Debug-windows-x86_64\Sandbox</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -105,7 +106,8 @@
       <ImportLibrary>..\build\Release-windows-x86_64\Flux\Flux.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Q /E /Y /I ..\build\Release-windows-x86_64\Flux\Flux.dll ..\build\Release-windows-x86_64\Sandbox</Command>
+      <Command>IF NOT EXIST ..\build\Release-windows-x86_64\Sandbox (mkdir ..\build\Release-windows-x86_64\Sandbox)
+xcopy /Q /E /Y /I ..\build\Release-windows-x86_64\Flux\Flux.dll ..\build\Release-windows-x86_64\Sandbox</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

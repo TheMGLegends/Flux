@@ -20,7 +20,7 @@ function UseYAML()
         links { "yaml-cppd" }
         libdirs { "Flux/vendor/yaml-cpp/install/debug/lib" }
     filter {}
-    
+
     filter "configurations:Release"
         -- Release Build for Windows (VS 2022)
         if not DirectoryExists("Flux/vendor/yaml-cpp/install/release") then

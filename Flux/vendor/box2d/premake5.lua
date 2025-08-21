@@ -19,7 +19,7 @@ function UseBOX2D()
         links { "box2dd" }
         libdirs { "Flux/vendor/box2d/install/debug/lib" }
     filter {}
-    
+
     filter "configurations:Release"
         -- Release Build for Windows (VS 2022)
         if not DirectoryExists("Flux/vendor/box2d/install/release") then

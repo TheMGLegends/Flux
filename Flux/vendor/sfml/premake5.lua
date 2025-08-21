@@ -43,7 +43,7 @@ function UseSFML()
         }
         libdirs { "Flux/vendor/sfml/install/debug/lib" }
     filter {}
-    
+
     filter "configurations:Release"
         -- Release Build for Windows (VS 2022)
         if not DirectoryExists("Flux/vendor/sfml/install/release") then

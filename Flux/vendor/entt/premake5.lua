@@ -16,7 +16,7 @@ function UseENTT()
             }
         end
     filter {}
-    
+
     filter "configurations:Release"
         -- Release Build for Windows (VS 2022)
         if not DirectoryExists("Flux/vendor/entt/install/release") then
