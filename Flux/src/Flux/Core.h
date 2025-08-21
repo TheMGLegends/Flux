@@ -17,10 +17,14 @@ constexpr int FLUX_FAILURE = 1;
 
 #define FLUX_FAILED(x) ((x) != FLUX_SUCCESS)
 
-// INFO: Custom Assertion Macro
+// INFO: Custom Assertion Macros
 #ifdef FLUX_DEBUG
-	#define FLUX_ASSERT(expression, message) assert((message, expression))
+	#define FLUX_MINIMAL_ASSERT(expression) if (!(expression)) { __debugbreak(); }
+	#define FLUX_CORE_ASSERT(expression, message) if (!(expression)) { FLUX_CORE_ERROR("Assertion Failed: {0}", message); __debugbreak(); }
+	#define FLUX_ASSERT(expression, message) if (!(expression)) { FLUX_ERROR("Assertion Failed: {0}", message); __debugbreak(); }
 #else
+	#define FLUX_MINIMAL_ASSERT(expression) ((void)0)
+	#define FLUX_CORE_ASSERT(expression, message) ((void)0)
 	#define FLUX_ASSERT(expression, message) ((void)0)
 #endif
 

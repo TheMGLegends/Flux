@@ -25,7 +25,7 @@ namespace Flux
 
 	void MultiLevelFormatter::SetPattern(const std::string& pattern, spdlog::level::level_enum level)
 	{
-		FLUX_ASSERT(level < spdlog::level::n_levels, "Invalid log level provided for pattern setting!");
+		FLUX_CORE_ASSERT(level < spdlog::level::n_levels, "Invalid log level provided for pattern setting!");
 
 		// INFO: Set the Provided Pattern for the Specific Log Level
 		patterns[level] = pattern;
@@ -34,7 +34,7 @@ namespace Flux
 
 	const std::string& MultiLevelFormatter::GetPattern(spdlog::level::level_enum level) const
 	{
-		FLUX_ASSERT(level < spdlog::level::n_levels, "Invalid log level provided for pattern retrieval!");
+		FLUX_CORE_ASSERT(level < spdlog::level::n_levels, "Invalid log level provided for pattern retrieval!");
 		return patterns[level];
 	}
 

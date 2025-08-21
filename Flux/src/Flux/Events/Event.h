@@ -1,9 +1,9 @@
 #pragma once
 
-#include <string>
-#include <sstream>
-
 #include "Flux/Core.h"
+
+#include <string>
+#include <functional>
 
 namespace Flux
 {
@@ -40,7 +40,6 @@ namespace Flux
 		friend class EventDispatcher;
 		
 	public:
-		Event() = default;
 		virtual ~Event() = default;
 
 		virtual EventType GetEventType() const = 0;

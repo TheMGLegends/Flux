@@ -2,6 +2,8 @@
 
 #include "Event.h"
 
+#include <sstream>
+
 namespace Flux
 {
 	class FLUX_API WindowCloseEvent : public Event

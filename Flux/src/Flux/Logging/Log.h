@@ -1,16 +1,19 @@
 #pragma once
 
+#include "Flux/Core.h"
+
 #if defined(FLUX_DEBUG)
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+	#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #elif defined(FLUX_RELEASE)
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
+	#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
 #endif
 #include <spdlog/spdlog.h>
 
-#include "Flux/Core.h"
-
 namespace Flux
 {
+	/// <summary>
+	/// Wrapper class for logging system provided by spdlog
+	/// </summary>
 	class FLUX_API Log
 	{
 	public:
@@ -20,9 +23,6 @@ namespace Flux
 		Log& operator=(const Log&) = delete;
 		~Log() = delete;
 
-		/// <summary>
-		/// Wrapper class used to initialise the logging system provided by spdlog
-		/// </summary>
 		static void Initialise();
 
 		static std::shared_ptr<spdlog::logger>& GetCoreLogger();

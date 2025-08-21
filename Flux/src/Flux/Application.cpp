@@ -2,6 +2,7 @@
 
 #include "Application.h"
 
+// TEMP: Testing the window creation
 #include <sfml/Window.hpp>
 
 namespace Flux
