@@ -9,6 +9,7 @@ namespace Flux
 	void Application::Run()
 	{
         sf::Window window(sf::VideoMode({ 800,600 }), "My Window");
+		FLUX_CORE_INFO("Window created with size: {}x{}", window.getSize().x, window.getSize().y);
 
         // run the program as long as the window is open
         while (window.isOpen())

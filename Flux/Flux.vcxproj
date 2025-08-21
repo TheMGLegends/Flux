@@ -119,13 +119,13 @@ xcopy /Q /E /Y /I ..\build\Release-windows-x86_64\Flux\Flux.dll ..\build\Release
     <ClInclude Include="src\Flux\Events\Event.h" />
     <ClInclude Include="src\Flux\Events\KeyEvent.h" />
     <ClInclude Include="src\Flux\Events\MouseEvent.h" />
-    <ClInclude Include="src\Flux\Logging\CoreFormatter.h" />
+    <ClInclude Include="src\Flux\Logging\Formatters\MultiLevelFormatter.h" />
     <ClInclude Include="src\Flux\Logging\Log.h" />
     <ClInclude Include="src\FluxPCH.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Flux\Application.cpp" />
-    <ClCompile Include="src\Flux\Logging\CoreFormatter.cpp" />
+    <ClCompile Include="src\Flux\Logging\Formatters\MultiLevelFormatter.cpp" />
     <ClCompile Include="src\Flux\Logging\Log.cpp" />
     <ClCompile Include="src\FluxPCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

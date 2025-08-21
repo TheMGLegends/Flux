@@ -23,9 +23,9 @@
 #include <unordered_set>
 #include <vector>
 
-// INFO: Flux Header Files
-//#include "Flux/Logging/Log.h"
-
 #ifdef FLUX_PLATFORM_WINDOWS
-	#include <Windows.h>
+#include <Windows.h>
 #endif
+
+// INFO: Flux Header Files
+#include "Flux/Logging/Log.h"

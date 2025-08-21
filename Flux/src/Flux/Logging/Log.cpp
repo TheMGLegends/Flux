@@ -2,8 +2,9 @@
 
 #include "Log.h"
 
-#include "CoreFormatter.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include <spdlog/sinks/stdout_color_sinks.h>
+
+#include "Formatters/MultiLevelFormatter.h"
 
 namespace Flux
 {
@@ -16,7 +17,7 @@ namespace Flux
 		// INFO: Core Logger Creation
 		auto coreSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 		FLUX_ASSERT(coreSink != nullptr, "Core Sink failed to initialise!"); // INFO: Using assert because you cannot log without a logger
-		coreSink->set_formatter(std::make_unique<CoreFormatter>());
+		coreSink->set_formatter(std::make_unique<MultiLevelFormatter>());
 
 		coreLogger = std::make_shared<spdlog::logger>("FLUX", coreSink);
 		FLUX_ASSERT(coreLogger != nullptr, "Core Logger failed to initialise!");

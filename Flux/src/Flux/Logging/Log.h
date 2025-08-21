@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Flux/Core.h"
-
 #if defined(FLUX_DEBUG)
-	#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #elif defined(FLUX_RELEASE)
-	#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
 #endif
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
+
+#include "Flux/Core.h"
 
 namespace Flux
 {

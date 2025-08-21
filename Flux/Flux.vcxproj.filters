@@ -34,7 +34,7 @@
     <ClInclude Include="src\Flux\Events\MouseEvent.h">
       <Filter>Flux\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Flux\Logging\CoreFormatter.h">
+    <ClInclude Include="src\Flux\Logging\Formatters\MultiLevelFormatter.h">
       <Filter>Flux\Logging</Filter>
     </ClInclude>
     <ClInclude Include="src\Flux\Logging\Log.h">
@@ -46,7 +46,7 @@
     <ClCompile Include="src\Flux\Application.cpp">
       <Filter>Flux</Filter>
     </ClCompile>
-    <ClCompile Include="src\Flux\Logging\CoreFormatter.cpp">
+    <ClCompile Include="src\Flux\Logging\Formatters\MultiLevelFormatter.cpp">
       <Filter>Flux\Logging</Filter>
     </ClCompile>
     <ClCompile Include="src\Flux\Logging\Log.cpp">

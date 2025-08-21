@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <sstream>
+
 #include "Flux/Core.h"
 
 namespace Flux
