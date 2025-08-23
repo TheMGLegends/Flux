@@ -11,7 +11,7 @@ namespace Flux
 	public:
 		inline int GetButtonCode() const { return buttonCode; }
 
-		EVENT_CLASS_CATEGORY(EventCategoryMouseButton | EventCategoryInput);
+		EVENT_CLASS_CATEGORY(EventCategory::MouseButton | EventCategory::Input);
 
 	protected:
 		MouseButtonEvent(int buttonCode) : buttonCode(buttonCode) {}
@@ -31,7 +31,7 @@ namespace Flux
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseButtonPressed);
+		EVENT_CLASS_TYPE(EventType::MouseButtonPressed);
 	};
 
 	class FLUX_API MouseButtonReleasedEvent : public MouseButtonEvent
@@ -46,7 +46,7 @@ namespace Flux
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseButtonReleased);
+		EVENT_CLASS_TYPE(EventType::MouseButtonReleased);
 	};
 
 	class FLUX_API MouseMovedEvent : public Event
@@ -64,8 +64,8 @@ namespace Flux
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseMoved);
-		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput);
+		EVENT_CLASS_TYPE(EventType::MouseMoved);
+		EVENT_CLASS_CATEGORY(EventCategory::Mouse | EventCategory::Input);
 
 	private:
 		float mouseX;
@@ -87,8 +87,8 @@ namespace Flux
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseScrolled);
-		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput);
+		EVENT_CLASS_TYPE(EventType::MouseScrolled);
+		EVENT_CLASS_CATEGORY(EventCategory::Mouse | EventCategory::Input);
 
 	private:
 		float offsetX;

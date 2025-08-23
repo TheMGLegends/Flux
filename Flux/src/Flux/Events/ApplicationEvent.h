@@ -11,8 +11,8 @@ namespace Flux
 	public:
 		WindowCloseEvent() = default;
 
-		EVENT_CLASS_TYPE(WindowClose);
-		EVENT_CLASS_CATEGORY(EventCategoryApplication);
+		EVENT_CLASS_TYPE(EventType::WindowClose);
+		EVENT_CLASS_CATEGORY(EventCategory::Application);
 	};
 
 	class FLUX_API WindowResizeEvent : public Event
@@ -30,8 +30,8 @@ namespace Flux
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(WindowResize);
-		EVENT_CLASS_CATEGORY(EventCategoryApplication);
+		EVENT_CLASS_TYPE(EventType::WindowResize);
+		EVENT_CLASS_CATEGORY(EventCategory::Application);
 
 	private:
 		unsigned int width;

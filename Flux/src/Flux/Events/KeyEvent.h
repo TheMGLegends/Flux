@@ -11,7 +11,7 @@ namespace Flux
 	public:
 		inline int GetKeyCode() const { return keyCode; }
 
-		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput);
+		EVENT_CLASS_CATEGORY(EventCategory::Keyboard | EventCategory::Input);
 
 	protected:
 		KeyEvent(int keyCode) : keyCode(keyCode) {}
@@ -34,7 +34,7 @@ namespace Flux
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(KeyPressed);
+		EVENT_CLASS_TYPE(EventType::KeyPressed);
 
 	private:
 		int repeatCount;
@@ -52,6 +52,6 @@ namespace Flux
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(KeyReleased);
+		EVENT_CLASS_TYPE(EventType::KeyReleased);
 	};
 }

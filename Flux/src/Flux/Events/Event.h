@@ -3,6 +3,7 @@
 #include "Flux/Core.h"
 
 #include <string>
+#include <format>
 #include <functional>
 
 namespace Flux
@@ -17,24 +18,22 @@ namespace Flux
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled		// Mouse Events
 	};
 
-	// TODO: Convert to Enum Class (And create custom operator overloads as needed)
 	enum EventCategory
 	{
-		None = 0,
-		EventCategoryApplication	= BIT(0),
-		EventCategoryInput			= BIT(1),
-		EventCategoryKeyboard		= BIT(2),
-		EventCategoryMouse			= BIT(3),
-		EventCategoryMouseButton	= BIT(4)
+		None			= 0,
+		Application		= BIT(0),
+		Input			= BIT(1),
+		Keyboard		= BIT(2),
+		Mouse			= BIT(3),
+		MouseButton		= BIT(4)
 	};
 
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; } \
+#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return type; } \
 							   virtual EventType GetEventType() const override { return GetStaticType(); } \
 							   virtual const char* GetName() const override { return #type; }
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-	// TODO: Think of what functions are Debug only (Not in Release)
 	class FLUX_API Event
 	{
 		friend class EventDispatcher;
@@ -82,10 +81,15 @@ namespace Flux
 	private:
 		Event& event;
 	};
-
-	// TODO: Doesn't work for spdlog, need to make a custom formatter for Event class
-	inline std::ostream& operator<<(std::ostream& os, const Event& e)
-	{
-		return os << e.ToString();
-	}
 }
+
+// INFO: Provide std::formatter specializations for all Event derived classes when logging
+template <std::derived_from<Flux::Event> Derived, typename CharT>
+struct std::formatter<Derived, CharT> : std::formatter<std::string>
+{
+	template <typename FormatContext>
+	FormatContext::iterator format(const Derived& event, FormatContext& ctx) const 
+	{
+		return std::formatter<std::string>::format(event.ToString(), ctx);
+	}
+};
