@@ -3,9 +3,10 @@
 #include "Flux/Core.h"
 
 #include <memory>
-#include <sfml/Graphics/RenderWindow.hpp>
 
 #include "Flux/Events/Event.h"
+
+namespace sf { class RenderWindow; }
 
 namespace Flux
 {

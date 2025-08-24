@@ -78,9 +78,22 @@ workspace "Flux"
         -- Flux Engine Include Directory
         includedirs { "%{prj.name}/src" }
 
-        -- Post Build Commands (Copy DLL into Running Project Build Directory)
+        -- Post Build Commands 
+        
+        -- Copy DLL into Running Project Build Director
         local sourceDir = "%{cfg.buildtarget.relpath}"
         local destinationDir = "../build/" .. builddir .. "/Sandbox"
+
+        postbuildcommands
+        {
+            "{MKDIR} " .. destinationDir,
+            "{COPYDIR} " .. sourceDir .. " " .. destinationDir
+        }
+
+        -- Copy Resources into Executing Project Working Directory
+        sourceDir = "resources"
+        destinationDir = "../Sandbox/resources"
+
         postbuildcommands
         {
             "{MKDIR} " .. destinationDir,

@@ -2,18 +2,24 @@
 
 #include "Core.h"
 
+#include <memory>
+
+#include "Window/Window.h"
+
 namespace Flux
 {
 	class FLUX_API Application
 	{
 	public:
-		Application() = default;
+		Application();
 		virtual ~Application() = default;
 
 		void Run();
 
-		// TEMP: Testing receiving events
-		bool OnWindowResizeEvent(class WindowResizeEvent& e);
+	private:
+		bool isRunning;
+
+		std::unique_ptr<Window> window;
 	};
 
 	// INFO: Defined by client to create custom entry point 

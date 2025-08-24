@@ -77,7 +77,9 @@
     </Link>
     <PostBuildEvent>
       <Command>IF NOT EXIST ..\build\Debug-windows-x86_64\Sandbox (mkdir ..\build\Debug-windows-x86_64\Sandbox)
-xcopy /Q /E /Y /I ..\build\Debug-windows-x86_64\Flux\Flux.dll ..\build\Debug-windows-x86_64\Sandbox</Command>
+xcopy /Q /E /Y /I ..\build\Debug-windows-x86_64\Flux\Flux.dll ..\build\Debug-windows-x86_64\Sandbox
+IF NOT EXIST ..\Sandbox\resources (mkdir ..\Sandbox\resources)
+xcopy /Q /E /Y /I resources ..\Sandbox\resources</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -107,7 +109,9 @@ xcopy /Q /E /Y /I ..\build\Debug-windows-x86_64\Flux\Flux.dll ..\build\Debug-win
     </Link>
     <PostBuildEvent>
       <Command>IF NOT EXIST ..\build\Release-windows-x86_64\Sandbox (mkdir ..\build\Release-windows-x86_64\Sandbox)
-xcopy /Q /E /Y /I ..\build\Release-windows-x86_64\Flux\Flux.dll ..\build\Release-windows-x86_64\Sandbox</Command>
+xcopy /Q /E /Y /I ..\build\Release-windows-x86_64\Flux\Flux.dll ..\build\Release-windows-x86_64\Sandbox
+IF NOT EXIST ..\Sandbox\resources (mkdir ..\Sandbox\resources)
+xcopy /Q /E /Y /I resources ..\Sandbox\resources</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

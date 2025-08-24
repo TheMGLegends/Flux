@@ -2,30 +2,21 @@
 
 #include "Application.h"
 
-// TEMP: Testing the window creation
-#include "Flux/Events/ApplicationEvent.h"
-#include "Flux/Window/Window.h"
-#include "Flux/Logging/Formatters/MultiLevelFormatter.h"
-#include <sfml/Window.hpp>
-
 namespace Flux
 {
-	void Application::Run()
+	Application::Application() : isRunning(false)
 	{
-		// TEMP: Testing the window creation
-        Window window;
+		window = std::make_unique<Window>();
+		FLUX_CORE_ASSERT(window != nullptr, "Failed to create Flux Window!");
 
-        WindowResizeEvent e(800, 600);
-		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Application::OnWindowResizeEvent, this, std::placeholders::_1));
-
-		window.Update();
+		isRunning = true;
 	}
 
-    bool Application::OnWindowResizeEvent(WindowResizeEvent& e)
-    {
-		FLUX_CORE_WARN("Event received: {}", e);
-
-        return false;
-    }
+	void Application::Run()
+	{
+		while (isRunning)
+		{
+			window->Update();
+		}
+	}
 }
