@@ -28,7 +28,7 @@ namespace Flux
 		MouseButton		= BIT(4)
 	};
 
-	int operator|(EventCategory a, EventCategory b)
+	inline int operator|(EventCategory a, EventCategory b)
 	{
 		return (static_cast<int>(a) | static_cast<int>(b));
 	}
@@ -42,7 +42,7 @@ namespace Flux
 	class FLUX_API Event
 	{
 		friend class EventDispatcher;
-		
+
 	public:
 		virtual ~Event() = default;
 
@@ -58,6 +58,12 @@ namespace Flux
 
 	protected:
 		bool handled = false;
+	};
+
+	class IOnEvent
+	{
+	public:
+		virtual void OnEvent(Event& event) = 0;
 	};
 
 	class EventDispatcher
@@ -87,7 +93,7 @@ namespace Flux
 }
 
 // INFO: Specialization for Logging Event Derived Types
-template <std::derived_from<Flux::Event> Derived, typename CharT>
+template<std::derived_from<Flux::Event> Derived, typename CharT>
 struct std::formatter<Derived, CharT> : std::formatter<std::string>
 {
 	template <typename FormatContext>

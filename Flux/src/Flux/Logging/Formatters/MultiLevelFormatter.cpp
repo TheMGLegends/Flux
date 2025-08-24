@@ -1,4 +1,4 @@
-#include "FluxPCH.h" // INFO: Precompiled Header
+#include "FluxPCH.h"
 
 #include "MultiLevelFormatter.h"
 

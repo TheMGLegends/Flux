@@ -10,6 +10,12 @@
     <Filter Include="Flux\Logging">
       <UniqueIdentifier>{9AF142B6-8654-D25A-2FDA-0A111B1C9EDD}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Flux\Logging\Formatters">
+      <UniqueIdentifier>{50F5C395-BC2C-0C2D-C536-705031ED3226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Flux\Window">
+      <UniqueIdentifier>{6B0D8007-D7C2-F8FC-60B7-F2D3CC6BEF00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Flux.h" />
@@ -35,10 +41,13 @@
       <Filter>Flux\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Flux\Logging\Formatters\MultiLevelFormatter.h">
-      <Filter>Flux\Logging</Filter>
+      <Filter>Flux\Logging\Formatters</Filter>
     </ClInclude>
     <ClInclude Include="src\Flux\Logging\Log.h">
       <Filter>Flux\Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\Window\Window.h">
+      <Filter>Flux\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\FluxPCH.h" />
   </ItemGroup>
@@ -47,10 +56,13 @@
       <Filter>Flux</Filter>
     </ClCompile>
     <ClCompile Include="src\Flux\Logging\Formatters\MultiLevelFormatter.cpp">
-      <Filter>Flux\Logging</Filter>
+      <Filter>Flux\Logging\Formatters</Filter>
     </ClCompile>
     <ClCompile Include="src\Flux\Logging\Log.cpp">
       <Filter>Flux\Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Flux\Window\Window.cpp">
+      <Filter>Flux\Window</Filter>
     </ClCompile>
     <ClCompile Include="src\FluxPCH.cpp" />
   </ItemGroup>

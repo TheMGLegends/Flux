@@ -59,7 +59,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>FluxPCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>SFML_STATIC;SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_BUILD_DLL;FLUX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_BUILD_DLL;FLUX_DEBUG;FLUX_ASSERTS_ENABLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>vendor\box2d\include;vendor\entt\single_include;vendor\sfml\include;vendor\spdlog\include;vendor\yaml-cpp\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -121,12 +121,14 @@ xcopy /Q /E /Y /I ..\build\Release-windows-x86_64\Flux\Flux.dll ..\build\Release
     <ClInclude Include="src\Flux\Events\MouseEvent.h" />
     <ClInclude Include="src\Flux\Logging\Formatters\MultiLevelFormatter.h" />
     <ClInclude Include="src\Flux\Logging\Log.h" />
+    <ClInclude Include="src\Flux\Window\Window.h" />
     <ClInclude Include="src\FluxPCH.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Flux\Application.cpp" />
     <ClCompile Include="src\Flux\Logging\Formatters\MultiLevelFormatter.cpp" />
     <ClCompile Include="src\Flux\Logging\Log.cpp" />
+    <ClCompile Include="src\Flux\Window\Window.cpp" />
     <ClCompile Include="src\FluxPCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

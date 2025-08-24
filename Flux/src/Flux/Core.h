@@ -18,7 +18,7 @@ constexpr int FLUX_FAILURE = 1;
 constexpr bool FLUX_FAILED(int result) { return result != FLUX_SUCCESS; }
 
 // INFO: Custom Assertion Macros
-#ifdef FLUX_DEBUG
+#ifdef FLUX_ASSERTS_ENABLED
 	#define FLUX_MINIMAL_ASSERT(expression) if (!(expression)) { __debugbreak(); }
 	#define FLUX_CORE_ASSERT(expression, message) if (!(expression)) { FLUX_CORE_ERROR("Assertion Failed: {0}", message); __debugbreak(); }
 	#define FLUX_ASSERT(expression, message) if (!(expression)) { FLUX_ERROR("Assertion Failed: {0}", message); __debugbreak(); }

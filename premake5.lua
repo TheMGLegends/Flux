@@ -98,7 +98,7 @@ workspace "Flux"
 
         -- Debug Configuration Settings
         filter "configurations:Debug"
-            defines { "FLUX_DEBUG" }
+            defines { "FLUX_DEBUG", "FLUX_ASSERTS_ENABLED" }
             symbols "On"
             runtime "Debug"
         filter {}
