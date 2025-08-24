@@ -15,7 +15,7 @@
 constexpr int FLUX_SUCCESS = 0;
 constexpr int FLUX_FAILURE = 1;
 
-#define FLUX_FAILED(x) ((x) != FLUX_SUCCESS)
+constexpr bool FLUX_FAILED(int result) { return result != FLUX_SUCCESS; }
 
 // INFO: Custom Assertion Macros
 #ifdef FLUX_DEBUG

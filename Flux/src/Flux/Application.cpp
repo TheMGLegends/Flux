@@ -4,6 +4,7 @@
 
 // TEMP: Testing the window creation
 #include "Flux/Events/ApplicationEvent.h"
+#include "Flux/Logging/Formatters/MultiLevelFormatter.h"
 #include <sfml/Window.hpp>
 
 namespace Flux
@@ -14,9 +15,8 @@ namespace Flux
         sf::Window window(sf::VideoMode({ 800,600 }), "My Window");
 
         WindowResizeEvent e(800, 600);
-        FLUX_CORE_WARN(e);
-
-		FLUX_CORE_INFO("Window created with size: {}x{}", window.getSize().x, window.getSize().y);
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Application::OnWindowResizeEvent, this, std::placeholders::_1));
 
         while (window.isOpen())
         {
@@ -27,4 +27,11 @@ namespace Flux
             }
         }
 	}
+
+    bool Application::OnWindowResizeEvent(WindowResizeEvent& e)
+    {
+		FLUX_CORE_WARN("Event received: {}", e);
+
+        return false;
+    }
 }

@@ -18,7 +18,7 @@ namespace Flux
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled		// Mouse Events
 	};
 
-	enum EventCategory
+	enum class EventCategory
 	{
 		None			= 0,
 		Application		= BIT(0),
@@ -28,11 +28,16 @@ namespace Flux
 		MouseButton		= BIT(4)
 	};
 
+	int operator|(EventCategory a, EventCategory b)
+	{
+		return (static_cast<int>(a) | static_cast<int>(b));
+	}
+
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return type; } \
 							   virtual EventType GetEventType() const override { return GetStaticType(); } \
 							   virtual const char* GetName() const override { return #type; }
 
-#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
+#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return static_cast<int>(category); }
 
 	class FLUX_API Event
 	{
@@ -48,7 +53,7 @@ namespace Flux
 
 		inline bool IsInCategory(EventCategory category) const
 		{
-			return GetCategoryFlags() & category;
+			return GetCategoryFlags() & static_cast<int>(category);
 		}
 
 	protected:
@@ -66,8 +71,6 @@ namespace Flux
 		template<typename T>
 		bool Dispatch(EventFunction<T> function)
 		{
-			// TODO: Maybe check to see if T is derived from Event?
-
 			if (event.GetEventType() == T::GetStaticType())
 			{
 				T& actualEvent = static_cast<T&>(event);
@@ -83,7 +86,7 @@ namespace Flux
 	};
 }
 
-// INFO: Provide std::formatter specializations for all Event derived classes when logging
+// INFO: Specialization for Logging Event Derived Types
 template <std::derived_from<Flux::Event> Derived, typename CharT>
 struct std::formatter<Derived, CharT> : std::formatter<std::string>
 {
