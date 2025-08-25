@@ -74,7 +74,7 @@ namespace Flux
 			else if (sf::Vector2i windowPosition = window->getPosition(); windowPosition != data.properties.position)
 			{
 				data.properties.position = windowPosition;
-				WindowMovedEvent movedEvent(data.properties.position.x, data.properties.position.y);
+				WindowMovedEvent movedEvent(data.properties.position);
 				eventCallback(movedEvent);
 			}
 #pragma endregion ApplicationEvents
@@ -83,6 +83,30 @@ namespace Flux
 #pragma endregion KeyboardEvents
 
 #pragma region MouseEvents
+			// INFO: Mouse Button Pressed Event
+			else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
+			{
+				MouseButtonPressedEvent buttonPressedEvent(static_cast<int>(mouseButtonPressed->button), mouseButtonPressed->position);
+				eventCallback(buttonPressedEvent);
+			}
+			// INFO: Mouse Button Released Event
+			else if (const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
+			{
+				MouseButtonReleasedEvent buttonReleasedEvent(static_cast<int>(mouseButtonReleased->button), mouseButtonReleased->position);
+				eventCallback(buttonReleasedEvent);
+			}
+			// INFO: Mouse Moved Event
+			else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
+			{
+				MouseMovedEvent movedEvent(mouseMoved->position);
+				eventCallback(movedEvent);
+			}
+			// INFO: Mouse Wheel Scrolled Event
+			else if (const auto* mouseWheelScrolled = event->getIf<sf::Event::MouseWheelScrolled>())
+			{
+				MouseScrolledEvent scrolledEvent(static_cast<int>(mouseWheelScrolled->wheel), mouseWheelScrolled->position, mouseWheelScrolled->delta);
+				eventCallback(scrolledEvent);
+			}
 #pragma endregion MouseEvents
 		}
 	}

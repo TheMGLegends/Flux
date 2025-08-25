@@ -13,7 +13,7 @@ namespace Flux
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,	// Application Events
 		KeyPressed, KeyReleased,												// Keyboard Events
-		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled		// Mouse Events
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseWheelScrolled	// Mouse Events
 	};
 
 	enum class EventCategory

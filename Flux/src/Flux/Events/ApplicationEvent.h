@@ -4,6 +4,8 @@
 
 #include <sstream>
 
+#include "Flux/Math/Vector2.h"
+
 namespace Flux
 {
 	class FLUX_API WindowCloseEvent : public Event
@@ -59,15 +61,14 @@ namespace Flux
 	class FLUX_API WindowMovedEvent : public Event
 	{
 	public:
-		WindowMovedEvent(int x, int y) : x(x), y(y) {}
+		WindowMovedEvent(const Vector2I& position) : position(position) {}
 
-		inline int GetX() const { return x; }
-		inline int GetY() const { return y; }
+		inline const Vector2I& GetPosition() const { return position; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "WindowMovedEvent: " << x << ", " << y;
+			ss << "WindowMovedEvent: " << position;
 			return ss.str();
 		}
 
@@ -75,7 +76,6 @@ namespace Flux
 		EVENT_CLASS_CATEGORY(EventCategory::Application);
 
 	private:
-		int x;
-		int y;
+		Vector2I position;
 	};
 }

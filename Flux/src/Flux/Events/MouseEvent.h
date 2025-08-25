@@ -4,30 +4,34 @@
 
 #include <sstream>
 
+#include "Flux/Math/Vector2.h"
+
 namespace Flux
 {
 	class FLUX_API MouseButtonEvent : public Event
 	{
 	public:
 		inline int GetButtonCode() const { return buttonCode; }
+		inline const Vector2I& GetPosition() const { return position; }
 
 		EVENT_CLASS_CATEGORY(EventCategory::MouseButton | EventCategory::Input);
 
 	protected:
-		MouseButtonEvent(int buttonCode) : buttonCode(buttonCode) {}
+		MouseButtonEvent(int buttonCode, const Vector2I& position) : buttonCode(buttonCode), position(position) {}
 
 		int buttonCode;
+		Vector2I position;
 	};
 
 	class FLUX_API MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonPressedEvent(int buttonCode) : MouseButtonEvent(buttonCode) {}
+		MouseButtonPressedEvent(int buttonCode, const Vector2I& position) : MouseButtonEvent(buttonCode, position) {}
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseButtonPressedEvent: " << buttonCode;
+			ss << "MouseButtonPressedEvent: " << buttonCode << " at " << position;
 			return ss.str();
 		}
 
@@ -37,12 +41,12 @@ namespace Flux
 	class FLUX_API MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonReleasedEvent(int buttonCode) : MouseButtonEvent(buttonCode) {}
+		MouseButtonReleasedEvent(int buttonCode, const Vector2I& position) : MouseButtonEvent(buttonCode, position) {}
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseButtonReleasedEvent: " << buttonCode;
+			ss << "MouseButtonReleasedEvent: " << buttonCode << " at " << position;
 			return ss.str();
 		}
 
@@ -52,15 +56,14 @@ namespace Flux
 	class FLUX_API MouseMovedEvent : public Event
 	{
 	public:
-		MouseMovedEvent(float x, float y) : mouseX(x), mouseY(y) {}
+		MouseMovedEvent(const Vector2I& position) : position(position) {}
 
-		inline float GetX() const { return mouseX; }
-		inline float GetY() const { return mouseY; }
+		inline const Vector2I& GetPosition() const { return position; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseMovedEvent: (" << mouseX << ", " << mouseY << ")";
+			ss << "MouseMovedEvent: " << position;
 			return ss.str();
 		}
 
@@ -68,30 +71,38 @@ namespace Flux
 		EVENT_CLASS_CATEGORY(EventCategory::Mouse | EventCategory::Input);
 
 	private:
-		float mouseX;
-		float mouseY;
+		Vector2I position;
 	};
 
-	class FLUX_API MouseScrolledEvent : public Event
+	class FLUX_API MouseScrolledEvent : public MouseButtonEvent
 	{
 	public:
-		MouseScrolledEvent(float offsetX, float offsetY) : offsetX(offsetX), offsetY(offsetY) {}
+		MouseScrolledEvent(int buttonCode, const Vector2I& position, float delta) : MouseButtonEvent(buttonCode, position), delta(delta) {}
 
-		inline float GetOffsetX() const { return offsetX; }
-		inline float GetOffsetY() const { return offsetY; }
+		inline float GetDelta() const { return delta; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseScrolledEvent: (" << offsetX << ", " << offsetY << ")";
+
+			// INFO: Vertical Scroll
+			if (buttonCode == 0)
+			{
+				ss << "MouseScrolledEvent: " << std::format("Vertical Scroll: {0} at {1}", delta, position);
+			}
+			// INFO: Horizontal Scroll
+			else if (buttonCode == 1)
+			{
+				ss << "MouseScrolledEvent: " << std::format("Horizontal Scroll: {0} at {1}", delta, position);
+			}
+
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(EventType::MouseScrolled);
+		EVENT_CLASS_TYPE(EventType::MouseWheelScrolled);
 		EVENT_CLASS_CATEGORY(EventCategory::Mouse | EventCategory::Input);
 
 	private:
-		float offsetX;
-		float offsetY;
+		float delta;
 	};
 }
