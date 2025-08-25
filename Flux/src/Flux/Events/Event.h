@@ -8,8 +8,6 @@
 
 namespace Flux
 {
-	// TODO: Implement Deferred Event Dispatching (Currently Supports Immediate Dispatching)
-
 	enum class EventType
 	{
 		None = 0,
@@ -60,10 +58,25 @@ namespace Flux
 		bool handled = false;
 	};
 
-	class IOnEvent
+#define BIND_EVENT_FUNCTION(fn) std::bind(&fn, this, std::placeholders::_1)
+
+	class FLUX_API IEventListener
 	{
 	public:
 		virtual void OnEvent(Event& event) = 0;
+	};
+
+	class FLUX_API EventEmitter
+	{
+	public:
+		using EventCallbackFunction = std::function<void(Event&)>;
+
+		virtual ~EventEmitter() = default;
+
+		void SetEventCallback(const EventCallbackFunction& callback) { eventCallback = callback; }
+
+	protected:
+		EventCallbackFunction eventCallback;
 	};
 
 	class EventDispatcher

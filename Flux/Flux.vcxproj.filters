@@ -50,6 +50,7 @@
       <Filter>Flux\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\FluxPCH.h" />
+    <ClInclude Include="src\Flux\Math\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Flux\Application.cpp">

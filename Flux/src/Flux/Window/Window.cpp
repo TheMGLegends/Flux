@@ -5,6 +5,10 @@
 #include <sfml/Graphics/Image.hpp>
 #include <sfml/Graphics/RenderWindow.hpp>
 
+#include "Flux/Events/ApplicationEvent.h"
+#include "Flux/Events/KeyEvent.h"
+#include "Flux/Events/MouseEvent.h"
+
 namespace Flux
 {
 	Window::Window(const WindowProperties& properties)
@@ -18,6 +22,7 @@ namespace Flux
 		FLUX_CORE_ASSERT(window != nullptr, "Failed to create SFML Window!");
 
 		SetVSyncEnabled(true);
+		data.properties.position = window->getPosition();
 
 		// INFO: Adding Window Icon
 		const std::filesystem::path iconPath = "resources/FluxIcon.png";
@@ -34,14 +39,51 @@ namespace Flux
 
 	void Window::Update()
 	{
-		// TEMP: Testing the window creation
-		while (window->isOpen())
+		while (const std::optional event = window->pollEvent())
 		{
-			while (const std::optional event = window->pollEvent())
+#pragma region ApplicationEvents
+			// INFO: Window Close Event
+			if (event->is<sf::Event::Closed>())
 			{
-				if (event->is<sf::Event::Closed>())
-					window->close();
+				WindowCloseEvent closeEvent;
+				eventCallback(closeEvent);
 			}
+			// INFO: Window Resize Event
+			else if (const auto* windowResized = event->getIf<sf::Event::Resized>())
+			{
+				sf::Vector2u size = windowResized->size;
+				data.properties.width = size.x;
+				data.properties.height = size.y;
+
+				WindowResizeEvent resizeEvent(data.properties.width, data.properties.height);
+				eventCallback(resizeEvent);
+			}
+			// INFO: Window Focus Event
+			else if (event->is<sf::Event::FocusGained>())
+			{
+				WindowFocusEvent focusEvent;
+				eventCallback(focusEvent);
+			}
+			// INFO: Window Lost Focus Event
+			else if (event->is<sf::Event::FocusLost>())
+			{
+				WindowLostFocusEvent lostFocusEvent;
+				eventCallback(lostFocusEvent);
+			}
+			// INFO: Window Moved Event
+			else if (sf::Vector2i windowPosition = window->getPosition(); windowPosition != data.properties.position)
+			{
+				data.properties.position = windowPosition;
+				WindowMovedEvent movedEvent(data.properties.position.x, data.properties.position.y);
+				eventCallback(movedEvent);
+			}
+#pragma endregion ApplicationEvents
+
+#pragma region KeyboardEvents
+#pragma endregion KeyboardEvents
+
+#pragma region MouseEvents
+#pragma endregion MouseEvents
 		}
 	}
 

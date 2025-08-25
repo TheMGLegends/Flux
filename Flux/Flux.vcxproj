@@ -127,6 +127,7 @@ xcopy /Q /E /Y /I resources ..\Sandbox\resources</Command>
     <ClInclude Include="src\Flux\Logging\Log.h" />
     <ClInclude Include="src\Flux\Window\Window.h" />
     <ClInclude Include="src\FluxPCH.h" />
+    <ClInclude Include="src\Flux\Math\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Flux\Application.cpp" />

@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "Flux/Events/Event.h"
+#include "Flux/Math/Vector2.h"
 
 namespace sf { class RenderWindow; }
 
@@ -15,20 +16,20 @@ namespace Flux
 		std::string title;
 		unsigned int width;
 		unsigned int height;
+		Vector2I position;
 
 		WindowProperties(const std::string& title = "Flux Engine",
 						 unsigned int width = 1280,
-						 unsigned int height = 720)
-			: title(title), width(width), height(height) {}
+						 unsigned int height = 720,
+						 const Vector2I& position = Vector2I())
+			: title(title), width(width), height(height), position(position) {}
 	};
 
-	class FLUX_API Window
+	class FLUX_API Window : public EventEmitter
 	{
 	public:
-		using EventCallbackFunction = std::function<void(Event&)>;
-
 		Window(const WindowProperties& properties = WindowProperties());
-		~Window();
+		virtual ~Window() override;
 
 		void Update();
 
@@ -43,8 +44,6 @@ namespace Flux
 		void SetFramerateLimit(unsigned int limit);
 		unsigned int GetFramerateLimit() const { return data.framerateLimit; }
 
-		void SetEventCallback(const EventCallbackFunction& callback) { data.eventCallback = callback; }
-
 	private:
 		struct WindowData
 		{
@@ -52,11 +51,8 @@ namespace Flux
 			bool vsyncEnabled;
 			unsigned int framerateLimit;
 
-			EventCallbackFunction eventCallback;
-
 			WindowData(const WindowProperties& properties = WindowProperties())
-				: properties(properties), vsyncEnabled(true), 
-				  framerateLimit(60), eventCallback(nullptr) { }
+				: properties(properties), vsyncEnabled(true), framerateLimit(60) { }
 		} data;
 
 		std::unique_ptr<sf::RenderWindow> window;

@@ -8,13 +8,20 @@
 
 namespace Flux
 {
-	class FLUX_API Application
+	class WindowCloseEvent;
+
+	class FLUX_API Application : public IEventListener
 	{
 	public:
 		Application();
 		virtual ~Application() = default;
 
+		virtual void OnEvent(Event& event) override;
+
 		void Run();
+
+	private:
+		bool OnWindowClose(WindowCloseEvent& event);
 
 	private:
 		bool isRunning;

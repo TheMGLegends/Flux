@@ -38,5 +38,44 @@ namespace Flux
 		unsigned int height;
 	};
 
-	// TODO: Implement WindowFocusEvent, WindowLostFocusEvent, and WindowMovedEvent
+	class FLUX_API WindowFocusEvent : public Event
+	{
+	public:
+		WindowFocusEvent() = default;
+
+		EVENT_CLASS_TYPE(EventType::WindowFocus);
+		EVENT_CLASS_CATEGORY(EventCategory::Application);
+	};
+
+	class FLUX_API WindowLostFocusEvent : public Event
+	{
+	public:
+		WindowLostFocusEvent() = default;
+
+		EVENT_CLASS_TYPE(EventType::WindowLostFocus);
+		EVENT_CLASS_CATEGORY(EventCategory::Application);
+	};
+
+	class FLUX_API WindowMovedEvent : public Event
+	{
+	public:
+		WindowMovedEvent(int x, int y) : x(x), y(y) {}
+
+		inline int GetX() const { return x; }
+		inline int GetY() const { return y; }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowMovedEvent: " << x << ", " << y;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(EventType::WindowMoved);
+		EVENT_CLASS_CATEGORY(EventCategory::Application);
+
+	private:
+		int x;
+		int y;
+	};
 }
