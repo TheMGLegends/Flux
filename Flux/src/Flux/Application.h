@@ -30,5 +30,5 @@ namespace Flux
 	};
 
 	// INFO: Defined by client to create custom entry point 
-	Application* CreateApplication();
+	std::unique_ptr<Application> CreateApplication();
 }

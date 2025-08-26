@@ -20,6 +20,9 @@ namespace Flux
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FUNCTION(Application::OnWindowClose));
 
+		// TODO: Could also just create lambdas here instead of binding functions
+		//dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent&) { isRunning = false; return true; });
+
 		FLUX_CORE_INFO(event);
 	}
 

@@ -19,7 +19,6 @@ namespace Flux
 		int keyCode;
 	};
 
-	// TODO: Think about if repeatCount is necessary
 	class FLUX_API KeyPressedEvent : public KeyEvent
 	{
 	public:

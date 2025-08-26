@@ -7,7 +7,7 @@ public:
 	virtual ~SandboxApplication() override = default;
 };
 
-Flux::Application* Flux::CreateApplication()
+std::unique_ptr<Flux::Application> Flux::CreateApplication()
 {
-	return new SandboxApplication();
+	return std::make_unique<SandboxApplication>();
 }
