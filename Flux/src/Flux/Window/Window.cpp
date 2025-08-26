@@ -80,6 +80,39 @@ namespace Flux
 #pragma endregion ApplicationEvents
 
 #pragma region KeyboardEvents
+			// INFO: Key Pressed Event
+			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+			{
+				int keyCode = static_cast<int>(keyPressed->code);
+
+				// INFO: Handling Key Repeat
+				if (keyCode == repeatedKeyData.keyCode)
+				{
+					repeatedKeyData.repeatCount++;
+				}
+				else
+				{
+					repeatedKeyData.keyCode = keyCode;
+					repeatedKeyData.repeatCount = 0;
+				}
+				KeyPressedEvent pressedEvent(repeatedKeyData.keyCode, repeatedKeyData.repeatCount);
+				eventCallback(pressedEvent);
+			}
+			// INFO: Key Released Event
+			else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>())
+			{
+				int keyCode = static_cast<int>(keyReleased->code);
+
+				// INFO: Resetting Repeat Data
+				if (keyCode == repeatedKeyData.keyCode)
+				{
+					repeatedKeyData.keyCode = -1;
+					repeatedKeyData.repeatCount = 0;
+				}
+
+				KeyReleasedEvent releasedEvent(keyCode);
+				eventCallback(releasedEvent);
+			}
 #pragma endregion KeyboardEvents
 
 #pragma region MouseEvents

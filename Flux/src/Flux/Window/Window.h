@@ -55,6 +55,15 @@ namespace Flux
 				: properties(properties), vsyncEnabled(true), framerateLimit(60) { }
 		} data;
 
+		struct RepeatedKeyData
+		{
+			int keyCode;
+			int repeatCount;
+
+			RepeatedKeyData(int keyCode = -1, int repeatCount = 0)
+				: keyCode(keyCode), repeatCount(repeatCount) {}
+		} repeatedKeyData;
+
 		std::unique_ptr<sf::RenderWindow> window;
 	};
 }
