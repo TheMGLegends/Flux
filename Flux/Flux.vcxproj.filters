@@ -13,6 +13,9 @@
     <Filter Include="Flux\Logging\Formatters">
       <UniqueIdentifier>{50F5C395-BC2C-0C2D-C536-705031ED3226}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Flux\Math">
+      <UniqueIdentifier>{5D74B0C1-C9DE-6438-121D-16DE7EC6428D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Flux\Window">
       <UniqueIdentifier>{6B0D8007-D7C2-F8FC-60B7-F2D3CC6BEF00}</UniqueIdentifier>
     </Filter>
@@ -46,11 +49,13 @@
     <ClInclude Include="src\Flux\Logging\Log.h">
       <Filter>Flux\Logging</Filter>
     </ClInclude>
+    <ClInclude Include="src\Flux\Math\Vector2.h">
+      <Filter>Flux\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\Flux\Window\Window.h">
       <Filter>Flux\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\FluxPCH.h" />
-    <ClInclude Include="src\Flux\Math\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Flux\Application.cpp">
