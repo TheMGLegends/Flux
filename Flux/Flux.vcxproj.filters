@@ -56,6 +56,8 @@
       <Filter>Flux\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\FluxPCH.h" />
+    <ClInclude Include="src\Flux\Layer\Layer.h" />
+    <ClInclude Include="src\Flux\Layer\LayerManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Flux\Application.cpp">
@@ -71,5 +73,6 @@
       <Filter>Flux\Window</Filter>
     </ClCompile>
     <ClCompile Include="src\FluxPCH.cpp" />
+    <ClCompile Include="src\Flux\Layer\LayerManager.cpp" />
   </ItemGroup>
 </Project>

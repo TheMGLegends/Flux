@@ -146,6 +146,8 @@ xcopy /Q /E /Y /I resources ..\Sandbox\resources</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Flux\Layer\LayerManager.h" />
+    <ClInclude Include="src\Flux\Layer\Layer.h" />
     <ClInclude Include="src\Flux.h" />
     <ClInclude Include="src\Flux\Application.h" />
     <ClInclude Include="src\Flux\Core.h" />
@@ -161,6 +163,7 @@ xcopy /Q /E /Y /I resources ..\Sandbox\resources</Command>
     <ClInclude Include="src\FluxPCH.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Flux\Layer\LayerManager.cpp" />
     <ClCompile Include="src\Flux\Application.cpp" />
     <ClCompile Include="src\Flux\Logging\Formatters\MultiLevelFormatter.cpp" />
     <ClCompile Include="src\Flux\Logging\Log.cpp" />
