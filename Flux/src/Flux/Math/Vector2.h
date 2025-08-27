@@ -15,6 +15,7 @@ namespace Flux
 	{
 	public:
 		Vector2() : sf::Vector2<T>() {}
+		Vector2(T x, T y) : sf::Vector2<T>(x, y) {}
 		Vector2(const sf::Vector2<T>& vector) : sf::Vector2<T>(vector) {}
 
 		std::string ToString() const
@@ -37,7 +38,7 @@ namespace Flux
 	using Vector2F = Vector2<float>;
 }
 
-template <typename T>
+template<typename T>
 std::ostream& operator<<(std::ostream& os, const Flux::Vector2<T>& vector)
 {
 	os << vector.ToString();

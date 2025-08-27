@@ -154,15 +154,24 @@ workspace "Flux"
         -- Windows Specific Settings
         filter "system:windows"
             cppdialect "C++20"
-            staticruntime "On"
+            staticruntime "Off"
             systemversion "latest"
 
-            defines { "FLUX_PLATFORM_WINDOWS" }
+            defines
+            {
+                "SPDLOG_USE_STD_FORMAT",
+                
+                "FLUX_PLATFORM_WINDOWS"
+            }
         filter {}
 
         -- Debug Configuration Settings
         filter "configurations:Debug"
-            defines { "FLUX_DEBUG" }
+            defines
+            {
+                "FLUX_DEBUG",
+                "FLUX_ASSERTS_ENABLED"
+            }
             symbols "On"
             runtime "Debug"
         filter {}

@@ -7,6 +7,9 @@
     <Filter Include="Flux\Events">
       <UniqueIdentifier>{68AC69DE-D461-E2D3-5D56-DCAAC90AD9D7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Flux\Layer">
+      <UniqueIdentifier>{D0FCACF7-BCB4-EE44-25BC-C7A011938935}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Flux\Logging">
       <UniqueIdentifier>{9AF142B6-8654-D25A-2FDA-0A111B1C9EDD}</UniqueIdentifier>
     </Filter>
@@ -43,6 +46,12 @@
     <ClInclude Include="src\Flux\Events\MouseEvent.h">
       <Filter>Flux\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Flux\Layer\Layer.h">
+      <Filter>Flux\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Flux\Layer\LayerManager.h">
+      <Filter>Flux\Layer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Flux\Logging\Formatters\MultiLevelFormatter.h">
       <Filter>Flux\Logging\Formatters</Filter>
     </ClInclude>
@@ -56,12 +65,13 @@
       <Filter>Flux\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\FluxPCH.h" />
-    <ClInclude Include="src\Flux\Layer\Layer.h" />
-    <ClInclude Include="src\Flux\Layer\LayerManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Flux\Application.cpp">
       <Filter>Flux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Flux\Layer\LayerManager.cpp">
+      <Filter>Flux\Layer</Filter>
     </ClCompile>
     <ClCompile Include="src\Flux\Logging\Formatters\MultiLevelFormatter.cpp">
       <Filter>Flux\Logging\Formatters</Filter>
@@ -73,6 +83,5 @@
       <Filter>Flux\Window</Filter>
     </ClCompile>
     <ClCompile Include="src\FluxPCH.cpp" />
-    <ClCompile Include="src\Flux\Layer\LayerManager.cpp" />
   </ItemGroup>
 </Project>

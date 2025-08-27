@@ -54,6 +54,8 @@ namespace Flux
 			return GetCategoryFlags() & static_cast<int>(category);
 		}
 
+		bool IsHandled() const { return handled; }
+
 	protected:
 		bool handled = false;
 	};

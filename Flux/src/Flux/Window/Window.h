@@ -52,7 +52,8 @@ namespace Flux
 			unsigned int framerateLimit;
 
 			WindowData(const WindowProperties& properties = WindowProperties())
-				: properties(properties), vsyncEnabled(true), framerateLimit(60) { }
+				: properties(properties), vsyncEnabled(true), framerateLimit(60) {
+			}
 		} data;
 
 		struct RepeatedKeyData

@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include "Layer/LayerManager.h"
 #include "Window/Window.h"
 
 namespace Flux
@@ -20,6 +21,9 @@ namespace Flux
 
 		void Run();
 
+		void PushLayer(Layer* layer) { layerManager.PushLayer(layer); }
+		void PushOverlay(Layer* overlay) { layerManager.PushOverlay(overlay); }
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& event);
 
@@ -27,6 +31,7 @@ namespace Flux
 		bool isRunning;
 
 		std::unique_ptr<Window> window;
+		LayerManager layerManager;
 	};
 
 	// INFO: Defined by client to create custom entry point 

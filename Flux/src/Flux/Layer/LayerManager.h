@@ -2,14 +2,15 @@
 
 #include "Flux/Core.h"
 
+#include "Flux/Events/Event.h"
+
 #include <vector>
 
 #include "Layer.h"
 
-// TODO: Implement enabled logic for layers to determine if Update/OnEvent should be called
 namespace Flux
 {
-	class FLUX_API LayerManager
+	class FLUX_API LayerManager : public IEventListener
 	{
 	public:
 		using Layers = std::vector<Layer*>;
@@ -17,11 +18,17 @@ namespace Flux
 		LayerManager();
 		~LayerManager();
 
+		virtual void OnEvent(Event& event) override;
+
+		void Update();
+
 		void PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
 
 		void PushOverlay(Layer* overlay);
 		void PopOverlay(Layer* overlay);
+
+		void SetLayerEnabled(Layer* layer, bool enabled);
 
 	private:
 		Layers layers;

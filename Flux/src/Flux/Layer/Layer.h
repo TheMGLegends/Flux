@@ -9,7 +9,7 @@ namespace Flux
 	class FLUX_API Layer : public IEventListener
 	{
 	public:
-		Layer(const std::string& name = "Layer") : name(name) {}
+		Layer(const std::string& name = "Layer", bool enabled = true) : name(name), enabled(enabled) {}
 		virtual ~Layer() = default;
 
 		virtual void OnEvent(Event& event) override {}
@@ -21,7 +21,12 @@ namespace Flux
 
 		const std::string& GetName() const { return name; }
 
+		bool IsEnabled() const { return enabled; }
+		void SetEnabled(bool enabled) { this->enabled = enabled; }
+
 	protected:
 		std::string name;
+
+		bool enabled;
 	};
 }

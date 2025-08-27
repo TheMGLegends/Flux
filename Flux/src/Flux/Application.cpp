@@ -23,13 +23,15 @@ namespace Flux
 		// TODO: Could also just create lambdas here instead of binding functions
 		//dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent&) { isRunning = false; return true; });
 
-		FLUX_CORE_INFO(event);
+		// INFO: Propagate Event to Layers
+		layerManager.OnEvent(event);
 	}
 
 	void Application::Run()
 	{
 		while (isRunning)
 		{
+			layerManager.Update();
 			window->Update();
 		}
 	}
