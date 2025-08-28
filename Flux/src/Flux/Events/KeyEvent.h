@@ -9,7 +9,7 @@ namespace Flux
 	class KeyEvent : public Event
 	{
 	public:
-		inline int GetKeyCode() const { return keyCode; }
+		int GetKeyCode() const { return keyCode; }
 
 		EVENT_CLASS_CATEGORY(EventCategory::Keyboard | EventCategory::Input);
 
@@ -24,7 +24,7 @@ namespace Flux
 	public:
 		KeyPressedEvent(int keyCode, int repeatCount) : KeyEvent(keyCode), repeatCount(repeatCount) {}
 
-		inline int GetRepeatCount() const { return repeatCount; }
+		int GetRepeatCount() const { return repeatCount; }
 
 		std::string ToString() const override
 		{

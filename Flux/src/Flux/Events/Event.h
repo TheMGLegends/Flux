@@ -49,7 +49,7 @@ namespace Flux
 		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }
 
-		inline bool IsInCategory(EventCategory category) const
+		bool IsInCategory(EventCategory category) const
 		{
 			return GetCategoryFlags() & static_cast<int>(category);
 		}
@@ -90,21 +90,23 @@ namespace Flux
 		EventDispatcher(Event& event) : event(event) {}
 
 		template<typename T>
-		bool Dispatch(EventFunction<T> function)
-		{
-			if (event.GetEventType() == T::GetStaticType())
-			{
-				T& actualEvent = static_cast<T&>(event);
-				event.handled = function(actualEvent);
-				return true;
-			}
-			
-			return false;
-		}
+		bool Dispatch(EventFunction<T> function);
 
 	private:
 		Event& event;
 	};
+
+	template<typename T>
+	inline bool EventDispatcher::Dispatch(EventFunction<T> function)
+	{
+		if (event.GetEventType() == T::GetStaticType())
+		{
+			T& actualEvent = static_cast<T&>(event);
+			event.handled = function(actualEvent);
+			return true;
+		}
+		return false;
+	}
 }
 
 // INFO: Specialization for Logging Event Derived Types

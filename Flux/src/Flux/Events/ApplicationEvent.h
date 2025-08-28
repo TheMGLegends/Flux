@@ -22,8 +22,8 @@ namespace Flux
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height) : width(width), height(height) {}
 
-		inline unsigned int GetWidth() const { return width; }
-		inline unsigned int GetHeight() const { return height; }
+		unsigned int GetWidth() const { return width; }
+		unsigned int GetHeight() const { return height; }
 
 		std::string ToString() const override
 		{
@@ -63,7 +63,7 @@ namespace Flux
 	public:
 		WindowMovedEvent(const Vector2I& position) : position(position) {}
 
-		inline const Vector2I& GetPosition() const { return position; }
+		const Vector2I& GetPosition() const { return position; }
 
 		std::string ToString() const override
 		{

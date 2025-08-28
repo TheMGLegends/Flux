@@ -11,8 +11,8 @@ namespace Flux
 	class MouseButtonEvent : public Event
 	{
 	public:
-		inline int GetButtonCode() const { return buttonCode; }
-		inline const Vector2I& GetPosition() const { return position; }
+		int GetButtonCode() const { return buttonCode; }
+		const Vector2I& GetPosition() const { return position; }
 
 		EVENT_CLASS_CATEGORY(EventCategory::MouseButton | EventCategory::Input);
 
@@ -58,7 +58,7 @@ namespace Flux
 	public:
 		MouseMovedEvent(const Vector2I& position) : position(position) {}
 
-		inline const Vector2I& GetPosition() const { return position; }
+		const Vector2I& GetPosition() const { return position; }
 
 		std::string ToString() const override
 		{
@@ -79,7 +79,7 @@ namespace Flux
 	public:
 		MouseScrolledEvent(int buttonCode, const Vector2I& position, float delta) : MouseButtonEvent(buttonCode, position), delta(delta) {}
 
-		inline float GetDelta() const { return delta; }
+		float GetDelta() const { return delta; }
 
 		std::string ToString() const override
 		{
