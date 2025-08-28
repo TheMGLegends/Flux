@@ -25,7 +25,7 @@ namespace Flux
 			: title(title), width(width), height(height), position(position) {}
 	};
 
-	class FLUX_API Window : public EventEmitter
+	class Window : public EventEmitter
 	{
 	public:
 		Window(const WindowProperties& properties = WindowProperties());

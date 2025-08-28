@@ -11,7 +11,7 @@ namespace Flux
 {
 	class WindowCloseEvent;
 
-	class FLUX_API Application : public IEventListener
+	class Application : public IEventListener
 	{
 	public:
 		Application();

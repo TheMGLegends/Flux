@@ -8,7 +8,7 @@
 
 namespace Flux
 {
-	class FLUX_API MouseButtonEvent : public Event
+	class MouseButtonEvent : public Event
 	{
 	public:
 		inline int GetButtonCode() const { return buttonCode; }
@@ -23,7 +23,7 @@ namespace Flux
 		Vector2I position;
 	};
 
-	class FLUX_API MouseButtonPressedEvent : public MouseButtonEvent
+	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int buttonCode, const Vector2I& position) : MouseButtonEvent(buttonCode, position) {}
@@ -38,7 +38,7 @@ namespace Flux
 		EVENT_CLASS_TYPE(EventType::MouseButtonPressed);
 	};
 
-	class FLUX_API MouseButtonReleasedEvent : public MouseButtonEvent
+	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(int buttonCode, const Vector2I& position) : MouseButtonEvent(buttonCode, position) {}
@@ -53,7 +53,7 @@ namespace Flux
 		EVENT_CLASS_TYPE(EventType::MouseButtonReleased);
 	};
 
-	class FLUX_API MouseMovedEvent : public Event
+	class MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(const Vector2I& position) : position(position) {}
@@ -74,7 +74,7 @@ namespace Flux
 		Vector2I position;
 	};
 
-	class FLUX_API MouseScrolledEvent : public MouseButtonEvent
+	class MouseScrolledEvent : public MouseButtonEvent
 	{
 	public:
 		MouseScrolledEvent(int buttonCode, const Vector2I& position, float delta) : MouseButtonEvent(buttonCode, position), delta(delta) {}

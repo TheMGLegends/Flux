@@ -54,8 +54,10 @@ workspace "Flux"
     -- Main Project
     project "Flux"
         location "Flux"
-        kind "SharedLib"
+        kind "StaticLib"
         language "C++"
+        cppdialect "C++20"
+        staticruntime "On"
 
         -- Build Directories
         targetdir ("build/" .. builddir .. "/%{prj.name}")
@@ -78,21 +80,9 @@ workspace "Flux"
         -- Flux Engine Include Directory
         includedirs { "%{prj.name}/src" }
 
-        -- Post Build Commands 
-        
-        -- Copy DLL into Running Project Build Director
-        local sourceDir = "%{cfg.buildtarget.relpath}"
-        local destinationDir = "../build/" .. builddir .. "/Sandbox"
-
-        postbuildcommands
-        {
-            "{MKDIR} " .. destinationDir,
-            "{COPYDIR} " .. sourceDir .. " " .. destinationDir
-        }
-
         -- Copy Resources into Executing Project Working Directory
-        sourceDir = "resources"
-        destinationDir = "../Sandbox/resources"
+        local sourceDir = "resources"
+        local destinationDir = "../Sandbox/resources"
 
         postbuildcommands
         {
@@ -102,11 +92,8 @@ workspace "Flux"
 
         -- Windows Specific Settings
         filter "system:windows"
-            cppdialect "C++20"
-            staticruntime "Off"
             systemversion "latest"
-
-            defines { "FLUX_PLATFORM_WINDOWS", "FLUX_BUILD_DLL" }
+            defines { "FLUX_PLATFORM_WINDOWS" }
         filter {}
 
         -- Debug Configuration Settings
@@ -128,6 +115,8 @@ workspace "Flux"
         location "Sandbox"
         kind "ConsoleApp"
         language "C++"
+        cppdialect "C++20"
+        staticruntime "On"
 
         -- Build Directories
         targetdir ("build/" .. builddir .. "/%{prj.name}")
@@ -151,18 +140,18 @@ workspace "Flux"
         -- Link to Flux Engine
         links { "Flux" }
 
+        -- Global Defines
+        defines
+        {
+            "SFML_STATIC",
+            "SPDLOG_COMPILED_LIB", "SPDLOG_USE_STD_FORMAT",
+            "YAML_CPP_STATIC_DEFINE"
+        }
+
         -- Windows Specific Settings
         filter "system:windows"
-            cppdialect "C++20"
-            staticruntime "Off"
             systemversion "latest"
-
-            defines
-            {
-                "SPDLOG_USE_STD_FORMAT",
-                
-                "FLUX_PLATFORM_WINDOWS"
-            }
+            defines { "FLUX_PLATFORM_WINDOWS" }
         filter {}
 
         -- Debug Configuration Settings

@@ -8,7 +8,7 @@
 
 namespace Flux
 {
-	class FLUX_API WindowCloseEvent : public Event
+	class WindowCloseEvent : public Event
 	{
 	public:
 		WindowCloseEvent() = default;
@@ -17,7 +17,7 @@ namespace Flux
 		EVENT_CLASS_CATEGORY(EventCategory::Application);
 	};
 
-	class FLUX_API WindowResizeEvent : public Event
+	class WindowResizeEvent : public Event
 	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height) : width(width), height(height) {}
@@ -40,7 +40,7 @@ namespace Flux
 		unsigned int height;
 	};
 
-	class FLUX_API WindowFocusEvent : public Event
+	class WindowFocusEvent : public Event
 	{
 	public:
 		WindowFocusEvent() = default;
@@ -49,7 +49,7 @@ namespace Flux
 		EVENT_CLASS_CATEGORY(EventCategory::Application);
 	};
 
-	class FLUX_API WindowLostFocusEvent : public Event
+	class WindowLostFocusEvent : public Event
 	{
 	public:
 		WindowLostFocusEvent() = default;
@@ -58,7 +58,7 @@ namespace Flux
 		EVENT_CLASS_CATEGORY(EventCategory::Application);
 	};
 
-	class FLUX_API WindowMovedEvent : public Event
+	class WindowMovedEvent : public Event
 	{
 	public:
 		WindowMovedEvent(const Vector2I& position) : position(position) {}

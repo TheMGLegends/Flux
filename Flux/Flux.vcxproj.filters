@@ -84,7 +84,4 @@
     </ClCompile>
     <ClCompile Include="src\FluxPCH.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="src\cpp.hint" />
-  </ItemGroup>
 </Project>

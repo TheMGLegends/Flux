@@ -37,7 +37,7 @@ namespace Flux
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return static_cast<int>(category); }
 
-	class FLUX_API Event
+	class Event
 	{
 		friend class EventDispatcher;
 
@@ -62,13 +62,13 @@ namespace Flux
 
 #define BIND_EVENT_FUNCTION(fn) std::bind(&fn, this, std::placeholders::_1)
 
-	class FLUX_API IEventListener
+	class IEventListener
 	{
 	public:
 		virtual void OnEvent(Event& event) = 0;
 	};
 
-	class FLUX_API EventEmitter
+	class EventEmitter
 	{
 	public:
 		using EventCallbackFunction = std::function<void(Event&)>;

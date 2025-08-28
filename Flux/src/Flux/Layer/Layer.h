@@ -6,7 +6,7 @@
 
 namespace Flux
 {
-	class FLUX_API Layer : public IEventListener
+	class Layer : public IEventListener
 	{
 	public:
 		Layer(const std::string& name = "Layer", bool enabled = true) : name(name), enabled(enabled) {}

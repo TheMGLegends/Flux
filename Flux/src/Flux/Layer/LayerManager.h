@@ -10,7 +10,7 @@
 
 namespace Flux
 {
-	class FLUX_API LayerManager : public IEventListener
+	class LayerManager : public IEventListener
 	{
 	public:
 		using Layers = std::vector<Layer*>;

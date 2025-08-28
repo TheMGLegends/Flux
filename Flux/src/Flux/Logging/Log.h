@@ -14,7 +14,7 @@ namespace Flux
 	/// <summary>
 	/// Wrapper class for logging system provided by spdlog
 	/// </summary>
-	class FLUX_API Log
+	class Log
 	{
 	public:
 		Log() = delete;
