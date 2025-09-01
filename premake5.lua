@@ -77,18 +77,8 @@ workspace "Flux"
         UseSPDLOG() -- Logging Library
         UseYAML()   -- YAML Parser Library
 
-        -- Include Directory
+        -- Include Directories
         includedirs { "%{prj.name}/src" }
-
-        -- Copy Resources into Executing Project Working Directory [TODO: Figure out how to do it for any executing projects automatically]
-        local sourceDir = "resources"
-        local destinationDir = "../FluxEditor/resources";
-
-        postbuildcommands
-        {
-            "{MKDIR} " .. destinationDir,
-            "{COPYDIR} " .. sourceDir .. " " .. destinationDir
-        }
 
         -- Windows Specific Settings
         filter "system:windows"
@@ -135,6 +125,13 @@ workspace "Flux"
             "Flux/vendor/yaml-cpp/include",     -- YAML Parser Library
 
             "Flux/src"
+        }
+
+        -- Copy Flux Engine Resources into Project
+        prebuildcommands
+        {
+            "{MKDIR} " .. "../Sandbox/resources",
+            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "../Sandbox/resources"
         }
 
         -- Link to Flux Engine
@@ -198,6 +195,13 @@ workspace "Flux"
 
             "Flux/src",
             "Sandbox/src"
+        }
+
+        -- Copy Flux Engine Resources into Project
+        prebuildcommands
+        {
+            "{MKDIR} " .. "../FluxEditor/resources",
+            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "../FluxEditor/resources"
         }
 
         -- Links

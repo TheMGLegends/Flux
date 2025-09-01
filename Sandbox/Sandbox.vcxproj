@@ -71,6 +71,10 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>IF NOT EXIST ..\Sandbox\resources (mkdir ..\Sandbox\resources)
+xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\Sandbox\resources</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -93,6 +97,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PreBuildEvent>
+      <Command>IF NOT EXIST ..\Sandbox\resources (mkdir ..\Sandbox\resources)
+xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\Sandbox\resources</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Sandbox\SandboxApplication.h" />

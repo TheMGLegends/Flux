@@ -75,15 +75,6 @@
       <AdditionalLibraryDirectories>vendor\box2d\install\debug\lib;vendor\sfml\install\debug\lib;vendor\spdlog\install\debug\lib;vendor\yaml-cpp\install\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/IGNORE:4006 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
-    <PreBuildEvent>
-      <Command>cmake -S vendor/sfml -B vendor/sfml/build/debug -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=OFF -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DCMAKE_INSTALL_PREFIX=vendor/sfml/install/debug
-cmake --build vendor/sfml/build/debug --config Debug --parallel
-cmake --install vendor/sfml/build/debug --config Debug --prefix vendor/sfml/install/debug</Command>
-    </PreBuildEvent>
-    <PostBuildEvent>
-      <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
-xcopy /Q /E /Y /I resources ..\FluxEditor\resources</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -112,27 +103,6 @@ xcopy /Q /E /Y /I resources ..\FluxEditor\resources</Command>
       <AdditionalLibraryDirectories>vendor\box2d\install\release\lib;vendor\sfml\install\release\lib;vendor\spdlog\install\release\lib;vendor\yaml-cpp\install\release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/IGNORE:4006 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
-    <PreBuildEvent>
-      <Command>cmake -S vendor/box2d -B vendor/box2d/build/release -G "Visual Studio 17 2022" -A x64 -DBOX2D_SAMPLES=OFF -DBOX2D_VALIDATE=OFF -DBOX2D_UNIT_TESTS=OFF -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_INSTALL_PREFIX=vendor/box2d/install/release
-cmake --build vendor/box2d/build/release --config Release
-cmake --install vendor/box2d/build/release --config Release --prefix vendor/box2d/install/release
-cmake -S vendor/entt -B vendor/entt/build/release -G "Visual Studio 17 2022" -A x64 -DENTT_INSTALL=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_INSTALL_PREFIX=vendor/entt/install/release
-cmake --build vendor/entt/build/release --config Release
-cmake --install vendor/entt/build/release --config Release --prefix vendor/entt/install/release
-cmake -S vendor/sfml -B vendor/sfml/build/release -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=OFF -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_INSTALL_PREFIX=vendor/sfml/install/release
-cmake --build vendor/sfml/build/release --config Release --parallel
-cmake --install vendor/sfml/build/release --config Release --prefix vendor/sfml/install/release
-cmake -S vendor/spdlog -B vendor/spdlog/build/release -G "Visual Studio 17 2022" -A x64 -DSPDLOG_USE_STD_FORMAT=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_INSTALL_PREFIX=vendor/spdlog/install/release
-cmake --build vendor/spdlog/build/release --config Release
-cmake --install vendor/spdlog/build/release --config Release --prefix vendor/spdlog/install/release
-cmake -S vendor/yaml-cpp -B vendor/yaml-cpp/build/release -G "Visual Studio 17 2022" -A x64 -DYAML_CPP_INSTALL=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_INSTALL_PREFIX=vendor/yaml-cpp/install/release
-cmake --build vendor/yaml-cpp/build/release --config Release
-cmake --install vendor/yaml-cpp/build/release --config Release --prefix vendor/yaml-cpp/install/release</Command>
-    </PreBuildEvent>
-    <PostBuildEvent>
-      <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
-xcopy /Q /E /Y /I resources ..\FluxEditor\resources</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Flux.h" />
