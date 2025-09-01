@@ -131,7 +131,10 @@ workspace "Flux"
         prebuildcommands
         {
             "{MKDIR} " .. "../Sandbox/resources",
-            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "../Sandbox/resources"
+            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "../Sandbox/resources",
+
+            "{MKDIR} " .. "%[Flux/%{cfg.targetdir}/resources]",
+            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "%[Flux/%{cfg.targetdir}/resources]"
         }
 
         -- Link to Flux Engine
@@ -201,7 +204,10 @@ workspace "Flux"
         prebuildcommands
         {
             "{MKDIR} " .. "../FluxEditor/resources",
-            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "../FluxEditor/resources"
+            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "../FluxEditor/resources",
+
+            "{MKDIR} " .. "%[Flux/%{cfg.targetdir}/resources]",
+            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "%[Flux/%{cfg.targetdir}/resources]"
         }
 
         -- Links

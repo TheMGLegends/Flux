@@ -73,7 +73,9 @@
     </Link>
     <PreBuildEvent>
       <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
-xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources</Command>
+xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources
+IF NOT EXIST "..\build\Debug-windows-x86_64\FluxEditor\resources" (mkdir "..\build\Debug-windows-x86_64\FluxEditor\resources")
+xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Debug-windows-x86_64\FluxEditor\resources"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -99,7 +101,9 @@ xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources</Comman
     </Link>
     <PreBuildEvent>
       <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
-xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources</Command>
+xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources
+IF NOT EXIST "..\build\Release-windows-x86_64\FluxEditor\resources" (mkdir "..\build\Release-windows-x86_64\FluxEditor\resources")
+xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Release-windows-x86_64\FluxEditor\resources"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
