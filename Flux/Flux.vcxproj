@@ -76,8 +76,8 @@
       <AdditionalOptions>/IGNORE:4006 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PostBuildEvent>
-      <Command>IF NOT EXIST ..\Sandbox\resources (mkdir ..\Sandbox\resources)
-xcopy /Q /E /Y /I resources ..\Sandbox\resources</Command>
+      <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
+xcopy /Q /E /Y /I resources ..\FluxEditor\resources</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -125,8 +125,8 @@ cmake --build vendor/yaml-cpp/build/release --config Release
 cmake --install vendor/yaml-cpp/build/release --config Release --prefix vendor/yaml-cpp/install/release</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>IF NOT EXIST ..\Sandbox\resources (mkdir ..\Sandbox\resources)
-xcopy /Q /E /Y /I resources ..\Sandbox\resources</Command>
+      <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
+xcopy /Q /E /Y /I resources ..\FluxEditor\resources</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

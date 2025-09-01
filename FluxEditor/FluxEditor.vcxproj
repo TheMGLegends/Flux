@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}</ProjectGuid>
+    <ProjectGuid>{CB15B52C-B7CD-F679-20D5-CFD50CAC916A}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Sandbox</RootNamespace>
+    <RootNamespace>FluxEditor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -42,16 +42,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)..\build\Debug-windows-x86_64\Sandbox\</OutDir>
-    <IntDir>$(ProjectDir)..\build-int\Debug-windows-x86_64\Sandbox\</IntDir>
-    <TargetName>Sandbox</TargetName>
+    <OutDir>$(ProjectDir)..\build\Debug-windows-x86_64\FluxEditor\</OutDir>
+    <IntDir>$(ProjectDir)..\build-int\Debug-windows-x86_64\FluxEditor\</IntDir>
+    <TargetName>FluxEditor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)..\build\Release-windows-x86_64\Sandbox\</OutDir>
-    <IntDir>$(ProjectDir)..\build-int\Release-windows-x86_64\Sandbox\</IntDir>
-    <TargetName>Sandbox</TargetName>
+    <OutDir>$(ProjectDir)..\build\Release-windows-x86_64\FluxEditor\</OutDir>
+    <IntDir>$(ProjectDir)..\build-int\Release-windows-x86_64\FluxEditor\</IntDir>
+    <TargetName>FluxEditor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -59,7 +59,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SFML_STATIC;SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_DEBUG;FLUX_ASSERTS_ENABLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;..\Sandbox\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -77,7 +77,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SFML_STATIC;SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;..\Sandbox\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -95,14 +95,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Sandbox\SandboxApplication.h" />
+    <ClInclude Include="src\FluxEditor\FluxEditorApplication.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Sandbox\SandboxApplication.cpp" />
+    <ClCompile Include="src\FluxEditor\FluxEditorApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Flux\Flux.vcxproj">
       <Project>{044D857C-F083-860D-9970-6C108586020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Sandbox\Sandbox.vcxproj">
+      <Project>{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,10 +1,10 @@
 #pragma once
 
 // INFO: Custom Success/Failure Macros
-constexpr int FLUX_SUCCESS = 0;
-constexpr int FLUX_FAILURE = 1;
+static constexpr int FLUX_SUCCESS = 0;
+static constexpr int FLUX_FAILURE = 1;
 
-constexpr bool FLUX_FAILED(int result) { return result != FLUX_SUCCESS; }
+static constexpr bool FLUX_FAILED(int result) { return result != FLUX_SUCCESS; }
 
 // INFO: Custom Assertion Macros
 #ifdef FLUX_ASSERTS_ENABLED

@@ -22,9 +22,15 @@ namespace Flux
 
 		void Update();
 
+		/// <summary>
+		/// Push Layers in the order in which you want them to receive events (First Push = First to Receive Events)
+		/// </summary>
 		void PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
 
+		/// <summary>
+		/// Push Overlays in the order in which you want them to receive events (Last Push = First to Receive Events)
+		/// </summary>
 		void PushOverlay(Layer* overlay);
 		void PopOverlay(Layer* overlay);
 

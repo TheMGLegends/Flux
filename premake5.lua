@@ -47,11 +47,11 @@ workspace "Flux"
 
     -- Startup Project
     filter "action:vs*"
-        startproject "Sandbox"
+        startproject "FluxEditor"
         buildoptions { "/utf-8" }
     filter {}
 
-    -- Main Project
+    -- Game Engine Project
     project "Flux"
         location "Flux"
         kind "StaticLib"
@@ -77,12 +77,12 @@ workspace "Flux"
         UseSPDLOG() -- Logging Library
         UseYAML()   -- YAML Parser Library
 
-        -- Flux Engine Include Directory
+        -- Include Directory
         includedirs { "%{prj.name}/src" }
 
-        -- Copy Resources into Executing Project Working Directory
+        -- Copy Resources into Executing Project Working Directory [TODO: Figure out how to do it for any executing projects automatically]
         local sourceDir = "resources"
-        local destinationDir = "../Sandbox/resources"
+        local destinationDir = "../FluxEditor/resources";
 
         postbuildcommands
         {
@@ -125,7 +125,7 @@ workspace "Flux"
         -- Project Source Files
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
-        -- Sandbox Include Directories
+        -- Include Directories [TODO: Do we need to include all these external libraries?]
         includedirs
         {
             "Flux/vendor/box2d/include",        -- 2D Physics Library
@@ -139,6 +139,73 @@ workspace "Flux"
 
         -- Link to Flux Engine
         links { "Flux" }
+
+        -- Global Defines
+        defines
+        {
+            "SFML_STATIC",
+            "SPDLOG_COMPILED_LIB", "SPDLOG_USE_STD_FORMAT",
+            "YAML_CPP_STATIC_DEFINE"
+        }
+
+        -- Windows Specific Settings
+        filter "system:windows"
+            systemversion "latest"
+            defines { "FLUX_PLATFORM_WINDOWS" }
+        filter {}
+
+        -- Debug Configuration Settings
+        filter "configurations:Debug"
+            defines
+            {
+                "FLUX_DEBUG",
+                "FLUX_ASSERTS_ENABLED"
+            }
+            symbols "On"
+            runtime "Debug"
+        filter {}
+
+        -- Release Configuration Settings
+        filter "configurations:Release"
+            defines { "FLUX_RELEASE" }
+            optimize "On"
+            runtime "Release"
+        filter {}
+
+    -- Game Engine Editor Project
+    project "FluxEditor"
+        location "FluxEditor"
+        kind "ConsoleApp"
+        language "C++"
+        cppdialect "C++20"
+        staticruntime "On"
+
+        -- Build Directories
+        targetdir ("build/" .. builddir .. "/%{prj.name}")
+        objdir ("build-int/" .. builddir .. "/%{prj.name}")
+
+        -- Project Source Files
+        files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
+
+        -- Include Directories [TODO: Do we need to include all these external libraries?]
+        includedirs
+        {
+            "Flux/vendor/box2d/include",        -- 2D Physics Library
+            "Flux/vendor/entt/single_include",  -- Entity-Component-System Library
+            "Flux/vendor/sfml/include",         -- Simple and Fast Multimedia Library
+            "Flux/vendor/spdlog/include",       -- Logging Library
+            "Flux/vendor/yaml-cpp/include",     -- YAML Parser Library
+
+            "Flux/src",
+            "Sandbox/src"
+        }
+
+        -- Links
+        links
+        {
+            "Flux", -- Flux Engine
+            "Sandbox" -- Sandbox [TODO: Temporarily links to this project, change later to any user made project]
+        }
 
         -- Global Defines
         defines

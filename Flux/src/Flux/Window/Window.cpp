@@ -9,6 +9,8 @@
 #include "Flux/Events/KeyEvent.h"
 #include "Flux/Events/MouseEvent.h"
 
+// TODO: SFML Window doesn't properly take focus when interacting with console window first
+
 namespace Flux
 {
 	Window::Window(const WindowProperties& properties)
