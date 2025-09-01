@@ -84,4 +84,7 @@
     </ClCompile>
     <ClCompile Include="src\FluxPCH.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\FluxIcon.png" />
+  </ItemGroup>
 </Project>
