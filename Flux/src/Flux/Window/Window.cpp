@@ -9,8 +9,6 @@
 #include "Flux/Events/KeyEvent.h"
 #include "Flux/Events/MouseEvent.h"
 
-// TODO: SFML Window doesn't properly take focus when interacting with console window first
-
 namespace Flux
 {
 	Window::Window(const WindowProperties& properties)
@@ -32,6 +30,15 @@ namespace Flux
 		FLUX_CORE_VERIFY(icon.loadFromFile(iconPath), std::format("Failed to load window icon from path: {0}", iconPath.string()));
 
 		window->setIcon(icon.getSize(), icon.getPixelsPtr());
+
+		// INFO: Disable Clicking on Console Window (Windows Only)
+#ifdef FLUX_PLATFORM_WINDOWS
+		HANDLE hStdIn = GetStdHandle(STD_INPUT_HANDLE);
+		DWORD consoleMode;
+		GetConsoleMode(hStdIn, &consoleMode);
+		consoleMode &= ~ENABLE_QUICK_EDIT_MODE;
+		SetConsoleMode(hStdIn, consoleMode);
+#endif
 	}
 
 	Window::~Window()
