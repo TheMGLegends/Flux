@@ -2,7 +2,7 @@
 
 #include "Flux/Core.h"
 
-#if defined(FLUX_DEBUG)
+#if defined(FLUX_DEBUG) || defined(FLUX_DEVELOPMENT)
 	#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #elif defined(FLUX_RELEASE)
 	#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
@@ -30,7 +30,7 @@ namespace Flux
 	};
 }
 
-#if defined(FLUX_DEBUG)
+#if defined(FLUX_DEBUG) || defined(FLUX_DEVELOPMENT)
 
 // INFO: Core Logger Macros
 #define FLUX_CORE_TRACE(...)	SPDLOG_LOGGER_TRACE(Flux::Log::GetCoreLogger(), __VA_ARGS__)

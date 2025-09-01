@@ -5,6 +5,10 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Development|x64">
+      <Configuration>Development</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
@@ -24,6 +28,12 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -36,6 +46,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -44,6 +57,13 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\build\Debug-windows-x86_64\FluxEditor\</OutDir>
     <IntDir>$(ProjectDir)..\build-int\Debug-windows-x86_64\FluxEditor\</IntDir>
+    <TargetName>FluxEditor</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)..\build\Development-windows-x86_64\FluxEditor\</OutDir>
+    <IntDir>$(ProjectDir)..\build-int\Development-windows-x86_64\FluxEditor\</IntDir>
     <TargetName>FluxEditor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -76,6 +96,30 @@
 xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources
 IF NOT EXIST "..\build\Debug-windows-x86_64\FluxEditor\resources" (mkdir "..\build\Debug-windows-x86_64\FluxEditor\resources")
 xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Debug-windows-x86_64\FluxEditor\resources"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>SFML_STATIC;SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_DEVELOPMENT;FLUX_ASSERTS_ENABLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;..\Sandbox\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PreBuildEvent>
+      <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
+xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources
+IF NOT EXIST "..\build\Development-windows-x86_64\FluxEditor\resources" (mkdir "..\build\Development-windows-x86_64\FluxEditor\resources")
+xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Development-windows-x86_64\FluxEditor\resources"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Flux/Application.h"
+#include "Flux/Logging/Log.h"
+
 #ifdef FLUX_PLATFORM_WINDOWS
 
 extern std::unique_ptr<Flux::Application> Flux::CreateApplication();

@@ -35,7 +35,7 @@ end
 
 workspace "Flux"
     architecture "x86_64" -- Only 64-Bit Systems are Supported
-    configurations { "Debug", "Release" }
+    configurations { "Debug", "Development", "Release" }
     builddir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
     -- Include External Library Premakes
@@ -93,6 +93,13 @@ workspace "Flux"
             runtime "Debug"
         filter {}
 
+        -- Development Configuration Settings
+        filter "configurations:Development"
+            defines { "FLUX_DEVELOPMENT", "FLUX_ASSERTS_ENABLED" }
+            symbols "On"
+            runtime "Debug"
+        filter {}
+
         -- Release Configuration Settings
         filter "configurations:Release"
             defines { "FLUX_RELEASE" }
@@ -103,7 +110,7 @@ workspace "Flux"
     -- Sandbox Project
     project "Sandbox"
         location "Sandbox"
-        kind "ConsoleApp"
+        kind "StaticLib"
         language "C++"
         cppdialect "C++20"
         staticruntime "On"
@@ -156,11 +163,14 @@ workspace "Flux"
 
         -- Debug Configuration Settings
         filter "configurations:Debug"
-            defines
-            {
-                "FLUX_DEBUG",
-                "FLUX_ASSERTS_ENABLED"
-            }
+            defines { "FLUX_DEBUG", "FLUX_ASSERTS_ENABLED" }
+            symbols "On"
+            runtime "Debug"
+        filter {}
+
+        -- Development Configuration Settings
+        filter "configurations:Development"
+            defines { "FLUX_DEVELOPMENT", "FLUX_ASSERTS_ENABLED" }
             symbols "On"
             runtime "Debug"
         filter {}
@@ -233,11 +243,14 @@ workspace "Flux"
 
         -- Debug Configuration Settings
         filter "configurations:Debug"
-            defines
-            {
-                "FLUX_DEBUG",
-                "FLUX_ASSERTS_ENABLED"
-            }
+            defines { "FLUX_DEBUG", "FLUX_ASSERTS_ENABLED" }
+            symbols "On"
+            runtime "Debug"
+        filter {}
+
+        -- Development Configuration Settings
+        filter "configurations:Development"
+            defines { "FLUX_DEVELOPMENT", "FLUX_ASSERTS_ENABLED" }
             symbols "On"
             runtime "Debug"
         filter {}
@@ -248,3 +261,5 @@ workspace "Flux"
             optimize "On"
             runtime "Release"
         filter {}
+
+    dependson { "Sandbox", "Flux" }

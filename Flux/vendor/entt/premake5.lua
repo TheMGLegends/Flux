@@ -5,7 +5,7 @@ function UseENTT()
 
     includedirs { "Flux/vendor/entt/single_include" }
 
-    filter "configurations:Debug"
+    filter { "configurations:Debug or Development" }
         -- Debug Build for Windows (VS 2022)
         if not DirectoryExists("Flux/vendor/entt/install/debug") then
             prebuildcommands

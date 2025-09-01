@@ -15,7 +15,7 @@ function UseSFML()
         "ws2_32.lib"
     }
 
-    filter "configurations:Debug"
+    filter { "configurations:Debug or Development" }
         -- Debug Build for Windows (VS 2022)
         if not DirectoryExists("Flux/vendor/sfml/install/debug") then
             prebuildcommands

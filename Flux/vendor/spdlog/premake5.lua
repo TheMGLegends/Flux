@@ -6,7 +6,7 @@ function UseSPDLOG()
     defines { "SPDLOG_COMPILED_LIB", "SPDLOG_USE_STD_FORMAT" }
     includedirs { "Flux/vendor/spdlog/include" }
 
-    filter "configurations:Debug"
+    filter { "configurations:Debug or Development" }
         -- Debug Build for Windows (VS 2022)
         if not DirectoryExists("Flux/vendor/spdlog/install/debug") then
             prebuildcommands

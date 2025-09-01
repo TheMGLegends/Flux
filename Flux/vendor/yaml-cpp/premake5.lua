@@ -6,7 +6,7 @@ function UseYAML()
     defines { "YAML_CPP_STATIC_DEFINE" }
     includedirs { "Flux/vendor/yaml-cpp/include" }
 
-    filter "configurations:Debug"
+    filter { "configurations:Debug or Development" }
         -- Debug Build for Windows (VS 2022)
         if not DirectoryExists("Flux/vendor/yaml-cpp/install/debug") then
             prebuildcommands

@@ -5,7 +5,7 @@ function UseBOX2D()
 
     includedirs { "Flux/vendor/box2d/include" }
 
-    filter "configurations:Debug"
+    filter { "configurations:Debug or Development" }
         -- Debug Build for Windows (VS 2022)
         if not DirectoryExists("Flux/vendor/box2d/install/debug") then
             prebuildcommands

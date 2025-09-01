@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FluxEditor", "FluxEditor\FluxEditor.vcxproj", "{CB15B52C-B7CD-F679-20D5-CFD50CAC916A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0} = {F4C124E3-60A1-A37E-69B9-2E55D5170AE0}
+		{044D857C-F083-860D-9970-6C108586020F} = {044D857C-F083-860D-9970-6C108586020F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Flux", "Flux\Flux.vcxproj", "{044D857C-F083-860D-9970-6C108586020F}"
 EndProject
@@ -10,19 +14,26 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Development|x64 = Development|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CB15B52C-B7CD-F679-20D5-CFD50CAC916A}.Debug|x64.ActiveCfg = Debug|x64
 		{CB15B52C-B7CD-F679-20D5-CFD50CAC916A}.Debug|x64.Build.0 = Debug|x64
+		{CB15B52C-B7CD-F679-20D5-CFD50CAC916A}.Development|x64.ActiveCfg = Development|x64
+		{CB15B52C-B7CD-F679-20D5-CFD50CAC916A}.Development|x64.Build.0 = Development|x64
 		{CB15B52C-B7CD-F679-20D5-CFD50CAC916A}.Release|x64.ActiveCfg = Release|x64
 		{CB15B52C-B7CD-F679-20D5-CFD50CAC916A}.Release|x64.Build.0 = Release|x64
 		{044D857C-F083-860D-9970-6C108586020F}.Debug|x64.ActiveCfg = Debug|x64
 		{044D857C-F083-860D-9970-6C108586020F}.Debug|x64.Build.0 = Debug|x64
+		{044D857C-F083-860D-9970-6C108586020F}.Development|x64.ActiveCfg = Development|x64
+		{044D857C-F083-860D-9970-6C108586020F}.Development|x64.Build.0 = Development|x64
 		{044D857C-F083-860D-9970-6C108586020F}.Release|x64.ActiveCfg = Release|x64
 		{044D857C-F083-860D-9970-6C108586020F}.Release|x64.Build.0 = Release|x64
 		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}.Debug|x64.ActiveCfg = Debug|x64
 		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}.Debug|x64.Build.0 = Debug|x64
+		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}.Development|x64.ActiveCfg = Development|x64
+		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}.Development|x64.Build.0 = Development|x64
 		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}.Release|x64.ActiveCfg = Release|x64
 		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
