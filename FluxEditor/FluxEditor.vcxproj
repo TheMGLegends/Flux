@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SFML_STATIC;SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_DEBUG;FLUX_ASSERTS_ENABLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;..\Sandbox\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\imgui-sfml\install\debug\include;..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;..\Sandbox\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -90,12 +90,13 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ImGui-SFML.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\imgui-sfml\install\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
-xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources
-IF NOT EXIST "..\build\Debug-windows-x86_64\FluxEditor\resources" (mkdir "..\build\Debug-windows-x86_64\FluxEditor\resources")
-xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Debug-windows-x86_64\FluxEditor\resources"</Command>
+      <Command>cmake -S vendor/imgui-sfml -B vendor/imgui-sfml/build/debug -G "Visual Studio 17 2022" -A x64 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DCMAKE_INSTALL_PREFIX=vendor/imgui-sfml/install/debug
+cmake --build vendor/imgui-sfml/build/debug --config Debug
+cmake --install vendor/imgui-sfml/build/debug --config Debug --prefix vendor/imgui-sfml/install/debug</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
@@ -103,7 +104,7 @@ xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Debug-windows-x86_64\
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SFML_STATIC;SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_DEVELOPMENT;FLUX_ASSERTS_ENABLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;..\Sandbox\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\imgui-sfml\install\debug\include;..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;..\Sandbox\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -114,12 +115,13 @@ xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Debug-windows-x86_64\
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ImGui-SFML.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\imgui-sfml\install\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
-xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources
-IF NOT EXIST "..\build\Development-windows-x86_64\FluxEditor\resources" (mkdir "..\build\Development-windows-x86_64\FluxEditor\resources")
-xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Development-windows-x86_64\FluxEditor\resources"</Command>
+      <Command>cmake -S vendor/imgui-sfml -B vendor/imgui-sfml/build/debug -G "Visual Studio 17 2022" -A x64 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DCMAKE_INSTALL_PREFIX=vendor/imgui-sfml/install/debug
+cmake --build vendor/imgui-sfml/build/debug --config Debug
+cmake --install vendor/imgui-sfml/build/debug --config Debug --prefix vendor/imgui-sfml/install/debug</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,7 +129,7 @@ xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Development-windows-x
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SFML_STATIC;SPDLOG_COMPILED_LIB;SPDLOG_USE_STD_FORMAT;YAML_CPP_STATIC_DEFINE;FLUX_PLATFORM_WINDOWS;FLUX_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;..\Sandbox\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\imgui-sfml\install\release\include;..\Flux\vendor\box2d\include;..\Flux\vendor\entt\single_include;..\Flux\vendor\sfml\include;..\Flux\vendor\spdlog\include;..\Flux\vendor\yaml-cpp\include;..\Flux\src;..\Sandbox\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -142,12 +144,13 @@ xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Development-windows-x
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ImGui-SFML.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\imgui-sfml\install\release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>IF NOT EXIST ..\FluxEditor\resources (mkdir ..\FluxEditor\resources)
-xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" ..\FluxEditor\resources
-IF NOT EXIST "..\build\Release-windows-x86_64\FluxEditor\resources" (mkdir "..\build\Release-windows-x86_64\FluxEditor\resources")
-xcopy /Q /E /Y /I "$(SolutionDir)Flux\resources" "..\build\Release-windows-x86_64\FluxEditor\resources"</Command>
+      <Command>cmake -S vendor/imgui-sfml -B vendor/imgui-sfml/build/release -G "Visual Studio 17 2022" -A x64 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_INSTALL_PREFIX=vendor/imgui-sfml/install/release
+cmake --build vendor/imgui-sfml/build/release --config Release
+cmake --install vendor/imgui-sfml/build/release --config Release --prefix vendor/imgui-sfml/install/release</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

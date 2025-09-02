@@ -39,11 +39,13 @@ workspace "Flux"
     builddir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
     -- Include External Library Premakes
-    include "Flux/vendor/box2d"      -- 2D Physics Library
-    include "Flux/vendor/entt"      -- Entity-Component-System Library
-    include "Flux/vendor/sfml"      -- Simple and Fast Multimedia Library
-    include "Flux/vendor/spdlog"    -- Logging Library
-    include "Flux/vendor/yaml-cpp"  -- YAML Parser Library
+    include "Flux/vendor/box2d"         -- 2D Physics Library
+    include "Flux/vendor/entt"          -- Entity-Component-System Library
+    include "Flux/vendor/sfml"          -- Simple and Fast Multimedia Library
+    include "Flux/vendor/spdlog"        -- Logging Library
+    include "Flux/vendor/yaml-cpp"      -- YAML Parser Library
+
+    include "FluxEditor/vendor/imgui-sfml" -- ImGui-SFML Library
 
     -- Startup Project
     filter "action:vs*"
@@ -134,16 +136,6 @@ workspace "Flux"
             "Flux/src"
         }
 
-        -- Copy Flux Engine Resources into Project
-        prebuildcommands
-        {
-            "{MKDIR} " .. "../Sandbox/resources",
-            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "../Sandbox/resources",
-
-            "{MKDIR} " .. "%[Flux/%{cfg.targetdir}/resources]",
-            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "%[Flux/%{cfg.targetdir}/resources]"
-        }
-
         -- Link to Flux Engine
         links { "Flux" }
 
@@ -197,6 +189,9 @@ workspace "Flux"
         -- Project Source Files
         files { "%{prj.name}/src/**.h", "%{prj.name}/src/**.cpp" }
 
+        -- Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
+        UseIMGUISFML()  -- ImGui-SFML Library (Also Imports ImGui)
+
         -- Include Directories [TODO: Do we need to include all these external libraries?]
         includedirs
         {
@@ -208,16 +203,6 @@ workspace "Flux"
 
             "Flux/src",
             "Sandbox/src"
-        }
-
-        -- Copy Flux Engine Resources into Project
-        prebuildcommands
-        {
-            "{MKDIR} " .. "../FluxEditor/resources",
-            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "../FluxEditor/resources",
-
-            "{MKDIR} " .. "%[Flux/%{cfg.targetdir}/resources]",
-            "{COPYDIR} " .. "%[%{wks.location}Flux/resources] " .. "%[Flux/%{cfg.targetdir}/resources]"
         }
 
         -- Links

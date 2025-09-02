@@ -140,8 +140,8 @@ namespace ImGui
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <sfml/Graphics/Color.hpp>
+#include <sfml/System/Vector2.hpp>
 
 #include <cstdint>
 

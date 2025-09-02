@@ -32,6 +32,7 @@ endif()
 # ImGui does not provide native support for CMakeLists, workaround for now to have
 # users specify IMGUI_DIR. Waiting for this PR to get merged...
 #    https://github.com/ocornut/imgui/pull/1713
+set(IMGUI_DIR "../imgui")
 if(NOT IMGUI_DIR)
   set(IMGUI_DIR "" CACHE PATH "imgui top-level directory")
   message(FATAL_ERROR "ImGui directory not found. Set IMGUI_DIR to imgui's top-level path (containing 'imgui.h' and other files).\n")
@@ -70,6 +71,9 @@ target_include_directories(ImGui-SFML PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
+set(SFML_DIR "${CMAKE_SOURCE_DIR}/../../../Flux/vendor/sfml/install/debug/lib/cmake/SFML" CACHE PATH "Path to SFMLConfig.cmake")
+find_package(SFML 3.0.1 COMPONENTS Graphics REQUIRED)
 target_link_libraries(ImGui-SFML PUBLIC SFML::Graphics OpenGL::GL)
 if(WIN32 AND MINGW)
   target_link_libraries(ImGui-SFML PUBLIC imm32)

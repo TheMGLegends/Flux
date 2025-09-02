@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\FluxEditor">
+      <UniqueIdentifier>{82B2BB63-6E80-AF69-5714-209043818BCE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\imgui">
+      <UniqueIdentifier>{5D3BD0F0-499E-5F95-F223-984BDE652B18}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\vendor\imgui\imconfig.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\vendor\imgui\imgui.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\vendor\imgui\imgui_internal.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\vendor\imgui\imstb_rectpack.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\vendor\imgui\imstb_textedit.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\vendor\imgui\imstb_truetype.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FluxEditor\FluxEditorApplication.h">
+      <Filter>src\FluxEditor</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\vendor\imgui\imgui.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\vendor\imgui\imgui_demo.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\vendor\imgui\imgui_draw.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\vendor\imgui\imgui_tables.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\vendor\imgui\imgui_widgets.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FluxEditor\FluxEditorApplication.cpp">
+      <Filter>src\FluxEditor</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
