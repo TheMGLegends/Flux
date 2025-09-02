@@ -45,7 +45,8 @@ workspace "Flux"
     include "Flux/vendor/spdlog"        -- Logging Library
     include "Flux/vendor/yaml-cpp"      -- YAML Parser Library
 
-    include "FluxEditor/vendor/imgui-sfml" -- ImGui-SFML Library
+    include "FluxEditor/vendor/imgui-sfml"  -- ImGui-SFML Library
+    include "FluxEditor/vendor/imguizmo"    -- ImGuizmo Library
 
     -- Startup Project
     filter "action:vs*"
@@ -191,6 +192,7 @@ workspace "Flux"
 
         -- Run External Library Premake Functions that setup includedirs, libdirs, links, etc.
         UseIMGUISFML()  -- ImGui-SFML Library (Also Imports ImGui)
+        UseIMGUIZMO()   -- ImGuizmo Library
 
         -- Include Directories [TODO: Do we need to include all these external libraries?]
         includedirs

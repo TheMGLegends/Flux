@@ -72,7 +72,11 @@ target_include_directories(ImGui-SFML PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-set(SFML_DIR "${CMAKE_SOURCE_DIR}/../../../Flux/vendor/sfml/install/debug/lib/cmake/SFML" CACHE PATH "Path to SFMLConfig.cmake")
+list(APPEND CMAKE_PREFIX_PATH
+    "${CMAKE_SOURCE_DIR}/../../../Flux/vendor/sfml/install/debug/lib/cmake/SFML"
+    "${CMAKE_SOURCE_DIR}/../../../Flux/vendor/sfml/install/release/lib/cmake/SFML"
+)
+
 find_package(SFML 3.0.1 COMPONENTS Graphics REQUIRED)
 target_link_libraries(ImGui-SFML PUBLIC SFML::Graphics OpenGL::GL)
 if(WIN32 AND MINGW)
