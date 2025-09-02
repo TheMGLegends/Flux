@@ -44,6 +44,8 @@ namespace Flux
 		void SetFramerateLimit(unsigned int limit);
 		unsigned int GetFramerateLimit() const { return data.framerateLimit; }
 
+		std::unique_ptr<sf::RenderWindow>& GetNativeWindow() { return window; }
+
 	private:
 		struct WindowData
 		{

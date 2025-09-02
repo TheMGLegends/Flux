@@ -12,13 +12,6 @@ int main(int argc, char** argv)
 	Flux::Log::Initialise();
 
 	std::unique_ptr<Flux::Application> app = Flux::CreateApplication();
-
-	if (!app) 
-	{ 
-		FLUX_CORE_ERROR("Application could not be created, did you select the correct startup project? (Debug = FluxEditor, Release = Sandbox)"); 
-		return -1; 
-	}
-
 	app->Run();
 
 	return 0;

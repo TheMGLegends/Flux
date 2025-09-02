@@ -1,6 +1,10 @@
 #include <Flux.h>
 #include <Sandbox/SandboxApplication.h>
 
+#include <filesystem>
+#include <sfml/Graphics/Image.hpp>
+#include <sfml/Graphics/RenderWindow.hpp>
+
 class EditorLayer : public Flux::Layer
 {
 public:
@@ -36,6 +40,18 @@ public:
 class FluxEditorApplication : public Flux::Application
 {
 public:
-	FluxEditorApplication() { PushLayer(new EditorLayer()); PushLayer(new SandboxLayer()); }
+	FluxEditorApplication() 
+	{
+		// INFO: Adding Default Flux Icon to Editor Window
+		auto& nativeWindow = GetWindow()->GetNativeWindow();
+		const std::filesystem::path iconPath = "resources/FluxIcon.png";
+
+		sf::Image icon;
+		FLUX_CORE_VERIFY(icon.loadFromFile(iconPath), std::format("Failed to load window icon from path: {0}", iconPath.string()));
+		nativeWindow->setIcon(icon.getSize(), icon.getPixelsPtr());
+
+		PushLayer(new EditorLayer()); 
+		PushLayer(new SandboxLayer()); 
+	}
 	virtual ~FluxEditorApplication() override = default;
 };

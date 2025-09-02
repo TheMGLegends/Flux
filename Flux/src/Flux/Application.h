@@ -24,6 +24,8 @@ namespace Flux
 		void PushLayer(Layer* layer) { layerManager.PushLayer(layer); }
 		void PushOverlay(Layer* overlay) { layerManager.PushOverlay(overlay); }
 
+		std::unique_ptr<Window>& GetWindow() { return window; }
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& event);
 

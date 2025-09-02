@@ -24,13 +24,6 @@ namespace Flux
 		SetVSyncEnabled(true);
 		data.properties.position = window->getPosition();
 
-		// INFO: Adding Window Icon
-		const std::filesystem::path iconPath = "resources/FluxIcon.png";
-		sf::Image icon;
-		FLUX_CORE_VERIFY(icon.loadFromFile(iconPath), std::format("Failed to load window icon from path: {0}", iconPath.string()));
-
-		window->setIcon(icon.getSize(), icon.getPixelsPtr());
-
 		// INFO: Disable Clicking on Console Window (Windows Only)
 #ifdef FLUX_PLATFORM_WINDOWS
 		HANDLE hStdIn = GetStdHandle(STD_INPUT_HANDLE);
